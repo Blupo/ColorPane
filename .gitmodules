@@ -1,0 +1,9 @@
+[submodule "includes/roact"]
+	path = includes/roact
+	url = https://github.com/Roblox/roact
+[submodule "includes/roact-rodux"]
+	path = includes/roact-rodux
+	url = https://github.com/Roblox/roact-rodux
+[submodule "includes/rodux"]
+	path = includes/rodux
+	url = https://github.com/Roblox/rodux

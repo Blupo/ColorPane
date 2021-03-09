@@ -1,0 +1,4 @@
+std = "roblox"
+
+[rules]
+parenthese_conditions = "allow"

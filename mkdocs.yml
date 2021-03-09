@@ -1,0 +1,28 @@
+site_name: ColorPane
+site_url: https://blupo.github.io/ColorPane
+repo_name: Blupo/ColorPane
+repo_url: https://github.com/Blupo/ColorPane
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: white
+    accent: blue
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - Color Editor: user-guide/color-editor.md
+    - ColorSequence Editor: user-guide/colorsequence-editor.md
+  - API:
+    - Usage: api/usage.md
+    - Reference: api/reference.md
+  
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - pymdownx.superfences
+  - toc:
+      permalink: true
