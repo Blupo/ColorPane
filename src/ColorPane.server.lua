@@ -14,5 +14,12 @@ else
     API.Name = "ColorPane"
 
     require(API).init(plugin)
-    API.Parent = CoreGui
+    
+    local success = pcall(function()
+        API.Parent = CoreGui
+    end)
+
+    if (not success) then
+        warn("ColorPane requires script injection to expose the API to developers. Please allow the permission and reload the plugin.")
+    end
 end

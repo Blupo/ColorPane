@@ -33,4 +33,4 @@ jobs:
           ALLOW_EMPTY_CHANGELOG: "false"
           ALLOW_TAG_PREFIX: "true"
         with:
-          args: ./ColorPane.rbxm
+          args: ./ColorPane.rbxmx
