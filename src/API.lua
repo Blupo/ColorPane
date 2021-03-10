@@ -4,11 +4,6 @@
     Please do not delete or modify this script, it is required
     for developers to be able to use ColorPane.
 
-    This script may be detected by plugins that look for
-    virus and/or backdoor scripts. Unless an
-    illegitimate version of ColorPane was installed,
-    this script will not cause any harm to your games.
-
     Learn more about ColorPane:
         https://github.com/Blupo/ColorPane
 ]]
@@ -294,13 +289,6 @@ ColorPane.OpenColorEditor = function()
     }):andThen(noOp, noOp)
 end
 
-ColorPane.OpenColorSequenceEditor = function()
-    ColorPane.PromptForColorSequence({
-        PromptTitle = "Create a ColorSequence",
-        InitialColor = DEFAULT_COLORSEQUENCE
-    }):andThen(noOp, noOp)
-end
-
 ColorPane.init = function(pluginObj)
     if (plugin) then return end
 
@@ -308,7 +296,7 @@ ColorPane.init = function(pluginObj)
     plugin = pluginObj
 
     colorPaneStore = MakeStore(plugin, MAX_QP_COLORS, plugin:GetSetting(SETTINGS_KEY) or {})
-    toolbarComponents = MakeToolbar(plugin)
+    toolbarComponents = MakeToolbar()
     colorEditorToolbarButton = toolbarComponents.ColorEditorButton
 
     colorEditorWidget = MakeWidget(plugin, "ColorEditor")
@@ -393,6 +381,7 @@ scriptReparentedEvent = script:GetPropertyChangedSignal("Parent"):Connect(functi
 end)
 
 script:GetPropertyChangedSignal("Source"):Connect(function()
+    warn("The ColorPane API script was unexpectedly modified")
     onUnloading()
 end)
 

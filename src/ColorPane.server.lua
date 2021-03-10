@@ -5,21 +5,36 @@ local CoreGui = game:GetService("CoreGui")
 local root = script.Parent
 local API = root:FindFirstChild("API")
 
+local PluginModules = root:FindFirstChild("PluginModules")
+local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
+
 ---
 
-if (CoreGui:FindFirstChild("ColorPane")) then
-    warn("ColorPane is already loaded")
-else
-    API.Archivable = false
-    API.Name = "ColorPane"
+local toolbarComponents = MakeToolbar(plugin)
+local reloadButton = toolbarComponents.ReloadButton
 
-    require(API).init(plugin)
-    
+local dropAPI = function()
     local success = pcall(function()
         API.Parent = CoreGui
     end)
 
-    if (not success) then
-        warn("ColorPane requires script injection to expose the API to developers. Please allow the permission and reload the plugin.")
+    if (success) then
+        reloadButton.Enabled = false
+    else
+        warn("ColorPane requires script injection to expose the API to developers. Please allow the permission and reload the plugin or use the Reload button in the toolbar.")
     end
 end
+
+---
+
+if (CoreGui:FindFirstChild("ColorPane")) then
+    warn("ColorPane is already loaded")
+end
+
+reloadButton.Click:Connect(dropAPI)
+
+API.Archivable = false
+API.Name = "ColorPane"
+require(API).init(plugin)
+
+dropAPI()

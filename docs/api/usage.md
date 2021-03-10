@@ -9,19 +9,24 @@ local CoreGui = game:GetService("CoreGui")
 local ColorPane = require(CoreGui:WaitForChild("ColorPane"))
 
 -- or maybe this
-CoreGui.ChildAdded(function(child)
+CoreGui.ChildAdded:Connect(function(child)
     if ((child.Name == "ColorPane") and child:IsA("ModuleScript")) then
         ColorPane = require(child)
     end
 end)
 ```
 
+Keep in mind that the API script may not be available when your plugin starts, and it will never appear if the user does not have ColorPane installed or does not allow script injection.
+
 ## Getting Colors
 
 You can obtain colors with the [PromptForColor](../reference#colorpanepromptforcolor) and [PromptForColorSequence](../reference#colorpanepromptforcolorsequence) functions. You can also pass options to them (refer to [PromptOptions](../reference#promptoptions)) to modify the prompt and subscribe to color changes.
 
+!!! warning
+    You must use the dot operator (`.`) when calling functions from the API.
+
 ```lua
-local editPromise = ColorPane:PromptForColor({
+local editPromise = ColorPane.PromptForColor({
     PromptTitle = "Hello, Roblox!",
 
     -- start the prompt with a random color
@@ -67,4 +72,4 @@ end)
 
 ## Example: ColorProps
 
-[ColorProps](https://www.roblox.com/library/6494015679) is companion plugin to ColorPane that lets you edit the color properties of objects. You can [view its source code](https://github.com/Blupo/ColorProps) if you want to learn more about how to use ColorPane.
+[ColorProps](https://www.roblox.com/library/6494015679) is plugin that lets you view and edit the color properties of objects using ColorPane. You can [view its source code](https://github.com/Blupo/ColorProps) if you want to see an example of a plugin that uses ColorPane.

@@ -60,9 +60,13 @@ local Style = {
 
     -- cs editor icons
     CSEditorReverseSequenceImage = "rbxassetid://6409046433",
-    CSEditorRemoveKeypointImage = "rbxassetid://6213137847", -- "rbxassetid://919846965"
+    CSEditorRemoveKeypointImage = "rbxassetid://6213137847",
     CSEditorSwapKeypointLeftImage = "rbxassetid://330699522",
     CSEditorSwapKeypointRightImage = "rbxassetid://330699633",
+
+    -- toolbar
+    ToolbarColorEditorImage = "rbxassetid://6498550308",
+    ToolbarRefreshButtonImage = "rbxassetid://6498542225",
 
     -- other
     MarkerSize = 6,
