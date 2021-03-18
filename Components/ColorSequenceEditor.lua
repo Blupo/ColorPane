@@ -71,12 +71,24 @@ end
 
 ---
 
-local ColorSequenceEditor = Roact.Component:extend("ColorSequenceEditor")
+local ColorSequenceEditor = Roact.PureComponent:extend("ColorSequenceEditor")
 
 ColorSequenceEditor.init = function(self, initProps)
-    self.editor = Roact.createRef()
-    self.timeline = Roact.createRef()
+    self.timelineStartPosition, self.updateTimelineStartPosition = Roact.createBinding(Vector2.new(0, 0))
+    self.timelineWidth, self.updateTimelineWidth = Roact.createBinding(0)
+    self.timelineProgress, self.updateTimelineProgress = Roact.createBinding(0)
+
     self.editorInputChangedEvent = Instance.new("BindableEvent")
+
+    self.markerTime, self.updateMarkerTime = self.timelineProgress:map(function(timelineProgress)
+        local colorSequence = self.state.colorSequence
+        local keypoints = colorSequence.Keypoints
+
+        local nearestKeypoint, nearestKeypointTimeDiff = getNearestKeypointIndex(colorSequence, timelineProgress)
+        local isKeypointInSnapProximity = (nearestKeypointTimeDiff < CURSOR_KEYPOINT_SNAP_VALUE)
+
+        return (isKeypointInSnapProximity and keypoints[nearestKeypoint].Time or timelineProgress)
+    end)
 
     self.updateSelectedKeypointTime = function(cursorPosition)
         local colorSequence = self.state.colorSequence
@@ -87,8 +99,8 @@ ColorSequenceEditor.init = function(self, initProps)
             return
         end
 
-        local distanceFromStart = cursorPosition - self.state.timelineStartPosition
-        local progress = math.clamp(distanceFromStart.X / self.state.timelineSize.X, 0, 1)
+        local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
+        local progress = math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1)
         progress = round(progress, math.log10(self.props.timeSnapValue))
 
         local nearestKeypoint, nearestKeypointTimeDiff = getNearestKeypointIndex(colorSequence, progress)
@@ -116,20 +128,16 @@ ColorSequenceEditor.init = function(self, initProps)
         })
     end
 
-    self.updateTimelineProgress = function(cursorPosition)
-        local distanceFromStart = cursorPosition - self.state.timelineStartPosition
+    self.calculateTimelineProgress = function(cursorPosition)
+        local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
 
-        self:setState({
-            timelineProgress = math.clamp(distanceFromStart.X / self.state.timelineSize.X, 0, 1)
-        })
+        self.updateTimelineProgress(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
     end
 
     self:setState({
         colorSequence = initProps.originalColor,
         tracking = false,
         showTimelineMarker = false,
-
-        timelineProgress = 0,
     })
 end
 
@@ -150,17 +158,8 @@ ColorSequenceEditor.didMount = function(self)
             self.updateSelectedKeypointTime(cursorPosition)
         end
 
-        self.updateTimelineProgress(cursorPosition)
+        self.calculateTimelineProgress(cursorPosition)
     end)
-
-    do
-        local timeline = self.timeline:getValue()
-
-        self:setState({
-            timelineStartPosition = timeline.AbsolutePosition,
-            timelineSize = timeline.AbsoluteSize,
-        })
-    end
 end
 
 ColorSequenceEditor.didUpdate = function(self, _, prevState)
@@ -180,17 +179,12 @@ end
 ColorSequenceEditor.render = function(self)
     local theme = self.props.theme
     local timeSnapValue = self.props.timeSnapValue
-
-    local timelineProgress = self.state.timelineProgress
+    
     local selectedKeypoint = self.state.selectedKeypoint
     local colorEditPromise = self.state.colorEditPromise
 
     local colorSequence = self.state.colorSequence
     local keypoints = colorSequence.Keypoints
-
-    local nearestKeypoint, nearestKeypointTimeDiff = getNearestKeypointIndex(colorSequence, timelineProgress)
-    local isKeypointInSnapProximity = (nearestKeypointTimeDiff < CURSOR_KEYPOINT_SNAP_VALUE)
-    local markerTime = isKeypointInSnapProximity and keypoints[nearestKeypoint].Time or timelineProgress
 
     local gradientElements = {}
 
@@ -210,7 +204,7 @@ ColorSequenceEditor.render = function(self)
         gradientElements[#gradientElements + 1] = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Position = UDim2.new(keypoint.Time, 0, 0.5, 0),
-            Size = UDim2.new(0, Style.MarkerSize + 2, 0, Style.MarkerSize + 2),
+            Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
             BorderSizePixel = 0,
             ZIndex = 2,
 
@@ -248,16 +242,21 @@ ColorSequenceEditor.render = function(self)
     gradientElements["Marker"] = (self.state.showTimelineMarker or self.state.tracking) and
         Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(markerTime, 0, 0.5, 0),
             Size = UDim2.new(0, 1, 1, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
 
-            BackgroundColor3 = Color.toColor3(Color.getBestContrastingColor(
-                Color.fromColor3(evalutateColorSequence(colorSequence, markerTime)),
-                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            ))
+            Position = self.markerTime:map(function(markerTime)
+                return UDim2.new(markerTime, 0, 0.5, 0)
+            end),
+
+            BackgroundColor3 = self.markerTime:map(function(markerTime)
+                return Color.toColor3(Color.getBestContrastingColor(
+                    Color.fromColor3(evalutateColorSequence(colorSequence, markerTime)),
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
+                ))
+            end),
         })
     or nil
 
@@ -277,8 +276,6 @@ ColorSequenceEditor.render = function(self)
         BorderSizePixel = 0,
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
-
-        [Roact.Ref] = self.editor,
 
         [Roact.Event.InputChanged] = function(_, input, gameProcessedEvent)
             self.editorInputChangedEvent:Fire(input, gameProcessedEvent)
@@ -310,10 +307,8 @@ ColorSequenceEditor.render = function(self)
                     Size = UDim2.new(1, -2, 1, -2),
                     BackgroundTransparency = 0,
                     ClipsDescendants = true,
-                    
-                    BackgroundColor3 = Color3.new(1, 1, 1),
 
-                    [Roact.Ref] = self.timeline,
+                    BackgroundColor3 = Color3.new(1, 1, 1),
 
                     [Roact.Event.InputBegan] = function(_, input)
                         if (input.UserInputType == Enum.UserInputType.MouseMovement) then
@@ -322,6 +317,10 @@ ColorSequenceEditor.render = function(self)
                             })
                         else
                             if (colorEditPromise) then return end
+
+                            local timelineProgress = self.timelineProgress:getValue()
+                            local nearestKeypoint, nearestKeypointTimeDiff = getNearestKeypointIndex(colorSequence, timelineProgress)
+                            local isKeypointInSnapProximity = (nearestKeypointTimeDiff < CURSOR_KEYPOINT_SNAP_VALUE)
 
                             if (input.UserInputType == Enum.UserInputType.MouseButton1) then
                                 if (isKeypointInSnapProximity) then
@@ -371,17 +370,13 @@ ColorSequenceEditor.render = function(self)
                     end,
     
                     [Roact.Change.AbsolutePosition] = function(obj)
-                        self:setState({
-                            timelineStartPosition = obj.AbsolutePosition,
-                            timelineSize = obj.AbsoluteSize,
-                        })
+                        self.updateTimelineStartPosition(obj.AbsolutePosition)
+                        self.updateTimelineWidth(obj.AbsoluteSize.X)
                     end,
         
                     [Roact.Change.AbsoluteSize] = function(obj)
-                        self:setState({
-                            timelineStartPosition = obj.AbsolutePosition,
-                            timelineSize = obj.AbsoluteSize,
-                        })
+                        self.updateTimelineStartPosition(obj.AbsolutePosition)
+                        self.updateTimelineWidth(obj.AbsoluteSize.X)
                     end,
                 }, gradientElements)
             }),

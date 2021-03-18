@@ -12,11 +12,11 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
+local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 ---
 
 local ANALOGY_ANGLE = math.pi / 5
-local EDITOR_KEY = "wheel"
 
 local shallowCompare = util.shallowCompare
 
@@ -25,6 +25,8 @@ local harmonies = {
         name = "None",
         image = Style.HarmonyNoneImage,
         order = 1,
+
+        numAngles = 0,
         getAngles = function() return {} end,
     },
 
@@ -33,6 +35,7 @@ local harmonies = {
         image = Style.HarmonyComplementImage,
         order = 2,
 
+        numAngles = 1,
         getAngles = function(angle)
             return {(angle + math.pi) % (2 * math.pi)}
         end
@@ -43,6 +46,7 @@ local harmonies = {
         image = Style.HarmonyTriadImage,
         order = 4,
 
+        numAngles = 2,
         getAngles = function(angle)
             return {
                 (angle + ((2 * math.pi) / 3)) % (2 * math.pi),
@@ -56,6 +60,7 @@ local harmonies = {
         image = Style.HarmonySquareImage,
         order = 6,
 
+        numAngles = 3,
         getAngles = function(angle)
             return {
                 (angle + (math.pi / 2)) % (2 * math.pi),
@@ -70,6 +75,7 @@ local harmonies = {
         image = Style.HarmonyHexagonImage,
         order = 8,
 
+        numAngles = 5,
         getAngles = function(angle)
             return {
                 (angle + (math.pi / 3)) % (2 * math.pi),
@@ -86,6 +92,7 @@ local harmonies = {
         image = Style.HarmonyAnalogousImage,
         order = 3,
 
+        numAngles = 2,
         getAngles = function(angle)
             return {
                 (angle + ANALOGY_ANGLE) % (2 * math.pi),
@@ -99,6 +106,7 @@ local harmonies = {
         image = Style.HarmonySplitComplementImage,
         order = 5,
             
+        numAngles = 2,
         getAngles = function(angle)
             local complementAngle = angle + math.pi
 
@@ -114,6 +122,7 @@ local harmonies = {
         image = Style.HarmonyRectangleImage,
         order = 7,
 
+        numAngles = 3,
         getAngles = function(angle)
             local analogy1 = angle + ANALOGY_ANGLE
             local complement = angle + math.pi
@@ -130,49 +139,80 @@ local harmonies = {
 
 ---
 
+local HueHarmonyMarker = Roact.PureComponent:extend("HueHarmonyMarker")
+
+HueHarmonyMarker.render = function(self)
+    local theme = self.props.theme
+
+    return Roact.createElement("TextButton", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
+
+        Position = Roact.joinBindings({
+            h = self.props.h,
+            wheelRadius = self.props.wheelRadius,
+        }):map(function(values)
+            local hueAngle = values.h * (2 * math.pi)
+            local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
+
+            return UDim2.new(
+                0.5, math.cos(harmonyAngle) * (values.wheelRadius - (self.props.ringWidth / 2)),
+                0.5, -math.sin(harmonyAngle) * (values.wheelRadius - (self.props.ringWidth / 2))
+            )
+        end),
+
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        AutoButtonColor = false,
+        ZIndex = 2,
+
+        Text = "",
+        TextTransparency = 1,
+
+        BackgroundColor3 = self.props.h:map(function(h)
+            local hueAngle = h * (2 * math.pi)
+            local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
+
+            return Color.toColor3(Color.getBestContrastingColor(
+                Color.fromHSB(harmonyAngle / (2 * math.pi), 1, 1),
+                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
+            ))
+        end),
+
+        [Roact.Event.Activated] = function()
+            local hueAngle = self.props.h:getValue() * (2 * math.pi)
+            local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
+            
+            self.props.updateH(harmonyAngle / (2 * math.pi))
+        end,
+    })
+end
+
+---
+
 local ColorWheel = Roact.Component:extend("ColorWheel")
 
 ColorWheel.init = function(self, initProps)
-    self.wheel = Roact.createRef()
-    self.plane = Roact.createRef()
+    local initH, initS, initB = Color.toHSB(Color.fromColor3(initProps.color))
 
-    self.makeMarker = function(angle)
-        local theme = self.props.theme
+    self.planeSize, self.updatePlaneSize = Roact.createBinding(Vector2.new(0, 0))
+    self.wheelCenter, self.updateWheelCenter = Roact.createBinding(Vector2.new(0, 0))
+    self.wheelRadius, self.updateWheelRadius = Roact.createBinding(0)
 
-        return Roact.createElement("TextButton", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
-            Position = self.state.wheelRadius and UDim2.new(0.5, math.cos(angle) * (self.state.wheelRadius - (self.props.ringWidth / 2)), 0.5, -math.sin(angle) * (self.state.wheelRadius - (self.props.ringWidth / 2))) or UDim2.new(0.5, 0, 0.5, 0),
-            BackgroundTransparency = 0,
-            BorderSizePixel = 0,
-            AutoButtonColor = false,
-            ZIndex = 2,
-
-            Text = "",
-            TextTransparency = 1,
-
-            BackgroundColor3 = Color.toColor3(Color.getBestContrastingColor(
-                Color.fromHSB(angle / (2 * math.pi), 1, 1),
-                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            )),
-
-            [Roact.Event.Activated] = function()
-                local hue = angle / (2 * math.pi)
-
-                self:setState({
-                    h = hue
-                })
-
-                self.props.setColor(Color.toColor3(Color.fromHSB(hue, self.state.s, self.state.b)))
-            end
-        })
-    end
+    self.components, self.updateComponents = Roact.createBinding({
+        h = initH,
+        s = initS,
+        b = initB,
+    })
 
     self.updateH = function(cursorPosition)
-        local distanceFromWheelCenter = self.state.wheelCenter - cursorPosition
+        local distanceFromWheelCenter = self.wheelCenter:getValue() - cursorPosition
         local mouseAngle = math.atan2(distanceFromWheelCenter.Y, -distanceFromWheelCenter.X)
+
+        local components = self.components:getValue()
         local hueAngle
+        local h
 
         -- calculate angle from [0, 2pi)
         if ((mouseAngle >= 0) and (mouseAngle <= math.pi)) then
@@ -181,55 +221,37 @@ ColorWheel.init = function(self, initProps)
             hueAngle = mouseAngle + (2 * math.pi)
         end
 
-        local h, s, b
         h = hueAngle / (2 * math.pi)
 
-        if (self.props.editor == EDITOR_KEY) then
-            s, b = self.state.s, self.state.b
-        else
-            _, s, b = Color.toHSB(Color.fromColor3(self.props.color))
-        end
-
-        self:setState({
+        self.updateComponents({
             h = h,
-            s = (self.props.editor ~= EDITOR_KEY) and s or nil,
-            b = (self.props.editor ~= EDITOR_KEY) and b or nil,
+            s = components.s,
+            b = components.b,
         })
 
-        self.props.setColor(Color.toColor3(Color.fromHSB(h, s, b)))
+        self.props.setColor(Color.toColor3(Color.fromHSB(h, components.s, components.b)))
     end
 
-    self.updateSV = function(cursorPosition)
-        local distanceFromWheelCenter = cursorPosition - self.state.wheelCenter
+    self.updateSB = function(cursorPosition)
+        local distanceFromWheelCenter = cursorPosition - self.wheelCenter:getValue()
+        local planeSize = self.planeSize:getValue()
+        local components = self.components:getValue()
 
-        local h
-        local s = math.clamp((distanceFromWheelCenter.X / self.state.planeSize) + 0.5, 0, 1)
-        local b = 1 - math.clamp((distanceFromWheelCenter.Y / self.state.planeSize) + 0.5, 0, 1)
+        local s = math.clamp((distanceFromWheelCenter.X / planeSize) + 0.5, 0, 1)
+        local b = 1 - math.clamp((distanceFromWheelCenter.Y / planeSize) + 0.5, 0, 1)
 
-        if (self.props.editor == EDITOR_KEY) then
-            h = self.state.h
-        else
-            h = Color.toHSB(Color.fromColor3(self.props.color))
-        end
-
-        self:setState({
-            h = (self.props.editor ~= EDITOR_KEY) and h or nil,
+        self.updateComponents({
+            h = components.h,
             s = s,
             b = b
         })
 
-        self.props.setColor(Color.toColor3(Color.fromHSB(h, s, b)))
+        self.props.setColor(Color.toColor3(Color.fromHSB(components.h, s, b)))
     end
-    
-    local h, s, b = Color.toHSB(Color.fromColor3(initProps.color))
 
     self:setState({
         trackingH = false,
-        trackingSV = false,
-
-        h = h,
-        s = s,
-        b = b
+        trackingSB = false,
     })
 end
 
@@ -237,15 +259,32 @@ ColorWheel.shouldUpdate = function(self, nextProps, nextState)
     local propsDiff = shallowCompare(self.props, nextProps)
     local stateDiff = shallowCompare(self.state, nextState)
 
+    if (table.find(propsDiff, "color")) then
+        if (nextProps.editor ~= PluginEnums.EditorKey.ColorWheel) then
+            local h, s, b = Color.toHSB(Color.fromColor3(nextProps.color))
+
+            self.updateComponents({
+                h = h,
+                s = s,
+                b = b,
+            })
+        end
+    end
+
     if (#stateDiff > 0) then return true end
 
     if (#propsDiff == 1) then
-        if (propsDiff[1] == "color") then
-            return (nextProps.editor ~= EDITOR_KEY)
+        return (propsDiff[1] ~= "color")
+    elseif (#propsDiff == 2) then
+        if (
+            ((propsDiff[1] == "color") and (propsDiff[2] == "editor")) or
+            ((propsDiff[1] == "editor") and (propsDiff[2] == "color"))
+        ) then
+            return false
         else
             return true
         end
-    elseif (#propsDiff > 1) then
+    elseif (#propsDiff > 2) then
         return true
     end
 
@@ -264,24 +303,10 @@ ColorWheel.didMount = function(self)
             self.updateH(cursorPosition)
         end
 
-        if (self.state.trackingSV) then
-            self.updateSV(cursorPosition)
+        if (self.state.trackingSB) then
+            self.updateSB(cursorPosition)
         end
     end)
-
-    do
-        local wheel = self.wheel:getValue()
-        local hueWheelPosition = wheel.AbsolutePosition
-        local hueWheelSize = wheel.AbsoluteSize
-
-        local plane = self.plane:getValue()
-
-        self:setState({
-            wheelCenter = hueWheelPosition + (hueWheelSize / 2), -- top-left + (GUI size / 2)
-            wheelRadius = hueWheelSize.X / 2,
-            planeSize = plane.AbsoluteSize.X
-        })
-    end
 end
 
 ColorWheel.willUnmount = function(self)
@@ -295,33 +320,37 @@ ColorWheel.render = function(self)
     local theme = self.props.theme
     local harmony = self.props.harmony
 
-    local h, s, b
-    local hueAngle
-
-    if (self.props.editor == EDITOR_KEY) then
-        h, s, b = self.state.h, self.state.s, self.state.b
-    else
-        h, s, b = Color.toHSB(Color.fromColor3(self.props.color))
-    end
-
-    hueAngle = h * (2 * math.pi)
-
     local hueMarkers = {
         PrimaryMarker = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
-            Size = self.state.trackingH and UDim2.new(0, self.props.ringWidth + 10, 0, self.props.ringWidth + 10) or UDim2.new(0, self.props.ringWidth - 10, 0, self.props.ringWidth - 10),
-            Position = self.state.wheelRadius and
-                UDim2.new(0.5, math.cos(hueAngle) * (self.state.wheelRadius - (self.props.ringWidth / 2)), 0.5, -math.sin(hueAngle) * (self.state.wheelRadius - (self.props.ringWidth / 2)))
-            or UDim2.new(0.5, 0, 0.5, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
             ZIndex = 2,
 
-            BackgroundColor3 = Color.toColor3(Color.getBestContrastingColor(
-                Color.fromHSB(h, 1, 1),
-                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            ))
+            Size = UDim2.new(
+                0, self.props.ringWidth + (self.state.trackingH and 10 or -10),
+                0, self.props.ringWidth + (self.state.trackingH and 10 or -10)
+            ),
+
+            Position = Roact.joinBindings({
+                h = self.components:map(function(components) return components.h end),
+                wheelRadius = self.wheelRadius
+            }):map(function(values)
+                local hueAngle = values.h * (2 * math.pi)
+
+                return UDim2.new(
+                    0.5, math.cos(hueAngle) * (values.wheelRadius - (self.props.ringWidth / 2)),
+                    0.5, -math.sin(hueAngle) * (values.wheelRadius - (self.props.ringWidth / 2))
+                )
+            end),
+
+            BackgroundColor3 = self.components:map(function(components)
+                return Color.toColor3(Color.getBestContrastingColor(
+                    Color.fromHSB(components.h, 1, 1),
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
+                ))
+            end),
         }, {
             UICorner = Roact.createElement("UICorner", {
                 CornerRadius = UDim.new(1, 0)
@@ -333,7 +362,9 @@ ColorWheel.render = function(self)
                     Position = UDim2.new(0.5, 0, 0.5, 0),
                     Size = UDim2.new(1, -10, 1, -10),
                     
-                    BackgroundColor3 = Color.toColor3(Color.fromHSB(h, 1, 1)),
+                    BackgroundColor3 = self.components:map(function(components)
+                        return Color.toColor3(Color.fromHSB(components.h, 1, 1))
+                    end)
                 }, {
                     UICorner = Roact.createElement("UICorner", {
                         CornerRadius = UDim.new(1, 0)
@@ -344,12 +375,29 @@ ColorWheel.render = function(self)
     }
 
     if (harmonies[harmony]) then
-        local harmonyAngles = harmonies[harmony].getAngles(hueAngle)
+        local numHarmonyAngles = harmonies[harmony].numAngles
 
-        for i = 1, #harmonyAngles do
-            local harmonyAngle = harmonyAngles[i]
+        for i = 1, numHarmonyAngles do
+            hueMarkers["HarmonyMarker" .. i] = Roact.createElement(HueHarmonyMarker, {
+                harmony = harmony,
+                angleNum = i,
 
-            hueMarkers["HarmonyMarker" .. i] = self.makeMarker(harmonyAngle)
+                h = self.components:map(function(components) return components.h end),
+                wheelRadius = self.wheelRadius,
+                ringWidth = self.props.ringWidth,
+
+                updateH = function(h)
+                    local components = self.components:getValue()
+                
+                    self.updateComponents({
+                        h = h,
+                        s = components.s,
+                        b = components.b
+                    })
+
+                    self.props.setColor(Color.toColor3(Color.fromHSB(h, components.s, components.b)))
+                end
+            })
         end
     end
 
@@ -363,10 +411,7 @@ ColorWheel.render = function(self)
             selected = harmony,
             buttons = harmonies,
             customLayout = true,
-
-            onButtonActivated = function(i)
-                self.props.setHarmony(i)
-            end
+            onButtonActivated = self.props.setHarmony,
         }),
 
         WheelContainer = Roact.createElement("Frame", {
@@ -388,8 +433,6 @@ ColorWheel.render = function(self)
 
                 Image = Style.HueWheelImage,
 
-                [Roact.Ref] = self.wheel,
-
                 [Roact.Event.InputBegan] = function(obj, input)
                     if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
                     
@@ -400,7 +443,7 @@ ColorWheel.render = function(self)
                     local upperRadius = hueWheelSize.X / 2
                     local lowerRadius =  upperRadius - self.props.ringWidth
 
-                    local distanceFromWheelCenter = mousePosition - self.state.wheelCenter
+                    local distanceFromWheelCenter = mousePosition - self.wheelCenter:getValue()
                     
                     if ((distanceFromWheelCenter.Magnitude >= lowerRadius) and (distanceFromWheelCenter.Magnitude <= upperRadius)) then
                         self:setState({
@@ -424,20 +467,16 @@ ColorWheel.render = function(self)
                     local hueWheelPosition = obj.AbsolutePosition
                     local hueWheelSize = obj.AbsoluteSize
 
-                    self:setState({
-                        wheelCenter = hueWheelPosition + (hueWheelSize / 2), -- top-left + (GUI size / 2)
-                        wheelRadius = hueWheelSize.X / 2,
-                    })
+                    self.updateWheelCenter(hueWheelPosition + (hueWheelSize / 2))
+                    self.updateWheelRadius(hueWheelSize.X / 2)
                 end,
 
                 [Roact.Change.AbsoluteSize] = function(obj)
                     local hueWheelPosition = obj.AbsolutePosition
                     local hueWheelSize = obj.AbsoluteSize
 
-                    self:setState({
-                        wheelCenter = hueWheelPosition + (hueWheelSize / 2), -- top-left + (GUI size / 2)
-                        wheelRadius = hueWheelSize.X / 2,
-                    })
+                    self.updateWheelCenter(hueWheelPosition + (hueWheelSize / 2))
+                    self.updateWheelRadius(hueWheelSize.X / 2)
                 end,
             }, {
                 UIAspectRatioConstraint = Roact.createElement("UIAspectRatioConstraint", {
@@ -467,7 +506,7 @@ ColorWheel.render = function(self)
                 Markers = Roact.createFragment(hueMarkers)
             }),
 
-            SVPlaneContainer = Roact.createElement("Frame", {
+            SBPlaneContainer = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 Size = UDim2.new(1, -(self.props.ringWidth * 2) - 0, 1, -(self.props.ringWidth * 2) - 0),
                 Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -482,7 +521,7 @@ ColorWheel.render = function(self)
                     DominantAxis = Enum.DominantAxis.Width
                 }),
 
-                SVPlane = Roact.createElement("ImageLabel", {
+                SBPlane = Roact.createElement("ImageLabel", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     --[[
                         the side length of largest square that fits inside a circle can be found with
@@ -493,39 +532,38 @@ ColorWheel.render = function(self)
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
                     ClipsDescendants = false,
-                    Image = Style.SVPlaneImage,
+                    Image = Style.SBPlaneImage,
 
                     BackgroundColor3 = Color3.new(1, 1, 1),
-                    ImageColor3 = Color.toColor3(Color.fromHSB(h, 1, 1)),
 
-                    [Roact.Ref] = self.plane,
+                    ImageColor3 = self.components:map(function(components)
+                        return Color.toColor3(Color.fromHSB(components.h, 1, 1))
+                    end),
 
                     [Roact.Event.InputBegan] = function(_, input)
                         if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
                         if (self.state.trackingH) then return end
+
+                        local inputPosition = input.Position
                         
                         self:setState({
-                            trackingSV = true,
+                            trackingSB = true,
                         })
+
+                        self.updateSB(Vector2.new(inputPosition.X, inputPosition.Y))
                     end,
 
                     [Roact.Event.InputEnded] = function(_, input)
                         if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
-                        if (not self.state.trackingSV) then return end
-
-                        local inputPosition = input.Position
+                        if (not self.state.trackingSB) then return end
 
                         self:setState({
-                            trackingSV = false,
+                            trackingSB = false,
                         })
-
-                        self.updateSV(Vector2.new(inputPosition.X, inputPosition.Y))
                     end,
 
                     [Roact.Change.AbsoluteSize] = function(obj)
-                        self:setState({
-                            planeSize = obj.AbsoluteSize.X,
-                        })
+                        self.updatePlaneSize(obj.AbsoluteSize.X)
                     end,
                 }, {
                     VGradient = Roact.createElement("UIGradient", {
@@ -539,15 +577,20 @@ ColorWheel.render = function(self)
                     MarkerContainer = Roact.createElement("Frame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Size = UDim2.new(0, 10, 0, 10),
-                        Position = UDim2.new(s, 0, 1 - b, 0),
                         BackgroundTransparency = 0,
                         BorderSizePixel = 0,
 
-                        BackgroundColor3 = Color.toColor3(Color.getBestContrastingColor(
-                            Color.fromHSB(h, s, b),
-                            Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                            Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                        ))
+                        Position = self.components:map(function(components)
+                            return UDim2.new(components.s, 0, 1 - components.b, 0)
+                        end),
+
+                        BackgroundColor3 = self.components:map(function(components)
+                            return Color.toColor3(Color.getBestContrastingColor(
+                                Color.fromHSB(components.h, components.s, components.b),
+                                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
+                            ))
+                        end),
                     }, {
                         UICorner = Roact.createElement("UICorner", {
                             CornerRadius = UDim.new(1, 0)
@@ -560,7 +603,9 @@ ColorWheel.render = function(self)
                             BackgroundTransparency = 0,
                             BorderSizePixel = 0,
                             
-                            BackgroundColor3 = Color.toColor3(Color.fromHSB(h, s, b)),
+                            BackgroundColor3 = self.components:map(function(components)
+                                return Color.toColor3(Color.fromHSB(components.h, components.s, components.b))
+                            end),
                         }, {
                             UICorner = Roact.createElement("UICorner", {
                                 CornerRadius = UDim.new(1, 0)
@@ -572,6 +617,10 @@ ColorWheel.render = function(self)
         }),
     })
 end
+
+---
+
+HueHarmonyMarker = ConnectTheme(HueHarmonyMarker)
 
 return RoactRodux.connect(function(state)
     return {
@@ -586,7 +635,7 @@ end, function(dispatch)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
-                editor = EDITOR_KEY
+                editor = PluginEnums.EditorKey.ColorWheel
             })
         end,
 

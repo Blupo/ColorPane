@@ -7,3 +7,6 @@
 [submodule "includes/rodux"]
 	path = includes/rodux
 	url = https://github.com/Roblox/rodux
+[submodule "includes/APIUtils"]
+	path = includes/APIUtils
+	url = https://github.com/Blupo/roblox-apiutils

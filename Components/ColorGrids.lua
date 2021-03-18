@@ -29,21 +29,7 @@ local Padding = require(Components:FindFirstChild("Padding"))
 local ColorGrid = Roact.PureComponent:extend("ColorGrid")
 
 ColorGrid.init = function(self)
-    self.layout = Roact.createRef()
-
-    self:setState({
-        gridLength = 0,
-        cellCounts = Vector2.new(0, 0),
-    })
-end
-
-ColorGrid.didMount = function(self)
-    local layout = self.layout:getValue()
-    local absoluteContentSize = layout.AbsoluteContentSize
-
-    self:setState({
-        gridLength = absoluteContentSize.Y,
-    })
+    self.gridLength, self.updateGridLength = Roact.createBinding(0)
 end
 
 ColorGrid.render = function(self)
@@ -84,21 +70,19 @@ ColorGrid.render = function(self)
         CellSize = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
         CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
 
-        [Roact.Ref] = self.layout,
-
         [Roact.Change.AbsoluteContentSize] = function(obj)
-            local absoluteContentSize = obj.AbsoluteContentSize
-
-            self:setState({
-                gridLength = absoluteContentSize.Y,
-            })
+            self.updateGridLength(obj.AbsoluteContentSize.Y)
         end
     })
 
     return Roact.createElement("Frame", {
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
-        Size = UDim2.new(1, 0, 0, self.state.gridLength + (self.props.title and (Style.StandardTextSize + Style.MinorElementPadding) or 0)),
+
+        Size = self.gridLength:map(function(gridLength)
+            return UDim2.new(1, 0, 0, gridLength + (self.props.title and (Style.StandardTextSize + Style.MinorElementPadding) or 0))
+        end),
+
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {
@@ -148,19 +132,7 @@ end
 local ColorGrids = Roact.PureComponent:extend("ColorGrids")
 
 ColorGrids.init = function(self)
-    self.layout = Roact.createRef()
-
-    self:setState({
-        listLength = 0,
-    })
-end
-
-ColorGrids.didMount = function(self)
-    local layout = self.layout:getValue()
-
-    self:setState({
-        listLength = layout.AbsoluteContentSize.Y
-    })
+    self.listLength, self.updateListLength = Roact.createBinding(0)
 end
 
 ColorGrids.render = function(self)
@@ -187,14 +159,8 @@ ColorGrids.render = function(self)
         SortOrder = Enum.SortOrder.Name,
         VerticalAlignment = Enum.VerticalAlignment.Top,
 
-        [Roact.Ref] = self.layout,
-
         [Roact.Change.AbsoluteContentSize] = function(obj)
-            local layout = obj.AbsoluteContentSize
-
-            self:setState({
-                listLength = layout.Y
-            })
+            self.updateListLength(obj.AbsoluteContentSize.Y)
         end
     })
 
@@ -207,7 +173,10 @@ ColorGrids.render = function(self)
         BackgroundTransparency = 0,
         BorderSizePixel = 1,
 
-        CanvasSize = UDim2.new(0, 0, 0, self.state.listLength + (Style.MinorElementPadding * 2)),
+        CanvasSize = self.listLength:map(function(listLength)
+            return UDim2.new(0, 0, 0, listLength + (Style.MinorElementPadding * 2))
+        end),
+
         CanvasPosition = Vector2.new(0, 0),
         TopImage = Style.ScrollbarImage,
         MidImage = Style.ScrollbarImage,

@@ -17,9 +17,9 @@ local root = script.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
-local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local util = require(PluginModules:FindFirstChild("util"))
 
 local includes = root:FindFirstChild("includes")
@@ -33,8 +33,6 @@ local ColorSequenceEditor = require(Components:FindFirstChild("ColorSequenceEdit
 
 ---
 
-local MAX_QP_COLORS = 99
-local SETTINGS_KEY = "ColorPane_Settings"
 local DEFAULT_COLOR = Color3.new(1, 1, 1)
 local DEFAULT_COLORSEQUENCE = ColorSequence.new(DEFAULT_COLOR)
 
@@ -44,9 +42,6 @@ local scriptReparentedEvent
 
 local colorPaneStore
 local persistentSettingsChanged
-
-local toolbarComponents
-local colorEditorToolbarButton
 
 local colorEditorTree
 local colorEditorWidget
@@ -61,9 +56,7 @@ local colorEditingFinishedEvent = Instance.new("BindableEvent")
 local colorSequenceEditingFinishedEvent = Instance.new("BindableEvent")
 
 local copy = util.copy
-local mergeTable = util.mergeTable
 local noYield = util.noYield
-local noOp = function() end
 
 local isOptionalType = function(value, typeName)
     return ((typeof(value) == typeName) or (typeof(value) == "nil"))
@@ -104,7 +97,7 @@ end
 
 local mountColorEditor = function(title, color, finishedEvent)
     colorEditorWidget.Title = title
-
+    
     colorPaneStore:dispatch({
         type = PluginEnums.StoreActionType.ColorEditor_SetColor,
         color = color,
@@ -113,7 +106,7 @@ local mountColorEditor = function(title, color, finishedEvent)
     colorEditorTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
         store = colorPaneStore,
     }, {
-        Editor = Roact.createElement(ColorEditor, {
+        App = Roact.createElement(ColorEditor, {
             originalColor = color,
             finishedEvent = finishedEvent
         })
@@ -122,8 +115,6 @@ local mountColorEditor = function(title, color, finishedEvent)
     if (not colorEditorWidget.Enabled) then
         colorEditorWidget.Enabled = true
     end
-
-    colorEditorToolbarButton:SetActive(true)
 end
 
 local mountColorSequenceEditor = function(title, colorSequence, promptForColorEdit, finishedEvent, onValueChanged)
@@ -132,7 +123,7 @@ local mountColorSequenceEditor = function(title, colorSequence, promptForColorEd
     colorSequenceEditorTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
         store = colorPaneStore,
     }, {
-        Editor = Roact.createElement(ColorSequenceEditor, {
+        App = Roact.createElement(ColorSequenceEditor, {
             originalColor = colorSequence,
             promptForColorEdit = promptForColorEdit,
             onValueChanged = onValueChanged,
@@ -183,7 +174,7 @@ local internalPromptForColor = function(promptOptions)
     end)
 
     local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
-        if (not colorEditorTree) then return end
+        if (not (oldState.colorEditor.color and newState.colorEditor.color)) then return end
         if (newState.colorEditor.color == oldState.colorEditor.color) then return end
 
         if (promptOptions.OnColorChanged) then
@@ -216,7 +207,11 @@ local internalPromptForColor = function(promptOptions)
         Roact.unmount(colorEditorTree)
         colorEditorTree = nil
         colorEditorWidget.Enabled = false
-        colorEditorToolbarButton:SetActive(false)
+        colorEditorWidget.Title = "ColorPane Color Editor"
+
+        colorPaneStore:dispatch({
+            type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+        })
     end)
 
     mountColorEditor(promptOptions.PromptTitle, promptOptions.InitialColor, colorEditingFinishedEvent)
@@ -276,17 +271,11 @@ ColorPane.PromptForColorSequence = function(promptOptions)
         Roact.unmount(colorSequenceEditorTree)
         colorSequenceEditorTree = nil
         colorSequenceEditorWidget.Enabled = false
+        colorSequenceEditorWidget.Title = "ColorPane ColorSequence Editor"
     end)
 
     mountColorSequenceEditor(promptOptions.PromptTitle, promptOptions.InitialColor, internalPromptForColor, colorSequenceEditingFinishedEvent, promptOptions.OnColorChanged)
     return editPromise
-end
-
-ColorPane.OpenColorEditor = function()
-    ColorPane.PromptForColor({
-        PromptTitle = "Select a color",
-        InitialColor = DEFAULT_COLOR
-    }):andThen(noOp, noOp)
 end
 
 ColorPane.init = function(pluginObj)
@@ -295,10 +284,7 @@ ColorPane.init = function(pluginObj)
     ColorPane.__init = nil
     plugin = pluginObj
 
-    colorPaneStore = MakeStore(plugin, MAX_QP_COLORS, plugin:GetSetting(SETTINGS_KEY) or {})
-    toolbarComponents = MakeToolbar()
-    colorEditorToolbarButton = toolbarComponents.ColorEditorButton
-
+    colorPaneStore = MakeStore(plugin)
     colorEditorWidget = MakeWidget(plugin, "ColorEditor")
     colorSequenceEditorWidget = MakeWidget(plugin, "ColorSequenceEditor")
 
@@ -319,9 +305,6 @@ ColorPane.init = function(pluginObj)
     end)
 
     persistentSettingsChanged = colorPaneStore.changed:connect(function(newState, oldState)
-        local newSettingsSlice = {}
-        local modifySettings = false
-
         if (newState.colorEditor.lastPaletteModification ~= oldState.colorEditor.lastPaletteModification) then
             local newPalettes = copy(newState.colorEditor.palettes)
 
@@ -336,33 +319,15 @@ ColorPane.init = function(pluginObj)
                 end
             end
 
-            newSettingsSlice.palettes = newPalettes
-            modifySettings = true
+            PluginSettings.Set(PluginEnums.PluginSettingKey.UserPalettes, newPalettes)
         end
 
         if (newState.colorSequenceEditor.snap ~= oldState.colorSequenceEditor.snap) then
-            newSettingsSlice.snap = newState.colorSequenceEditor.snap
-            modifySettings = true
-        end
-
-        if (modifySettings) then
-            local pluginSettings = plugin:GetSetting(SETTINGS_KEY) or {}
-            mergeTable(pluginSettings, newSettingsSlice)
-
-            plugin:SetSetting(SETTINGS_KEY, pluginSettings)
-        end
-    end)
-
-    colorEditorToolbarButton.Click:Connect(function()
-        if (colorEditorTree) then
-            colorEditingFinishedEvent:Fire(false)
-        else
-            ColorPane.OpenColorEditor()
+            PluginSettings.Set(PluginEnums.PluginSettingKey.SnapValue, newState.colorSequenceEditor.snap)
         end
     end)
 
     pluginUnloadingEvent = plugin.Unloading:Connect(onUnloading)
-    colorEditorToolbarButton.ClickableWhenViewportHidden = true
 end
 
 ---

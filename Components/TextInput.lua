@@ -22,6 +22,8 @@ local Padding = require(Components:FindFirstChild("Padding"))
         TextSize?
         TextXAlignment?
 
+        usesTextBinding: boolean?
+
         canClear: boolean?
         disabled: boolean?
         isTextAValidValue: () -> boolean?
@@ -31,6 +33,8 @@ local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = Roact.PureComponent:extend("TextInput")
 
 TextInput.init = function(self)
+    self.textBox = Roact.createRef()
+
     self:setState({
         focused = false,
         hover = false,
@@ -39,10 +43,21 @@ TextInput.init = function(self)
 end
 
 TextInput.didUpdate = function(self, prevProps)
-    if (self.state.invalidInput and (self.props.Text ~= prevProps.Text)) then
-        self:setState({
-            invalidInput = false,
-        })
+    local textBox = self.textBox:getValue()
+
+    local text = self.props.usesTextBinding and self.props.Text:getValue() or self.props.Text
+    local prevText = prevProps.usesTextBinding and prevProps.Text:getValue() or prevProps.Text
+
+    if (self.state.invalidInput) then
+        if (text ~= prevText) then
+            self:setState({
+                invalidInput = false,
+            })
+        end
+    else
+        if (text ~= textBox.Text) then
+            textBox.Text = text
+        end
     end
 end
 
@@ -127,6 +142,8 @@ TextInput.render = function(self)
                 self.props.disabled and Enum.StudioStyleGuideModifier.Disabled or nil
             ),
 
+            [Roact.Ref] = self.textBox,
+
             [Roact.Event.Focused] = function()
                 if (self.props.disabled) then return end
 
@@ -139,9 +156,10 @@ TextInput.render = function(self)
             [Roact.Event.FocusLost] = function(obj)
                 if (self.props.disabled) then return end
                 
+                local originalText = self.props.usesTextBinding and self.props.Text:getValue() or self.props.Text
                 local text = string.match(obj.Text, "^%s*(.-)%s*$")
 
-                if (text == self.props.Text) then
+                if (text == originalText) then
                     self:setState({
                         focused = false,
                     })
@@ -150,14 +168,13 @@ TextInput.render = function(self)
                 end
 
                 if ((not self.props.canClear) and (text == "")) then
-                    obj.Text = self.props.Text
+                    obj.Text = originalText
 
                     self:setState({
                         focused = false,
                         invalidInput = false,
                     })
 
-                    self.props.onTextChanged(self.props.Text)
                     return
                 end
 
@@ -167,17 +184,6 @@ TextInput.render = function(self)
                         invalidInput = true,
                     })
                 else
-                    --[[
-                        There are situations where inputting new text will not result in
-                        the Text render prop changing, therefore we need to reset the Text
-                        property to account for this.
-                        
-                        If the inputted text *does* result in the Text prop changing, we
-                        don't need to do anything special, since it will be reflected at
-                        the next render.
-                    ]]
-                    obj.Text = self.props.Text
-                    
                     self:setState({
                         focused = false,
                         invalidInput = false,

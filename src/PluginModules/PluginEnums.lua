@@ -1,6 +1,5 @@
-local makeEnum = function(...)
+local makeEnum = function(name, enumItems)
 	local enum = {}
-	local enumItems = {...}
 	
 	for i = 1, #enumItems do
 		local enumItem = enumItems[i]
@@ -9,18 +8,18 @@ local makeEnum = function(...)
 	end
 	
 	return setmetatable(enum, {
-		__index = function(_, k)
-			error(tostring(k) .. " is not a valid member of enum")
+		__index = function(_, key)
+			error(tostring(key) .. " is not a valid member of enum " .. name)
 		end,
 		
-		__newindex = function(_, k)
-			error(tostring(k) .. " cannot be assigned to", 2)
+		__newindex = function()
+			error(name .. " cannot be modified")
 		end,
 	})
 end
 
-return {
-	StoreActionType = makeEnum(
+return setmetatable({
+	StoreActionType = makeEnum("PluginEnums.StoreActionType", {
         "SetTheme",
         "UpdateSessionData",
 
@@ -37,5 +36,32 @@ return {
         "ColorEditor_ChangePaletteColorPosition",
 
         "ColorSequenceEditor_SetSnapValue"
-    )
-}
+    }),
+
+    PluginSettingKey = makeEnum("PluginEnums.PluginSettingKey", {
+        "UserPalettes",
+        "SnapValue",
+        "AutoLoadAPI",
+        "AutoLoadColorProperties",
+    }),
+
+    EditorKey = makeEnum("PluginEnums.EditorKey", {
+        "ColorWheel",
+        "RGBSlider",
+        "CMYKSlider",
+        "HSBSlider",
+        "HSLSlider",
+        "GreyscaleSlider",
+        "KelvinSlider",
+
+        "Default",
+    }),
+}, {
+    __index = function(_, key)
+        error(tostring(key) .. " is not a valid enum")
+    end,
+
+    __newindex = function()
+        error("Enum table cannot be modified")
+    end
+})

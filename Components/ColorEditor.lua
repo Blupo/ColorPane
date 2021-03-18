@@ -24,6 +24,13 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 local shallowCompare = util.shallowCompare
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
 
+local getMaxPages = function(width)
+    local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
+    local maxPaddingSpaces = math.floor((width % Style.EditorPageWidth) / Style.MajorElementPadding)
+
+    return (maxPaddingSpaces >= (maxPagesNoPadding - 1)) and maxPagesNoPadding or (maxPagesNoPadding - 1)
+end
+
 local editorTabs = {
     {
         name = "wheel",
@@ -55,7 +62,7 @@ local editorTabs = {
         getElement = function(self)
             return Roact.createElement(PalettePages)
         end
-    }
+    },
 }
 
 ---
@@ -63,7 +70,6 @@ local editorTabs = {
 local ColorEditor = Roact.Component:extend("ColorEditor")
 
 ColorEditor.init = function(self)
-    self.editor = Roact.createRef()
     self.editorInputChangedEvent = Instance.new("BindableEvent")
 
     self:setState({
@@ -77,8 +83,8 @@ ColorEditor.shouldUpdate = function(self, nextProps, nextState)
 
     if (#stateDiff == 1) then
         if (stateDiff[1] == "editorWidth") then
-            local oldMaxPages = math.clamp(math.floor(self.state.editorWidth / Style.EditorPageWidth), 1, #editorTabs)
-            local newMaxPages = math.clamp(math.floor(nextState.editorWidth / Style.EditorPageWidth), 1, #editorTabs)
+            local oldMaxPages = math.clamp(getMaxPages(self.state.editorWidth), 1, #editorTabs)
+            local newMaxPages = math.clamp(getMaxPages(nextState.editorWidth), 1, #editorTabs)
 
             return (oldMaxPages ~= newMaxPages)
         else
@@ -103,7 +109,6 @@ end
 
 ColorEditor.willUnmount = function(self)
     self.editorInputChangedEvent:Destroy()
-    self.editorInputChangedEvent = nil
 end
 
 ColorEditor.render = function(self)
@@ -114,7 +119,7 @@ ColorEditor.render = function(self)
     local quickPaletteElements = {}
     local editorTabButtons = {}
 
-    local maxPages = math.clamp(math.floor(self.state.editorWidth / Style.EditorPageWidth), 1, #editorTabs)
+    local maxPages = math.clamp(getMaxPages(self.state.editorWidth), 1, #editorTabs)
     local numDisabledButtons
 
     if (maxPages == #editorTabs) then
@@ -217,11 +222,9 @@ ColorEditor.render = function(self)
         EditorPages = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(1, -46, 1, -118),
+            Size = UDim2.new(1, -(Style.LargeButtonSize + 2 + Style.MajorElementPadding), 1, -118),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
-
-            [Roact.Ref] = self.editor,
 
             [Roact.Change.AbsoluteSize] = function(obj)
                 local absoluteSize = obj.AbsoluteSize
@@ -235,14 +238,15 @@ ColorEditor.render = function(self)
         EditorPagePicker = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 0),
-            Size = UDim2.new(0, 30, 1, -118),
+            Size = UDim2.new(0, Style.LargeButtonSize + 2, 1, -118),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
+            ClipsDescendants = true,
         }, {
             Pickers = Roact.createElement(ButtonBar, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(0, 30, 0, 100),
+                Size = UDim2.new(1, 0, 0, (Style.LargeButtonSize * #editorTabs) + 2),
 
                 displayType = "image",
                 vertical = true,
@@ -253,9 +257,7 @@ ColorEditor.render = function(self)
                 selectedDisplayColor = Color3.new(1, 1, 1),
                 disabledDisplayColor = Color3.new(1/3, 1/3, 1/3),
 
-                onButtonActivated = function(i)
-                    self.props.setEditorPage(i)
-                end
+                onButtonActivated = self.props.setEditorPage
             })
         }),
 

@@ -71,16 +71,10 @@ end
 
 local ButtonBar = Roact.PureComponent:extend("ButtonBar")
 
-ButtonBar.init = function(self, initProps)
-    self:setState({
-        selected = initProps.selected or 0,
-    })
-end
-
 ButtonBar.render = function(self)
     local theme = self.props.theme
     local displayType = self.props.displayType
-    local selected = self.state.selected
+    local selected = self.props.selected
 
     local buttonElements = {}
     local numButtons = #self.props.buttons
@@ -119,11 +113,7 @@ ButtonBar.render = function(self)
             [Roact.Event.Activated] = function()
                 if (buttonInfo.disabled) then return end
                 if (selected == i) then return end
-
-                self:setState({
-                    selected = i
-                })
-    
+                
                 self.props.onButtonActivated(i)
             end
         }

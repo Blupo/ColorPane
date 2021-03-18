@@ -1,3 +1,24 @@
+## Unreleased
+### Added
+- Added a Settings window, with options to automatically load the API and/or Color Properties window on startup
+- Integrated the functionality of ColorProps into ColorPane
+
+### Changed
+- API loading is no longer occurs at startup by default, the user must now explicitly load it or set the option to automatically load it in the Settings window
+- Color Properties: You can now click anywhere inside a property list item to edit the color, not just on the item's color indicator
+
+### Fixed
+- The titles of the editor windows now reset to an identifiable name once they are closed
+- Setting the initial prompt value when calling `PromptForColor` no longer causes `OnColorChanged` to be called
+- Improved the performance of multiple components, the effects of which will be particularly noticable when resizing editor windows
+- The editor page bar in the color editor window now correctly highlights the currently-chosen editor page
+- Editor pages in the color editor now have the proper minimum width, previously the calculations did not take padding into account and ended up making them slightly smaller than the minimum
+- Fixed improper behaviour in the color wheel due to some misplaced code
+  - The color value should update when the left mouse button is pressed down on the SB-plane, however it occurred when the mouse button was released instead
+
+### Removed
+- Removed the undocumented `OpenColorPrompt` function from the API
+
 ## [0.1.2] - 2021-03-10
 ### Added
 - Added a toolbar button that lets the user attempt to drop the API script into CoreGui if it could not be done automatically

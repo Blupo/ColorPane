@@ -32,7 +32,7 @@ local Style = {
     -- color wheel
     ColorWheelRingWidth = 20,
     HueWheelImage ="rbxassetid://5686040244",
-    SVPlaneImage = "rbxassetid://5685199701",
+    SBPlaneImage = "rbxassetid://5685199701",
     HarmonyMarkerImage = "rbxassetid://6208151356",
 
     -- dropdown icons
@@ -65,15 +65,18 @@ local Style = {
     CSEditorSwapKeypointRightImage = "rbxassetid://330699633",
 
     -- toolbar
-    ToolbarColorEditorImage = "rbxassetid://6498550308",
-    ToolbarRefreshButtonImage = "rbxassetid://6498542225",
+    ToolbarColorEditorButtonImage = "rbxassetid://6498550308",
+    ToolbarLoadAPIButtonImage = "rbxassetid://6498542225",
+    ToolbarSettingsButtonImage = "rbxassetid://6528624327",
+    ToolbarColorPropertiesButtonImage = "rbxassetid://6531028502",
 
     -- other
-    MarkerSize = 6,
+    MarkerSize = 8,
     StandardCornerRadius = 4,
     StandardInputHeight = 22,
     DialogButtonWidth = 70,
     EditorPageWidth = 265,
+    SliderIncrementButtonWidth = 16,
 }
 
 Style.StandardButtonSize = Style.StandardTextSize + (Style.MinorElementPadding * 2)
@@ -83,15 +86,22 @@ Style.LargeButtonSize = Style.StandardButtonSize + (Style.MinorElementPadding * 
 do
     local styleImages = {}
 
-    for k, v in pairs(Style) do
-        local start = string.find(k, "Image")
+    for key, value in pairs(Style) do
+        local start = string.find(key, "Image")
 
         if (start) then
-            styleImages[#styleImages + 1] = v
+            local newImageLabel = Instance.new("ImageLabel")
+            newImageLabel.Image = value
+
+            styleImages[#styleImages + 1] = newImageLabel
         end
     end
 
     ContentProvider:PreloadAsync(styleImages)
+
+    for i = 1, #styleImages do
+        styleImages[i]:Destroy()
+    end
 end
 
 return Style

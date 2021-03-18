@@ -14,11 +14,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local SimpleList = Roact.PureComponent:extend("SimpleList")
 
 SimpleList.init = function(self)
-    self.layout = Roact.createRef()
-
-    self:setState({
-        listLength = 0
-    })
+    self.listLength, self.updateListLength = Roact.createBinding(0)
 end
 
 SimpleList.render = function(self)
@@ -70,15 +66,9 @@ SimpleList.render = function(self)
         HorizontalAlignment = Enum.HorizontalAlignment.Left,
         SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Top,
-
-        [Roact.Ref] = self.layout,
-
+        
         [Roact.Change.AbsoluteContentSize] = function(obj)
-            local contentSize = obj.AbsoluteContentSize
-
-            self:setState({
-                listLength = contentSize.Y
-            })
+            self.updateListLength(obj.AbsoluteContentSize.Y)
         end
     })
 
@@ -90,7 +80,10 @@ SimpleList.render = function(self)
         BorderSizePixel = 1,
         ClipsDescendants = true,
        
-        CanvasSize = self.props.CanvasSize or UDim2.new(0, 0, 0, self.state.listLength),
+        CanvasSize = self.props.CanvasSize or self.listLength:map(function(listLength)
+            return UDim2.new(0, 0, 0, listLength)
+        end),
+
         CanvasPosition = Vector2.new(0, 0),
         TopImage = Style.ScrollbarImage,
         MidImage = Style.ScrollbarImage,

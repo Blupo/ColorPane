@@ -17,7 +17,6 @@ local Slider = require(Components:FindFirstChild("Slider"))
 
 ---
 
-local KELVINSLIDER_KEY = "kelvinslider"
 local LOWER_RANGE = 1000
 local UPPER_RANGE = 10000
 
@@ -71,24 +70,33 @@ local kelvinPresets = {
 local KelvinSliderPage = Roact.Component:extend("KelvinSliderPage")
 
 KelvinSliderPage.init = function(self, initProps)
-    self:setState({
-        k = getKelvinRangeValue(Color.toKelvin(Color.fromColor3(initProps.color))),
-    })
+    self.kelvin, self.updateKelvin = Roact.createBinding(getKelvinRangeValue(Color.toKelvin(Color.fromColor3(initProps.color))))
 end
 
 KelvinSliderPage.shouldUpdate = function(self, nextProps, nextState)
     local propsDiff = shallowCompare(self.props, nextProps)
     local stateDiff = shallowCompare(self.state, nextState)
 
+    if (table.find(propsDiff, "color")) then
+        if (nextProps.editor ~= PluginEnums.EditorKey.KelvinSlider) then
+            self.updateKelvin(getKelvinRangeValue(Color.toKelvin(Color.fromColor3(nextProps.color))))
+        end
+    end
+
     if (#stateDiff > 0) then return true end
 
     if (#propsDiff == 1) then
-        if (propsDiff[1] == "color") then
-            return (nextProps.editor ~= KELVINSLIDER_KEY)
+        return (propsDiff[1] ~= "color")
+    elseif (#propsDiff == 2) then
+        if (
+            ((propsDiff[1] == "color") and (propsDiff[2] == "editor")) or
+            ((propsDiff[1] == "editor") and (propsDiff[2] == "color"))
+        ) then
+            return false
         else
             return true
         end
-    elseif (#propsDiff > 1) then
+    elseif (#propsDiff > 2) then
         return true
     end
 
@@ -97,13 +105,16 @@ end
 
 KelvinSliderPage.render = function(self)
     local theme = self.props.theme
+
+    --[[
     local k
 
-    if (self.props.editor == KELVINSLIDER_KEY) then
+    if (self.props.editor == PluginEnums.EditorKey.KelvinSlider) then
         k = self.state.k
     else
         k = getKelvinRangeValue(Color.toKelvin(Color.fromColor3(self.props.color)))
     end
+    --]]
 
     local presetItems = {}
 
@@ -114,10 +125,7 @@ KelvinSliderPage.render = function(self)
             name = preset.name,
 
             onActivated = function()
-                self:setState({
-                    k = getKelvinRangeValue(preset.kelvin)
-                })
-
+                self.updateKelvin(getKelvinRangeValue(preset.kelvin))
                 self.props.setColor(Color.toColor3(Color.fromKelvin(preset.kelvin)))
             end,
 
@@ -147,7 +155,7 @@ KelvinSliderPage.render = function(self)
 
     return Roact.createFragment({
         Slider = Roact.createElement(Slider, {
-            value = k,
+            value = self.kelvin,
             editorInputChanged = self.props.editorInputChanged,
             layoutOrder = 0,
 
@@ -155,11 +163,13 @@ KelvinSliderPage.render = function(self)
             sliderGradient = kelvinGradient,
             unitLabel = "K",
 
-            markerColor = Color.toColor3(Color.getBestContrastingColor(
-                Color.fromKelvin(getValueRangeKelvin(k)),
-                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            )),
+            markerColor = self.kelvin:map(function(k)
+                return Color.toColor3(Color.getBestContrastingColor(
+                    Color.fromKelvin(getValueRangeKelvin(k)),
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
+                ))
+            end),
 
             valueToText = valueToText,
             textToValue = textToValue,
@@ -169,10 +179,7 @@ KelvinSliderPage.render = function(self)
             end,
 
             valueChanged = function(value)
-                self:setState({
-                    k = value
-                })
-
+                self.updateKelvin(value)
                 self.props.setColor(Color.toColor3(Color.fromKelvin(getValueRangeKelvin(value))))
             end
         }),
@@ -256,7 +263,7 @@ end, function(dispatch)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
-                editor = KELVINSLIDER_KEY
+                editor = PluginEnums.EditorKey.KelvinSlider
             })
         end
     }

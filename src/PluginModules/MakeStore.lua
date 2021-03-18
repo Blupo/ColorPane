@@ -6,6 +6,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local util = require(PluginModules:FindFirstChild("util"))
 
 local includes = root:FindFirstChild("includes")
@@ -13,8 +14,12 @@ local Rodux = require(includes:FindFirstChild("Rodux"))
 
 ---
 
+local MAX_QP_COLORS = 99
+
 local copy = util.copy
 local mergeTable = util.mergeTable
+
+local pluginStore
 
 local getNewPaletteName = function(palettes, originalPaletteName, selfIndex)
     local found = false
@@ -82,8 +87,10 @@ local getPaletteColorIndex = function(paletteColors, colorName)
     end
 end
 
-return function(plugin, maxQuickPaletteColors, colorPaneSettings)
-    local userPalettes = colorPaneSettings.palettes or {}
+return function(plugin)
+    if (pluginStore) then return pluginStore end
+
+    local userPalettes = copy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
 
     for i = 1, #userPalettes do
         local palette = userPalettes[i]
@@ -111,7 +118,6 @@ return function(plugin, maxQuickPaletteColors, colorPaneSettings)
         
         colorEditor = {
             authoritativeEditor = "",
-            color = Color3.new(),
             
             quickPalette = {},
             palettes = userPalettes,
@@ -119,7 +125,7 @@ return function(plugin, maxQuickPaletteColors, colorPaneSettings)
         },
 
         colorSequenceEditor = {
-            snap = colorPaneSettings.snap or 0.1/100,
+            snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue) or 0.1/100,
         }
     }
 
@@ -142,7 +148,7 @@ return function(plugin, maxQuickPaletteColors, colorPaneSettings)
             state = copy(state)
 
             state.colorEditor.color = action.color
-            state.colorEditor.authoritativeEditor = action.editor or ""
+            state.colorEditor.authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
             
             return state
         end,
@@ -153,8 +159,8 @@ return function(plugin, maxQuickPaletteColors, colorPaneSettings)
             local quickPalette = state.colorEditor.quickPalette
             table.insert(quickPalette, 1, action.color)
 
-            if (quickPalette[maxQuickPaletteColors + 1]) then
-                quickPalette[maxQuickPaletteColors + 1] = nil
+            if (quickPalette[MAX_QP_COLORS + 1]) then
+                quickPalette[MAX_QP_COLORS + 1] = nil
             end
 
             return state
@@ -335,5 +341,6 @@ return function(plugin, maxQuickPaletteColors, colorPaneSettings)
         themeChanged:Disconnect()
     end)
 
+    pluginStore = colorPaneStore
     return colorPaneStore
 end

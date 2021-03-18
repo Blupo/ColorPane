@@ -16,11 +16,12 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 local Slider = Roact.PureComponent:extend("Slider")
 
 Slider.init = function(self)
-    self.slider = Roact.createRef()
+    self.sliderCenter, self.updateSliderCenter = Roact.createBinding(Vector2.new(0, 0))
+    self.sliderSize, self.updateSliderSize = Roact.createBinding(0)
 
     self.updateValue = function(cursorPosition)
-        local distanceFromCenter = cursorPosition - self.state.sliderCenter
-        local value = math.clamp((distanceFromCenter.X / self.state.sliderSize) + 0.5, 0, 1)
+        local distanceFromCenter = cursorPosition - self.sliderCenter:getValue()
+        local value = math.clamp((distanceFromCenter.X / self.sliderSize:getValue()) + 0.5, 0, 1)
 
         self.props.valueChanged(value)
     end
@@ -40,17 +41,6 @@ Slider.didMount = function(self)
 
         self.updateValue(Vector2.new(inputPosition.X, inputPosition.Y))
     end)
-
-    do
-        local slider = self.slider:getValue()
-        local sliderPosition = slider.AbsolutePosition
-        local sliderSize = slider.AbsoluteSize
-
-        self:setState({
-            sliderCenter = sliderPosition + (sliderSize / 2),
-            sliderSize = sliderSize.X
-        })
-    end
 end
 
 Slider.willUnmount = function(self)
@@ -143,8 +133,6 @@ Slider.render = function(self)
                 BackgroundColor3 = Color3.new(1, 1, 1),
                 BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder),
 
-                [Roact.Ref] = self.slider,
-
                 [Roact.Event.InputBegan] = function(_, input)
                     if (self.state.inputFocused) then return end
                     if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
@@ -171,20 +159,16 @@ Slider.render = function(self)
                     local sliderPosition = obj.AbsolutePosition
                     local sliderSize = obj.AbsoluteSize
 
-                    self:setState({
-                        sliderCenter = sliderPosition + (sliderSize / 2),
-                        sliderSize = sliderSize.X
-                    })
+                    self.updateSliderCenter(sliderPosition + (sliderSize / 2))
+                    self.updateSliderSize(sliderSize.X)
                 end,
     
                 [Roact.Change.AbsoluteSize] = function(obj)
                     local sliderPosition = obj.AbsolutePosition
                     local sliderSize = obj.AbsoluteSize
 
-                    self:setState({
-                        sliderCenter = sliderPosition + (sliderSize / 2),
-                        sliderSize = sliderSize.X
-                    })
+                    self.updateSliderCenter(sliderPosition + (sliderSize / 2))
+                    self.updateSliderSize(sliderSize.X)
                 end,
             }, {
                 UICorner = Roact.createElement("UICorner", {
@@ -197,10 +181,13 @@ Slider.render = function(self)
                 
                 Marker = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
-                    Position = UDim2.new(self.props.value, 0, 0.5, 0),
                     Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
                     BackgroundTransparency = 0,
                     BorderSizePixel = 1,
+
+                    Position = self.props.value:map(function(value)
+                        return UDim2.new(value, 0, 0.5, 0)
+                    end),
 
                     BackgroundColor3 = self.props.markerColor or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)
                 }, {
@@ -224,14 +211,14 @@ Slider.render = function(self)
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.MinorElementPadding) or 0, 1, 0),
-    
                 TextXAlignment = Enum.TextXAlignment.Center,
-                Text = self.props.valueToText(self.props.value),
+                Text = self.props.value:map(self.props.valueToText),
     
                 isTextAValidValue = function(text)
                     return self.props.textToValue(text) and true or false
                 end,
 
+                usesTextBinding = true,
                 canClear = false,
                 onTextChanged = function(newText)
                     local newValue = self.props.textToValue(newText)

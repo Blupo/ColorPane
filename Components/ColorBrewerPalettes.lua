@@ -93,9 +93,7 @@ ColorBrewerPalettes.render = function(self)
             selected = self.props.dataClass,
             buttons = dataClasses,
 
-            onButtonActivated = function(i)
-                self.props.setDataClass(i)
-            end
+            onButtonActivated = self.props.setDataClass
         }),
 
         NumDataClassesSelector = Roact.createElement(ButtonBar, {
