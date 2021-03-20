@@ -11,6 +11,26 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 ---
 
+--[[
+    props
+
+        AnchorPoint?
+        Position?
+        Size?
+        TextSize?
+
+        itemHeight: number
+        customLayout: boolean?
+        
+        items: array<{
+            name: string,
+            onActivated: () -> nil,
+
+            LayoutOrder: number?
+            [Roact.Children]: dictionary<any, Element>? 
+        }>
+]]
+
 local SimpleList = Roact.PureComponent:extend("SimpleList")
 
 SimpleList.init = function(self)
@@ -33,7 +53,7 @@ SimpleList.render = function(self)
             LayoutOrder = self.props.customLayout and item.LayoutOrder or i,
 
             Font = Enum.Font.SourceSans,
-            TextSize = self.props.textSize,
+            TextSize = self.props.TextSize,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Center,
             Text = item.name,
@@ -58,7 +78,9 @@ SimpleList.render = function(self)
             end,
 
             [Roact.Event.Activated] = item.onActivated,
-        }, item[Roact.Children])
+
+            [Roact.Children] = item[Roact.Children]
+        })
     end
 
     listItems["UIListLayout"] = Roact.createElement("UIListLayout", {
@@ -80,7 +102,7 @@ SimpleList.render = function(self)
         BorderSizePixel = 1,
         ClipsDescendants = true,
        
-        CanvasSize = self.props.CanvasSize or self.listLength:map(function(listLength)
+        CanvasSize = self.listLength:map(function(listLength)
             return UDim2.new(0, 0, 0, listLength)
         end),
 

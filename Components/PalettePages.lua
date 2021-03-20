@@ -12,6 +12,7 @@ local util = require(PluginModules:FindFirstChild("util"))
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local WebColorsPalette = require(includes:FindFirstChild("WebColorsPalette"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
@@ -29,6 +30,7 @@ local DISALLOWED_PALETTE_NAMES = {
     brickcolor = true,
     brickcolors = true,
     colorbrewer = true,
+    ["web colors"] = true,
 }
 
 local shallowCompare = util.shallowCompare
@@ -38,9 +40,39 @@ local brickColorsPalette = {
     colors = {}
 }
 
+local builtInPalettes = {
+    {
+        name = "BrickColors",
+
+        content = function()
+            return Roact.createElement(Palette, {
+                palette = brickColorsPalette,
+                readOnly = true,
+            })
+        end
+    },
+
+    {
+        name = "ColorBrewer",
+        content = function() return Roact.createElement(ColorBrewerPalettes) end
+    },
+
+    {
+        name = "Web Colors",
+
+        content = function()
+            return Roact.createElement(Palette, {
+                palette = WebColorsPalette,
+                readOnly = true
+            })
+        end
+    }
+}
+
 for i = 1, 1032 do
     local brickColor = BrickColor.new(i)
 
+    -- BrickColors that don't exist default to #194
     if ((brickColor.Number ~= 194) or (i == 194)) then
         brickColorsPalette.colors[#brickColorsPalette.colors + 1] = {
             name = brickColor.Name,
@@ -107,26 +139,24 @@ PalettePages.render = function(self)
         ).Y
     or nil
 
-    local palettePages = {
-        {
-            name = "BrickColors",
-            content = Roact.createElement(Palette, {
-                palette = brickColorsPalette,
-                readOnly = true,
-            })
-        },
+    local numBuiltInPalettes = #builtInPalettes
+    local palettePages = {}
 
-        {
-            name = "ColorBrewer",
-            content = Roact.createElement(ColorBrewerPalettes)
+    for i = 1, numBuiltInPalettes do
+        local palette = builtInPalettes[i]
+
+        palettePages[#palettePages + 1] = {
+            name = palette.name,
+            content = palette.content()
         }
-    }
+    end
 
     for i = 1, #palettes do
         local palette = palettes[i]
 
         palettePages[#palettePages + 1] = {
             name = palette.name,
+
             content = Roact.createElement(Palette, {
                 palette = palette
             })
@@ -143,7 +173,7 @@ PalettePages.render = function(self)
                 {
                     name = "Create a New Palette",
                     onActivated = function()
-                        local newPage = (#palettes + 1) + 2
+                        local newPage = (#palettes + 1) + numBuiltInPalettes
 
                         self:setState({
                             currentPage = newPage,
@@ -156,7 +186,7 @@ PalettePages.render = function(self)
                     end
                 },
 
-                (currentPage > 2) and {
+                (currentPage > numBuiltInPalettes) and {
                     name = "Rename this Palette",
                     onActivated = function()
                         self:setState({
@@ -167,7 +197,7 @@ PalettePages.render = function(self)
                     end
                 } or nil,
 
-                (currentPage > 2) and {
+                (currentPage > numBuiltInPalettes) and {
                     name = "Delete this Palette",
                     onActivated = function()
                         self:setState({
@@ -177,11 +207,11 @@ PalettePages.render = function(self)
                     end
                 } or nil,
 
-                (currentPage > 2) and {
+                (currentPage > numBuiltInPalettes) and {
                     name = "Duplicate this Palette",
                     onActivated = function()
                         local duplicatePaletteName = palettePages[currentPage].name
-                        local newPage = (#palettes + 1) + 2
+                        local newPage = (#palettes + 1) + numBuiltInPalettes
 
                         self:setState({
                             currentPage = newPage,

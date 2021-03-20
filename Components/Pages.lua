@@ -77,10 +77,10 @@ Pages.render = function(self)
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 1, 1, 5),
             Size = UDim2.new(1, self.props.options and (-Style.LargeButtonSize - 6) or -2, 0, Style.LargeButtonSize * ((numPagesListItems <= 5) and numPagesListItems or 5)),
+            TextSize = Style.LargeTextSize,
 
             customLayout = self.props.customLayout,
             itemHeight = Style.LargeButtonSize,
-            textSize = Style.LargeTextSize,
             items = pageListItems,
         })
     elseif ((self.state.optionsOpen) and (self.props.options)) then
@@ -113,9 +113,9 @@ Pages.render = function(self)
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, -1, 1, 5),
             Size = UDim2.new(1, self.props.options and (-Style.LargeButtonSize - 6) or -2, 0, Style.LargeButtonSize * ((numOptionsListItems <= 8) and numOptionsListItems or 8)),
+            TextSize = Style.LargeTextSize,
 
             itemHeight = Style.LargeButtonSize,
-            textSize = Style.LargeTextSize,
             items = optionListItems,
         })
     end

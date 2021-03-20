@@ -105,17 +105,6 @@ end
 
 KelvinSliderPage.render = function(self)
     local theme = self.props.theme
-
-    --[[
-    local k
-
-    if (self.props.editor == PluginEnums.EditorKey.KelvinSlider) then
-        k = self.state.k
-    else
-        k = getKelvinRangeValue(Color.toKelvin(Color.fromColor3(self.props.color)))
-    end
-    --]]
-
     local presetItems = {}
 
     for i = 1, #kelvinPresets do
@@ -130,7 +119,7 @@ KelvinSliderPage.render = function(self)
             end,
 
             [Roact.Children] = {
-                UIPadding = Roact.createElement(Padding, {0, 0, Style.TextObjectPadding, 0}),
+                UIPadding = Roact.createElement(Padding, {0, Style.SpaciousElementPadding}),
 
                 KelvinLabel = Roact.createElement("TextLabel", {
                     AnchorPoint = Vector2.new(1, 0.5),
@@ -146,8 +135,6 @@ KelvinSliderPage.render = function(self)
                     Text = preset.kelvin,
 
                     TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
-                }, {
-                    UIPadding = Roact.createElement(Padding, {0, 0, 0, Style.TextObjectPadding}),
                 })
             }
         }
@@ -242,9 +229,9 @@ KelvinSliderPage.render = function(self)
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
                 Size = UDim2.new(1, -2, 1, -18),
+                TextSize = Style.StandardTextSize,
 
                 itemHeight = Style.StandardButtonSize,
-                textSize = Style.StandardTextSize,
                 items = presetItems
             }),
         }),

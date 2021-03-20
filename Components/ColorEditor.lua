@@ -238,7 +238,7 @@ ColorEditor.render = function(self)
         EditorPagePicker = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 0),
-            Size = UDim2.new(0, Style.LargeButtonSize + 2, 1, -118),
+            Size = UDim2.new(0, Style.LargeButtonSize + 2, 0, (Style.LargeButtonSize * #editorTabs) + 2),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             ClipsDescendants = true,
@@ -246,7 +246,7 @@ ColorEditor.render = function(self)
             Pickers = Roact.createElement(ButtonBar, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, (Style.LargeButtonSize * #editorTabs) + 2),
+                Size = UDim2.new(1, 0, 1, 0),
 
                 displayType = "image",
                 vertical = true,

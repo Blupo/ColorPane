@@ -122,7 +122,7 @@ end
         Position?
         Size?
 
-        colorLists: array<array<Color3>> | dictionary<string, array<Color3>>
+        colorLists: dictionary<string | number, array<Color3>>
         named: boolean?
         selected: number? (only works properly if there is only one color list)
 

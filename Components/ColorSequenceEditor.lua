@@ -80,7 +80,7 @@ ColorSequenceEditor.init = function(self, initProps)
 
     self.editorInputChangedEvent = Instance.new("BindableEvent")
 
-    self.markerTime, self.updateMarkerTime = self.timelineProgress:map(function(timelineProgress)
+    self.markerTime = self.timelineProgress:map(function(timelineProgress)
         local colorSequence = self.state.colorSequence
         local keypoints = colorSequence.Keypoints
 

@@ -88,64 +88,6 @@ RobloxAPI.GetData = function()
     end)
 end
 
---[[
-RobloxAPI.GetData = function()
-    if (apiDump or requestInProgress) then return end
-
-    requestInProgress = true
-    apiDataRequestStartedEvent:Fire()
-
-    coroutine.wrap(function()
-        local studioVersion
-
-        pcall(function()
-            local response = HttpService:RequestAsync({
-                Url = API_URL .. STUDIO_VERSION_ENDPOINT,
-                Method = "GET",
-            })
-        
-            if (response.Success) then
-                studioVersion = response.Body
-            end
-        end)
-
-        if (not studioVersion) then
-            requestInProgress = false
-            apiDataRequestFinishedEvent:Fire(false)
-
-            return
-        end
-
-        pcall(function()
-            local response = HttpService:RequestAsync({
-                Url = API_URL .. string.format(API_DUMP_ENDPOINT, studioVersion),
-                Method = "GET",
-            })
-        
-            if (response.Success) then
-                apiDump = HttpService:JSONDecode(response.Body)
-            end
-        end)
-
-        if (apiDump) then
-            RobloxAPI.APIData = APIUtils.createAPIData(apiDump)
-            RobloxAPI.APIInterface = APIUtils.createAPIInterface(RobloxAPI.APIData)
-
-            for i = 1, #TerrainMaterialColors.Properties do
-                local property = TerrainMaterialColors.Properties[i]
-                local behaviour = TerrainMaterialColors.Behaviours[i]
-            
-                RobloxAPI.APIData:AddClassMember("Terrain", property)
-                RobloxAPI.APIInterface:AddClassMemberBehavior("Terrain", "Property", property.Name, behaviour)
-            end
-        end
-
-        requestInProgress = false
-        apiDataRequestFinishedEvent:Fire(apiDump and true or false)
-    end)()
-end
---]]
-
 RobloxAPI.init = function(plugin)
     RobloxAPI.init = nil
 

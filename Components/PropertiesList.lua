@@ -237,8 +237,6 @@ end
         Size?
         Position?
 
-        ColorPane
-
 ]]
 
 local PropertiesList = Roact.PureComponent:extend("PropertiesList")

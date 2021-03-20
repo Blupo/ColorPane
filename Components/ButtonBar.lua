@@ -18,6 +18,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         AnchorPoint?
         Position?
         Size?
+        LayoutOrder?
 
         title: string?
         vertical: boolean?
@@ -158,6 +159,7 @@ ButtonBar.render = function(self)
         AnchorPoint = self.props.AnchorPoint,
         Size = self.props.Size,
         Position = self.props.Position,
+        LayoutOrder = self.props.LayoutOrder,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {

@@ -2,10 +2,13 @@
 ### Added
 - Added a Settings window, with options to automatically load the API and/or Color Properties window on startup
 - Integrated the functionality of ColorProps into ColorPane
+- You can now view palettes in either a grid or list layout
+- Added a palette of [web colors](https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors)
 
 ### Changed
 - API loading is no longer occurs at startup by default, the user must now explicitly load it or set the option to automatically load it in the Settings window
 - Color Properties: You can now click anywhere inside a property list item to edit the color, not just on the item's color indicator
+- Changed the behaviour of the palette grid double-click shortcut: clicking on the color at any time after it has been selected will set the current color, not just within the amount of time that would be considered a "double click"
 
 ### Fixed
 - The titles of the editor windows now reset to an identifiable name once they are closed
@@ -17,7 +20,7 @@
   - The color value should update when the left mouse button is pressed down on the SB-plane, however it occurred when the mouse button was released instead
 
 ### Removed
-- Removed the undocumented `OpenColorPrompt` function from the API
+- Removed the undocumented `OpenColorEditor` function from the API
 
 ## [0.1.2] - 2021-03-10
 ### Added

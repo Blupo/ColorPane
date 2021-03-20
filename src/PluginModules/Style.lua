@@ -40,10 +40,15 @@ local Style = {
     DropdownOpenImage = "rbxassetid://367867055",
 
     -- palette page
+    PaletteGridViewImage = "rbxassetid://6541631629",
+    PaletteListViewImage = "rbxassetid://6313201384",
     PaletteAddColorImage = "rbxassetid://919844482",
     PaletteRemoveColorImage = "rbxassetid://6213137847",
-    PaletteColorMoveUpImage = "rbxassetid://330699522",
-    PaletteColorMoveDownImage = "rbxassetid://330699633",
+    PaletteColorMoveUpImage = "rbxassetid://965323360",
+    PaletteColorMoveDownImage = "rbxassetid://913309373",
+    PaletteColorMoveLeftImage = "rbxassetid://330699522",
+    PaletteColorMoveRightImage = "rbxassetid://330699633",
+    PaletteSetColorImage = "rbxassetid://6541208713",
 
     -- Pages
     PageOptionsImage = "rbxassetid://6308568235",
