@@ -48,7 +48,7 @@ Palette.render = function(self)
         if (searchTerm) then
             local start = string.find(string.lower(color.name), searchTerm)
 
-            include = (start and true or false)
+            include = start and true or false
         end
 
         if (include) then
@@ -101,12 +101,22 @@ Palette.render = function(self)
                 canClear = true,
                 onTextChanged = function(newText)
                     local text = string.match(newText, "^%s*(.-)%s*$")
+                    local newSearchTerm = string.lower(string.gsub(text, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
+                    local resetSelected
+
+                    if (selectedColor) then
+                        local start = string.find(string.lower(selectedColor.name), newSearchTerm)
+                        
+                        resetSelected = (not start) and true or false
+                    else
+                        resetSelected = false
+                    end
 
                     self:setState({
-                        selectedColorIndex = Roact.None,
+                        selectedColorIndex = resetSelected and Roact.None or nil,
 
                         searchDisplayText = text,
-                        searchTerm = (text ~= "") and string.lower(string.gsub(text, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0")) or Roact.None
+                        searchTerm = (newSearchTerm ~= "") and newSearchTerm or Roact.None
                     })
                 end
             }),

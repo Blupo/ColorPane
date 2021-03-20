@@ -9,6 +9,7 @@
 - API loading is no longer occurs at startup by default, the user must now explicitly load it or set the option to automatically load it in the Settings window
 - Color Properties: You can now click anywhere inside a property list item to edit the color, not just on the item's color indicator
 - Changed the behaviour of the palette grid double-click shortcut: clicking on the color at any time after it has been selected will set the current color, not just within the amount of time that would be considered a "double click"
+- When searching for a palette color, if the selected color is included in the filtered list, it will now stay selected instead of being deselected
 
 ### Fixed
 - The titles of the editor windows now reset to an identifiable name once they are closed
