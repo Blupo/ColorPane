@@ -8,6 +8,7 @@ local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
+local Padding = require(Components:FindFirstChild("Padding"))
 
 ---
 
@@ -20,14 +21,18 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         TextSize?
 
         itemHeight: number
-        customLayout: boolean?
+        itemPadding: number?
         
-        items: array<{
+        sections: array<{
             name: string,
-            onActivated: () -> nil,
 
-            LayoutOrder: number?
-            [Roact.Children]: dictionary<any, Element>? 
+            items: array<{
+                name: string,
+                onActivated: () -> nil,
+
+                LayoutOrder: number?
+                [Roact.Children]: dictionary<any, Element>? 
+            }>
         }>
 ]]
 
@@ -39,48 +44,91 @@ end
 
 SimpleList.render = function(self)
     local theme = self.props.theme
+    local sections = self.props.sections
 
     local listItems = {}
 
-    for i = 1, #self.props.items do
-        local item = self.props.items[i]
+    for i = 1, #sections do
+        local section = sections[i]
+        local shouldShowSectionHeader = true
 
-        listItems[#listItems + 1] = Roact.createElement("TextButton", {
-            Size = UDim2.new(1, 0, 0, self.props.itemHeight),
-            AutoButtonColor = false,
-            BackgroundTransparency = 0,
-            BorderSizePixel = 0,
-            LayoutOrder = self.props.customLayout and item.LayoutOrder or i,
+        if ((not self.props.showAllSections) and (((i == 1) and (#sections == 1)) or (#section.items < 1))) then
+            shouldShowSectionHeader = false
+        end
 
-            Font = Enum.Font.SourceSans,
-            TextSize = self.props.TextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
-            Text = item.name,
+        if (shouldShowSectionHeader) then
+            listItems[#listItems + 1] = Roact.createElement("TextLabel", {
+                Size = UDim2.new(1, 0, 0, self.props.itemHeight),
+                BackgroundTransparency = 0,
+                BorderSizePixel = 0,
+                LayoutOrder = #listItems + 1,
 
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button),
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
+                Font = Enum.Font.SourceSansBold,
+                TextSize = self.props.TextSize,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextYAlignment = Enum.TextYAlignment.Center,
+                Text = section.name,
 
-            [Roact.Event.MouseEnter] = function(obj)
-                obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Hover)
-            end,
+                BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.HeaderSection),
+                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+            }, {
+                UIPadding = self.props.itemPadding and
+                    Roact.createElement(Padding, {0, 0, self.props.itemPadding, 0})
+                or nil,
+            })
+        end
 
-            [Roact.Event.MouseLeave] = function(obj)
-                obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button)
-            end,
+        for j = 1, #section.items do
+            local item = section.items[j]
+            local children
 
-            [Roact.Event.MouseButton1Down] = function(obj)
-                obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Pressed)
-            end,
+            if (item[Roact.Children]) then
+                children = item[Roact.Children]
+            else
+                if (self.props.itemPadding) then
+                    children = {
+                        UIPadding = Roact.createElement(Padding, {0, 0, self.props.itemPadding, 0})
+                    }
+                end
+            end
 
-            [Roact.Event.MouseButton1Up] = function(obj)
-                obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button)
-            end,
-
-            [Roact.Event.Activated] = item.onActivated,
-
-            [Roact.Children] = item[Roact.Children]
-        })
+            listItems[#listItems + 1] = Roact.createElement("TextButton", {
+                Size = UDim2.new(1, 0, 0, self.props.itemHeight),
+                AutoButtonColor = false,
+                BackgroundTransparency = 0,
+                BorderSizePixel = 0,
+                LayoutOrder = #listItems + 1,
+    
+                Font = Enum.Font.SourceSans,
+                TextSize = self.props.TextSize,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextYAlignment = Enum.TextYAlignment.Center,
+                Text = item.name,
+    
+                BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button),
+                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
+    
+                [Roact.Event.MouseEnter] = function(obj)
+                    obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Hover)
+                end,
+    
+                [Roact.Event.MouseLeave] = function(obj)
+                    obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button)
+                end,
+    
+                [Roact.Event.MouseButton1Down] = function(obj)
+                    obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Pressed)
+                end,
+    
+                [Roact.Event.MouseButton1Up] = function(obj)
+                    obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button)
+                end,
+    
+                [Roact.Event.Activated] = function()
+                    item.onActivated()
+                end,
+            }, children)
+        end
     end
 
     listItems["UIListLayout"] = Roact.createElement("UIListLayout", {

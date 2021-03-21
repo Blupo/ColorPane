@@ -108,9 +108,10 @@ return function(plugin)
 
         sessionData = {
             editorPage = 1,
-            lastSliderPage = 1,
-            lastPalettePage = 1,
+            lastSliderPage = {1, 1},
+            lastPalettePage = {1, 1},
             lastHueHarmony = 1,
+            paletteLayout = "grid",
             
             cbDataClass = 1,
             cbNumDataClasses = 3,
@@ -121,7 +122,9 @@ return function(plugin)
             
             quickPalette = {},
             palettes = userPalettes,
-            lastPaletteModification = os.clock(), -- this is easier than trying to compare the contents of each palette table
+            
+            -- comparing this is easier than comparing the actual tables
+            lastPaletteModification = os.clock(),
         },
 
         colorSequenceEditor = {

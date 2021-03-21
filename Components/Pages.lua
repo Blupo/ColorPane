@@ -14,74 +14,118 @@ local SimpleList = require(Components:FindFirstChild("SimpleList"))
 
 ---
 
-local Pages = Roact.Component:extend("Pages")
+--[[
+    props
+        initPage: number?
+
+        pageSections: array<{
+            name: string,
+
+            pages: array<{
+                name: string,
+                layoutOrder: number
+            }>
+        }>
+
+        options: array<{
+            name: string
+            onActivated: () -> nil
+        }>
+
+        onPageChanged = (number) -> nil
+]]
+
+local Pages = Roact.PureComponent:extend("Pages")
 
 Pages.init = function(self, initProps)
     self:setState({
-        page = initProps.initPage or 1,
+        page = initProps.initPage or {1, 1},
         dropdownOpen = false,
         optionsOpen = false,
     })
 end
 
 Pages.didUpdate = function(self, prevProps)
-    if (self.props.pages ~= prevProps.pages) then
+    if (self.props.pageSections ~= prevProps.pageSections) then
         self:setState({
-            page = self.props.initPage or 1,
-        --  dropdownOpen = false,
-        --  optionsOpen = false,
+            page = self.props.initPage or {1, 1},
         })
     end
 end
 
 Pages.render = function(self)
     local theme = self.props.theme
+    local pageSections = self.props.pageSections
 
-    local currentPage = self.props.pages[self.state.page]
+    local currentPageIndices = self.state.page
+    local currentPageSectionNum, currentPageNum = currentPageIndices[1], currentPageIndices[2]
+
+    local currentPageSection = pageSections[currentPageSectionNum]
+    if (not currentPageSection) then return end
+
+    local currentPage = currentPageSection.pages[currentPageNum]
     if (not currentPage) then return end
 
     local list
-    local numPagesListItems = #self.props.pages - 1
+    local numPagesListItems = 0
+
+    for i = 1, #pageSections do
+        local pages = pageSections[i].pages
+
+        for j = 1, #pages do
+            if (pages[j] ~= currentPage) then
+                numPagesListItems = numPagesListItems + 1
+            end
+        end
+    end
 
     if (self.state.dropdownOpen) then
-        local pages = self.props.pages
-        local pageListItems = {}
+        local pageListSections = {}
 
-        for i = 1, #pages do
-            local page = pages[i]
+        for i = 1, #pageSections do
+            local section = pageSections[i]
+            local sectionPages = section.pages
+            local newIndex = #pageListSections + 1
 
-            if (page.name ~= currentPage.name) then
-                pageListItems[#pageListItems + 1] = {
-                    name = page.name,
-                    layoutOrder = page.layoutOrder,
+            pageListSections[newIndex] = {
+                name = section.name,
+                items = {}
+            }
 
-                    onActivated = function()
-                        self:setState({
-                            page = i,
-                            dropdownOpen = false,
-                        })
-                        
-                        if (self.props.onPageChanged) then
-                            self.props.onPageChanged(i)
-                        end
-                    end,
+            local pageListSection = pageListSections[newIndex]
 
-                    [Roact.Children] = {
-                        Padding = Roact.createElement(Padding, {0, 0, Style.SpaciousElementPadding, 0}),
+            for j = 1, #sectionPages do
+                local page = sectionPages[j]
+
+                if (page ~= currentPage) then
+                    pageListSection.items[#pageListSection.items + 1] = {
+                        name = page.name,
+                        layoutOrder = page.layoutOrder,
+    
+                        onActivated = function()
+                            self:setState({
+                                page = {i, j},
+                                dropdownOpen = false,
+                            })
+                            
+                            if (self.props.onPageChanged) then
+                                self.props.onPageChanged(i, j)
+                            end
+                        end,
                     }
-                }
+                end
             end
         end
 
         list = Roact.createElement(SimpleList, {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 1, 1, 5),
-            Size = UDim2.new(1, self.props.options and (-Style.LargeButtonSize - 6) or -2, 0, Style.LargeButtonSize * ((numPagesListItems <= 5) and numPagesListItems or 5)),
+            Size = UDim2.new(1, self.props.options and (-Style.LargeButtonSize - 6) or -2, 0, Style.LargeButtonSize * 5),
             TextSize = Style.LargeTextSize,
 
-            customLayout = self.props.customLayout,
             itemHeight = Style.LargeButtonSize,
-            items = pageListItems,
+            itemPadding = Style.SpaciousElementPadding,
+            sections = pageListSections,
         })
     elseif ((self.state.optionsOpen) and (self.props.options)) then
         local options = self.props.options
@@ -116,7 +160,13 @@ Pages.render = function(self)
             TextSize = Style.LargeTextSize,
 
             itemHeight = Style.LargeButtonSize,
-            items = optionListItems,
+            
+            sections = {
+                {
+                    name = "",
+                    items = optionListItems
+                }
+            },
         })
     end
     
@@ -164,18 +214,29 @@ Pages.render = function(self)
                         if (input.UserInputType ~= Enum.UserInputType.MouseWheel) then return end
 
                         local delta = input.Position.Z
-                        local nextPage = (self.state.page - delta) % #self.props.pages
+                        local nextPage = currentPageNum - delta
+                        local nextSection
 
                         if (nextPage <= 0) then
-                            nextPage = #self.props.pages
+                            nextSection = currentPageSectionNum - 1
+                            nextSection = (nextSection > 0) and nextSection or #pageSections
+
+                            nextPage = #pageSections[nextSection].pages
+                        elseif (nextPage > #currentPageSection.pages) then
+                            nextSection = currentPageSectionNum + 1
+                            nextSection = (nextSection <= #pageSections) and nextSection or 1
+
+                            nextPage = 1
+                        else
+                            nextSection = currentPageSectionNum
                         end
 
                         self:setState({
-                            page = nextPage
+                            page = {nextSection, nextPage}
                         })
 
                         if (self.props.onPageChanged) then
-                            self.props.onPageChanged(nextPage)
+                            self.props.onPageChanged(nextSection, nextPage)
                         end
                     end,
 

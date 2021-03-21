@@ -4,12 +4,14 @@
 - Integrated the functionality of ColorProps into ColorPane
 - You can now view palettes in either a grid or list layout
 - Added a palette of [web colors](https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors)
+- Added sections to the palette list to distinguish between built-in and user-created palettes
 
 ### Changed
 - API loading is no longer occurs at startup by default, the user must now explicitly load it or set the option to automatically load it in the Settings window
 - Color Properties: You can now click anywhere inside a property list item to edit the color, not just on the item's color indicator
 - Changed the behaviour of the palette grid double-click shortcut: clicking on the color at any time after it has been selected will set the current color, not just within the amount of time that would be considered a "double click"
 - When searching for a palette color, if the selected color is included in the filtered list, it will now stay selected instead of being deselected
+- Slightly changed the palette deletion prompt text
 
 ### Fixed
 - The titles of the editor windows now reset to an identifiable name once they are closed
@@ -22,6 +24,7 @@
 
 ### Removed
 - Removed the undocumented `OpenColorEditor` function from the API
+- Removed the name restrictions on user-created palettes
 
 ## [0.1.2] - 2021-03-10
 ### Added

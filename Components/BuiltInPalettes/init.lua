@@ -14,7 +14,7 @@ local WebColors = require(script:FindFirstChild("WebColors"))
 
 return {
     {
-        name = "BrickColor",
+        name = "BrickColors",
         
         getContent = function()
             return Roact.createElement(Palette, {

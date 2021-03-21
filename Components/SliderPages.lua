@@ -784,48 +784,60 @@ SliderPages = function(props)
         initPage = props.lastSliderPage,
         onPageChanged = props.updateSliderPage,
 
-        pages = {
+        pageSections = {
             {
-                name = "RGB",
-                content = Roact.createElement(RGBSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                name = "",
 
-            {
-                name = "CMYK",
-                content = Roact.createElement(CMYKSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                pages = {
+                    {
+                        name = "RGB",
 
-            {
-                name = "HSB",
-                content = Roact.createElement(HSBSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                        content = Roact.createElement(RGBSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
 
-            {
-                name = "HSL",
-                content = Roact.createElement(HSLSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                    {
+                        name = "CMYK",
 
-            {
-                name = "Monochrome",
-                content = Roact.createElement(GreyscaleSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                        content = Roact.createElement(CMYKSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
 
-            {
-                name = "Temperature",
-                content = Roact.createElement(KelvinSliderPage, {
-                    editorInputChanged = props.editorInputChanged,
-                })
-            },
+                    {
+                        name = "HSB",
+
+                        content = Roact.createElement(HSBSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
+
+                    {
+                        name = "HSL",
+
+                        content = Roact.createElement(HSLSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
+
+                    {
+                        name = "Monochrome",
+
+                        content = Roact.createElement(GreyscaleSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
+
+                    {
+                        name = "Temperature",
+                        
+                        content = Roact.createElement(KelvinSliderPage, {
+                            editorInputChanged = props.editorInputChanged,
+                        })
+                    },
+                }
+            }
         }
     })
 end
@@ -842,11 +854,11 @@ return RoactRodux.connect(function(state)
     }
 end, function(dispatch)
     return {
-        updateSliderPage = function(sliderPage)
+        updateSliderPage = function(section, page)
             dispatch({
                 type = PluginEnums.StoreActionType.UpdateSessionData,
                 slice = {
-                    lastSliderPage = sliderPage
+                    lastSliderPage = {section, page}
                 }
             })
         end,

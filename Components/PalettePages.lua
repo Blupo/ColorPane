@@ -23,27 +23,19 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
 
-local DELETE_PROMPT_TEXT = "Are you sure you want to permanently delete\n\n%s?"
-
-local DISALLOWED_PALETTE_NAMES = {
-    brickcolor = true,
-    brickcolors = true,
-    colorbrewer = true,
-    ["web colors"] = true,
-}
+local DELETE_PROMPT_TEXT = "Are you sure you want to permanently delete %s?"
 
 local shallowCompare = util.shallowCompare
 
 ---
 
-local PalettePages = Roact.Component:extend("PalettePages")
+local PalettePages = Roact.PureComponent:extend("PalettePages")
 
 PalettePages.init = function(self)
-    self.prompt = Roact.createRef()
+    self.promptWidth, self.updatePromptWidth = Roact.createBinding(0)
 
     self:setState({
         showRemovePalettePrompt = false,
-        promptWidth = 0
     })
 end
 
@@ -63,42 +55,22 @@ PalettePages.shouldUpdate = function(self, nextProps, nextState)
     return false
 end
 
-PalettePages.didMount = function(self)
-    local prompt = self.prompt:getValue()
-    if (not prompt) then return end
-
-    self:setState({
-        promptWidth = prompt.AbsoluteSize.X
-    })
-end
-
 PalettePages.render = function(self)
     local palettes = self.props.palettes
     local theme = self.props.theme
 
     local currentPage = self.props.lastPalettePage
-    local displayPage
-
-    local promptText = self.state.showRemovePalettePrompt and
-        string.format(DELETE_PROMPT_TEXT, self.state.removePaletteName)
-    or nil
-
-    local promptTextHeight = self.state.showRemovePalettePrompt and
-        TextService:GetTextSize(
-            promptText,
-            Style.LargeTextSize,
-            Style.StandardFont,
-            Vector2.new(self.state.promptWidth - (Style.MajorElementPadding * 2), math.huge)
-        ).Y
-    or nil
-
+    local currentPageSection, currentPageNum = currentPage[1], currentPage[2]
     local numBuiltInPalettes = #BuiltInPalettes
-    local palettePages = {}
+    
+    local displayPage
+    local builtInPalettePages = {}
+    local userPalettePages = {}
 
     for i = 1, numBuiltInPalettes do
         local palette = BuiltInPalettes[i]
 
-        palettePages[#palettePages + 1] = {
+        builtInPalettePages[#builtInPalettePages + 1] = {
             name = palette.name,
             content = palette.getContent()
         }
@@ -107,7 +79,7 @@ PalettePages.render = function(self)
     for i = 1, #palettes do
         local palette = palettes[i]
 
-        palettePages[#palettePages + 1] = {
+        userPalettePages[#userPalettePages + 1] = {
             name = palette.name,
 
             content = Roact.createElement(Palette, {
@@ -119,64 +91,70 @@ PalettePages.render = function(self)
     if (not (self.state.showRemovePalettePrompt or self.state.showRenamePalettePrompt)) then
         displayPage = Roact.createElement(Pages, {
             initPage = currentPage,
-            pages = palettePages,
+            showAllSections = true,
             onPageChanged = self.props.updatePalettePage,
+
+            pageSections = {
+                {
+                    name = "Built-In Palettes",
+                    pages = builtInPalettePages,
+                },
+
+                {
+                    name = "User Palettes",
+                    pages = userPalettePages,
+                }
+            },
 
             options = {
                 {
                     name = "Create a New Palette",
                     onActivated = function()
-                        local newPage = (#palettes + 1) + numBuiltInPalettes
-
                         self:setState({
-                            currentPage = newPage,
                             showRemovePalettePrompt = false,
                             removePaletteName = Roact.None,
                         })
 
-                        self.props.updatePalettePage(newPage)
                         self.props.addPalette()
+                        self.props.updatePalettePage(2, #palettes + 1)
                     end
                 },
 
-                (currentPage > numBuiltInPalettes) and {
+                (currentPageSection == 2) and {
                     name = "Rename this Palette",
                     onActivated = function()
                         self:setState({
                             showRenamePalettePrompt = true,
-                            renamePaletteName = palettePages[currentPage].name,
-                            newPaletteName = palettePages[currentPage].name,
+                            renamePaletteName = palettes[currentPageNum].name,
+                            newPaletteName = palettes[currentPageNum].name,
                         })
                     end
                 } or nil,
 
-                (currentPage > numBuiltInPalettes) and {
+                (currentPageSection == 2) and {
                     name = "Delete this Palette",
                     onActivated = function()
                         self:setState({
                             showRemovePalettePrompt = true,
-                            removePaletteName = palettePages[currentPage].name
+                            removePaletteName = palettes[currentPageNum].name
                         })
                     end
                 } or nil,
 
-                (currentPage > numBuiltInPalettes) and {
+                (currentPageSection == 2) and {
                     name = "Duplicate this Palette",
                     onActivated = function()
-                        local duplicatePaletteName = palettePages[currentPage].name
-                        local newPage = (#palettes + 1) + numBuiltInPalettes
+                        local duplicatePaletteName = palettes[currentPageNum].name
 
-                        self:setState({
-                            currentPage = newPage,
-                        })
-
-                        self.props.updatePalettePage(newPage)
                         self.props.duplicatePalette(duplicatePaletteName)
+                        self.props.updatePalettePage(2, #palettes + 1)
                     end
                 } or nil,
             }
         })
     elseif (self.state.showRemovePalettePrompt) then
+        local promptText = string.format(DELETE_PROMPT_TEXT, self.state.removePaletteName)
+
         displayPage = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -184,12 +162,8 @@ PalettePages.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
 
-            [Roact.Ref] = self.prompt,
-
             [Roact.Change.AbsoluteSize] = function(obj)
-                self:setState({
-                    promptWidth = obj.AbsoluteSize.X
-                })
+                self.updatePromptWidth(obj.AbsoluteSize.X)
             end
         }, {
             UIPadding = Roact.createElement(Padding, {0, Style.MajorElementPadding}),
@@ -197,9 +171,19 @@ PalettePages.render = function(self)
             WarningText = Roact.createElement("TextLabel", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 0.5, -4),
-                Size = UDim2.new(1, 0, 0, promptTextHeight),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
+
+                Size = self.promptWidth:map(function(promptWidth)
+                    local promptTextHeight = TextService:GetTextSize(
+                        promptText,
+                        Style.LargeTextSize,
+                        Style.StandardFont,
+                        Vector2.new(promptWidth - (Style.MajorElementPadding * 2), math.huge)
+                    ).Y
+
+                    return UDim2.new(1, 0, 0, promptTextHeight)
+                end),
 
                 Font = Style.StandardFont,
                 TextSize = Style.LargeTextSize,
@@ -209,14 +193,6 @@ PalettePages.render = function(self)
                 TextYAlignment = Enum.TextYAlignment.Bottom,
 
                 TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
-
-                [Roact.Ref] = self.promptText,
-
-                [Roact.Change.AbsoluteSize] = function(obj)
-                    self:setState({
-                        promptTextHeight = obj.TextBounds.Y
-                    })
-                end
             }),
 
             Buttons = Roact.createElement("Frame", {
@@ -265,12 +241,11 @@ PalettePages.render = function(self)
                         local removePaletteName = self.state.removePaletteName
 
                         self:setState({
-                            currentPage = 1,
                             showRemovePalettePrompt = false,
                             removePaletteName = Roact.None,
                         })
 
-                        self.props.updatePalettePage(1)
+                        self.props.updatePalettePage(1, 1)
                         self.props.removePalette(removePaletteName)
                     end
                 }),
@@ -284,12 +259,8 @@ PalettePages.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
 
-            [Roact.Ref] = self.prompt,
-
             [Roact.Change.AbsoluteSize] = function(obj)
-                self:setState({
-                    promptWidth = obj.AbsoluteSize.X
-                })
+                self.updatePromptWidth(obj.AbsoluteSize.X)
             end
         }, {
             RenameLabel = Roact.createElement("TextLabel", {
@@ -316,10 +287,6 @@ PalettePages.render = function(self)
                 Text = self.state.newPaletteName,
 
                 canClear = false,
-
-                isTextAValidValue = function(text)
-                    return (not DISALLOWED_PALETTE_NAMES[string.lower(text)]) and true or false
-                end,
 
                 onTextChanged = function(text)
                     self:setState({
@@ -407,11 +374,11 @@ return RoactRodux.connect(function(state)
     }
 end, function(dispatch)
     return {
-        updatePalettePage = function(palettePage)
+        updatePalettePage = function(section, page)
             dispatch({
                 type = PluginEnums.StoreActionType.UpdateSessionData,
                 slice = {
-                    lastPalettePage = palettePage
+                    lastPalettePage = {section, page}
                 }
             })
         end,

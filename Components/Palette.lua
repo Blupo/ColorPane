@@ -24,7 +24,6 @@ Palette.init = function(self)
 
     self:setState({
         searchDisplayText = "",
-        layoutType = "grid",
 
         lastSelectTime = os.clock(),
     })
@@ -33,6 +32,8 @@ end
 Palette.render = function(self)
     local isReadOnly = self.props.readOnly
     local palette = self.props.palette
+    local paletteLayout = self.props.paletteLayout
+
     local searchTerm = self.state.searchTerm
     local selectedColor = palette.colors[self.state.selectedColorIndex]
 
@@ -126,7 +127,7 @@ Palette.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                selected = (self.state.layoutType == "grid") and 1 or 2,
+                selected = (paletteLayout == "grid") and 1 or 2,
 
                 buttons = {
                     {
@@ -141,9 +142,7 @@ Palette.render = function(self)
                 },
 
                 onButtonActivated = function(i)
-                    self:setState({
-                        layoutType = (i == 1) and "grid" or "layout"
-                    })
+                    self.props.updatePaletteLayout((i == 1) and "grid" or "list")
                 end,
             }),
 
@@ -161,7 +160,7 @@ Palette.render = function(self)
             or nil,
         }),
 
-        Colors = Roact.createElement((self.state.layoutType == "grid") and PaletteColorGrid or PaletteColorList, {
+        Colors = Roact.createElement((paletteLayout == "grid") and PaletteColorGrid or PaletteColorList, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, Style.StandardButtonSize + Style.MinorElementPadding + 1),
             Size = UDim2.new(1, -2, 1, -(Style.StandardButtonSize + Style.MinorElementPadding + 2)),
@@ -220,9 +219,19 @@ end
 return RoactRodux.connect(function(state)
     return {
         theme = state.theme,
+        paletteLayout = state.sessionData.paletteLayout,
     }
 end, function(dispatch)
     return {
+        updatePaletteLayout = function(newLayout)
+            dispatch({
+                type = PluginEnums.StoreActionType.UpdateSessionData,
+                slice = {
+                    paletteLayout = newLayout
+                }
+            })
+        end,
+
         setColor = function(newColor)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_SetColor,

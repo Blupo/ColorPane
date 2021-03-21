@@ -232,7 +232,13 @@ KelvinSliderPage.render = function(self)
                 TextSize = Style.StandardTextSize,
 
                 itemHeight = Style.StandardButtonSize,
-                items = presetItems
+                
+                sections = {
+                    {
+                        name = "",
+                        items = presetItems
+                    }
+                }
             }),
         }),
     })
