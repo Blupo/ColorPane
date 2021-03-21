@@ -12,11 +12,10 @@ local util = require(PluginModules:FindFirstChild("util"))
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
-local WebColorsPalette = require(includes:FindFirstChild("WebColorsPalette"))
 
 local Components = root:FindFirstChild("Components")
+local BuiltInPalettes = require(Components:FindFirstChild("BuiltInPalettes"))
 local Button = require(Components:FindFirstChild("Button"))
-local ColorBrewerPalettes = require(Components:FindFirstChild("ColorBrewerPalettes"))
 local Padding = require(Components:FindFirstChild("Padding"))
 local Pages = require(Components:FindFirstChild("Pages"))
 local Palette = require(Components:FindFirstChild("Palette"))
@@ -34,52 +33,6 @@ local DISALLOWED_PALETTE_NAMES = {
 }
 
 local shallowCompare = util.shallowCompare
-
-local brickColorsPalette = {
-    name = "BrickColors",
-    colors = {}
-}
-
-local builtInPalettes = {
-    {
-        name = "BrickColors",
-
-        content = function()
-            return Roact.createElement(Palette, {
-                palette = brickColorsPalette,
-                readOnly = true,
-            })
-        end
-    },
-
-    {
-        name = "ColorBrewer",
-        content = function() return Roact.createElement(ColorBrewerPalettes) end
-    },
-
-    {
-        name = "Web Colors",
-
-        content = function()
-            return Roact.createElement(Palette, {
-                palette = WebColorsPalette,
-                readOnly = true
-            })
-        end
-    }
-}
-
-for i = 1, 1032 do
-    local brickColor = BrickColor.new(i)
-
-    -- BrickColors that don't exist default to #194
-    if ((brickColor.Number ~= 194) or (i == 194)) then
-        brickColorsPalette.colors[#brickColorsPalette.colors + 1] = {
-            name = brickColor.Name,
-            color = brickColor.Color
-        }
-    end
-end
 
 ---
 
@@ -139,15 +92,15 @@ PalettePages.render = function(self)
         ).Y
     or nil
 
-    local numBuiltInPalettes = #builtInPalettes
+    local numBuiltInPalettes = #BuiltInPalettes
     local palettePages = {}
 
     for i = 1, numBuiltInPalettes do
-        local palette = builtInPalettes[i]
+        local palette = BuiltInPalettes[i]
 
         palettePages[#palettePages + 1] = {
             name = palette.name,
-            content = palette.content()
+            content = palette.getContent()
         }
     end
 

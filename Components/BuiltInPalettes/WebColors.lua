@@ -1,5 +1,5 @@
 --[[
-    Named colors from CSS Color Module 4
+    Named colors from CSS Color Module Level 4
     https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors
 --]]
 
@@ -321,7 +321,7 @@ return {
 
         {
             keywords = {"hotpink"},
-            name = "Hot pink",
+            name = "Hot Pink",
             color = Color3.fromRGB(255, 105, 180)
         },
 
