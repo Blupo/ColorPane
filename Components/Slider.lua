@@ -103,7 +103,7 @@ Slider.render = function(self)
         keypointsFrame = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 1),
             Position = UDim2.new(0, Style.StandardButtonSize / 2, 1, 0),
-            Size = UDim2.new(1, -80, 0, Style.StandardButtonSize),
+            Size = UDim2.new(1, -(60 + Style.StandardButtonSize + Style.MinorElementPadding), 0, Style.StandardButtonSize),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, keypointComponents)
@@ -135,7 +135,7 @@ Slider.render = function(self)
         SliderBorder = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 18),
-            Size = UDim2.new(1, -58, 0, Style.StandardButtonSize),
+            Size = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, Style.StandardButtonSize),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
 
@@ -229,7 +229,7 @@ Slider.render = function(self)
         InputFrame = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 18),
-            Size = UDim2.new(0, 50, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, 60, 0, Style.StandardButtonSize),
             BackgroundTransparency = 1,
             BorderSizePixel = 0
         }, {

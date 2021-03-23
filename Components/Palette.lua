@@ -101,8 +101,7 @@ Palette.render = function(self)
 
                 canClear = true,
                 onTextChanged = function(newText)
-                    local text = string.match(newText, "^%s*(.-)%s*$")
-                    local newSearchTerm = string.lower(string.gsub(text, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
+                    local newSearchTerm = string.lower(string.gsub(newText, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
                     local resetSelected
 
                     if (selectedColor) then
@@ -116,7 +115,7 @@ Palette.render = function(self)
                     self:setState({
                         selectedColorIndex = resetSelected and Roact.None or nil,
 
-                        searchDisplayText = text,
+                        searchDisplayText = newText,
                         searchTerm = (newSearchTerm ~= "") and newSearchTerm or Roact.None
                     })
                 end

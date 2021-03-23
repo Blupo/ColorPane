@@ -13,11 +13,12 @@
 - Changed the behaviour of the palette grid double-click shortcut: clicking on the color at any time after it has been selected will set the current color, not just within the amount of time that would be considered a "double click"
 - When searching for a palette color, if the selected color is included in the filtered list, it will now stay selected instead of being deselected
 - You will now be asked to input a name *before* creating new palettes, with the option to disable the prompt in the Settings
+- The palette naming prompt will now show you what the actual new name will be if the inputted name is already being used
 
 ### Fixed
 - The titles of the editor windows now reset to an identifiable name once they are closed
 - Setting the initial prompt value when calling `PromptForColor` no longer causes `OnColorChanged` to be called
-- Improved the performance of multiple components, the effects of which will be particularly noticable when resizing editor windows
+- Improved the performance of multiple components, the effects of which will be particularly noticable when resizing editor windows or using the palettes page
 - The editor page bar in the color editor window now correctly highlights the currently-chosen editor page
 - Editor pages in the color editor now have the proper minimum width, previously the calculations did not take padding into account and ended up making them slightly smaller than the minimum
 - Fixed improper behaviour in the color wheel due to some misplaced code

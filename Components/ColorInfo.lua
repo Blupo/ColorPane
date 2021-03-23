@@ -10,7 +10,6 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
-local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local BuiltInPalettes = Components:FindFirstChild("BuiltInPalettes")
@@ -135,27 +134,21 @@ local infoComponents = {
 
 local ColorInfo = Roact.PureComponent:extend("ColorInfo")
 
-ColorInfo.init = function(self)
-    self.listLength, self.updateListLength = Roact.createBinding(0)
-end
-
 ColorInfo.render = function(self)
     local theme = self.props.theme
     local color = self.props.color
 
-    local listElements = {}
+    local pageElement = {}
 
     for i = 1, #infoComponents do
         local component = infoComponents[i]
 
-        listElements[#listElements + 1] = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+        pageElement[#pageElement + 1] = Roact.createElement("Frame", {
+            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
             LayoutOrder = i,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIPadding = Roact.createElement(Padding, {Style.MinorElementPadding, Style.MinorElementPadding, Style.SpaciousElementPadding, Style.MinorElementPadding}),
-
             ComponentLabel = Roact.createElement("TextLabel", {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
@@ -191,44 +184,15 @@ ColorInfo.render = function(self)
         })
     end
 
-    listElements["UIListLayout"] = Roact.createElement("UIListLayout", {
+    pageElement["UIListLayout"] = Roact.createElement("UIListLayout", {
+        Padding = UDim.new(0, Style.SpaciousElementPadding),
         FillDirection = Enum.FillDirection.Vertical,
         HorizontalAlignment = Enum.HorizontalAlignment.Left,
         SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Top,
-        
-        [Roact.Change.AbsoluteContentSize] = function(obj)
-            self.updateListLength(obj.AbsoluteContentSize.Y)
-        end
     })
 
-    return Roact.createFragment({
-        Roact.createElement("ScrollingFrame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 0,
-            BorderSizePixel = 1,
-            ClipsDescendants = true,
-        
-            CanvasSize = self.listLength:map(function(listLength)
-                return UDim2.new(0, 0, 0, listLength)
-            end),
-
-            CanvasPosition = Vector2.new(0, 0),
-            TopImage = Style.ScrollbarImage,
-            MidImage = Style.ScrollbarImage,
-            BottomImage = Style.ScrollbarImage,
-            HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-            ScrollBarThickness = Style.ScrollbarThickness,
-
-            ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
-            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
-        }, listElements)
-    })
+    return Roact.createFragment(pageElement)
 end
 
 return RoactRodux.connect(function(state)

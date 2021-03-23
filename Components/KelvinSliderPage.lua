@@ -189,7 +189,7 @@ KelvinSliderPage.render = function(self)
 
         ScaleUpperLimitLabel = Roact.createElement("TextLabel", {
             AnchorPoint = Vector2.new(1, 0),
-            Position = UDim2.new(1, -58, 0, 40),
+            Position = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, 40),
             Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
