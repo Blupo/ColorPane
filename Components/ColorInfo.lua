@@ -19,6 +19,19 @@ local WebColorsPalette = require(BuiltInPalettes:FindFirstChild("WebColors"))
 
 local webColors = WebColorsPalette.colors
 
+local parseComponents = function(componentString, numComponents)
+    local pattern = string.rep("(.+), ?", numComponents - 1) .. "(.+)"
+    local components = {string.match(componentString, pattern)}
+
+    for i = 1, #components do
+        if (not tonumber(components[i])) then
+            components[i] = nil
+        end
+    end
+
+    return table.unpack(components)
+end
+
 local infoComponents = {
     {
         name = "RGB",
@@ -30,7 +43,7 @@ local infoComponents = {
         end,
 
         getColor = function(componentString)
-            local r, g, b = string.match(componentString, "(%d+), ?(%d+), ?(%d+)")
+            local r, g, b = parseComponents(componentString, 3)
             if (not (r and g and b)) then return end
 
             return Color.fromRGB(r / 255, g / 255, b / 255)
@@ -48,7 +61,7 @@ local infoComponents = {
         end,
 
         getColor = function(componentString)
-            local c, m, y, k = string.match(componentString,"(%d+), ?(%d+), ?(%d+), ?(%d+)")
+            local c, m, y, k = parseComponents(componentString, 4)
             if (not (c and m and y and k)) then return end
 
             return Color.fromCMYK(c / 100, m / 100, y / 100, k / 100)
@@ -66,7 +79,7 @@ local infoComponents = {
         end,
 
         getColor = function(componentString)
-            local h, s, b = string.match(componentString, "(%d+), ?(%d+), ?(%d+)")
+            local h, s, b = parseComponents(componentString, 3)
             if (not (h and s and b)) then return end
 
             return Color.fromHSB(h / 360, s / 100, b / 100)
@@ -84,7 +97,7 @@ local infoComponents = {
         end,
 
         getColor = function(componentString)
-            local h, s, l = string.match(componentString, "(%d+), ?(%d+), ?(%d+)")
+            local h, s, l = parseComponents(componentString, 3)
             if (not (h and s and l)) then return end
 
             return Color.fromHSL(h / 360, s / 100, l / 100)
