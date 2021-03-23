@@ -13,6 +13,7 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
+local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
 local ColorWheel = require(Components:FindFirstChild("ColorWheel"))
 local Padding = require(Components:FindFirstChild("Padding"))
 local PalettePages = require(Components:FindFirstChild("PalettePages"))
@@ -63,6 +64,15 @@ local editorTabs = {
             return Roact.createElement(PalettePages)
         end
     },
+
+    {
+        name = "colorInfo",
+        image = Style.ColorInfoEditorImage,
+
+        getElement = function(self)
+            return Roact.createElement(ColorInfo)
+        end
+    }
 }
 
 ---

@@ -29,7 +29,7 @@ local shallowCompare = util.shallowCompare
 
 ---
 
-local PalettePages = Roact.PureComponent:extend("PalettePages")
+local PalettePages = Roact.Component:extend("PalettePages")
 
 PalettePages.init = function(self)
     self.promptWidth, self.updatePromptWidth = Roact.createBinding(0)

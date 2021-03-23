@@ -18,7 +18,8 @@ local Padding = require(Components:FindFirstChild("Padding"))
         PlaceholderText?
         Position?
         Size?
-        Text?
+        
+        Text
         TextSize?
         TextXAlignment?
 
@@ -43,18 +44,19 @@ TextInput.init = function(self)
 end
 
 TextInput.didUpdate = function(self, prevProps)
-    local textBox = self.textBox:getValue()
+    if (self.props.usesTextBinding) then return end
 
-    local text = self.props.usesTextBinding and self.props.Text:getValue() or self.props.Text
-    local prevText = prevProps.usesTextBinding and prevProps.Text:getValue() or prevProps.Text
+    local text = self.props.Text
 
     if (self.state.invalidInput) then
-        if (text ~= prevText) then
+        if (text ~= prevProps.Text) then
             self:setState({
                 invalidInput = false,
             })
         end
     else
+        local textBox = self.textBox:getValue()
+        
         if (text ~= textBox.Text) then
             textBox.Text = text
         end
@@ -133,7 +135,27 @@ TextInput.render = function(self)
             TextXAlignment = self.props.TextXAlignment or Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Center,
             PlaceholderText = self.props.PlaceholderText or "",
-            Text = self.props.Text,
+
+            Text = self.props.usesTextBinding and
+                self.props.Text:map(function(text)
+                    if (not self.prevText) then
+                        self.prevText = text
+                    end
+
+                    if (self.state.invalidInput) then
+                        if (self.prevText ~= text) then
+                            self:setState({
+                                invalidInput = false,
+                            })
+                        else
+                            return self.textBox:getValue().Text
+                        end
+                    end
+
+                    self.prevText = text
+                    return text
+                end)
+            or self.props.Text,
 
             BackgroundColor3 = backgroundColor,
             PlaceholderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Disabled),
@@ -160,9 +182,16 @@ TextInput.render = function(self)
                 local text = string.match(obj.Text, "^%s*(.-)%s*$")
 
                 if (text == originalText) then
-                    self:setState({
-                        focused = false,
-                    })
+                    if (self.props.isTextAValidValue) then
+                        self:setState({
+                            focused = false,
+                            invalidInput = (not self.props.isTextAValidValue(originalText)),
+                        })
+                    else
+                        self:setState({
+                            focused = false
+                        })
+                    end
 
                     return
                 end

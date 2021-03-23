@@ -101,8 +101,8 @@ PaletteColorGrid.render = function(self)
                 Position = UDim2.new(0, 0, 0, 0),
                 Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
                 
-                displayType = "image",
-                image = Style.PaletteSetColorImage,
+                displayType = "text",
+                text = "Set Color",
                 disabled = (not selected),
 
                 onActivated = function()

@@ -41,6 +41,12 @@ for i = 1, #ColorTypeScripts do
         local r, g, b = colorType[TO_KEY .. COMMON_SPACE](...)
         if (not (r and g and b)) then return end
 
+        if (
+            ((r < 0) or (r > 1)) or
+            ((g < 0) or (g > 1)) or
+            ((b < 0) or (b > 1))
+        ) then return end
+
         return colorConstructor(r, g, b)
     end
 end

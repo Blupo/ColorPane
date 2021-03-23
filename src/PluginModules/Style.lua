@@ -48,7 +48,6 @@ local Style = {
     PaletteColorMoveDownImage = "rbxassetid://913309373",
     PaletteColorMoveLeftImage = "rbxassetid://330699522",
     PaletteColorMoveRightImage = "rbxassetid://330699633",
-    PaletteSetColorImage = "rbxassetid://6541208713",
 
     -- Pages
     PageOptionsImage = "rbxassetid://6308568235",
@@ -62,6 +61,7 @@ local Style = {
     ColorWheelEditorImage = "rbxassetid://6333198466",
     SliderEditorImage = "rbxassetid://6333325727",
     PaletteEditorImage = "rbxassetid://6333569516",
+    ColorInfoEditorImage = "rbxassetid://6554131676",
 
     -- cs editor icons
     CSEditorReverseSequenceImage = "rbxassetid://6409046433",
