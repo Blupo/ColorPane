@@ -4,7 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -23,13 +23,13 @@ local CURSOR_KEYPOINT_SNAP_VALUE = 1/100
 local MIN_SNAP_VALUE = 0.001/100
 local MAX_SNAP_VALUE= 25/100
 
+local noYield = Util.noYield
+
 local round = function(n, power)
     local place = 10 ^ power
 
     return math.floor(n / place + 0.5) * place
 end
-
-local noYield = util.noYield
 
 -- From the DevHub: https://developer.roblox.com/en-us/api-reference/datatype/ColorSequence
 local evalutateColorSequence = function(sequence, time)

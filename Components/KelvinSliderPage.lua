@@ -4,7 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -20,7 +20,7 @@ local Slider = require(Components:FindFirstChild("Slider"))
 local LOWER_RANGE = 1000
 local UPPER_RANGE = 10000
 
-local shallowCompare = util.shallowCompare
+local shallowCompare = Util.shallowCompare
 
 local getKelvinRangeValue = function(k)
     k = math.clamp(k, LOWER_RANGE, UPPER_RANGE)

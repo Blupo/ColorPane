@@ -20,7 +20,7 @@ local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Promise = require(includes:FindFirstChild("Promise"))
@@ -55,8 +55,8 @@ local unloadingEvent = Instance.new("BindableEvent")
 local colorEditingFinishedEvent = Instance.new("BindableEvent")
 local colorSequenceEditingFinishedEvent = Instance.new("BindableEvent")
 
-local copy = util.copy
-local noYield = util.noYield
+local copy = Util.copy
+local noYield = Util.noYield
 
 local isOptionalType = function(value, typeName)
     return ((typeof(value) == typeName) or (typeof(value) == "nil"))

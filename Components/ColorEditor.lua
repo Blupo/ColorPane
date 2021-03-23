@@ -4,7 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -22,7 +22,7 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
 
-local shallowCompare = util.shallowCompare
+local shallowCompare = Util.shallowCompare
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
 
 local getMaxPages = function(width)

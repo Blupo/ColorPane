@@ -7,6 +7,15 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 
 local SETTINGS_KEY = "ColorPane_Settings"
 
+local DEFAULTS = {
+    [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = true,
+    [PluginEnums.PluginSettingKey.SnapValue] = 0.1/100,
+    [PluginEnums.PluginSettingKey.AutoLoadAPI] = false,
+    [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = false,
+}
+
+---
+
 local plugin
 local pluginSettings
 local settingsModified = false
@@ -59,6 +68,12 @@ PluginSettings.init = function(initPlugin)
     
         if (oldPalettes or oldSnap) then
             PluginSettings.Flush()
+        end
+    end
+
+    for key, defaultValue in pairs(DEFAULTS) do
+        if (pluginSettings[key] == nil) then
+            pluginSettings[key] = defaultValue
         end
     end
 

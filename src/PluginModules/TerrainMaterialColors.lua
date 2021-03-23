@@ -4,13 +4,13 @@ local Workspace = game:GetService("Workspace")
 
 local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local Terrain = Workspace.Terrain
 
 ---
 
-local copy = util.copy
+local copy = Util.copy
 
 local terrainMaterialColorProperties = {}
 local terrainMaterialColorBehaviours = {}

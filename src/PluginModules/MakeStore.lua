@@ -5,9 +5,10 @@ local Studio = settings().Studio
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Rodux = require(includes:FindFirstChild("Rodux"))
@@ -16,76 +17,15 @@ local Rodux = require(includes:FindFirstChild("Rodux"))
 
 local MAX_QP_COLORS = 99
 
-local copy = util.copy
-local mergeTable = util.mergeTable
+local getPalette = PaletteUtils.getPalette
+local getPaletteColorIndex = PaletteUtils.getPaletteColorIndex
+local getNewPaletteName = PaletteUtils.getNewPaletteName
+local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
+
+local copy = Util.copy
+local mergeTable = Util.mergeTable
 
 local pluginStore
-
-local getNewPaletteName = function(palettes, originalPaletteName, selfIndex)
-    local found = false
-    local numDuplicates = 0
-    local paletteName = originalPaletteName
-
-    repeat
-        found = false
-
-        for i = 1, #palettes do
-            local palette = palettes[i]
-
-            if ((palette.name == paletteName) and (i ~= selfIndex)) then
-                found = true
-                numDuplicates = numDuplicates + 1
-                paletteName = originalPaletteName .. " (" .. numDuplicates .. ")"
-                break
-            end
-        end
-    until (not found)
-
-    return paletteName, numDuplicates
-end
-
-local getNewPaletteColorName = function(paletteColors, originalColorName, selfIndex)
-    local found = false
-    local numDuplicates = 0
-    local colorName = originalColorName
-
-    repeat
-        found = false
-
-        for i = 1, #paletteColors do
-            local color = paletteColors[i]
-
-            if ((color.name == colorName) and (i ~= selfIndex)) then
-                found = true
-                numDuplicates = numDuplicates + 1
-                colorName = originalColorName .. " (" .. numDuplicates .. ")"
-                break
-            end
-        end
-    until (not found)
-
-    return colorName, numDuplicates
-end
-
-local getPalette = function(palettes, paletteName)
-	for i = 1, #palettes do
-		local palette = palettes[i]
-
-		if (palette.name == paletteName) then
-			return palette, i
-		end
-	end
-end
-
-local getPaletteColorIndex = function(paletteColors, colorName)
-    for i = 1, #paletteColors do
-        local color = paletteColors[i]
-
-        if (color.name == colorName) then
-            return i
-        end
-    end
-end
 
 return function(plugin)
     if (pluginStore) then return pluginStore end
@@ -128,7 +68,7 @@ return function(plugin)
         },
 
         colorSequenceEditor = {
-            snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue) or 0.1/100,
+            snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
         }
     }
 

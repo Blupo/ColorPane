@@ -13,6 +13,32 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
 
+--[[
+    props
+
+        AnchorPoint?
+        Position?
+        LayoutOrder?
+
+        sliderLabel: string
+        unitLabel: string?
+
+        value: Binding -> number
+
+        markerColor: Color3?
+        sliderGradient: ColorSequence
+        editorInputChanged: RBXScriptSignal
+
+        keypoints: array<{
+            value: number,
+            color: Color3
+        }>?
+
+        valueToText: (number) -> string
+        textToValue: (string) -> number?
+        valueChanged: (number) -> nil
+]]
+
 local Slider = Roact.PureComponent:extend("Slider")
 
 Slider.init = function(self)
@@ -87,9 +113,9 @@ Slider.render = function(self)
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
         Size = self.props.keypoints and UDim2.new(1, 0, 0, 66) or UDim2.new(1, 0, 0, 40),
+        LayoutOrder = self.props.LayoutOrder,
         BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        LayoutOrder = self.props.layoutOrder
+        BorderSizePixel = 0
     }, {
         NameLabel = Roact.createElement("TextLabel", {
             AnchorPoint = Vector2.new(0.5, 0),

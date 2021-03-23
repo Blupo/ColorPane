@@ -5,9 +5,11 @@ local TextService = game:GetService("TextService")
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -25,7 +27,133 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local DELETE_PROMPT_TEXT = "Are you sure you want to permanently delete %s?"
 
-local shallowCompare = util.shallowCompare
+local getNewPaletteName = PaletteUtils.getNewPaletteName
+local shallowCompare = Util.shallowCompare
+
+---
+
+--[[
+
+    props
+
+        name: string
+        promptText: string
+        selfIndex: number
+
+        onNameChanged: (string) -> nil
+        onPromptClosed: (boolean) -> nil
+]]
+
+local NamePalettePrompt = Roact.PureComponent:extend("NamePalettePrompt")
+
+NamePalettePrompt.render = function(self)
+    local theme = self.props.theme
+    local name = self.props.name
+
+    local newName = getNewPaletteName(self.props.palettes, name, self.props.selfIndex)
+    
+    return Roact.createElement("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+    }, {
+        PromptLabel = Roact.createElement("TextLabel", {
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0, 0),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+
+            Font = Style.StandardFont,
+            TextSize = Style.StandardTextSize,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center,
+            Text = self.props.promptText,
+
+            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
+        }),
+
+        NameInput = Roact.createElement(TextInput, {
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.MinorElementPadding),
+            Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
+
+            TextSize = Style.LargeTextSize,
+            Text = name,
+
+            canClear = false,
+            onTextChanged = self.props.onNameChanged,
+        }),
+
+        NameIsOKLabel = Roact.createElement("TextLabel", {
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.LargeButtonSize + (Style.MinorElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+
+            Font = Style.StandardFont,
+            TextSize = Style.StandardTextSize,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center,
+            Text = (name ~= newName) and ("This palette will be named '" .. newName .. "'") or "",
+
+            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
+        }),
+
+        Buttons = Roact.createElement("Frame", {
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0, (Style.StandardTextSize * 2) + Style.LargeButtonSize + (Style.MinorElementPadding * 3)),
+            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+        }, {
+            UIListLayout = Roact.createElement("UIListLayout", {
+                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                FillDirection = Enum.FillDirection.Horizontal,
+                HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                VerticalAlignment = Enum.VerticalAlignment.Center,
+            }),
+
+            CancelButton = Roact.createElement(Button, {
+                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                LayoutOrder = 0,
+
+                displayType = "text",
+                text = "Cancel",
+
+                backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
+                borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
+                hoverColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton, Enum.StudioStyleGuideModifier.Hover),
+                displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText),
+
+                onActivated = function()
+                    self.props.onPromptClosed(false)
+                end
+            }),
+
+            ConfirmButton = Roact.createElement(Button, {
+                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                LayoutOrder = 0,
+
+                displayType = "text",
+                text = "OK",
+
+                backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
+                borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
+                hoverColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton, Enum.StudioStyleGuideModifier.Hover),
+                displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
+
+                onActivated = function()
+                    self.props.onPromptClosed(true)
+                end
+            }),
+        }),
+    })
+end
 
 ---
 
@@ -35,7 +163,7 @@ PalettePages.init = function(self)
     self.promptWidth, self.updatePromptWidth = Roact.createBinding(0)
 
     self:setState({
-        showRemovePalettePrompt = false,
+        askNameBeforeCreation = PluginSettings.Get(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation)
     })
 end
 
@@ -53,6 +181,20 @@ PalettePages.shouldUpdate = function(self, nextProps, nextState)
     end
 
     return false
+end
+
+PalettePages.didMount = function(self)
+    self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
+        if (key ~= PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
+
+        self:setState({
+            askNameBeforeCreation = newValue
+        })
+    end)
+end
+
+PalettePages.willUnmount = function(self)
+    self.settingsChanged:Disconnect()
 end
 
 PalettePages.render = function(self)
@@ -87,70 +229,56 @@ PalettePages.render = function(self)
             })
         }
     end
+    
+    if (self.state.showNamePalettePrompt) then
+        displayPage = Roact.createElement(NamePalettePrompt, {
+            promptText = "Name the new palette",
+            name = self.state.newPaletteName,
 
-    if (not (self.state.showRemovePalettePrompt or self.state.showRenamePalettePrompt)) then
-        displayPage = Roact.createElement(Pages, {
-            initPage = currentPage,
-            showAllSections = true,
-            onPageChanged = self.props.updatePalettePage,
+            onNameChanged = function(text)
+                self:setState({
+                    newPaletteName = text,
+                })
+            end,
 
-            pageSections = {
-                {
-                    name = "Built-In Palettes",
-                    pages = builtInPalettePages,
-                },
+            onPromptClosed = function(didConfirm)
+                local newPaletteName = self.state.newPaletteName
 
-                {
-                    name = "User Palettes",
-                    pages = userPalettePages,
-                }
-            },
+                self:setState({
+                    showNamePalettePrompt = false,
+                    newPaletteName = Roact.None,
+                })
 
-            options = {
-                {
-                    name = "Create a New Palette",
-                    onActivated = function()
-                        self:setState({
-                            showRemovePalettePrompt = false,
-                            removePaletteName = Roact.None,
-                        })
+                if (not (didConfirm and newPaletteName)) then return end
+                self.props.addPalette(newPaletteName)
+                self.props.updatePalettePage(2, #palettes + 1)
+            end,
+        })
+    elseif (self.state.showRenamePalettePrompt) then
+        displayPage = Roact.createElement(NamePalettePrompt, {
+            promptText = "Rename '" .. self.state.renamePaletteName .. "'",
+            name  = self.state.newPaletteName,
+            selfIndex = currentPageNum,
 
-                        self.props.addPalette()
-                        self.props.updatePalettePage(2, #palettes + 1)
-                    end
-                },
+            onNameChanged = function(text)
+                self:setState({
+                    newPaletteName = text
+                })
+            end,
 
-                (currentPageSection == 2) and {
-                    name = "Rename this Palette",
-                    onActivated = function()
-                        self:setState({
-                            showRenamePalettePrompt = true,
-                            renamePaletteName = palettes[currentPageNum].name,
-                            newPaletteName = palettes[currentPageNum].name,
-                        })
-                    end
-                } or nil,
+            onPromptClosed = function(didConfirm)
+                local oldPaletteName = self.state.renamePaletteName
+                local newPaletteName = self.state.newPaletteName
 
-                (currentPageSection == 2) and {
-                    name = "Delete this Palette",
-                    onActivated = function()
-                        self:setState({
-                            showRemovePalettePrompt = true,
-                            removePaletteName = palettes[currentPageNum].name
-                        })
-                    end
-                } or nil,
+                self:setState({
+                    showRenamePalettePrompt = false,
+                    renamePaletteName = Roact.None,
+                    newPaletteName = Roact.None,
+                })
 
-                (currentPageSection == 2) and {
-                    name = "Duplicate this Palette",
-                    onActivated = function()
-                        local duplicatePaletteName = palettes[currentPageNum].name
-
-                        self.props.duplicatePalette(duplicatePaletteName)
-                        self.props.updatePalettePage(2, #palettes + 1)
-                    end
-                } or nil,
-            }
+                if (not (didConfirm and newPaletteName)) then return end
+                self.props.changePaletteName(oldPaletteName, newPaletteName)
+            end,
         })
     elseif (self.state.showRemovePalettePrompt) then
         local promptText = string.format(DELETE_PROMPT_TEXT, self.state.removePaletteName)
@@ -251,118 +379,85 @@ PalettePages.render = function(self)
                 }),
             }),
         })
-    elseif (self.state.showRenamePalettePrompt) then
-        displayPage = Roact.createElement("Frame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
+    else
+        displayPage = Roact.createElement(Pages, {
+            initPage = currentPage,
+            showAllSections = true,
+            onPageChanged = self.props.updatePalettePage,
 
-            [Roact.Change.AbsoluteSize] = function(obj)
-                self.updatePromptWidth(obj.AbsoluteSize.X)
-            end
-        }, {
-            RenameLabel = Roact.createElement("TextLabel", {
-                AnchorPoint = Vector2.new(0.5, 0),
-                Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-    
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
-                Text = "Rename '" .. self.state.renamePaletteName .. "'",
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
-            }),
+            pageSections = {
+                {
+                    name = "Built-In Palettes",
+                    pages = builtInPalettePages,
+                },
 
-            NameInput = Roact.createElement(TextInput, {
-                AnchorPoint = Vector2.new(0.5, 0),
-                Position = UDim2.new(0.5, 0, 0, Style.LargeTextSize),
-                Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
+                {
+                    name = "User Palettes",
+                    pages = userPalettePages,
+                }
+            },
 
-                TextSize = Style.LargeTextSize,
-                Text = self.state.newPaletteName,
+            options = {
+                {
+                    name = "Create a New Palette",
+                    onActivated = function()
+                        if (self.state.askNameBeforeCreation) then
+                            self:setState({
+                                showNamePalettePrompt = true,
+                                newPaletteName = getNewPaletteName(palettes, "New Palette")
+                            })
+                        else
+                            self.props.addPalette()
+                            self.props.updatePalettePage(2, #palettes + 1)
+                        end
+                    end
+                },
 
-                canClear = false,
+                (currentPageSection == 2) and {
+                    name = "Duplicate this Palette",
+                    onActivated = function()
+                        local duplicatePaletteName = palettes[currentPageNum].name
 
-                onTextChanged = function(text)
-                    self:setState({
-                        newPaletteName = text,
-                    })
-                end
-            }),
+                        self.props.duplicatePalette(duplicatePaletteName)
+                        self.props.updatePalettePage(2, #palettes + 1)
+                    end
+                } or nil,
 
-            Buttons = Roact.createElement("Frame", {
-                AnchorPoint = Vector2.new(0.5, 0),
-                Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.LargeButtonSize + (Style.MinorElementPadding * 2)),
-                Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-            }, {
-                UIListLayout = Roact.createElement("UIListLayout", {
-                    Padding = UDim.new(0, Style.SpaciousElementPadding),
-                    FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    VerticalAlignment = Enum.VerticalAlignment.Center,
-                }),
-
-                CancelButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
-                    LayoutOrder = 0,
-
-                    displayType = "text",
-                    text = "Cancel",
-
-                    backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
-                    borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
-                    hoverColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton, Enum.StudioStyleGuideModifier.Hover),
-                    displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText),
-
+                (currentPageSection == 2) and {
+                    name = "Rename this Palette",
                     onActivated = function()
                         self:setState({
-                            showRenamePalettePrompt = false,
-                            renamePaletteName = Roact.None,
-                            newPaletteName = Roact.None,
+                            showRenamePalettePrompt = true,
+                            renamePaletteName = palettes[currentPageNum].name,
+                            newPaletteName = palettes[currentPageNum].name,
                         })
                     end
-                }),
+                } or nil,
 
-                ConfirmButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
-                    LayoutOrder = 0,
-
-                    displayType = "text",
-                    text = "OK",
-
-                    backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
-                    borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
-                    hoverColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton, Enum.StudioStyleGuideModifier.Hover),
-                    displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
-
+                (currentPageSection == 2) and {
+                    name = "Delete this Palette",
                     onActivated = function()
-                        local oldPaletteName = self.state.renamePaletteName
-                        local newPaletteName = self.state.newPaletteName
-
                         self:setState({
-                            showRenamePalettePrompt = false,
-                            renamePaletteName = Roact.None,
-                            newPaletteName = Roact.None,
+                            showRemovePalettePrompt = true,
+                            removePaletteName = palettes[currentPageNum].name
                         })
-
-                        if (not newPaletteName) then return end
-                        self.props.changePaletteName(oldPaletteName, newPaletteName)
                     end
-                }),
-            }),
+                } or nil,
+            }
         })
     end
 
     return displayPage
 end
+
+---
+
+NamePalettePrompt = RoactRodux.connect(function(state)
+    return {
+        theme = state.theme,
+        palettes = state.colorEditor.palettes,
+    }
+end)(NamePalettePrompt)
 
 return RoactRodux.connect(function(state)
     return {
@@ -383,9 +478,10 @@ end, function(dispatch)
             })
         end,
 
-        addPalette = function()
+        addPalette = function(name)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_AddPalette,
+                name = name
             })
         end,
 

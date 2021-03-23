@@ -43,6 +43,7 @@ return setmetatable({
         "SnapValue",
         "AutoLoadAPI",
         "AutoLoadColorProperties",
+        "AskNameBeforePaletteCreation"
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {

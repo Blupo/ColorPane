@@ -4,7 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -24,7 +24,7 @@ local HSLSliderPage = Roact.Component:extend("HSLSliderPage")
 local GreyscaleSliderPage = Roact.Component:extend("GreyscaleSliderPage")
 local KelvinSliderPage = require(Components:FindFirstChild("KelvinSliderPage"))
 
-local shallowCompare = util.shallowCompare
+local shallowCompare = Util.shallowCompare
 
 local ConnectStore = RoactRodux.connect(function(state)
     return {
@@ -141,17 +141,17 @@ RGBSliderPage.render = function(self)
         }),
 
         R = Roact.createElement(Slider, {
-            value = self.components:map(function(components) return components.r end),
-            editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 0,
+            LayoutOrder = 0,
 
             sliderLabel = "Red",
             markerColor = self.markerColor,
+            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(0, components.g, components.b), Color3.new(1, components.g, components.b))
             end),
 
+            value = self.components:map(function(components) return components.r end),
             valueToText = rgbValueToText,
             textToValue = rgbTextToValue,
 
@@ -169,17 +169,17 @@ RGBSliderPage.render = function(self)
         }),
 
         G = Roact.createElement(Slider, {
-            value = self.components:map(function(components) return components.g end),
-            editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 1,
+            LayoutOrder = 1,            
 
             sliderLabel = "Green",
             markerColor = self.markerColor,
+            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(components.r, 0, components.b), Color3.new(components.r, 1, components.b))
             end),
 
+            value = self.components:map(function(components) return components.g end),
             valueToText = rgbValueToText,
             textToValue = rgbTextToValue,
 
@@ -197,17 +197,17 @@ RGBSliderPage.render = function(self)
         }),
 
         B = Roact.createElement(Slider, {
-            value = self.components:map(function(components) return components.b end),
-            editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 2,
+            LayoutOrder = 2,
 
             sliderLabel = "Blue",
             markerColor = self.markerColor,
+            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(components.r, components.g, 0), Color3.new(components.r, components.g, 1))
             end),
 
+            value = self.components:map(function(components) return components.b end),
             valueToText = rgbValueToText,
             textToValue = rgbTextToValue,
 
@@ -275,10 +275,11 @@ CMYKSliderPage.render = function(self)
         }),
 
         C = Roact.createElement(Slider, {
+            LayoutOrder = 0,
+            
             value = self.components:map(function(components) return components.c end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 0,
-
+            
             sliderLabel = "Cyan",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -308,9 +309,10 @@ CMYKSliderPage.render = function(self)
         }),
 
         M = Roact.createElement(Slider, {
+            LayoutOrder = 1,
+            
             value = self.components:map(function(components) return components.m end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 1,
 
             sliderLabel = "Magenta",
             unitLabel = "%",
@@ -341,9 +343,10 @@ CMYKSliderPage.render = function(self)
         }),
 
         Y = Roact.createElement(Slider, {
+            LayoutOrder = 2,
+            
             value = self.components:map(function(components) return components.y end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 2,
 
             sliderLabel = "Yellow",
             unitLabel = "%",
@@ -374,9 +377,10 @@ CMYKSliderPage.render = function(self)
         }),
 
         K = Roact.createElement(Slider, {
+            LayoutOrder = 3,
+            
             value = self.components:map(function(components) return components.k end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 3,
 
             sliderLabel = "Key",
             unitLabel = "%",
@@ -455,9 +459,10 @@ HSBSliderPage.render = function(self)
         }),
 
         H = Roact.createElement(Slider, {
+            LayoutOrder = 0,
+            
             value = self.components:map(function(components) return components.h end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 0,
 
             sliderLabel = "Hue",
             unitLabel = "°",
@@ -498,9 +503,10 @@ HSBSliderPage.render = function(self)
         }),
 
         S = Roact.createElement(Slider, {
+            LayoutOrder = 1,
+
             value = self.components:map(function(components) return components.s end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 1,
 
             sliderLabel = "Saturation",
             unitLabel = "%",
@@ -527,9 +533,10 @@ HSBSliderPage.render = function(self)
         }),
 
         B = Roact.createElement(Slider, {
+            LayoutOrder = 2,
+
             value = self.components:map(function(components) return components.b end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 2,
 
             sliderLabel = "Brightness",
             unitLabel = "%",
@@ -604,9 +611,10 @@ HSLSliderPage.render = function(self)
         }),
 
         H = Roact.createElement(Slider, {
+            LayoutOrder = 0,
+
             value = self.components:map(function(components) return components.h end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 0,
 
             sliderLabel = "Hue",
             unitLabel = "°",
@@ -648,9 +656,10 @@ HSLSliderPage.render = function(self)
         }),
 
         S = Roact.createElement(Slider, {
+            LayoutOrder = 1,
+
             value = self.components:map(function(components) return components.s end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 1,
 
             sliderLabel = "Saturation",
             unitLabel = "%",
@@ -680,9 +689,10 @@ HSLSliderPage.render = function(self)
         }),
 
         L = Roact.createElement(Slider, {
+            LayoutOrder = 2,
+
             value = self.components:map(function(components) return components.l end),
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 2,
 
             sliderLabel = "Lightness",
             unitLabel = "%",
@@ -743,7 +753,6 @@ GreyscaleSliderPage.render = function(self)
         Slider = Roact.createElement(Slider, {
             value = self.brightness,
             editorInputChanged = self.props.editorInputChanged,
-            layoutOrder = 0,
 
             sliderLabel = "Brightness",
             sliderGradient = ColorSequence.new(Color3.new(0, 0, 0), Color3.new(1, 1, 1)),

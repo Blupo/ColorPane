@@ -19,20 +19,21 @@ local Settings = Roact.PureComponent:extend("Settings")
 
 Settings.init = function(self)
     self:setState({
-        autoLoadAPI = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI),
-        autoLoadColorProps = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties),
+        [PluginEnums.PluginSettingKey.AutoLoadAPI] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI),
+        [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties),
+        [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = PluginSettings.Get(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation),
     })
 end
 
 Settings.didMount = function(self)
     self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
-        if (key == PluginEnums.PluginSettingKey.AutoLoadAPI) then
+        if (
+            (key == PluginEnums.PluginSettingKey.AutoLoadAPI) or
+            (key == PluginEnums.PluginSettingKey.AutoLoadColorProperties) or
+            (key == PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation)
+        ) then
             self:setState({
-                autoLoadAPI = newValue
-            })
-        elseif (key == PluginEnums.PluginSettingKey.AutoLoadColorProperties) then
-            self:setState({
-                autoLoadColorProps = newValue
+                [key] = newValue,
             })
         end
     end)
@@ -69,7 +70,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, 22),
             LayoutOrder = 0,
             
-            value = self.state.autoLoadAPI,
+            value = self.state[PluginEnums.PluginSettingKey.AutoLoadAPI],
             text = "Automatically load the API on startup",
 
             onChecked = function(newValue)
@@ -81,11 +82,23 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, 30),
             LayoutOrder = 1,
             
-            value = self.state.autoLoadColorProps,
+            value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
             text = "Automatically load the Color Properties window on startup",
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadColorProperties, newValue)
+            end,
+        }),
+
+        AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, 22),
+            LayoutOrder = 2,
+            
+            value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
+            text = "Name palettes before creating them",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
             end,
         }),
     })

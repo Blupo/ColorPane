@@ -2,7 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -36,7 +36,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         onActivated: () -> nil
 ]]
 
-local merge = util.mergeTable
+local merge = Util.mergeTable
 
 local buttonTypes = {
     image = "ImageButton",

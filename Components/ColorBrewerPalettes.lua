@@ -3,7 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local ColorBrewer = require(includes:FindFirstChild("ColorBrewer"))
@@ -16,7 +16,7 @@ local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
 
 ---
 
-local copy = util.copy
+local copy = Util.copy
 local colorSchemes = copy(ColorBrewer)
 local buttonBarHeight = Style.StandardButtonSize + Style.StandardTextSize + Style.MinorElementPadding
 

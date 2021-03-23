@@ -4,7 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local util = require(PluginModules:FindFirstChild("util"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -18,7 +18,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 local ANALOGY_ANGLE = math.pi / 5
 
-local shallowCompare = util.shallowCompare
+local shallowCompare = Util.shallowCompare
 
 local harmonies = {
     {
