@@ -6,7 +6,9 @@ The color editor has several components to it:
 
 If the editor window is large enough, then all of the components will be shown at the same time, otherwise you can use the button bar at the right of the window to pick which one to view. By default, the window is only large enough to show the wheel and sliders.
 
-Outside of being used in a plugin, you can use the plugin toolbar to bring up the color editor at any time.
+![The plugin toolbar](../images/toolbar.png)
+
+You can use the toolbar to bring up the color editor at any time using the *Color Editor* button.
 
 ## Color Wheel
 
@@ -88,4 +90,4 @@ The quick palette at the bottom of the window lets you temporarily store colors 
 
 ![The comparison and hex input](../images/tools.png)
 
-The comparison square shows the current and starting colors (on the top and bottom respectively), with the Quick Palette next to it. If you ever need to start over, you can click on the starting color to reset. The hex input accepts either 3 (`ABC` = `AABBCC`) or 6 (`ABCDEF`) digits.
+The comparison square shows the current and starting colors (on the top and bottom respectively), and you can click on the starting color to set the current color, in case you want to start over. The hex input accepts either 3 (`ABC` = `AABBCC`) or 6 (`ABCDEF`) digits.
