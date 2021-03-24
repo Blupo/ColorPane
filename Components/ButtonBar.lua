@@ -25,18 +25,18 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         selected: number?
         customLayout: boolean?
 
-        displayColor: Color3?
-        selectedDisplayColor: Color3?
-        disabledDisplayColor: Color3?
-
         displayType: "image" | "text"
 
         buttons: array<{
-            name: string?,
+            name: string,
             text: string?,
             image: string?,
 
-            disabled: boolean?
+            disabled: boolean?,
+
+            displayColor: Color3?,
+            selctedDisplayColor: Color3?,
+            disabledDisplayColor: Color3?
         }>
 
         onButtonActivated: (number) -> nil
@@ -121,17 +121,17 @@ ButtonBar.render = function(self)
 
         local displayColor
 
-        if (not buttonInfo.disabled) then
+        if (buttonInfo.disabled) then
+            displayColor = buttonInfo.disabledDisplayColor or theme:GetColor(Enum.StudioStyleGuideColor.ButtonText, Enum.StudioStyleGuideModifier.Disabled)
+        else
             if (selected == i) then
-                displayColor = self.props.selectedDisplayColor or theme:GetColor(
+                displayColor = buttonInfo.selectedDisplayColor or theme:GetColor(
                     Enum.StudioStyleGuideColor.ButtonText,
                     Enum.StudioStyleGuideModifier.Selected
                 )
             else
-                displayColor = self.props.displayColor or theme:GetColor(Enum.StudioStyleGuideColor.ButtonText)
+                displayColor = buttonInfo.displayColor or theme:GetColor(Enum.StudioStyleGuideColor.ButtonText)
             end
-        else
-            displayColor = self.props.disabledDisplayColor or theme:GetColor(Enum.StudioStyleGuideColor.ButtonText, Enum.StudioStyleGuideModifier.Disabled)
         end
 
         if (displayType == "image") then

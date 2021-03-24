@@ -22,8 +22,12 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
 
-local shallowCompare = Util.shallowCompare
+local EDITOR_ICON_DISPLAY_COLOR = Color3.new(1, 1, 1)
+local EDITOR_ICON_SELECTED_COLOR = Color3.new(1, 1, 1)
+local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
+
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
+local shallowCompare = Util.shallowCompare
 
 local getMaxPages = function(width)
     local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
@@ -37,6 +41,10 @@ local editorTabs = {
         name = "wheel",
         image = Style.ColorWheelEditorImage,
 
+        displayColor = EDITOR_ICON_DISPLAY_COLOR,
+        selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
+        disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
+
         getElement = function(self)
             return Roact.createElement(ColorWheel, {
                 editorInputChanged = self.editorInputChangedEvent.Event,
@@ -49,6 +57,10 @@ local editorTabs = {
         name = "sliders",
         image = Style.SliderEditorImage,
 
+        displayColor = EDITOR_ICON_DISPLAY_COLOR,
+        selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
+        disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
+
         getElement = function(self)
             return Roact.createElement(SliderPages, {
                 editorInputChanged = self.editorInputChangedEvent.Event,
@@ -59,6 +71,10 @@ local editorTabs = {
     {
         name = "palettes",
         image = Style.PaletteEditorImage,
+
+        displayColor = EDITOR_ICON_DISPLAY_COLOR,
+        selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
+        disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
 
         getElement = function(self)
             return Roact.createElement(PalettePages)
@@ -166,7 +182,11 @@ ColorEditor.render = function(self)
         editorTabButtons[#editorTabButtons + 1] = {
             name = tab.name,
             image = tab.image,
-            disabled = (i <= numDisabledButtons)
+            disabled = (i <= numDisabledButtons),
+
+            displayColor = tab.displayColor,
+            selectedDisplayColor = tab.selectedDisplayColor,
+            disabledDisplayColor = tab.disabledDisplayColor,
         }
     end
 
@@ -262,10 +282,6 @@ ColorEditor.render = function(self)
                 vertical = true,
                 selected = selectedEditor,
                 buttons = editorTabButtons,
-
-                displayColor = Color3.new(1, 1, 1),
-                selectedDisplayColor = Color3.new(1, 1, 1),
-                disabledDisplayColor = Color3.new(1/3, 1/3, 1/3),
 
                 onButtonActivated = self.props.setEditorPage
             })
