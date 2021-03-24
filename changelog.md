@@ -22,6 +22,7 @@
 - The editor page bar in the color editor window now correctly highlights the currently-chosen editor page
 - Editor pages in the color editor now have the proper minimum width, previously the calculations did not take padding into account and ended up making them slightly smaller than the minimum
 - Fixed improper behaviour in the color wheel due to some misplaced code: the color value should have updated when the left mouse button was pressed down on the saturation-brightness square, however it occurred when the mouse button was released instead
+- If you close the Color Properties window while editing a property, the color editor window(s) should now close
 
 ### Removed
 - Removed the undocumented `OpenColorEditor` function from the API

@@ -271,6 +271,10 @@ PropertiesList.init = function(self)
 end
 
 PropertiesList.willUnmount = function(self)
+    if (self.state.editColorPromise) then
+        self.state.editColorPromise:cancel()
+    end
+
     self.selectionChanged:Disconnect()
     self.selectionColorsChanged:Disconnect()
 
