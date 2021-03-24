@@ -4,7 +4,7 @@ The color editor has several components to it:
 
 [TOC]
 
-If the editor window is large enough, then the color wheel, sliders, and palettes will be shown at the same time, otherwise you can use the button bar at the right of the window to pick which one to view. By default, the window is only large enough to show the wheel and sliders.
+If the editor window is large enough, then all of the components will be shown at the same time, otherwise you can use the button bar at the right of the window to pick which one to view. By default, the window is only large enough to show the wheel and sliders.
 
 Outside of being used in a plugin, you can use the plugin toolbar to bring up the color editor at any time.
 
@@ -12,7 +12,7 @@ Outside of being used in a plugin, you can use the plugin toolbar to bring up th
 
 ![Color wheel](../images/color-wheel.png)
 
-The color wheel is an [HSB](https://wikipedia.org/wiki/HSL_and_HSV) color wheel with a square for the Saturation and Brightness. There is a button bar at the bottom for basic color harmonies. The main color markers are denoted as circles, while any harmonies are denoted as squares.
+The color wheel is a standard [HSB](https://wikipedia.org/wiki/HSL_and_HSV) color wheel, with a ring for the hue and an inner square for the saturation and brightness. There is also a button bar at the bottom for basic color harmonies. The main color markers are denoted as circles, while any harmonies are denoted as squares.
 
 ## Sliders
 
@@ -28,30 +28,52 @@ There are 6 types of sliders:
 - Temperature
     - Lets you pick colors corresponding to Kelvin temperatures, with some presets. Implementation is based on [neilbartlett's color-temperature](https://github.com/neilbartlett/color-temperature).
 
+!!! hint
+    On the Slider and Palette editors, you can use the scroll wheel on the respective page selector to traverse the page list without having to open the dropdown.
+
 ## Palettes
 
-![The palettes view](../images/palettes.png)
+![The grid view for palettes](../images/palettes.png)
 
-Palettes let you store lists of colors. The overflow menu lets you create, delete, rename, and duplicate palettes.
+Palettes let you store lists of colors. The overflow menu lets you create, duplicate, rename and delete palettes. You can use the search bar to filter colors, and you can use the ![plus](../images/plus.png) button to add colors to the palette.
 
-You can use the search bar to filter colors, and you can use the ![plus](../images/plus.png) button to add colors to the palette. Clicking on a color will select it, which allows you to use the color options:
+!!! hint
+    By default you will be prompted to name palettes before creating them. You can disable this in the Settings.
 
-- The *Set Color* button will set the current color to the selected color (you can also double-click on a color to do this)
+### Grid View
+
+Grid view (pictured above) is the default view for palettes, and allows for easy access to colors. Clicking on a color will select it, which allows you to use the color options:
+
+- The *Set Color* button will set the current color to the selected color (you can also double-click on the color)
 - The ![minus](../images/minus.png) button will remove the color from the palette
 - The ![left](../images/left.png) and ![right](../images/right.png) buttons will move the color around the list
 - You can rename the color using the text box
 
-ColorPane includes two built-in palettes:
+### List View
 
-- A BrickColor palette
+![The list view for palettes](../images/palettes-list.png)
+
+List view is useful for palettes where the color names are important. Clicking on a list item will select it, which shows the color options:
+
+- The ![minus](../images/minus.png) button will remove the color from the palette
+- The ![up](../images/up.png) and ![down](../images/down.png) buttons will move the color around the list
+- The name label will turn into a text box, with which you can change the name of the color
+
+To set the current color, click on the color box inside the list item.
+
+### Built-In Palettes
+
+ColorPane includes some built-in palettes:
+
+- A [BrickColor](https://developer.roblox.com/articles/BrickColor-Codes) palette
 - A page for the [ColorBrewer](https://colorbrewer2.org) palettes (clicking on a color in the ColorBrewer page will immediately set the current color instead of selecting it)
+- A [web colors](https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors) palette
 
-!!! info
-    You cannot create a palette with any of the following names, as they correspond to the names of built-in palettes (case in-sensitive):
+## Color Information
 
-    - BrickColor
-    - BrickColors
-    - ColorBrewer
+![The color information](../images/color-info.png)
+
+The information page shows the components for different color conversions. You can copy from the text boxes if you need to use the color somewhere else, or paste into the text boxes (in the format you see) to change the color.
 
 ## Quick Palette
 

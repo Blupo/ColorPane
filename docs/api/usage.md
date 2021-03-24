@@ -69,7 +69,3 @@ end)
 
 !!! info
     Any open prompts will be closed and their associated Promises will be cancelled automatically, and any connections to Unloading will be disconnected automatically.
-
-## Example: ColorProps
-
-[ColorProps](https://www.roblox.com/library/6494015679) is plugin that lets you view and edit the color properties of objects using ColorPane. You can [view its source code](https://github.com/Blupo/ColorProps) if you want to see an example of a plugin that uses ColorPane.

@@ -4,7 +4,7 @@
 
 You can add a new keypoint by clicking on the empty space in the gradient view, as long as your cursor isn't snapped to another keypoint and you haven't reached the keypoint limit.
 
-You can remove a keypoint by selecting it and pressing the ![minus](../images/minus.png) button, or you can right-click on it (without having to select it). 
+You can remove a keypoint by selecting it and pressing the ![minus](../images/minus.png) button, or you can right-click on it. 
 
 ## Editing Keypoints
 
