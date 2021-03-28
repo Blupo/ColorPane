@@ -5,7 +5,7 @@ To manually load the API, click on the *Load API* button in the plugin's toolbar
 ![The plugin toolbar](../images/toolbar.png)
 
 !!! info
-    Loading the API requires script injection, and you will be prompted to allow this if this is the first time you're loading the API.
+    Loading the API requires script injection, and you will be prompted to allow this the first time you try to do it.
 
 You also have the option to load the API automatically at startup. To do this, go to the Settings window and enable the *Automatically load the API on startup* option.
 
