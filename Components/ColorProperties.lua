@@ -1,3 +1,7 @@
+local RunService = game:GetService("RunService")
+
+---
+
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
@@ -159,7 +163,43 @@ ColorProperties.willUnmount = function(self)
 end
 
 ColorProperties.render = function(self)
-    return Roact.createElement(self.state.apiLoaded and PropertiesList or NoAPIAlert)
+    local theme = self.props.theme
+    local element 
+
+    if (not RunService:IsEdit()) then
+        element = Roact.createElement("Frame", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Size = UDim2.new(1, 0, 1, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 0,
+            BorderSizePixel = 0,
+
+            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
+        }, {
+            UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+
+            Notice = Roact.createElement("TextLabel", {
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                Size = UDim2.new(1, 0, 1, 0),
+                Position = UDim2.new(0.5, 0, 0.5, 0),
+                BackgroundTransparency = 1,
+                BorderSizePixel = 0,
+
+                Font = Style.StandardFont,
+                TextSize = Style.StandardTextSize,
+                TextXAlignment = Enum.TextXAlignment.Center,
+                TextYAlignment = Enum.TextYAlignment.Center,
+                TextWrapped = true,
+                Text = "Color Properties is disabled in testing modes",
+                
+                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
+            }),
+        })
+    else
+        element = Roact.createElement(self.state.apiLoaded and PropertiesList or NoAPIAlert)
+    end
+
+    return element
 end
 
 ---

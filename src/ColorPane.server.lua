@@ -1,4 +1,5 @@
 local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
 
 ---
 
@@ -112,7 +113,7 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
     end
 end
 
-if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) then
+if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties) and RunService:IsEdit()) then
     local startupRequestFinished
     startupRequestFinished = RobloxAPI.DataRequestFinished:Connect(function(success)
         startupRequestFinished:Disconnect()
@@ -123,6 +124,9 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) th
     end)
 
     RobloxAPI.GetData()
+end
+
+if (colorPropertiesWidget.Enabled) then
     mountColorProperties()
 end
 

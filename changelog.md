@@ -1,3 +1,8 @@
+## [0.2.1] - 2021-03-29
+### Fixed
+- The Color Properties window no longer tries to load in testing modes
+- The Color Properties window will now show the loading screen if it is enabled on startup instead of being blank
+
 ## [0.2.0] - 2021-03-29
 ### Added
 - Added a Settings window
