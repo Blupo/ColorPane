@@ -16,7 +16,8 @@ CoreGui.ChildAdded:Connect(function(child)
 end)
 ```
 
-Keep in mind that the API script may not be available when your plugin starts, and it will never appear if the user does not have ColorPane installed or does not allow script injection.
+!!! info
+    Keep in mind that the API script may not be available when your plugin starts, and it will never appear if the user does not have ColorPane installed or does not allow script injection.
 
 ## Getting Colors
 
