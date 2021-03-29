@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
+     <loc>https://blupo.github.io/ColorPane/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/user-guide/color-editor/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/user-guide/colorsequence-editor/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/user-guide/color-properties/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/user-guide/api-integrations/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/api/usage/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://blupo.github.io/ColorPane/api/reference/</loc>
+     <lastmod>2021-03-29</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+</urlset>

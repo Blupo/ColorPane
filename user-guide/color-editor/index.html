@@ -1,0 +1,698 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <link rel="canonical" href="https://blupo.github.io/ColorPane/user-guide/color-editor/">
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.0">
+    
+    
+      
+        <title>Color Editor - ColorPane</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bc7e593a.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab28b872.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ffffff">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="white" data-md-color-accent="blue">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#color-wheel" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://blupo.github.io/ColorPane" title="ColorPane" class="md-header-nav__button md-logo" aria-label="ColorPane">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            ColorPane
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Color Editor
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/Blupo/ColorPane/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Blupo/ColorPane
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://blupo.github.io/ColorPane" title="ColorPane" class="md-nav__button md-logo" aria-label="ColorPane">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    ColorPane
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/Blupo/ColorPane/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Blupo/ColorPane
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      User Guide
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        User Guide
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Color Editor
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Color Editor
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#color-wheel" class="md-nav__link">
+    Color Wheel
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sliders" class="md-nav__link">
+    Sliders
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    Palettes
+  </a>
+  
+    <nav class="md-nav" aria-label="Palettes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-view" class="md-nav__link">
+    Grid View
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-view" class="md-nav__link">
+    List View
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#built-in-palettes" class="md-nav__link">
+    Built-In Palettes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-information" class="md-nav__link">
+    Color Information
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-palette" class="md-nav__link">
+    Quick Palette
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-and-hex-input" class="md-nav__link">
+    Comparison and Hex Input
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../colorsequence-editor/" class="md-nav__link">
+      ColorSequence Editor
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../color-properties/" class="md-nav__link">
+      Color Properties
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../api-integrations/" class="md-nav__link">
+      API Integrations
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      API
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/usage/" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/reference/" class="md-nav__link">
+      Reference
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#color-wheel" class="md-nav__link">
+    Color Wheel
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sliders" class="md-nav__link">
+    Sliders
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#palettes" class="md-nav__link">
+    Palettes
+  </a>
+  
+    <nav class="md-nav" aria-label="Palettes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grid-view" class="md-nav__link">
+    Grid View
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list-view" class="md-nav__link">
+    List View
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#built-in-palettes" class="md-nav__link">
+    Built-In Palettes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-information" class="md-nav__link">
+    Color Information
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-palette" class="md-nav__link">
+    Quick Palette
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-and-hex-input" class="md-nav__link">
+    Comparison and Hex Input
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/Blupo/ColorPane/edit/master/docs/user-guide/color-editor.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Color Editor</h1>
+                
+                <p><img alt="The color editor" src="../../images/all-editors.png" /></p>
+<p>The color editor has several components to it:</p>
+<div class="toc">
+<ul>
+<li><a href="#color-wheel">Color Wheel</a></li>
+<li><a href="#sliders">Sliders</a></li>
+<li><a href="#palettes">Palettes</a><ul>
+<li><a href="#grid-view">Grid View</a></li>
+<li><a href="#list-view">List View</a></li>
+<li><a href="#built-in-palettes">Built-In Palettes</a></li>
+</ul>
+</li>
+<li><a href="#color-information">Color Information</a></li>
+<li><a href="#quick-palette">Quick Palette</a></li>
+<li><a href="#comparison-and-hex-input">Comparison and Hex Input</a></li>
+</ul>
+</div>
+<p>If the editor window is large enough, then all of the components will be shown at the same time, otherwise you can use the button bar at the right of the window to pick which one to view. By default, the window is only large enough to show the wheel and sliders.</p>
+<p><img alt="The plugin toolbar" src="../../images/toolbar.png" /></p>
+<p>You can use the toolbar to bring up the color editor at any time using the <em>Color Editor</em> button.</p>
+<h2 id="color-wheel">Color Wheel<a class="headerlink" href="#color-wheel" title="Permanent link">&para;</a></h2>
+<p><img alt="Color wheel" src="../../images/color-wheel.png" /></p>
+<p>The color wheel is a standard <a href="https://wikipedia.org/wiki/HSL_and_HSV">HSB</a> color wheel, with a ring for the hue and an inner square for the saturation and brightness. There is also a button bar at the bottom for basic color harmonies. The main color markers are denoted as circles, while any harmonies are denoted as squares.</p>
+<h2 id="sliders">Sliders<a class="headerlink" href="#sliders" title="Permanent link">&para;</a></h2>
+<p><img alt="RGB sliders" src="../../images/rgb-sliders.png" /></p>
+<p>There are 6 types of sliders:</p>
+<ul>
+<li>RGB</li>
+<li>CMYK</li>
+<li>HSB</li>
+<li>HSL</li>
+<li>Monochrome (black-and-white)</li>
+<li>Temperature<ul>
+<li>Lets you pick colors corresponding to Kelvin temperatures, with some presets. Implementation is based on <a href="https://github.com/neilbartlett/color-temperature">neilbartlett's color-temperature</a>.</li>
+</ul>
+</li>
+</ul>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>On the Slider and Palette editors, you can use the scroll wheel on the respective page selector to traverse the page list without having to open the dropdown.</p>
+</div>
+<h2 id="palettes">Palettes<a class="headerlink" href="#palettes" title="Permanent link">&para;</a></h2>
+<p><img alt="The grid view for palettes" src="../../images/palettes.png" /></p>
+<p>Palettes let you store lists of colors. The overflow menu lets you create, duplicate, rename and delete palettes. You can use the search bar to filter colors, and you can use the <img alt="plus" src="../../images/plus.png" /> button to add colors to the palette.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>By default you will be prompted to name palettes before creating them. You can disable this in the Settings.</p>
+</div>
+<h3 id="grid-view">Grid View<a class="headerlink" href="#grid-view" title="Permanent link">&para;</a></h3>
+<p>Grid view (pictured above) is the default view for palettes, and allows for easy access to colors. Clicking on a color will select it, which allows you to use the color options:</p>
+<ul>
+<li>The <em>Set Color</em> button will set the current color to the selected color (you can also double-click on the color)</li>
+<li>The <img alt="minus" src="../../images/minus.png" /> button will remove the color from the palette</li>
+<li>The <img alt="left" src="../../images/left.png" /> and <img alt="right" src="../../images/right.png" /> buttons will move the color around the list</li>
+<li>You can rename the color using the text box</li>
+</ul>
+<h3 id="list-view">List View<a class="headerlink" href="#list-view" title="Permanent link">&para;</a></h3>
+<p><img alt="The list view for palettes" src="../../images/palettes-list.png" /></p>
+<p>List view is useful for palettes where the color names are important. Clicking on a list item will select it, which shows the color options:</p>
+<ul>
+<li>The <img alt="minus" src="../../images/minus.png" /> button will remove the color from the palette</li>
+<li>The <img alt="up" src="../../images/up.png" /> and <img alt="down" src="../../images/down.png" /> buttons will move the color around the list</li>
+<li>The name label will turn into a text box, with which you can change the name of the color</li>
+</ul>
+<p>To set the current color, click on the color box inside the list item.</p>
+<h3 id="built-in-palettes">Built-In Palettes<a class="headerlink" href="#built-in-palettes" title="Permanent link">&para;</a></h3>
+<p>ColorPane includes some built-in palettes:</p>
+<ul>
+<li>A <a href="https://developer.roblox.com/articles/BrickColor-Codes">BrickColor</a> palette</li>
+<li>A page for the <a href="https://colorbrewer2.org">ColorBrewer</a> palettes (clicking on a color in the ColorBrewer page will immediately set the current color instead of selecting it)</li>
+<li>A <a href="https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors">web colors</a> palette</li>
+</ul>
+<h2 id="color-information">Color Information<a class="headerlink" href="#color-information" title="Permanent link">&para;</a></h2>
+<p><img alt="The color information" src="../../images/color-info.png" /></p>
+<p>The information page shows the components for different color conversions. You can copy from the text boxes if you need to use the color somewhere else, or paste into the text boxes (in the format you see) to change the color.</p>
+<h2 id="quick-palette">Quick Palette<a class="headerlink" href="#quick-palette" title="Permanent link">&para;</a></h2>
+<p><img alt="The quick palette" src="../../images/quick-palette.png" /></p>
+<p>The quick palette at the bottom of the window lets you temporarily store colors for quick access. The <img alt="plus" src="../../images/plus.png" /> button will add the current color, and clicking on a color will set the current color.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The quick palette will display as many colors as the size of the window can accomodate, and stores up to 99. If you add more colors after the 99th, colors will be removed from the end of the list to accommodate.</p>
+</div>
+<h2 id="comparison-and-hex-input">Comparison and Hex Input<a class="headerlink" href="#comparison-and-hex-input" title="Permanent link">&para;</a></h2>
+<p><img alt="The comparison and hex input" src="../../images/tools.png" /></p>
+<p>The comparison square shows the current and starting colors (on the top and bottom respectively), and you can click on the starting color to set the current color, in case you want to start over. The hex input accepts either 3 (<code>ABC</code> = <code>AABBCC</code>) or 6 (<code>ABCDEF</code>) digits.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../.." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../colorsequence-editor/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                ColorSequence Editor
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.6a3d08fc.min.js"></script>
+      <script src="../../assets/javascripts/bundle.71201edf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
