@@ -59,7 +59,7 @@ Palette.render = function(self)
 
     if (searchTerm) then
         for paletteIndex in pairs(paletteColorsSlice) do 
-            paletteColorsSliceToWholeMap[#paletteColorsSliceToWholeMap + 1] = paletteIndex
+            table.insert(paletteColorsSliceToWholeMap, paletteIndex)
         end
 
         table.sort(paletteColorsSliceToWholeMap)

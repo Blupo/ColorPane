@@ -91,7 +91,7 @@ local getSafeSelection = function()
 		end)
 
 		if (passesSecurityCheck and hasValidClassName) then
-			safeSelection[#safeSelection + 1] = obj
+			table.insert(safeSelection, obj)
 		end
 	end
 
@@ -156,11 +156,10 @@ updateSelectionCommonPropertyValues = function()
             local obj = selection[i]
 
             if (obj:IsA(propertyClassName)) then
-                commonPropertyValues[#commonPropertyValues + 1] = APIInterface:GetProperty(obj, propertyName, propertyClassName, true)
+                table.insert(commonPropertyValues, APIInterface:GetProperty(obj, propertyName, propertyClassName, true))
 
                 if (isNative and shouldListenForPropertyChanges) then
-                    selectionPropertyValuesChangedConnections[#selectionPropertyValuesChangedConnections + 1] =
-                        obj:GetPropertyChangedSignal(propertyName):Connect(updateSelectionCommonPropertyValues)
+                    table.insert(selectionPropertyValuesChangedConnections, obj:GetPropertyChangedSignal(propertyName):Connect(updateSelectionCommonPropertyValues))
                 end
             end
         end

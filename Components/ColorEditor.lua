@@ -179,7 +179,7 @@ ColorEditor.render = function(self)
     for i = 1, #editorTabs do
         local tab = editorTabs[i]
 
-        editorTabButtons[#editorTabButtons + 1] = {
+        table.insert(editorTabButtons, {
             name = tab.name,
             image = tab.image,
             disabled = (i <= numDisabledButtons),
@@ -187,7 +187,7 @@ ColorEditor.render = function(self)
             displayColor = tab.displayColor,
             selectedDisplayColor = tab.selectedDisplayColor,
             disabledDisplayColor = tab.disabledDisplayColor,
-        }
+        })
     end
 
     for i = 1, #self.props.quickPalette do

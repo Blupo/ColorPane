@@ -8,10 +8,10 @@ for i = 1, 1032 do
 
     -- BrickColors that don't exist default to #194
     if ((brickColor.Number ~= 194) or (i == 194)) then
-        brickColorsPalette.colors[#brickColorsPalette.colors + 1] = {
+        table.insert(brickColorsPalette.colors, {
             name = brickColor.Name,
             color = brickColor.Color
-        }
+        })
     end
 end
 

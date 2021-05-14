@@ -295,7 +295,7 @@ PropertiesList.render = function(self)
         local propertyName = propertyData.Name
         
         propertyNameCounts[propertyName] = (propertyNameCounts[propertyName] or 0) + 1
-        propertiesArray[#propertiesArray + 1] = propertyData
+        table.insert(propertiesArray, propertyData)
     end
 
     for propertyData, propertyClassName in pairs(properties) do

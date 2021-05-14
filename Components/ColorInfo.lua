@@ -156,7 +156,7 @@ ColorInfo.render = function(self)
     for i = 1, #infoComponents do
         local component = infoComponents[i]
 
-        pageElement[#pageElement + 1] = Roact.createElement("Frame", {
+        table.insert(pageElement, Roact.createElement("Frame", {
             Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
             LayoutOrder = i,
             BackgroundTransparency = 1,
@@ -194,7 +194,7 @@ ColorInfo.render = function(self)
                     self.props.setColor(Color.toColor3(component.getColor(newText)))
                 end,
             })
-        })
+        }))
     end
 
     pageElement["UIListLayout"] = Roact.createElement("UIListLayout", {

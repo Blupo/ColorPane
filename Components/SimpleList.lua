@@ -57,7 +57,7 @@ SimpleList.render = function(self)
         end
 
         if (shouldShowSectionHeader) then
-            listItems[#listItems + 1] = Roact.createElement("TextLabel", {
+            table.insert(listItems, Roact.createElement("TextLabel", {
                 Size = UDim2.new(1, 0, 0, self.props.itemHeight),
                 BackgroundTransparency = 0,
                 BorderSizePixel = 0,
@@ -75,7 +75,7 @@ SimpleList.render = function(self)
                 UIPadding = self.props.itemPadding and
                     Roact.createElement(Padding, {0, 0, self.props.itemPadding, 0})
                 or nil,
-            })
+            }))
         end
 
         for j = 1, #section.items do
@@ -92,7 +92,7 @@ SimpleList.render = function(self)
                 end
             end
 
-            listItems[#listItems + 1] = Roact.createElement("TextButton", {
+            table.insert(listItems, Roact.createElement("TextButton", {
                 Size = UDim2.new(1, 0, 0, self.props.itemHeight),
                 AutoButtonColor = false,
                 BackgroundTransparency = 0,
@@ -127,7 +127,7 @@ SimpleList.render = function(self)
                 [Roact.Event.Activated] = function()
                     item.onActivated()
                 end,
-            }, children)
+            }, children))
         end
     end
 

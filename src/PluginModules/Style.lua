@@ -98,7 +98,7 @@ do
             local newImageLabel = Instance.new("ImageLabel")
             newImageLabel.Image = value
 
-            styleImages[#styleImages + 1] = newImageLabel
+            table.insert(styleImages, newImageLabel)
         end
     end
 

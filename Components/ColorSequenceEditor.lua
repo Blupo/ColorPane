@@ -201,7 +201,7 @@ ColorSequenceEditor.render = function(self)
         local keypoint = keypoints[i]
         local isFixed = (i == 1) or (i == #keypoints)
 
-        gradientElements[#gradientElements + 1] = Roact.createElement("Frame", {
+        table.insert(gradientElements, Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Position = UDim2.new(keypoint.Time, 0, 0.5, 0),
             Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
@@ -236,7 +236,7 @@ ColorSequenceEditor.render = function(self)
                     or nil,
                 })
             or nil
-        })
+        }))
     end
 
     gradientElements["Marker"] = (self.state.showTimelineMarker or self.state.tracking) and
@@ -333,7 +333,7 @@ ColorSequenceEditor.render = function(self)
                                         local newKeypointTime = round(timelineProgress, math.log10(timeSnapValue))
 
                                         local newKeypoint = ColorSequenceKeypoint.new(newKeypointTime, evalutateColorSequence(colorSequence, newKeypointTime))
-                                        keypoints[#keypoints + 1] = newKeypoint
+                                        table.insert(keypoints, newKeypoint)
 
                                         table.sort(keypoints, function(keypointA, keypointB)
                                             return keypointA.Time < keypointB.Time

@@ -57,8 +57,8 @@ for _, materialEnumItem in pairs(materialEnumItems) do
             end,
         }
 
-        terrainMaterialColorProperties[#terrainMaterialColorProperties + 1] = newPropertyData
-        terrainMaterialColorBehaviours[#terrainMaterialColorBehaviours + 1] = newPropertyBehaviour
+        table.insert(terrainMaterialColorProperties, newPropertyData)
+        table.insert(terrainMaterialColorBehaviours, newPropertyBehaviour)
     end
 end
 

@@ -115,10 +115,10 @@ return function(plugin)
             local palettes = state.colorEditor.palettes
             local paletteName = getNewPaletteName(palettes, action.name or "New Palette")
 
-            palettes[#palettes + 1] = {
+            table.insert(palettes, {
                 name = paletteName,
                 colors = {}
-            }
+            })
 
             state.colorEditor.lastPaletteModification = os.clock()
             return state
@@ -149,7 +149,7 @@ return function(plugin)
             local paletteCopy = copy(palettes[paletteIndex])
             paletteCopy.name = newPaletteName
 
-            palettes[#palettes + 1] = paletteCopy
+            table.insert(palettes, paletteCopy)
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
@@ -177,10 +177,10 @@ return function(plugin)
             local paletteColors = palette.colors
             local colorName = getNewPaletteColorName(paletteColors, action.name or "New Color")
 
-            paletteColors[#paletteColors + 1] = {
+            table.insert(paletteColors, {
                 name = colorName,
                 color = action.color
-            }
+            })
 
             state.colorEditor.lastPaletteModification = os.clock()
             return state
@@ -196,10 +196,10 @@ return function(plugin)
             local paletteColors = palette.colors
             local colorName = getNewPaletteColorName(paletteColors, action.name or "New Color")
 
-            paletteColors[#paletteColors + 1] = {
+            table.insert(paletteColors, {
                 name = colorName,
                 color = state.colorEditor.color
-            }
+            })
 
             state.colorEditor.lastPaletteModification = os.clock()
             return state

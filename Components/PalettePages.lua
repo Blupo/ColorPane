@@ -212,22 +212,22 @@ PalettePages.render = function(self)
     for i = 1, numBuiltInPalettes do
         local palette = BuiltInPalettes[i]
 
-        builtInPalettePages[#builtInPalettePages + 1] = {
+        table.insert(builtInPalettePages, {
             name = palette.name,
             content = palette.getContent()
-        }
+        })
     end
 
     for i = 1, #palettes do
         local palette = palettes[i]
 
-        userPalettePages[#userPalettePages + 1] = {
+        table.insert(userPalettePages, {
             name = palette.name,
 
             content = Roact.createElement(Palette, {
                 palette = palette
             })
-        }
+        })
     end
     
     if (self.state.showNamePalettePrompt) then

@@ -98,7 +98,7 @@ Pages.render = function(self)
                 local page = sectionPages[j]
 
                 if (page ~= currentPage) then
-                    pageListSection.items[#pageListSection.items + 1] = {
+                    table.insert(pageListSection.items, {
                         name = page.name,
                         layoutOrder = page.layoutOrder,
     
@@ -112,7 +112,7 @@ Pages.render = function(self)
                                 self.props.onPageChanged(i, j)
                             end
                         end,
-                    }
+                    })
                 end
             end
         end
@@ -135,7 +135,7 @@ Pages.render = function(self)
         for i = 1, #options do
             local option = options[i]
 
-            optionListItems[#optionListItems + 1] = {
+            table.insert(optionListItems, {
                 name = option.name,
 
                 onActivated = function()
@@ -150,7 +150,7 @@ Pages.render = function(self)
                 [Roact.Children] = {
                     Padding = Roact.createElement(Padding, {0, 0, Style.SpaciousElementPadding, 0}),
                 }
-            }
+            })
         end
 
         list = Roact.createElement(SimpleList, {

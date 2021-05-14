@@ -34,13 +34,13 @@ local shallowCompare = function(t1, t2)
 
     for k, v in pairs(t1) do
         if (t2[k] ~= v) then
-            diff[#diff + 1] = k
+            table.insert(diff, k)
         end
     end
 
     for k, v in pairs(t2) do
         if ((not table.find(diff, k)) and (t1[k] ~= v)) then
-            diff[#diff + 1] = k
+            table.insert(diff, k)
         end
     end
 

@@ -47,10 +47,10 @@ local numDataClassesButtons = {}
 for i = 1, 10 do
     local num = i + 2
 
-    numDataClassesButtons[#numDataClassesButtons + 1] = {
+    table.insert(numDataClassesButtons, {
         name = num,
         text = num,
-    }
+    })
 end
 
 for _, scheme in pairs(colorSchemes) do

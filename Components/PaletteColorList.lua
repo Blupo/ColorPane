@@ -65,7 +65,7 @@ PaletteColorList.render = function(self)
             listItemHeight = (Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)
         end
 
-        listElements[#listElements + 1] = Roact.createElement("TextButton", {
+        table.insert(listElements, Roact.createElement("TextButton", {
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
             AutoButtonColor = false,
@@ -194,7 +194,7 @@ PaletteColorList.render = function(self)
                     or nil,
                 })
             or nil,
-        })
+        }))
     end
 
     listElements["UIListLayout"] = Roact.createElement("UIListLayout", {
