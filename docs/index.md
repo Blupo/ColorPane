@@ -9,7 +9,3 @@ You can install it [from the library](https://roblox.com/library/6474565567/Colo
 ![The ColorSequence editor](images/colorsequence-editor.png)
 
 ![The color properties window](images/color-properties.png)
-
----
-
-This product includes color specifications and designs developed by Cynthia Brewer ([http://colorbrewer.org/](http://colorbrewer.org/)).

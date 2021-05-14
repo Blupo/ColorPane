@@ -20,6 +20,7 @@ nav:
   - API:
     - Usage: api/usage.md
     - Reference: api/reference.md
+  - Attribution: attribution.md
   
 markdown_extensions:
   - admonition
