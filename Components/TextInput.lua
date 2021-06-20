@@ -15,11 +15,11 @@ local Padding = require(Components:FindFirstChild("Padding"))
 --[[
     props
         AnchorPoint?
-        PlaceholderText?
         Position?
         Size?
         
         Text
+        PlaceholderText?
         TextSize?
         TextXAlignment?
 

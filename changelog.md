@@ -1,3 +1,12 @@
+## Unreleased
+
+### Added
+- Added the ability to import palettes from ModuleScripts, StringValues, JSON files, or URLs
+- Added the ability to export palettes as ModuleScripts or StringValues
+
+### Fixed
+- Fixed a bug that occurred when the API script was modified while the API wasn't loaded
+
 ## [0.2.1] - 2021-03-29
 ### Fixed
 - The Color Properties window no longer tries to load in testing modes

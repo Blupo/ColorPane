@@ -53,7 +53,7 @@ PluginSettings.init = function(initPlugin)
     pluginSettings = initPlugin:GetSetting(SETTINGS_KEY) or {}
 
     do
-        -- Migrate old settings
+        -- Migrate old settings (before v0.2)
         local oldPalettes, oldSnap = PluginSettings.Get("palettes"), PluginSettings.Get("snap")
     
         if (oldPalettes) then

@@ -790,14 +790,14 @@ end
 
 SliderPages = function(props)
     return Roact.createElement(Pages, {
-        initPage = props.lastSliderPage,
+        selectedPage = props.lastSliderPage,
         onPageChanged = props.updateSliderPage,
 
         pageSections = {
             {
                 name = "",
 
-                pages = {
+                items = {
                     {
                         name = "RGB",
 

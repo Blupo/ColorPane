@@ -75,6 +75,11 @@ local Style = {
     ToolbarSettingsButtonImage = "rbxassetid://6528624327",
     ToolbarColorPropertiesButtonImage = "rbxassetid://6531028502",
 
+    -- status
+    StatusGoodImage = "rbxassetid://1469818624",
+    StatusBadImage = "rbxassetid://367878870",
+    StatusWaitingImage = "rbxassetid://6973265105",
+
     -- other
     MarkerSize = 8,
     StandardCornerRadius = 4,

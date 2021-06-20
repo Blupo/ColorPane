@@ -10,3 +10,6 @@
 [submodule "includes/APIUtils"]
 	path = includes/APIUtils
 	url = https://github.com/Blupo/roblox-apiutils
+[submodule "includes/t"]
+	path = includes/t
+	url = https://github.com/osyrisrblx/t

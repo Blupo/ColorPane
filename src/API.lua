@@ -63,8 +63,15 @@ local isOptionalType = function(value, typeName)
 end
 
 local onUnloading = function(waitToDestroy)
-    scriptReparentedEvent:Disconnect()
-    pluginUnloadingEvent:Disconnect()
+    if (scriptReparentedEvent) then
+        scriptReparentedEvent:Disconnect()
+        scriptReparentedEvent = nil
+    end
+
+    if (pluginUnloadingEvent) then
+        pluginUnloadingEvent:Disconnect()
+        pluginUnloadingEvent = nil
+    end
 
     if (unloadingEvent) then
         unloadingEvent:Fire()

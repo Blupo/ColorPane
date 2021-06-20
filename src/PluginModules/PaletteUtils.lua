@@ -1,3 +1,25 @@
+local root = script.Parent.Parent
+
+local includes = root:FindFirstChild("includes")
+local t = require(includes:FindFirstChild("t"))
+
+
+---
+
+local paletteTypeCheck = t.strictInterface({
+    name = t.string,
+
+    colors = t.array(t.strictInterface({
+        name = t.string,
+        
+        color = t.strictInterface({
+            [1] = t.numberConstrained(0, 1),
+            [2] = t.numberConstrained(0, 1),
+            [3] = t.numberConstrained(0, 1),
+        })
+    }))
+})
+
 local getNewItemName = function(items, originalName, selfIndex)
     local found = false
     local numDuplicates = 0
@@ -41,6 +63,35 @@ local getPaletteColorIndex = function(paletteColors, colorName)
     end
 end
 
+local validate = function(palette)
+    -- type check
+    local typeCheckSuccess, message = paletteTypeCheck(palette)
+    if (not typeCheckSuccess) then return false, message end
+
+    -- check for "blank" name
+    local substitutedPaletteName = string.gsub(palette.name, "%s+", "")
+    if (string.len(substitutedPaletteName) < 1) then return false, "palette name is blank" end
+
+    -- check for colors with the same or "blank" names
+    local colorNameMap = {}
+
+    for i = 1, #palette.colors do
+        local color = palette.colors[i]
+        local name = color.name
+
+        local substitutedName = string.gsub(name, "%s+", "")
+        if (string.len(substitutedName) < 1) then return false, "color name is blank" end
+
+        if (colorNameMap[name]) then
+            return false, "duplicate color name"
+        else
+            colorNameMap[name] = true
+        end
+    end
+
+    return true, nil
+end
+
 ---
 
 return {
@@ -48,4 +99,5 @@ return {
     getNewPaletteColorName = getNewItemName,
     getPalette = getPalette,
     getPaletteColorIndex = getPaletteColorIndex,
+    validate = validate,
 }

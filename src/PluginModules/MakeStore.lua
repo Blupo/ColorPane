@@ -113,12 +113,17 @@ return function(plugin)
             state = copy(state)
 
             local palettes = state.colorEditor.palettes
-            local paletteName = getNewPaletteName(palettes, action.name or "New Palette")
 
-            table.insert(palettes, {
-                name = paletteName,
-                colors = {}
-            })
+            if (action.palette) then
+                table.insert(palettes, action.palette)
+            else
+                local paletteName = getNewPaletteName(palettes, action.name or "New Palette")
+
+                table.insert(palettes, {
+                    name = paletteName,
+                    colors = {}
+                })
+            end
 
             state.colorEditor.lastPaletteModification = os.clock()
             return state
