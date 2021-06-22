@@ -3,6 +3,7 @@
 ### Added
 - Added the ability to import palettes from ModuleScripts, StringValues, JSON files, or URLs
 - Added the ability to export palettes as ModuleScripts or StringValues
+- Users will now be notified at startup if their version of ColorPane is out-of-date, with the option to disable this in the Settings
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded

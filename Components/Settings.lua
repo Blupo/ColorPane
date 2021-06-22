@@ -22,6 +22,7 @@ Settings.init = function(self)
         [PluginEnums.PluginSettingKey.AutoLoadAPI] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI),
         [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties),
         [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = PluginSettings.Get(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation),
+        [PluginEnums.PluginSettingKey.AutoCheckForUpdate] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate),
     })
 end
 
@@ -30,7 +31,8 @@ Settings.didMount = function(self)
         if (
             (key == PluginEnums.PluginSettingKey.AutoLoadAPI) or
             (key == PluginEnums.PluginSettingKey.AutoLoadColorProperties) or
-            (key == PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation)
+            (key == PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation) or
+            (key == PluginEnums.PluginSettingKey.AutoCheckForUpdate)
         ) then
             self:setState({
                 [key] = newValue,
@@ -90,9 +92,21 @@ Settings.render = function(self)
             end,
         }),
 
-        AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
+        AutoCheckForUpdate = Roact.createElement(Checkbox, {
             Size = UDim2.new(1, 0, 0, 22),
             LayoutOrder = 2,
+            
+            value = self.state[PluginEnums.PluginSettingKey.AutoCheckForUpdate],
+            text = "Check for updates on startup",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.AutoCheckForUpdate, newValue)
+            end,
+        }),
+
+        AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, 22),
+            LayoutOrder = 3,
             
             value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
             text = "Name palettes before creating them",

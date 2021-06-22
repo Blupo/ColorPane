@@ -12,6 +12,7 @@ local DEFAULTS = {
     [PluginEnums.PluginSettingKey.SnapValue] = 0.1/100,
     [PluginEnums.PluginSettingKey.AutoLoadAPI] = false,
     [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = false,
+    [PluginEnums.PluginSettingKey.AutoCheckForUpdate] = true,
 }
 
 ---

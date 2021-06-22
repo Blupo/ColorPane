@@ -18,6 +18,7 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
+local UpdateChecker = require(PluginModules:FindFirstChild("UpdateChecker"))
 
 local Components = root:FindFirstChild("Components")
 local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
@@ -105,6 +106,10 @@ if (CoreGui:FindFirstChild("ColorPane")) then
     warn("ColorPane is already loaded")
 end
 
+if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate)) then
+    UpdateChecker.Check()
+end
+
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
     local success = loadAPI()
 
@@ -129,6 +134,8 @@ end
 if (colorPropertiesWidget.Enabled) then
     mountColorProperties()
 end
+
+---
 
 loadAPIButton.Click:Connect(loadAPI)
 
