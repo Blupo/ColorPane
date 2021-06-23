@@ -1,3 +1,5 @@
+-- Equations: https://en.wikipedia.org/wiki/HSL_and_HSV#Color_conversion_formulae
+
 local root = script.Parent.Parent
 
 local Common = root:FindFirstChild("Common")
@@ -23,6 +25,11 @@ HSB.fromRGB = function(r, g, b)
     return h, s, maxComponent
 end
 
+--[[
+    h [0, 1]
+    s [0, 1]
+    b [0, 1]
+]]
 HSB.toRGB = function(h, s, b)
     local chroma = b * s
     local h2 = (h * 360) / 60

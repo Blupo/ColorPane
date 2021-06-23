@@ -1,3 +1,5 @@
+-- Equations: https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
+
 local CMYK = {}
 
 CMYK.fromRGB = function(r, g, b)
@@ -13,6 +15,12 @@ CMYK.fromRGB = function(r, g, b)
     return c, m, y, k
 end
 
+--[[
+    c [0, 1]
+    y [0, 1]
+    m [0, 1]
+    k [0, 1]
+]]
 CMYK.toRGB = function(c, m, y, k)
     return
         (1 - c) * (1 - k),

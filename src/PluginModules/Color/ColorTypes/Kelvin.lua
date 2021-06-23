@@ -1,3 +1,6 @@
+-- Implementation based on Neil Bartlett's color-temperature
+-- https://github.com/neilbartlett/color-temperature
+
 local kelvinBestFit = function(a, b, c, x)
     return a + (b * x) + (c * math.log(x))
 end

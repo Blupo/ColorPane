@@ -1,3 +1,5 @@
+-- Equations: https://en.wikipedia.org/wiki/HSL_and_HSV#Color_conversion_formulae
+
 local HSXUtil = {}
 
 HSXUtil.getIntermediateRGB = function(hueSegment, chroma, secondLargestComponent)

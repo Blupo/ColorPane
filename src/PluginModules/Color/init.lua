@@ -1,6 +1,10 @@
 local ColorTypes = script:FindFirstChild("ColorTypes")
 local ColorTypeScripts = ColorTypes:GetChildren()
 
+local Common = script:FindFirstChild("Common")
+local Lab = require(Common:FindFirstChild("Lab"))
+local LCh = require(Common:FindFirstChild("LCh"))
+
 ---
 
 local FROM_KEY = "from"
@@ -51,6 +55,8 @@ for i = 1, #ColorTypeScripts do
     end
 end
 
+---
+
 -- WCAG definition of relative luminance
 -- https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
 Color.getLuminance = function(self)
@@ -88,6 +94,35 @@ end
 
 Color.invert = function(self)
     return colorConstructor(1 - self.__r, 1 - self.__g, 1 - self.__b)
+end
+
+-- brighten, darken, saturate, and desaturate implementation based on Gregor Aisch's chroma.js
+-- https://github.com/gka/chroma.js
+Color.brighten = function(self, amount)
+    amount = amount or 1
+
+    local l, a, b = Lab.fromXYZ(Color.toXYZ(self))
+    l = l + (amount * 18 / 100)
+
+    return Color.fromXYZ(Lab.toXYZ(l, a, b))
+end
+
+Color.darken = function(self, amount)
+    return Color.brighten(self, -amount)
+end
+
+Color.saturate = function(self, amount)
+    amount = amount or 1
+
+    local l, c, h = LCh.fromLab(Lab.fromXYZ(Color.toXYZ(self)))
+    c = c + (amount * 18 / 100)
+    c = (c < 0) and 0 or c
+
+    return Color.fromXYZ(Lab.toXYZ(LCh.toLab(l, c, h)))
+end
+
+Color.desaturate = function(self, amount)
+    return Color.saturate(self, -amount)
 end
 
 return Color
