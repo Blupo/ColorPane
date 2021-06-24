@@ -150,7 +150,7 @@ Palette.render = function(self)
                     LayoutOrder = 2,
 
                     displayType = "image",
-                    image = Style.PaletteAddColorImage,
+                    image = Style.AddImage,
 
                     onActivated = function()
                         self.props.addCurrentColorToPalette(palette.name)

@@ -76,7 +76,7 @@ local editorTabs = {
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
         disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
 
-        getElement = function(self)
+        getElement = function()
             return Roact.createElement(PalettePages)
         end
     },
@@ -85,7 +85,7 @@ local editorTabs = {
         name = "colorInfo",
         image = Style.ColorInfoEditorImage,
 
-        getElement = function(self)
+        getElement = function()
             return Roact.createElement(ColorInfo)
         end
     }
@@ -227,7 +227,7 @@ ColorEditor.render = function(self)
         LayoutOrder = 0,
         
         displayType = "image",
-        image = Style.PaletteAddColorImage,
+        image = Style.AddImage,
 
         onActivated = function()
             self.props.addQuickPaletteColor(self.props.color)

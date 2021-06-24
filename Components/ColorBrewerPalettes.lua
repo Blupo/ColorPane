@@ -16,8 +16,7 @@ local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
 
 ---
 
-local copy = Util.copy
-local colorSchemes = copy(ColorBrewer)
+local colorSchemes = Util.copy(ColorBrewer)
 local buttonBarHeight = Style.StandardButtonSize + Style.StandardTextSize + Style.MinorElementPadding
 
 local dataClasses = {

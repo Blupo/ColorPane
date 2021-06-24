@@ -555,7 +555,7 @@ ColorSequenceEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = Style.CSEditorRemoveKeypointImage,
+                image = Style.RemoveImage,
                 disabled = (colorEditPromise or (not selectedKeypoint) or (selectedKeypoint == 1) or (selectedKeypoint == #keypoints)),
 
                 onActivated = function()

@@ -230,9 +230,29 @@ Dropdown.render = function(self)
                         nextSection = selectedItemSectionNum
                     end
 
-                    if (self.props.onItemChanged) then
-                        self.props.onItemChanged(nextSection, nextItem)
+                    -- handle the case of empty sections
+                    -- note: this will cause an infinite loop if every section is empty
+                    local section = itemSections[nextSection]
+
+                    while (#section.items < 1) do
+                        nextSection = nextSection - delta
+                        
+                        if (nextSection <= 0) then
+                            nextSection = #itemSections
+                        elseif (nextSection > #itemSections) then
+                            nextSection = 1
+                        end
+
+                        section = itemSections[nextSection]
+                        
+                        if (delta == -1) then
+                            nextItem = 1
+                        elseif (delta == 1) then
+                            nextItem = #section.items
+                        end
                     end
+
+                    self.props.onItemChanged(nextSection, nextItem)
                 end,
 
                 [Roact.Event.MouseEnter] = function(obj)

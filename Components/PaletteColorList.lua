@@ -163,7 +163,7 @@ PaletteColorList.render = function(self)
                             LayoutOrder = 1,
             
                             displayType = "image",
-                            image = Style.PaletteRemoveColorImage,
+                            image = Style.RemoveImage,
 
                             onActivated = self.props.onColorRemoved,
                         })

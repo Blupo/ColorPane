@@ -42,8 +42,6 @@ local Style = {
     -- palette page
     PaletteGridViewImage = "rbxassetid://6541631629",
     PaletteListViewImage = "rbxassetid://6313201384",
-    PaletteAddColorImage = "rbxassetid://919844482",
-    PaletteRemoveColorImage = "rbxassetid://6213137847",
     PaletteColorMoveUpImage = "rbxassetid://965323360",
     PaletteColorMoveDownImage = "rbxassetid://913309373",
     PaletteColorMoveLeftImage = "rbxassetid://330699522",
@@ -65,7 +63,6 @@ local Style = {
 
     -- cs editor icons
     CSEditorReverseSequenceImage = "rbxassetid://6409046433",
-    CSEditorRemoveKeypointImage = "rbxassetid://6213137847",
     CSEditorSwapKeypointLeftImage = "rbxassetid://330699522",
     CSEditorSwapKeypointRightImage = "rbxassetid://330699633",
 
@@ -79,6 +76,10 @@ local Style = {
     StatusGoodImage = "rbxassetid://1469818624",
     StatusBadImage = "rbxassetid://367878870",
     StatusWaitingImage = "rbxassetid://6973265105",
+
+    -- add/remove
+    AddImage = "rbxassetid://919844482",
+    RemoveImage = "rbxassetid://6213137847",
 
     -- other
     MarkerSize = 8,

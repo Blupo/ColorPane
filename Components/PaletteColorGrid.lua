@@ -129,7 +129,7 @@ PaletteColorGrid.render = function(self)
                     LayoutOrder = 0,
     
                     displayType = "image",
-                    image = Style.PaletteRemoveColorImage,
+                    image = Style.RemoveImage,
                     disabled = ((not selected) or isReadOnly),
 
                     onActivated = self.props.onColorRemoved,

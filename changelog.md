@@ -4,9 +4,11 @@
 - Added the ability to import palettes from ModuleScripts, StringValues, JSON files, or URLs
 - Added the ability to export palettes as ModuleScripts or StringValues
 - Users will now be notified at startup if their version of ColorPane is out-of-date, with the option to disable this in the Settings
+- Added a palette showing variations of the selected color, including hues, shades, tints, and tones
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
+- Fixed a bug where trying to use the scroll wheel on the palette page picker would break the palettes page if the user didn't have any User Palettes
 
 ## [0.2.1] - 2021-03-29
 ### Fixed
