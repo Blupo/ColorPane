@@ -55,6 +55,8 @@ return function(plugin)
             
             cbDataClass = 1,
             cbNumDataClasses = 3,
+
+            variationSteps = 10,
         },
         
         colorEditor = {

@@ -9,6 +9,7 @@ local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
 local Palette = require(Components:FindFirstChild("Palette"))
 
 local BrickColors = require(script:FindFirstChild("BrickColors"))
+local CopicColors = require(script:FindFirstChild("CopicColors"))
 local WebColors = require(script:FindFirstChild("WebColors"))
 
 ---
@@ -30,6 +31,17 @@ return {
 
         getContent = function()
             return Roact.createElement(ColorBrewerPalettes)
+        end
+    },
+
+    {
+        name = "Copic Colors",
+        
+        getContent = function()
+            return Roact.createElement(Palette, {
+                palette = CopicColors,
+                readOnly = true
+            })
         end
     },
 

@@ -18,17 +18,11 @@ local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
 local MIN_STEPS = 4
 local MAX_STEPS = 14
 
-local ColorTools = Roact.PureComponent:extend("ColorTools")
+local ColorVariations = Roact.PureComponent:extend("ColorVariations")
 
-ColorTools.init = function(self)
-    self:setState({
-        colorSteps = 10
-    })
-end
-
-ColorTools.render = function(self)
+ColorVariations.render = function(self)
     local theme = self.props.theme
-    local steps = self.state.colorSteps
+    local variationSteps = self.props.variationSteps
 
     local modifiedColors = {
         Hues = {},
@@ -37,7 +31,7 @@ ColorTools.render = function(self)
         Tones = {},
     }
 
-    for i = 1, steps do
+    for i = 1, variationSteps do
         local color = Color.fromColor3(self.props.color)
 
         modifiedColors.Shades[i] = Color.toColor3(Color.darken(color, i/2))
@@ -64,12 +58,10 @@ ColorTools.render = function(self)
 
                 displayType = "image",
                 image = Style.AddImage,
-                disabled = (steps >= MAX_STEPS),
+                disabled = (variationSteps >= MAX_STEPS),
 
                 onActivated = function()
-                    self:setState({
-                        colorSteps = steps + 1
-                    })
+                    self.props.updateVariationSteps(variationSteps + 1)
                 end,
             }),
 
@@ -79,12 +71,10 @@ ColorTools.render = function(self)
 
                 displayType = "image",
                 image = Style.RemoveImage,
-                disabled = (steps <= MIN_STEPS),
+                disabled = (variationSteps <= MIN_STEPS),
 
                 onActivated = function()
-                    self:setState({
-                        colorSteps = steps - 1
-                    })
+                    self.props.updateVariationSteps(variationSteps - 1)
                 end,
             }),
 
@@ -111,7 +101,7 @@ ColorTools.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
-                Text = self.state.colorSteps,
+                Text = variationSteps,
                 Font = Style.StandardFont,
                 TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Center,
@@ -142,6 +132,8 @@ return RoactRodux.connect(function(state)
     return {
         theme = state.theme,
         color = state.colorEditor.color,
+
+        variationSteps = state.sessionData.variationSteps,
     }
 end, function(dispatch)
     return {
@@ -151,5 +143,14 @@ end, function(dispatch)
                 color = color
             })
         end,
+
+        updateVariationSteps = function(steps)
+            dispatch({
+                type = PluginEnums.StoreActionType.UpdateSessionData,
+                slice = {
+                    variationSteps = steps
+                }
+            })
+        end,
     }
-end)(ColorTools)
+end)(ColorVariations)

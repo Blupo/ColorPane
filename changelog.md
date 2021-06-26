@@ -5,6 +5,7 @@
 - Added the ability to export palettes as ModuleScripts or StringValues
 - Users will now be notified at startup if their version of ColorPane is out-of-date, with the option to disable this in the Settings
 - Added a palette showing variations of the selected color, including hues, shades, tints, and tones
+- Added a [Copic](https://copic.jp/en/) color palette
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
