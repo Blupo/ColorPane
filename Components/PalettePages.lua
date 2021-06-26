@@ -31,6 +31,9 @@ PalettePages.init = function(self)
     self:setState({
         askNameBeforeCreation = PluginSettings.Get(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation),
         displayPage = "palettes",
+
+        leftShiftDown = false,
+        rightShiftDown = false,
     })
 end
 
@@ -51,6 +54,34 @@ PalettePages.shouldUpdate = function(self, nextProps, nextState)
 end
 
 PalettePages.didMount = function(self)
+    self.keyDown = self.props.editorInputBegan:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        if (input.KeyCode == Enum.KeyCode.LeftShift) then
+            self:setState({
+                leftShiftDown = true,
+            })
+        elseif (input.KeyCode ~= Enum.KeyCode.RightShift) then
+            self:setState({
+                rightShiftDown = true,
+            })
+        end
+    end)
+
+    self.keyUp = self.props.editorInputEnded:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        if (input.KeyCode == Enum.KeyCode.LeftShift) then
+            self:setState({
+                leftShiftDown = false,
+            })
+        elseif (input.KeyCode ~= Enum.KeyCode.RightShift) then
+            self:setState({
+                rightShiftDown = false,
+            })
+        end
+    end)
+
     self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
         if (key ~= PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
 
@@ -61,6 +92,8 @@ PalettePages.didMount = function(self)
 end
 
 PalettePages.willUnmount = function(self)
+    self.keyDown:Disconnect()
+    self.keyUp:Disconnect()
     self.settingsChanged:Disconnect()
 end
 
@@ -81,7 +114,7 @@ PalettePages.render = function(self)
 
         table.insert(builtInPalettePages, {
             name = palette.name,
-            content = palette.getContent()
+            content = palette.getContent(self)
         })
     end
 
@@ -230,10 +263,15 @@ PalettePages.render = function(self)
                     name = "Delete this Palette",
 
                     onActivated = function()
-                        self:setState({
-                            displayPage = "removePalette",
-                            paletteIndex = selectedPageNum
-                        })
+                        if (self.state.leftShiftDown or self.state.rightShiftDown) then
+                            self.props.removePalette(palettes[selectedPageNum].name)
+                            self.props.updatePalettePage(1, 1)
+                        else
+                            self:setState({
+                                displayPage = "removePalette",
+                                paletteIndex = selectedPageNum
+                            })
+                        end
                     end
                 } or nil,
             }
@@ -252,6 +290,9 @@ return RoactRodux.connect(function(state)
         palettes = state.colorEditor.palettes,
         lastPaletteModification = state.colorEditor.lastPaletteModification,
         lastPalettePage = state.sessionData.lastPalettePage,
+
+        editorInputBegan = state.colorEditor.editorInputBegan,
+        editorInputEnded = state.colorEditor.editorInputEnded,
     }
 end, function(dispatch)
     return {
@@ -275,6 +316,13 @@ end, function(dispatch)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_DuplicatePalette,
                 name = paletteName
+            })
+        end,
+
+        removePalette = function(paletteName)
+            dispatch({
+                type = PluginEnums.StoreActionType.ColorEditor_RemovePalette,
+                name = paletteName,
             })
         end,
     }

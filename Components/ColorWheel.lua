@@ -628,6 +628,8 @@ return RoactRodux.connect(function(state)
         color = state.colorEditor.color,
         editor = state.colorEditor.authoritativeEditor,
         harmony = state.sessionData.lastHueHarmony,
+
+        editorInputChanged = state.colorEditor.editorInputChanged,
     }
 end, function(dispatch)
     return {

@@ -1,10 +1,12 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
+local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
@@ -12,6 +14,13 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local Padding = require(Components:FindFirstChild("Padding"))
 
 ---
+
+local KEY_CODE_DELTAS = {
+    [Enum.KeyCode.Up] = function(cellsPerRow) return -cellsPerRow end,
+    [Enum.KeyCode.Down] = function(cellsPerRow) return cellsPerRow end,
+    [Enum.KeyCode.Left] = function() return -1 end,
+    [Enum.KeyCode.Right] = function() return 1 end,
+}
 
 --[[
     props
@@ -30,6 +39,57 @@ local ColorGrid = Roact.PureComponent:extend("ColorGrid")
 
 ColorGrid.init = function(self)
     self.gridLength, self.updateGridLength = Roact.createBinding(0)
+    self.cellsPerRow, self.updateCellsPerRow = Roact.createBinding(0)
+    self.keyInputRepeaters = {}
+
+    for keyCode, deltaCallback in pairs(KEY_CODE_DELTAS) do
+        local repeater = RepeatingCallback.new(function()
+            local colors = self.props.colors
+            local selected = self.props.selected
+            if (not selected) then return end
+
+            local nextSelected = selected + deltaCallback(self.cellsPerRow:getValue())
+            if (not colors[nextSelected]) then return end
+
+            self.props.onColorSelected(nextSelected)
+        end, 0.25, 0.1)
+
+        self.keyInputRepeaters[keyCode] = repeater
+    end
+end
+
+ColorGrid.didMount = function(self)
+    self.keyDown = self.props.editorInputBegan:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        local inputRepeater = self.keyInputRepeaters[input.KeyCode]
+        if (not inputRepeater) then return end
+
+        for _, repeater in pairs(self.keyInputRepeaters) do
+            repeater:stop()
+        end
+
+        inputRepeater:start()
+    end)
+
+    self.keyUp = self.props.editorInputEnded:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        local inputRepeater = self.keyInputRepeaters[input.KeyCode]
+        if (not inputRepeater) then return end
+
+        inputRepeater:stop()
+    end)
+end
+
+ColorGrid.willUnmount = function(self)
+    for _, repeater in pairs(self.keyInputRepeaters) do
+        repeater:destroy()
+    end
+
+    self.keyInputRepeaters = nil
+    self.keyDown:Disconnect()
+    self.keyUp:Disconnect()
 end
 
 ColorGrid.render = function(self)
@@ -72,7 +132,11 @@ ColorGrid.render = function(self)
 
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateGridLength(obj.AbsoluteContentSize.Y)
-        end
+        end,
+
+        [Roact.Change.AbsoluteCellCount] = function(obj)
+            self.updateCellsPerRow(obj.AbsoluteCellCount.X)
+        end,
     })
 
     return Roact.createElement("Frame", {
@@ -193,5 +257,15 @@ ColorGrids.render = function(self)
     }, listElements)
 end
 
-ColorGrid = ConnectTheme(ColorGrid)
+---
+
+ColorGrid = RoactRodux.connect(function(state)
+    return {
+        theme = state.theme,
+
+        editorInputBegan = state.colorEditor.editorInputBegan,
+        editorInputEnded = state.colorEditor.editorInputEnded,
+    }
+end)(ColorGrid)
+
 return ConnectTheme(ColorGrids)

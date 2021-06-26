@@ -78,8 +78,6 @@ ColorSequenceEditor.init = function(self, initProps)
     self.timelineWidth, self.updateTimelineWidth = Roact.createBinding(0)
     self.timelineProgress, self.updateTimelineProgress = Roact.createBinding(0)
 
-    self.editorInputChangedEvent = Instance.new("BindableEvent")
-
     self.markerTime = self.timelineProgress:map(function(timelineProgress)
         local colorSequence = self.state.colorSequence
         local keypoints = colorSequence.Keypoints
@@ -141,25 +139,12 @@ ColorSequenceEditor.init = function(self, initProps)
     })
 end
 
-ColorSequenceEditor.willUnmount = function(self)
-    self.editorInputChangedEvent:Destroy()
-    self.editorInputChangedEvent = nil
+ColorSequenceEditor.didMount = function(self)
+    
 end
 
-ColorSequenceEditor.didMount = function(self)
-    self.inputChanged = self.editorInputChangedEvent.Event:Connect(function(input, gameProcessedEvent)
-        if (gameProcessedEvent) then return end
-        if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
-        
-        local inputPosition = input.Position
-        local cursorPosition = Vector2.new(inputPosition.X, inputPosition.Y)
-        
-        if (self.state.tracking and self.state.selectedKeypoint) then
-            self.updateSelectedKeypointTime(cursorPosition)
-        end
-
-        self.calculateTimelineProgress(cursorPosition)
-    end)
+ColorSequenceEditor.willUnmount = function(self)
+    
 end
 
 ColorSequenceEditor.didUpdate = function(self, _, prevState)
@@ -277,8 +262,38 @@ ColorSequenceEditor.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
-        [Roact.Event.InputChanged] = function(_, input, gameProcessedEvent)
-            self.editorInputChangedEvent:Fire(input, gameProcessedEvent)
+        [Roact.Event.InputBegan] = function(_, input)
+            if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+            if (not selectedKeypoint) then return end
+
+            local keyCode = input.KeyCode
+            local nextSelected
+
+            if (keyCode == Enum.KeyCode.Left) then
+                nextSelected = selectedKeypoint - 1
+            elseif (keyCode == Enum.KeyCode.Right) then
+                nextSelected = selectedKeypoint + 1
+            end
+
+            if (not keypoints[nextSelected]) then return end
+
+            self:setState({
+                selectedKeypoint = nextSelected,
+                tracking = false,
+            })
+        end,
+
+        [Roact.Event.InputChanged] = function(_, input)
+            if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
+            
+            local inputPosition = input.Position
+            local cursorPosition = Vector2.new(inputPosition.X, inputPosition.Y)
+            
+            if (self.state.tracking and self.state.selectedKeypoint) then
+                self.updateSelectedKeypointTime(cursorPosition)
+            end
+
+            self.calculateTimelineProgress(cursorPosition)
         end,
     }, {
         UIPadding = Roact.createElement(Padding, {Style.PagePadding}),

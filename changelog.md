@@ -6,6 +6,8 @@
 - Users will now be notified at startup if their version of ColorPane is out-of-date, with the option to disable this in the Settings
 - Added a palette showing variations of the selected color, including hues, shades, tints, and tones
 - Added a [Copic](https://copic.jp/en/) color palette
+- Holding down either Shift key when selecting the option to delete a palette will now bypass the confirmation dialog
+- Users can now use the arrow keys to traverse palettes when a color is selected, as well as switch between keypoints in the ColorSequence editor when one is selected
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded

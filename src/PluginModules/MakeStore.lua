@@ -5,6 +5,7 @@ local Studio = settings().Studio
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local ColorEditorInput = require(PluginModules:FindFirstChild("ColorEditorInput"))
 local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
@@ -25,6 +26,7 @@ local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 local copy = Util.copy
 local mergeTable = Util.mergeTable
 
+local editorInputEvents = ColorEditorInput.GetInputEventSignals()
 local pluginStore
 
 return function(plugin)
@@ -64,7 +66,11 @@ return function(plugin)
             
             quickPalette = {},
             palettes = userPalettes,
-            
+
+            editorInputBegan = editorInputEvents.InputBegan,
+            editorInputChanged = editorInputEvents.InputChanged,
+            editorInputEnded = editorInputEvents.InputEnded,
+
             -- comparing this is easier than comparing the actual tables
             lastPaletteModification = os.clock(),
         },

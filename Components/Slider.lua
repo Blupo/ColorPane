@@ -5,10 +5,10 @@ local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
+local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
@@ -27,7 +27,6 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
         markerColor: Color3?
         sliderGradient: ColorSequence
-        editorInputChanged: RBXScriptSignal
 
         keypoints: array<{
             value: number,
@@ -277,4 +276,11 @@ Slider.render = function(self)
     })
 end
 
-return ConnectTheme(Slider)
+---
+
+return RoactRodux.connect(function(state)
+    return {
+        theme = state.theme,
+        editorInputChanged = state.colorEditor.editorInputChanged,
+    }
+end)(Slider)

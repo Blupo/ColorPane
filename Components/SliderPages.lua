@@ -145,7 +145,6 @@ RGBSliderPage.render = function(self)
 
             sliderLabel = "Red",
             markerColor = self.markerColor,
-            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(0, components.g, components.b), Color3.new(1, components.g, components.b))
@@ -173,7 +172,6 @@ RGBSliderPage.render = function(self)
 
             sliderLabel = "Green",
             markerColor = self.markerColor,
-            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(components.r, 0, components.b), Color3.new(components.r, 1, components.b))
@@ -201,7 +199,6 @@ RGBSliderPage.render = function(self)
 
             sliderLabel = "Blue",
             markerColor = self.markerColor,
-            editorInputChanged = self.props.editorInputChanged,
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(Color3.new(components.r, components.g, 0), Color3.new(components.r, components.g, 1))
@@ -278,8 +275,6 @@ CMYKSliderPage.render = function(self)
             LayoutOrder = 0,
             
             value = self.components:map(function(components) return components.c end),
-            editorInputChanged = self.props.editorInputChanged,
-            
             sliderLabel = "Cyan",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -312,8 +307,6 @@ CMYKSliderPage.render = function(self)
             LayoutOrder = 1,
             
             value = self.components:map(function(components) return components.m end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Magenta",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -346,8 +339,6 @@ CMYKSliderPage.render = function(self)
             LayoutOrder = 2,
             
             value = self.components:map(function(components) return components.y end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Yellow",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -380,8 +371,6 @@ CMYKSliderPage.render = function(self)
             LayoutOrder = 3,
             
             value = self.components:map(function(components) return components.k end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Key",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -462,8 +451,6 @@ HSBSliderPage.render = function(self)
             LayoutOrder = 0,
             
             value = self.components:map(function(components) return components.h end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Hue",
             unitLabel = "°",
             markerColor = self.components:map(function(components)
@@ -506,8 +493,6 @@ HSBSliderPage.render = function(self)
             LayoutOrder = 1,
 
             value = self.components:map(function(components) return components.s end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Saturation",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -536,8 +521,6 @@ HSBSliderPage.render = function(self)
             LayoutOrder = 2,
 
             value = self.components:map(function(components) return components.b end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Brightness",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -614,8 +597,6 @@ HSLSliderPage.render = function(self)
             LayoutOrder = 0,
 
             value = self.components:map(function(components) return components.h end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Hue",
             unitLabel = "°",
 
@@ -659,8 +640,6 @@ HSLSliderPage.render = function(self)
             LayoutOrder = 1,
 
             value = self.components:map(function(components) return components.s end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Saturation",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -692,8 +671,6 @@ HSLSliderPage.render = function(self)
             LayoutOrder = 2,
 
             value = self.components:map(function(components) return components.l end),
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Lightness",
             unitLabel = "%",
             markerColor = self.markerColor,
@@ -752,8 +729,6 @@ GreyscaleSliderPage.render = function(self)
 
         Slider = Roact.createElement(Slider, {
             value = self.brightness,
-            editorInputChanged = self.props.editorInputChanged,
-
             sliderLabel = "Brightness",
             sliderGradient = ColorSequence.new(Color3.new(0, 0, 0), Color3.new(1, 1, 1)),
 
@@ -800,50 +775,32 @@ SliderPages = function(props)
                 items = {
                     {
                         name = "RGB",
-
-                        content = Roact.createElement(RGBSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(RGBSliderPage)
                     },
 
                     {
                         name = "CMYK",
-
-                        content = Roact.createElement(CMYKSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(CMYKSliderPage)
                     },
 
                     {
                         name = "HSB",
-
-                        content = Roact.createElement(HSBSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(HSBSliderPage)
                     },
 
                     {
                         name = "HSL",
-
-                        content = Roact.createElement(HSLSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(HSLSliderPage)
                     },
 
                     {
                         name = "Monochrome",
-
-                        content = Roact.createElement(GreyscaleSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(GreyscaleSliderPage)
                     },
 
                     {
                         name = "Temperature",
-                        
-                        content = Roact.createElement(KelvinSliderPage, {
-                            editorInputChanged = props.editorInputChanged,
-                        })
+                        content = Roact.createElement(KelvinSliderPage)
                     },
                 }
             }

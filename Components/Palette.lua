@@ -17,6 +17,13 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
 
+--[[
+    props
+
+    palette: Palette
+    readOnly: boolean?
+]]
+
 local Palette = Roact.PureComponent:extend("Palette")
 
 Palette.init = function(self)

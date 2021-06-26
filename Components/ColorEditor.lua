@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
+local ColorEditorInput = require(PluginModules:FindFirstChild("ColorEditorInput"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -28,6 +29,7 @@ local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
 
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
 local shallowCompare = Util.shallowCompare
+local editorInputBindableEvents = ColorEditorInput.GetInputBindableEvents()
 
 local getMaxPages = function(width)
     local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
@@ -47,7 +49,6 @@ local editorTabs = {
 
         getElement = function(self)
             return Roact.createElement(ColorWheel, {
-                editorInputChanged = self.editorInputChangedEvent.Event,
                 ringWidth = Style.ColorWheelRingWidth,
             })
         end
@@ -61,10 +62,8 @@ local editorTabs = {
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
         disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
 
-        getElement = function(self)
-            return Roact.createElement(SliderPages, {
-                editorInputChanged = self.editorInputChangedEvent.Event,
-            })
+        getElement = function()
+            return Roact.createElement(SliderPages)
         end
     },
 
@@ -96,8 +95,6 @@ local editorTabs = {
 local ColorEditor = Roact.Component:extend("ColorEditor")
 
 ColorEditor.init = function(self)
-    self.editorInputChangedEvent = Instance.new("BindableEvent")
-
     self:setState({
         editorWidth = 0,
     })
@@ -131,10 +128,6 @@ ColorEditor.shouldUpdate = function(self, nextProps, nextState)
     end
 
     return false
-end
-
-ColorEditor.willUnmount = function(self)
-    self.editorInputChangedEvent:Destroy()
 end
 
 ColorEditor.render = function(self)
@@ -243,8 +236,16 @@ ColorEditor.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
+        [Roact.Event.InputBegan] = function(_, input, gameProcessedEvent)
+            editorInputBindableEvents.InputBegan:Fire(input, gameProcessedEvent)
+        end,
+
         [Roact.Event.InputChanged] = function(_, input, gameProcessedEvent)
-            self.editorInputChangedEvent:Fire(input, gameProcessedEvent)
+            editorInputBindableEvents.InputChanged:Fire(input, gameProcessedEvent)
+        end,
+
+        [Roact.Event.InputEnded] = function(_, input, gameProcessedEvent)
+            editorInputBindableEvents.InputEnded:Fire(input, gameProcessedEvent)
         end,
     }, {
         UIPadding = Roact.createElement(Padding, {Style.PagePadding}),

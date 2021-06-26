@@ -1,18 +1,24 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
+local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
 ---
+
+local KEY_CODE_DELTAS = {
+    [Enum.KeyCode.Up] = -1,
+    [Enum.KeyCode.Down] = 1,
+}
 
 --[[
     props
@@ -29,8 +35,7 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
         readOnly: boolean?
         selected: number?
 
-        onColorSelected = (number) -> nil
-
+        onColorSelected: (number) -> nil
         onColorSet: (number) -> nil
         onColorRemoved: () -> nil
         onColorNameChanged: (string) -> nil
@@ -42,6 +47,56 @@ local PaletteColorList = Roact.PureComponent:extend("PaletteColorList")
 
 PaletteColorList.init = function(self)
     self.listLength, self.updateListLength = Roact.createBinding(0)
+    self.keyInputRepeaters = {}
+
+    for keyCode, delta in pairs(KEY_CODE_DELTAS) do
+        local repeater = RepeatingCallback.new(function()
+            local colors = self.props.colors
+            local selected = self.props.selected
+            if (not selected) then return end
+
+            local nextSelected = selected + delta
+            if (not colors[nextSelected]) then return end
+
+            self.props.onColorSelected(nextSelected)
+        end, 0.25, 0.1)
+
+        self.keyInputRepeaters[keyCode] = repeater
+    end
+end
+
+PaletteColorList.didMount = function(self)
+    self.keyDown = self.props.editorInputBegan:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        local inputRepeater = self.keyInputRepeaters[input.KeyCode]
+        if (not inputRepeater) then return end
+
+        for _, repeater in pairs(self.keyInputRepeaters) do
+            repeater:stop()
+        end
+
+        inputRepeater:start()
+    end)
+
+    self.keyUp = self.props.editorInputEnded:Connect(function(input)
+        if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
+
+        local inputRepeater = self.keyInputRepeaters[input.KeyCode]
+        if (not inputRepeater) then return end
+
+        inputRepeater:stop()
+    end)
+end
+
+PaletteColorList.willUnmount = function(self)
+    for _, repeater in pairs(self.keyInputRepeaters) do
+        repeater:destroy()
+    end
+
+    self.keyInputRepeaters = nil
+    self.keyDown:Disconnect()
+    self.keyUp:Disconnect()
 end
 
 PaletteColorList.render = function(self)
@@ -236,4 +291,13 @@ PaletteColorList.render = function(self)
     }, listElements)
 end
 
-return ConnectTheme(PaletteColorList)
+---
+
+return RoactRodux.connect(function(state)
+    return {
+        theme = state.theme,
+
+        editorInputBegan = state.colorEditor.editorInputBegan,
+        editorInputEnded = state.colorEditor.editorInputEnded,
+    }
+end)(PaletteColorList)

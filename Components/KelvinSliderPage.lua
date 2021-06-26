@@ -143,7 +143,6 @@ KelvinSliderPage.render = function(self)
     return Roact.createFragment({
         Slider = Roact.createElement(Slider, {
             value = self.kelvin,
-            editorInputChanged = self.props.editorInputChanged,
             layoutOrder = 0,
 
             sliderLabel = "Temperature",
