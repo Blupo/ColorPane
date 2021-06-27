@@ -23,21 +23,21 @@ UpdateChecker.Check = function()
     if (not latestPlugin) then return end
 
     local latestPluginModules = latestPlugin:FindFirstChild("PluginModules")
-    local lastestReleaseVersionScript = latestPluginModules:FindFirstChild("ReleaseVersion")
+    local latestReleaseVersionScript = latestPluginModules:FindFirstChild("ReleaseVersion")
 
-    -- default to v0.0.0 for old versions (before v0.3)
-    local lastestReleaseVersion = lastestReleaseVersionScript and require(lastestReleaseVersionScript) or {0, 0, 0}
+    -- default to v0.0.0 for versions before v0.3
+    local latestReleaseVersion = latestReleaseVersionScript and require(latestReleaseVersionScript) or {0, 0, 0}
 
-    local releaseMajor, latestReleaseMajor = ReleaseVersion[1], lastestReleaseVersion[1]
-    local releaseMinor, lastestReleaseMinor = ReleaseVersion[2], lastestReleaseVersion[2]
-    local releasePatch, lastestReleasePatch = ReleaseVersion[3], lastestReleaseVersion[3]
+    local releaseMajor, latestReleaseMajor = ReleaseVersion[1], latestReleaseVersion[1]
+    local releaseMinor, latestReleaseMinor = ReleaseVersion[2], latestReleaseVersion[2]
+    local releasePatch, latestReleasePatch = ReleaseVersion[3], latestReleaseVersion[3]
 
-    if ((latestReleaseMajor > releaseMajor) or (lastestReleaseMinor > releaseMinor) or (lastestReleasePatch > releasePatch)) then
+    if ((latestReleaseMajor > releaseMajor) or (latestReleaseMinor > releaseMinor) or (latestReleasePatch > releasePatch)) then
         if (sessionNotificationShown) then return end
 
         warn(string.format(
             "A new version of ColorPane is available: v%d.%d.%d; you're currently using v%d.%d.%d",
-            latestReleaseMajor, lastestReleaseMinor, lastestReleasePatch,
+            latestReleaseMajor, latestReleaseMinor, latestReleasePatch,
             releaseMajor, releaseMinor, releasePatch
         ))
 
