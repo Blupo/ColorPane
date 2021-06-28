@@ -13,6 +13,10 @@
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
 - Fixed a bug where trying to use the scroll wheel on the palette page picker would break the palettes page if the user didn't have any User Palettes
 
+### Changed
+- Testing sessions (e.g. Play Solo) will no longer save changes to settings
+- Changed the behaviour for data saving when multiple Studio sessions are open
+
 ## [0.2.1] - 2021-03-29
 ### Fixed
 - The Color Properties window no longer tries to load in testing modes

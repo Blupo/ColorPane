@@ -44,7 +44,9 @@ return setmetatable({
         "AutoLoadAPI",
         "AutoLoadColorProperties",
         "AskNameBeforePaletteCreation",
-        "AutoCheckForUpdate"
+        "AutoCheckForUpdate",
+        "AutoSave",
+        "AutoSaveInterval",
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {
