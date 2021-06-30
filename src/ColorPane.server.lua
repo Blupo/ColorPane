@@ -122,13 +122,17 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
     end
 end
 
-if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties) and RunService:IsEdit()) then
+if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) then
     local startupRequestFinished
     startupRequestFinished = RobloxAPI.DataRequestFinished:Connect(function(success)
         startupRequestFinished:Disconnect()
+        startupRequestFinished = nil
 
         if (not success) then
-            warn("The Color Properties window could not be automatically loaded. Please make sure that you have allowed HTTP requests for setup.rbxcdn.com and try again.")
+            warn("The Color Properties window could not be automatically loaded. " .. (RunService:IsEdit() and
+                "Please make sure that you have allowed HTTP requests for setup.rbxcdn.com and try again." or
+                "Please make sure that the Roblox API data is cached."
+            ))
         end
     end)
 

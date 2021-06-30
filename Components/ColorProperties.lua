@@ -38,16 +38,18 @@ NoAPIAlert.init = function(self)
     end)
 
     self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
-        if (key ~= PluginEnums.PluginSettingKey.AutoLoadColorProperties) then return end
+        if ((key ~= PluginEnums.PluginSettingKey.AutoLoadColorProperties) and (key ~= PluginEnums.PluginSettingKey.CacheAPIData)) then return end
 
         self:setState({
-            autoLoad = newValue
+            [key] = newValue
         })
     end)
     
     self:setState({
         requestRunning = RobloxAPI.IsRequestRunning(),
-        autoLoad = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)
+
+        [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties),
+        [PluginEnums.PluginSettingKey.CacheAPIData] = PluginSettings.Get(PluginEnums.PluginSettingKey.CacheAPIData)
     })
 end
 
@@ -62,6 +64,7 @@ end
 NoAPIAlert.render = function(self)
     local theme = self.props.theme
     local requestRunning = self.state.requestRunning
+    local isEdit = RunService:IsEdit()
 
     return Roact.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -86,7 +89,10 @@ NoAPIAlert.render = function(self)
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Bottom,
             TextWrapped = true,
-            Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. This screen will disappear once the data has been loaded.",
+            Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. " .. (isEdit and
+                "This screen will change once the data has been loaded." or
+                "\n\nNote: To use Color Properties during testing, you must have already loaded the data with the \"Cache Roblox API data\" option enabled before testing."
+            ),
             
             TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
         }),
@@ -96,7 +102,7 @@ NoAPIAlert.render = function(self)
             Position = UDim2.new(0.5, 0, 0.5, Style.SpaciousElementPadding),
             Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
 
-            disabled = self.state.requestRunning,
+            disabled = requestRunning,
             displayType = "text",
             text = requestRunning and "Loading..." or "Load",
 
@@ -118,13 +124,28 @@ NoAPIAlert.render = function(self)
         AutoLoadRobloxAPICheckbox = Roact.createElement(Checkbox, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 2)),
-            Size = UDim2.new(1, 0, 0, 30),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             
-            value = self.state.autoLoad,
-            text = "Automatically load the Color Properties window on startup",
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
+            text = "Automatically load the Roblox API data on startup",
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadColorProperties, newValue)
+            end,
+        }),
+
+        CacheAPIDataCheckbox = Roact.createElement(Checkbox, {
+            AnchorPoint = Vector2.new(0.5, 0),
+            Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 3) + (Style.StandardTextSize * 2)),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
+            text = "Cache the Roblox API data for use during testing sessions",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.CacheAPIData, newValue)
             end,
         })
     })
@@ -163,46 +184,10 @@ ColorProperties.willUnmount = function(self)
 end
 
 ColorProperties.render = function(self)
-    local theme = self.props.theme
-    local element 
-
-    if (not RunService:IsEdit()) then
-        element = Roact.createElement("Frame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Size = UDim2.new(1, 0, 1, 0),
-            Position = UDim2.new(0.5, 0, 0.5, 0),
-            BackgroundTransparency = 0,
-            BorderSizePixel = 0,
-
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
-        }, {
-            UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
-
-            Notice = Roact.createElement("TextLabel", {
-                AnchorPoint = Vector2.new(0.5, 0.5),
-                Size = UDim2.new(1, 0, 1, 0),
-                Position = UDim2.new(0.5, 0, 0.5, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Center,
-                TextYAlignment = Enum.TextYAlignment.Center,
-                TextWrapped = true,
-                Text = "Color Properties is disabled in testing modes",
-                
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
-            }),
-        })
-    else
-        element = Roact.createElement(self.state.apiLoaded and PropertiesList or NoAPIAlert)
-    end
-
-    return element
+    return Roact.createElement(self.state.apiLoaded and PropertiesList or NoAPIAlert)
 end
 
 ---
 
 NoAPIAlert = ConnectTheme(NoAPIAlert)
-return ConnectTheme(ColorProperties)
+return ColorProperties

@@ -156,10 +156,14 @@ updateSelectionCommonPropertyValues = function()
             local obj = selection[i]
 
             if (obj:IsA(propertyClassName)) then
-                table.insert(commonPropertyValues, APIInterface:GetProperty(obj, propertyName, propertyClassName, true))
+                local success, value = APIInterface:GetProperty(obj, propertyName, propertyClassName, true, true)
+                
+                if (success) then
+                    table.insert(commonPropertyValues, value)
 
-                if (isNative and shouldListenForPropertyChanges) then
-                    table.insert(selectionPropertyValuesChangedConnections, obj:GetPropertyChangedSignal(propertyName):Connect(updateSelectionCommonPropertyValues))
+                    if (isNative and shouldListenForPropertyChanges) then
+                        table.insert(selectionPropertyValuesChangedConnections, obj:GetPropertyChangedSignal(propertyName):Connect(updateSelectionCommonPropertyValues))
+                    end
                 end
             end
         end
@@ -242,7 +246,11 @@ SelectionManager.GetColorPropertyValuesSnapshot = function()
                     snapshot[obj] = {}
                 end
 
-                snapshot[obj][propertyName] = APIInterface:GetProperty(obj, propertyName, propertyClassName, true)
+                local success, value = APIInterface:GetProperty(obj, propertyName, propertyClassName, true, true)
+                
+                if (success) then
+                    snapshot[obj][propertyName] = value
+                end
             end
         end
     end
@@ -261,7 +269,7 @@ SelectionManager.ApplyColorProperty = function(className, propertyName, newColor
         local obj = selection[i]
 
         if (obj:IsA(className)) then
-            APIInterface:SetProperty(obj, propertyName, newColor, className, true)
+            APIInterface:SetProperty(obj, propertyName, newColor, className, true, true)
         end
     end
 
@@ -273,7 +281,7 @@ end
 SelectionManager.ApplyObjectColorProperty = function(obj, className, propertyName, newValue)
     if (not isAPIReady) then return end
 
-    APIInterface:SetProperty(obj, propertyName, newValue, className, true)
+    APIInterface:SetProperty(obj, propertyName, newValue, className, true, true)
 end
 
 SelectionManager.Connect = function()

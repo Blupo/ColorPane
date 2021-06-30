@@ -1,3 +1,7 @@
+local RunService = game:GetService("RunService")
+
+---
+
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
@@ -23,6 +27,7 @@ local SETTINGS = {
     [PluginEnums.PluginSettingKey.AutoCheckForUpdate] = true,
     [PluginEnums.PluginSettingKey.AutoSave] = true,
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = true,
+    [PluginEnums.PluginSettingKey.CacheAPIData] = true,
 }
 
 ---
@@ -36,6 +41,7 @@ Settings.init = function(self)
         initSettings[key] = PluginSettings.Get(key)
     end
 
+    self.listLength, self.updateListLength = Roact.createBinding(0)
     self:setState(initSettings)
 end
 
@@ -56,14 +62,29 @@ end
 
 Settings.render = function(self)
     local theme = self.props.theme
+    local isEdit = RunService:IsEdit()
 
-    return Roact.createElement("Frame", {
+    return Roact.createElement("ScrollingFrame", {
         AnchorPoint = Vector2.new(0.5, 0),
         Position = UDim2.new(0.5, 0, 0, 0),
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
 
+        CanvasSize = self.listLength:map(function(length)
+            return UDim2.new(0, 0, 0, length)
+        end),
+
+        TopImage = Style.ScrollbarImage,
+        MidImage = Style.ScrollbarImage,
+        BottomImage = Style.ScrollbarImage,
+        HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
+        VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
+        VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
+        ScrollBarThickness = Style.ScrollbarThickness,
+        ClipsDescendants = true,
+
+        ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
     }, {
         UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
@@ -74,14 +95,19 @@ Settings.render = function(self)
             HorizontalAlignment = Enum.HorizontalAlignment.Left,
             SortOrder = Enum.SortOrder.LayoutOrder,
             VerticalAlignment = Enum.VerticalAlignment.Top,
+
+            [Roact.Change.AbsoluteContentSize] = function(obj)
+                self.updateListLength(obj.AbsoluteContentSize.Y + (Style.PagePadding * 2))
+            end,
         }),
 
         AutoLoadAPICheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 1,
             
+            disabled = (not isEdit),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadAPI],
-            text = "Automatically load the API on startup",
+            text = "Automatically inject the ColorPane API script on startup",
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadAPI, newValue)
@@ -89,38 +115,15 @@ Settings.render = function(self)
         }),
 
         AutoLoadColorPropertiesCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 30),
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 2,
             
+            disabled = (not isEdit),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
-            text = "Automatically load the Color Properties window on startup",
+            text = "Automatically load the Roblox API data for Color Properties on startup",
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadColorProperties, newValue)
-            end,
-        }),
-
-        AutoCheckForUpdate = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
-            LayoutOrder = 5,
-            
-            value = self.state[PluginEnums.PluginSettingKey.AutoCheckForUpdate],
-            text = "Check for updates on startup",
-
-            onChecked = function(newValue)
-                PluginSettings.Set(PluginEnums.PluginSettingKey.AutoCheckForUpdate, newValue)
-            end,
-        }),
-
-        AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
-            LayoutOrder = 6,
-            
-            value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
-            text = "Name palettes before creating them",
-
-            onChecked = function(newValue)
-                PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
             end,
         }),
 
@@ -128,6 +131,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, 22),
             LayoutOrder = 3,
             
+            disabled = (not isEdit),
             value = self.state[PluginEnums.PluginSettingKey.AutoSave],
             text = "Auto-save settings and palettes",
 
@@ -166,7 +170,7 @@ Settings.render = function(self)
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 canClear = false,
-                disabled = (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
+                disabled = (not isEdit) or (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
 
                 isTextAValidValue = function(text)
                     local interval = tonumber(text)
@@ -183,7 +187,46 @@ Settings.render = function(self)
                     PluginSettings.Set(PluginEnums.PluginSettingKey.AutoSaveInterval, interval)
                 end,
             })
-        })
+        }),
+
+        CacheAPIDataCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            LayoutOrder = 5,
+            
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
+            text = "Cache Roblox API data for use during testing sessions",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.CacheAPIData, newValue)
+            end,
+        }),
+
+        AutoCheckForUpdateCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, 22),
+            LayoutOrder = 6,
+            
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.AutoCheckForUpdate],
+            text = "Check for updates on startup",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.AutoCheckForUpdate, newValue)
+            end,
+        }),
+
+        AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, 22),
+            LayoutOrder = 7,
+            
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
+            text = "Name palettes before creating them",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
+            end,
+        }),
     })
 end
 

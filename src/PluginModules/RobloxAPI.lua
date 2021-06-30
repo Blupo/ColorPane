@@ -1,10 +1,13 @@
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 ---
 
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local TerrainMaterialColors = require(PluginModules:FindFirstChild("TerrainMaterialColors"))
 
 local includes = root:FindFirstChild("includes")
@@ -43,31 +46,48 @@ RobloxAPI.GetData = function()
     apiDataRequestStartedEvent:Fire()
 
     Promise.new(function(resolve, reject)
-        local studioVersion
+        local cachedAPIDump = PluginSettings.GetCachedAPIDump()
 
-        local studioVersionResponse = HttpService:RequestAsync({
-            Url = API_URL .. STUDIO_VERSION_ENDPOINT,
-            Method = "GET",
-        })
-
-        if (studioVersionResponse.Success) then
-            studioVersion = studioVersionResponse.Body
-        else
-            reject(studioVersionResponse.StatusMessage)
+        if (cachedAPIDump) then
+            resolve(cachedAPIDump, true)
             return
         end
 
-        local jsonAPIDumpResponse = HttpService:RequestAsync({
-            Url = API_URL .. string.format(API_DUMP_ENDPOINT, studioVersion),
-            Method = "GET",
-        })
+        if (RunService:IsEdit()) then
+            local studioVersion
 
-        if (jsonAPIDumpResponse.Success) then
-            resolve(HttpService:JSONDecode(jsonAPIDumpResponse.Body))
+            local studioVersionResponse = HttpService:RequestAsync({
+                Url = API_URL .. STUDIO_VERSION_ENDPOINT,
+                Method = "GET",
+            })
+
+            if (studioVersionResponse.Success) then
+                studioVersion = studioVersionResponse.Body
+            else
+                reject(studioVersionResponse.StatusMessage)
+                return
+            end
+
+            local jsonAPIDumpResponse = HttpService:RequestAsync({
+                Url = API_URL .. string.format(API_DUMP_ENDPOINT, studioVersion),
+                Method = "GET",
+            })
+
+            if (jsonAPIDumpResponse.Success) then
+                resolve(jsonAPIDumpResponse.Body, false)
+            else
+                reject(jsonAPIDumpResponse.StatusMessage)
+            end
         else
-            reject(jsonAPIDumpResponse.StatusMessage)
+            reject("No cached API data")
         end
-    end):andThen(function(api)
+    end):andThen(function(api, usedCache)
+        if (not usedCache) then
+            PluginSettings.CacheAPIDump(api)
+        end
+
+        api = HttpService:JSONDecode(api)
+
         RobloxAPI.APIData = APIUtils.createAPIData(api)
         RobloxAPI.APIInterface = APIUtils.createAPIInterface(RobloxAPI.APIData)
 
@@ -88,13 +108,27 @@ RobloxAPI.GetData = function()
     end)
 end
 
-RobloxAPI.init = function(plugin)
+RobloxAPI.init = function(initPlugin)
     RobloxAPI.init = nil
 
-    plugin.Unloading:Connect(function()
+    initPlugin.Unloading:Connect(function()
         apiDataRequestStartedEvent:Destroy()
-        apiDataRequestFinishedEvent:Destroy()
+        apiDataRequestFinishedEvent:Destroy()    
     end)
 end
+
+---
+
+PluginSettings.SettingChanged:Connect(function(key, newValue)
+    if (key ~= PluginEnums.PluginSettingKey.CacheAPIData) then return end
+
+    if (newValue) then
+        if (not apiDump) then return end
+
+        PluginSettings.CacheAPIDump(HttpService:JSONEncode(apiDump))
+    else
+        PluginSettings.ClearCachedAPIDump()
+    end
+end)
 
 return RobloxAPI

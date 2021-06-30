@@ -13,6 +13,7 @@ local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
+local Padding = require(Components:FindFirstChild("Padding"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 ---
@@ -422,30 +423,51 @@ PropertiesList.render = function(self)
         end
     })
 
-    return Roact.createElement("ScrollingFrame", {
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        BorderSizePixel = 1,
-        ClipsDescendants = true,
+    return (#propertiesArray > 0) and
+        Roact.createElement("ScrollingFrame", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Size = UDim2.new(1, 0, 1, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BorderSizePixel = 1,
+            ClipsDescendants = true,
 
-        CanvasPosition = Vector2.new(0, 0),
-        TopImage = Style.ScrollbarImage,
-        MidImage = Style.ScrollbarImage,
-        BottomImage = Style.ScrollbarImage,
-        HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-        ScrollBarThickness = 16,
-        
-        CanvasSize = self.listLength:map(function(length)
-            return UDim2.new(0, minCellWidth, 0, length)
-        end),
+            CanvasPosition = Vector2.new(0, 0),
+            TopImage = Style.ScrollbarImage,
+            MidImage = Style.ScrollbarImage,
+            BottomImage = Style.ScrollbarImage,
+            HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
+            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
+            VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
+            ScrollBarThickness = 16,
+            
+            CanvasSize = self.listLength:map(function(length)
+                return UDim2.new(0, minCellWidth, 0, length)
+            end),
 
-        BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
-        BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
-        ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-    }, listElements)
+            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
+            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
+            ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
+        }, listElements)
+    or
+        Roact.createElement("TextLabel", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Size = UDim2.new(1, 0, 1, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 0,
+            BorderSizePixel = 0,
+
+            Text = "The selected item(s) do not have any color properties",
+            Font = Style.StandardFont,
+            TextSize = Style.StandardTextSize,
+            TextXAlignment = Enum.TextXAlignment.Center,
+            TextYAlignment = Enum.TextYAlignment.Center,
+            TextWrapped = true,
+
+            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
+            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+        }, {
+            UIPadding = Roact.createElement(Padding, {Style.PagePadding})
+        })
 end
 
 PropertyListItem = ConnectTheme(PropertyListItem)

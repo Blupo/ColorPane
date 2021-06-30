@@ -8,14 +8,20 @@
 - Added a [Copic](https://copic.jp/en/) color palette
 - Holding down either Shift key when selecting the option to delete a palette will now bypass the confirmation dialog
 - Users can now use the arrow keys to traverse palettes when a color is selected, as well as switch between keypoints in the ColorSequence editor when one is selected
+- Setting data will now automatically save instead of only when the plugin is unloaded or when the Settings window is closed, with options to disable this or modify the interval in the Settings
+- Users now have the option to cache the Roblox API data so that Color Properties can be used during testing with the "Cache Roblox API data" setting
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
 - Fixed a bug where trying to use the scroll wheel on the palette page picker would break the palettes page if the user didn't have any User Palettes
+- Fixed a bug that occurred if Color Properties tried referencing an object property that existed in the API dump but didn't exist on the object, most likely because the Studio and API dump versions were mismatched
 
 ### Changed
-- Testing sessions (e.g. Play Solo) will no longer save changes to settings
-- Changed the behaviour for data saving when multiple Studio sessions are open
+- Testing sessions (e.g. Play Solo) can no longer modify settings or write data to disk
+- Changed the behaviour for data writing when multiple Studio sessions are open
+- Modified some setting descriptions to more accurately reflect what they actually do
+- Changed the "Load API" toolbar button's text and description to more accurately reflect what it actually does
+- Color Properties now shows a notice if the selection has no color properties instead of showing a blank window
 
 ## [0.2.1] - 2021-03-29
 ### Fixed

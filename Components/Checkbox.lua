@@ -19,6 +19,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         Size?
         LayoutOrder?
 
+        disabled: boolean?
         value: boolean
         text: string
         onChecked: (boolean) -> nil
@@ -28,6 +29,7 @@ local Checkbox = Roact.PureComponent:extend("Checkbox")
 
 Checkbox.render = function(self)
     local theme = self.props.theme
+    local disabled = self.props.disabled
 
     return Roact.createElement("Frame", {
         AnchorPoint = self.props.AnchorPoint,
@@ -51,6 +53,8 @@ Checkbox.render = function(self)
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder),
 
             [Roact.Event.MouseButton1Click] = function()
+                if (disabled) then return end
+
                 self.props.onChecked(not self.props.value)
             end
         }, {
@@ -76,7 +80,10 @@ Checkbox.render = function(self)
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
 
-                    BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, Enum.StudioStyleGuideModifier.Selected),
+                    BackgroundColor3 = theme:GetColor(
+                        Enum.StudioStyleGuideColor.InputFieldBorder,
+                        disabled and Enum.StudioStyleGuideModifier.Disabled or Enum.StudioStyleGuideModifier.Selected
+                    ),
                 }, {
                     UICorner = Roact.createElement("UICorner", {
                         CornerRadius = UDim.new(0, Style.StandardCornerRadius),

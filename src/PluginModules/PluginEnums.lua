@@ -47,6 +47,7 @@ return setmetatable({
         "AutoCheckForUpdate",
         "AutoSave",
         "AutoSaveInterval",
+        "CacheAPIData",
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {
