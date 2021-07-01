@@ -23,18 +23,20 @@ local Padding = require(Components:FindFirstChild("Padding"))
         TextSize?
         TextXAlignment?
 
-        usesTextBinding: boolean?
-
         canClear: boolean?
         disabled: boolean?
-        isTextAValidValue: () -> boolean?
-        onTextChanged: ()
+        usesTextBinding: boolean?
+        selectTextOnFocus: boolean?
+
+        isTextAValidValue: (string)? -> boolean
+        onTextChanged: (string)?
+        onSubmit: (string)?
 ]]
 
 local TextInput = Roact.PureComponent:extend("TextInput")
 
-TextInput.init = function(self)
-    self.textBox = Roact.createRef()
+TextInput.init = function(self, initProps)
+    self.lastText = initProps.usesTextBinding and initProps.Text:getValue() or initProps.Text
 
     self:setState({
         focused = false,
@@ -46,25 +48,26 @@ end
 TextInput.didUpdate = function(self, prevProps)
     if (self.props.usesTextBinding) then return end
 
-    local text = self.props.Text
+    local newText = self.props.Text
+    local prevText = prevProps.Text
 
-    if (self.state.invalidInput) then
-        if (text ~= prevProps.Text) then
-            self:setState({
-                invalidInput = false,
-            })
-        end
-    else
-        local textBox = self.textBox:getValue()
-        
-        if (text ~= textBox.Text) then
-            textBox.Text = text
-        end
+    if (newText ~= prevText) then
+        self.lastText = newText
+
+        self:setState({
+            invalidInput = false
+        })
     end
 end
 
 TextInput.render = function(self)
     local theme = self.props.theme
+    local disabled = self.props.disabled
+    local usesTextBinding = self.props.usesTextBinding
+
+    local isTextAValidValue = self.props.isTextAValidValue
+    local onTextChanged = self.props.onTextChanged
+    local onSubmit = self.props.onSubmit
 
     local borderColor
     local backgroundColor
@@ -101,7 +104,7 @@ TextInput.render = function(self)
         BackgroundColor3 = borderColor,
 
         [Roact.Event.MouseEnter] = function()
-            if ((self.state.focused) or (self.props.disabled)) then return end
+            if (self.state.focused or disabled) then return end
 
             self:setState({
                 hover = true
@@ -127,7 +130,7 @@ TextInput.render = function(self)
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
             ClipsDescendants = true,
-            TextEditable = (not self.props.disabled),
+            TextEditable = (not disabled),
 
             Font = Style.StandardFont,
             ClearTextOnFocus = false,
@@ -136,89 +139,96 @@ TextInput.render = function(self)
             TextYAlignment = Enum.TextYAlignment.Center,
             PlaceholderText = self.props.PlaceholderText or "",
 
-            Text = self.props.usesTextBinding and
+            Text = usesTextBinding and
                 self.props.Text:map(function(text)
-                    if (not self.prevText) then
-                        self.prevText = text
-                    end
-
                     if (self.state.invalidInput) then
-                        if (self.prevText ~= text) then
+                        if (text ~= self.lastBindingText) then
                             self:setState({
-                                invalidInput = false,
+                                invalidInput = false
                             })
                         else
-                            return self.textBox:getValue().Text
+                            return self.lastText
                         end
                     end
 
-                    self.prevText = text
+                    self.lastBindingText = text
                     return text
                 end)
             or self.props.Text,
 
-            BackgroundColor3 = backgroundColor,
-            PlaceholderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Disabled),
             TextColor3 = theme:GetColor(
                 Enum.StudioStyleGuideColor.MainText,
-                self.props.disabled and Enum.StudioStyleGuideModifier.Disabled or nil
+                disabled and Enum.StudioStyleGuideModifier.Disabled or nil
             ),
 
-            [Roact.Ref] = self.textBox,
+            BackgroundColor3 = backgroundColor,
+            PlaceholderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Disabled),
 
-            [Roact.Event.Focused] = function()
-                if (self.props.disabled) then return end
+            [Roact.Event.Focused] = function(obj)
+                if (disabled) then return end
+                
+                if (self.props.selectTextOnFocus) then
+                    obj.CursorPosition = string.len(obj.Text) + 1
+                    obj.SelectionStart = 1
+                end
 
                 self:setState({
                     focused = true,
                     hover = false,
+                    invalidInput = false,
                 })
             end,
 
             [Roact.Event.FocusLost] = function(obj)
-                if (self.props.disabled) then return end
-                
-                local originalText = self.props.usesTextBinding and self.props.Text:getValue() or self.props.Text
-                local text = string.match(obj.Text, "^%s*(.-)%s*$")
+                if (disabled) then return end
 
-                if (text == originalText) then
-                    if (self.props.isTextAValidValue) then
-                        self:setState({
-                            focused = false,
-                            invalidInput = (not self.props.isTextAValidValue(originalText)),
-                        })
-                    else
-                        self:setState({
-                            focused = false
-                        })
-                    end
+                local newText = string.match(obj.Text, "^%s*(.-)%s*$")
+                local isValid = (not isTextAValidValue) and true or isTextAValidValue(newText)
+                local originalText = usesTextBinding and self.props.Text:getValue() or self.props.Text
 
+                if (newText == originalText) then
+                    self:setState({
+                        focused = false,
+                    })
+
+                    obj.Text = originalText
+                    self.lastText = originalText
                     return
                 end
 
-                if ((not self.props.canClear) and (text == "")) then
+                if (isValid and onSubmit) then
+                    --[[
+                        Since we can't know if the Text prop will change after onSubmit,
+                        we need to reset the TextBox's Text to its original value.
+
+                        If Text does change, the TextBox's Text will briefly flicker.
+                        If Text doesn't change, that's what this line of code is for.
+                    --]]
                     obj.Text = originalText
 
-                    self:setState({
-                        focused = false,
-                        invalidInput = false,
-                    })
-
-                    return
+                    onSubmit(newText)
                 end
 
-                if (self.props.isTextAValidValue and (not self.props.isTextAValidValue(text))) then
-                    self:setState({
-                        focused = false,
-                        invalidInput = true,
-                    })
-                else
-                    self:setState({
-                        focused = false,
-                        invalidInput = false,
-                    })
+                self:setState({
+                    focused = false,
+                    invalidInput = (not isValid),
+                })
+            end,
 
-                    self.props.onTextChanged(text)
+            [Roact.Change.Text] = function(obj)
+                if (disabled) then return end
+
+                local newText = string.match(obj.Text, "^%s*(.-)%s*$")
+
+                if ((not self.props.canClear) and (newText == "")) then
+                    obj.Text = self.lastText
+                    return
+                else
+                    self.lastText = newText
+                end
+
+                if (onTextChanged) then
+                    onTextChanged(newText)
                 end
             end
         }, {
@@ -229,6 +239,6 @@ TextInput.render = function(self)
             UIPadding = Roact.createElement(Padding, {0, Style.TextObjectPadding}),
         })
     })
-    end
+end
 
 return ConnectTheme(TextInput)

@@ -238,14 +238,16 @@ Slider.render = function(self)
                 Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.MinorElementPadding) or 0, 1, 0),
                 TextXAlignment = Enum.TextXAlignment.Center,
                 Text = self.props.value:map(self.props.valueToText),
+
+                canClear = false,
+                usesTextBinding = true,
+                selectTextOnFocus = true,
     
                 isTextAValidValue = function(text)
                     return self.props.textToValue(text) and true or false
                 end,
 
-                usesTextBinding = true,
-                canClear = false,
-                onTextChanged = function(newText)
+                onSubmit = function(newText)
                     local newValue = self.props.textToValue(newText)
     
                     if (type(newValue) ~= "number") then return end

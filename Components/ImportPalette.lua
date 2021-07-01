@@ -442,11 +442,14 @@ ImportPalette.render = function(self)
                 Text = self.state.importURL or "",
                 PlaceholderText = "Type or paste a URL here",
 
-                onTextChanged = function(newText)
+                onSubmit = function(newText)
                     self:setState({
                         importURL = newText
                     })
                 end,
+
+                canClear = true,
+                selectTextOnFocus = true,
             }),
 
             RetrieveURLButton = Roact.createElement(Button, {
@@ -642,7 +645,7 @@ ImportPalette.render = function(self)
             
                         canClear = false,
 
-                        onTextChanged = function(newText)
+                        onSubmit = function(newText)
                             self:setState({
                                 paletteName = newText
                             })

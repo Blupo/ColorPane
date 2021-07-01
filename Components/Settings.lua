@@ -179,7 +179,7 @@ Settings.render = function(self)
                     return ((math.floor(interval) == interval) and (interval > 0))
                 end,
 
-                onTextChanged = function(newText)
+                onSubmit = function(newText)
                     local interval = tonumber(newText)
                     if (not interval) then return false end
                     if ((math.floor(interval) ~= interval) or (interval < 1)) then return end

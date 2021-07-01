@@ -497,7 +497,7 @@ ColorSequenceEditor.render = function(self)
                         return ((n >= MIN_SNAP_VALUE) and (n <= (1 - MIN_SNAP_VALUE)))
                     end,
     
-                    onTextChanged = function(text)
+                    onSubmit = function(text)
                         local n = tonumber(text)
                         n = round(n / 100, math.log10(MIN_SNAP_VALUE))
 
@@ -684,10 +684,9 @@ ColorSequenceEditor.render = function(self)
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 30, 0.5, 0),
                     Size = UDim2.new(0, 50, 1, 0),
+                    
                     Text = timeSnapValue * 100,
                     TextXAlignment = Enum.TextXAlignment.Center,
-    
-                    canClear = false,
     
                     isTextAValidValue = function(text)
                         local n = tonumber(text)
@@ -697,13 +696,15 @@ ColorSequenceEditor.render = function(self)
                         return ((n >= MIN_SNAP_VALUE) and (n <= MAX_SNAP_VALUE))
                     end,
     
-                    onTextChanged = function(text)
+                    onSubmit = function(text)
                         local n = tonumber(text)
                         n = math.clamp(n / 100, MIN_SNAP_VALUE, MAX_SNAP_VALUE)
                         n = round(n, math.log10(MIN_SNAP_VALUE))
 
                         self.props.setSnapValue(n)
                     end,
+
+                    canClear = false,
                 }),
     
                 SnapUnitLabel = Roact.createElement("TextLabel", {

@@ -72,16 +72,16 @@ RenamePalette.render = function(self)
             Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.MinorElementPadding),
             Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
 
-            TextSize = Style.LargeTextSize,
             Text = newPaletteName,
+            TextSize = Style.LargeTextSize,
 
-            canClear = false,
-
-            onTextChanged = function(newText)
+            onSubmit = function(newText)
                 self:setState({
                     newPaletteName = newText
                 })
             end,
+
+            canClear = false,
         }),
 
         NameIsOKLabel = Roact.createElement("TextLabel", {

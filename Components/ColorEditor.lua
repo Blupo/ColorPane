@@ -384,16 +384,18 @@ ColorEditor.render = function(self)
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
                 Size = UDim2.new(1, -6 - Style.MinorElementPadding, 0, Style.StandardInputHeight),
-    
-                TextXAlignment = Enum.TextXAlignment.Center,
+                
                 Text = string.upper(Color.toHex(Color.fromColor3(self.props.color))),
-    
+                TextXAlignment = Enum.TextXAlignment.Center,
+
+                canClear = false,
+                selectTextOnFocus = true,
+
                 isTextAValidValue = function(text)
                     return Color.fromHex(text) and true or false
                 end,
-    
-                canClear = false,
-                onTextChanged = function(text)
+
+                onSubmit = function(text)
                     self.props.setColor(Color.toColor3(Color.fromHex(text)))
                 end,
             }),

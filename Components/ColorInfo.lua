@@ -184,15 +184,15 @@ ColorInfo.render = function(self)
                 Size = UDim2.new(1, -(30 + Style.SpaciousElementPadding), 1, 0),
                 Text = component.getComponentString(color),
 
-                canClear = false,
-
                 isTextAValidValue = function(text)
                     return (component.getColor(text) and true or false)
                 end,
 
-                onTextChanged = function(newText)
+                onSubmit = function(newText)
                     self.props.setColor(Color.toColor3(component.getColor(newText)))
                 end,
+
+                canClear = false,
             })
         }))
     end

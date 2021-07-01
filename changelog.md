@@ -22,6 +22,8 @@
 - Modified some setting descriptions to more accurately reflect what they actually do
 - Changed the "Load API" toolbar button's text and description to more accurately reflect what it actually does
 - Color Properties now shows a notice if the selection has no color properties instead of showing a blank window
+- Several text inputs, mainly for color components, will now select their entire text when you focus on them
+- Palette search will now update as the search text changes and no longer requires the user to release the TextBox's focus
 
 ## [0.2.1] - 2021-03-29
 ### Fixed

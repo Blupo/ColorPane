@@ -106,7 +106,6 @@ Palette.render = function(self)
                 PlaceholderText = "Search",
                 Text = self.state.searchDisplayText,
 
-                canClear = true,
                 onTextChanged = function(newText)
                     local newSearchTerm = string.lower(string.gsub(newText, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
                     local resetSelected
@@ -125,7 +124,9 @@ Palette.render = function(self)
                         searchDisplayText = newText,
                         searchTerm = (newSearchTerm ~= "") and newSearchTerm or Roact.None
                     })
-                end
+                end,
+
+                canClear = true,
             }),
 
             LayoutPicker = Roact.createElement(ButtonBar, {

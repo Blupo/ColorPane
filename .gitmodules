@@ -13,3 +13,6 @@
 [submodule "includes/t"]
 	path = includes/t
 	url = https://github.com/osyrisrblx/t
+[submodule "includes/Promise"]
+	path = includes/Promise
+	url = https://github.com/evaera/roblox-lua-promise
