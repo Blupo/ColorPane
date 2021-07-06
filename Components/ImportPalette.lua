@@ -55,7 +55,8 @@ local importStatusMessages = {
     NoObjectSelected = "At least one object should be selected",
     MultipleObjectsSelected = "Only one object should be selected",
     NotAnX = "The selected object is not a %s",
-    ValidPalette = "The %s contains a valid palette"
+    ValidPalette = "The %s contains a valid palette",
+    NonConformantPalette = "Palette format check failed: %s",
 }
 
 ---
@@ -104,12 +105,12 @@ ImportPalette.init = function(self)
 end
 
 ImportPalette.didMount = function(self)
-    self.rotator = RunService.Heartbeat:Connect(function()
+    self.rotator = RunService.Heartbeat:Connect(function(step)
         local statusIcon = self.statusIcon:getValue()
         if (not statusIcon) then return end
 
         if (self.state.status == "wait") then
-            statusIcon.Rotation = (statusIcon.Rotation + 1) % 360  
+            statusIcon.Rotation = (statusIcon.Rotation + (step * 60)) % 360  
         else
             statusIcon.Rotation = 0
         end
@@ -203,7 +204,7 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(message)
+                            reject(string.format(importStatusMessages.NonConformantPalette, message))
                         end
                     end):andThen(
                         self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "ModuleScript")),
@@ -304,7 +305,7 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(message)
+                            reject(string.format(importStatusMessages.NonConformantPalette, message))
                         end
                     end):andThen(
                         self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "StringValue")),
@@ -382,7 +383,7 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(message)
+                            reject(string.format(importStatusMessages.NonConformantPalette, message))
                         end
                     end):andThen(
                         self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "file")),
@@ -482,7 +483,7 @@ ImportPalette.render = function(self)
                         })
 
                         if (not response.Success) then
-                            reject(response.StatusMessage)
+                            reject(response.StatusCode .. " " .. response.StatusMessage)
                             return
                         else
                             local newPalette = HttpService:JSONDecode(response.Body)
@@ -491,7 +492,7 @@ ImportPalette.render = function(self)
                             if (isValid) then
                                 resolve(newPalette)
                             else
-                                reject(message)
+                                reject(string.format(importStatusMessages.NonConformantPalette, message))
                             end
                         end
                     end):timeout(HTTP_TIMEOUT)
