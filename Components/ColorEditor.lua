@@ -40,14 +40,14 @@ end
 
 local editorTabs = {
     {
-        name = "wheel",
+        name = "ColorWheel",
         image = Style.ColorWheelEditorImage,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
         disabledDisplayColor = EDITOR_ICON_DISABLED_COLOR,
 
-        getElement = function(self)
+        getElement = function()
             return Roact.createElement(ColorWheel, {
                 ringWidth = Style.ColorWheelRingWidth,
             })
@@ -55,7 +55,7 @@ local editorTabs = {
     },
 
     {
-        name = "sliders",
+        name = "Sliders",
         image = Style.SliderEditorImage,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
@@ -68,7 +68,7 @@ local editorTabs = {
     },
 
     {
-        name = "palettes",
+        name = "Palettes",
         image = Style.PaletteEditorImage,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
@@ -81,7 +81,7 @@ local editorTabs = {
     },
 
     {
-        name = "colorInfo",
+        name = "ColorInfo",
         image = Style.ColorInfoEditorImage,
 
         getElement = function()
@@ -155,17 +155,20 @@ ColorEditor.render = function(self)
         local page
 
         if (maxPages ~= #editorTabs) then
-            page = (i ~= maxPages) and editorTabs[i].getElement(self) or editorTabs[selectedEditor].getElement(self)
+            page = (i ~= maxPages) and i or selectedEditor
         else
-            page = editorTabs[i].getElement(self)
+            page = i
         end
 
-        editorPageElements[i] = Roact.createElement("Frame", {
+        local editorTab = editorTabs[page]
+
+        editorPageElements[editorTab.name] = Roact.createElement("Frame", {
             Size = UDim2.new(1 / maxPages, -Style.MajorElementPadding * (maxPages - 1) / maxPages, 1, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
+            LayoutOrder = i
         }, {
-            Page = page,
+            Page = editorTab.getElement(),
         })
     end
 

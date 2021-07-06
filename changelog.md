@@ -15,6 +15,7 @@
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
 - Fixed a bug where trying to use the scroll wheel on the palette page picker would break the palettes page if the user didn't have any User Palettes
 - Fixed a bug that occurred if Color Properties tried referencing an object property that existed in the API dump but didn't exist on the object, most likely because the Studio and API dump versions were mismatched
+- Fixed a bug that occurred when a text input was focused and destroyed due to a re-render
 
 ### Changed
 - Testing sessions (e.g. Play Solo) can no longer modify settings or write data to disk
@@ -24,6 +25,7 @@
 - Color Properties now shows a notice if the selection has no color properties instead of showing a blank window
 - Several text inputs, mainly for color components, will now select their entire text when you focus on them
 - Palette search will now update as the search text changes and no longer requires the user to release the TextBox's focus
+- Text inputs will now respond to overflow text and changes to the cursor position
 
 ## [0.2.1] - 2021-03-29
 ### Fixed

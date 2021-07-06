@@ -77,7 +77,7 @@ Pages.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                Content = (not (self.state.dropdownOpen or self.state.optionsOpen)) and selectedPage.content or nil
+                Content = (not self.state.dropdownExpanded) and selectedPage.content or nil
             })
         or nil
     })

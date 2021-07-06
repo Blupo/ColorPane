@@ -193,6 +193,7 @@ ColorInfo.render = function(self)
                 end,
 
                 canClear = false,
+                selectTextOnFocus = (component.name == "Hex"),
             })
         }))
     end
