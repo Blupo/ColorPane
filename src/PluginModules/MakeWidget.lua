@@ -35,6 +35,15 @@ local widgetsInfo = {
 		Title = "ColorPane Settings",
 	    Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.EditorPageWidth, 200, Style.EditorPageWidth, 200),
 	},
+
+	ColorSequencePalette = {
+		Id = "ColorPane_CS_Palette",
+		Title = "ColorPane ColorSequence Palette",
+		Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true,
+			Style.PagePadding + 230, (Style.PagePadding * 2) + Style.StandardInputHeight + Style.MinorElementPadding + (((Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)) * 6) + 2,
+			Style.PagePadding + 230, (Style.PagePadding * 2) + Style.StandardInputHeight + Style.MinorElementPadding + (((Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)) * 6) + 2
+		),
+	},
 }
 
 local widgets = {}

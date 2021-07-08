@@ -68,7 +68,7 @@ local Style = {
 
     -- toolbar
     ToolbarColorEditorButtonImage = "rbxassetid://6498550308",
-    ToolbarLoadAPIButtonImage = "rbxassetid://6498542225",
+    ToolbarInjectAPIButtonImage = "rbxassetid://6498542225",
     ToolbarSettingsButtonImage = "rbxassetid://6528624327",
     ToolbarColorPropertiesButtonImage = "rbxassetid://6531028502",
 
@@ -87,7 +87,7 @@ local Style = {
     StandardInputHeight = 22,
     DialogButtonWidth = 70,
     EditorPageWidth = 265,
-    SliderIncrementButtonWidth = 16,
+    ColorSequencePreviewWidth = 62,
 }
 
 Style.StandardButtonSize = Style.StandardTextSize + (Style.MinorElementPadding * 2)

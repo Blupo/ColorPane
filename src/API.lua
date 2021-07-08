@@ -119,14 +119,11 @@ local mountColorEditor = function(title, color, finishedEvent)
         })
     }), colorEditorWidget)
 
-    if (not colorEditorWidget.Enabled) then
-        colorEditorWidget.Enabled = true
-    end
+    colorEditorWidget.Title = title
+    colorEditorWidget.Enabled = true
 end
 
 local mountColorSequenceEditor = function(title, colorSequence, promptForColorEdit, finishedEvent, onValueChanged)
-    colorSequenceEditorWidget.Title = title
-
     colorSequenceEditorTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
         store = colorPaneStore,
     }, {
@@ -138,9 +135,8 @@ local mountColorSequenceEditor = function(title, colorSequence, promptForColorEd
         })
     }), colorSequenceEditorWidget)
 
-    if (not colorSequenceEditorWidget.Enabled) then
-        colorSequenceEditorWidget.Enabled = true
-    end
+    colorSequenceEditorWidget.Title = title
+    colorSequenceEditorWidget.Enabled = true
 end
 
 ---
@@ -247,7 +243,7 @@ ColorPane.PromptForColorSequence = function(promptOptions)
         )
     ) then return Promise.reject("Invalid prompt options") end
 
-    promptOptions.PromptTitle = promptOptions.PromptTitle or "Create a ColorSequence"
+    promptOptions.PromptTitle = promptOptions.PromptTitle or "Create a gradient"
     promptOptions.InitialColor = promptOptions.InitialColor or DEFAULT_COLORSEQUENCE
 
     local resolveEvent = Instance.new("BindableEvent")
@@ -327,6 +323,27 @@ ColorPane.init = function(pluginObj)
             end
 
             PluginSettings.Set(PluginEnums.PluginSettingKey.UserPalettes, newPalettes)
+        end
+
+        if (newState.colorSequenceEditor.lastPaletteModification ~= oldState.colorSequenceEditor.lastPaletteModification) then
+            local newPalette = copy(newState.colorSequenceEditor.palette)
+
+            for i = 1, #newPalette do
+                local color = newPalette[i]
+                local colorSequence = color.color
+                local keypoints = {}
+
+                for j = 1, #colorSequence.Keypoints do
+                    local keypoint = colorSequence.Keypoints[j]
+                    local keypointValue = keypoint.Value
+
+                    keypoints[j] = {keypoint.Time, {keypointValue.R, keypointValue.G, keypointValue.B}}
+                end
+
+                color.color = keypoints
+            end
+            
+            PluginSettings.Set(PluginEnums.PluginSettingKey.UserColorSequences, newPalette)
         end
 
         if (newState.colorSequenceEditor.snap ~= oldState.colorSequenceEditor.snap) then

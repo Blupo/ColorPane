@@ -125,7 +125,8 @@ PalettePages.render = function(self)
             name = palette.name,
 
             content = Roact.createElement(Palette, {
-                palette = palette
+                palette = palette,
+                paletteIndex = i,
             })
         })
     end
@@ -243,7 +244,7 @@ PalettePages.render = function(self)
                     name = "Duplicate this Palette",
 
                     onActivated = function()
-                        self.props.duplicatePalette(palettes[selectedPageNum].name)
+                        self.props.duplicatePalette(selectedPageNum)
                         self.props.updatePalettePage(2, #palettes + 1)
                     end
                 } or nil,
@@ -264,7 +265,7 @@ PalettePages.render = function(self)
 
                     onActivated = function()
                         if (self.state.leftShiftDown or self.state.rightShiftDown) then
-                            self.props.removePalette(palettes[selectedPageNum].name)
+                            self.props.removePalette(selectedPageNum)
                             self.props.updatePalettePage(1, 1)
                         else
                             self:setState({
@@ -312,17 +313,17 @@ end, function(dispatch)
             })
         end,
 
-        duplicatePalette = function(paletteName)
+        duplicatePalette = function(index)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_DuplicatePalette,
-                name = paletteName
+                index = index,
             })
         end,
 
-        removePalette = function(paletteName)
+        removePalette = function(index)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_RemovePalette,
-                name = paletteName,
+                index = index
             })
         end,
     }

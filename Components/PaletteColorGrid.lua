@@ -87,7 +87,7 @@ PaletteColorGrid.render = function(self)
                 Position = UDim2.new(0, 0, 1, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
                 
-                Text = selected and colors[selected].name or "",
+                Text = colors[selected] and colors[selected].name or "",
                 PlaceholderText = "Select a color",
 
                 canClear = false,

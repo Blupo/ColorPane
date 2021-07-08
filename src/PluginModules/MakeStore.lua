@@ -18,8 +18,6 @@ local Rodux = require(includes:FindFirstChild("Rodux"))
 
 local MAX_QP_COLORS = 99
 
-local getPalette = PaletteUtils.getPalette
-local getPaletteColorIndex = PaletteUtils.getPaletteColorIndex
 local getNewPaletteName = PaletteUtils.getNewPaletteName
 local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 
@@ -33,6 +31,7 @@ return function(plugin)
     if (pluginStore) then return pluginStore end
 
     local userPalettes = copy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
+    local userColorSequences = copy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserColorSequences) or {})
 
     for i = 1, #userPalettes do
         local palette = userPalettes[i]
@@ -43,6 +42,21 @@ return function(plugin)
 
             color.color = Color3.new(colorValue[1], colorValue[2], colorValue[3])
         end
+    end
+
+    for i = 1, #userColorSequences do
+        local color = userColorSequences[i]
+        local colorSequence = color.color
+        local keypoints = {}
+
+        for j = 1, #colorSequence do
+            local keypoint = colorSequence[j]
+            local keypointValue = keypoint[2]
+
+            keypoints[j] = ColorSequenceKeypoint.new(keypoint[1], Color3.new(keypointValue[1], keypointValue[2], keypointValue[3]))
+        end
+
+        color.color = ColorSequence.new(keypoints)
     end
 
     local colorPaneStoreInitialState = {
@@ -77,10 +91,16 @@ return function(plugin)
 
         colorSequenceEditor = {
             snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
+
+            palette = userColorSequences,
+            lastPaletteModification = os.clock(),
         }
     }
 
     local colorPaneStore = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
+        --[[
+            theme: StudioTheme
+        ]]
         [PluginEnums.StoreActionType.SetTheme] = function(state, action)
             state = copy(state)
             
@@ -88,6 +108,9 @@ return function(plugin)
             return state
         end,
 
+        --[[
+            slice: dictionary<any, any>
+        ]]
         [PluginEnums.StoreActionType.UpdateSessionData] = function(state, action)
             state = copy(state)
 
@@ -95,6 +118,10 @@ return function(plugin)
             return state
         end,
         
+        --[[
+            color: Color3
+            editor: PluginEnums.EditorKey?
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(state, action)
             state = copy(state)
 
@@ -104,6 +131,9 @@ return function(plugin)
             return state
         end,
 
+        --[[
+            color: Color3
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(state, action)
             state = copy(state)
 
@@ -117,6 +147,10 @@ return function(plugin)
             return state
         end,
 
+        --[[
+            palette: Palette?
+            name: string?
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(state, action)
             state = copy(state)
 
@@ -132,156 +166,268 @@ return function(plugin)
                     colors = {}
                 })
             end
-
+            
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
+        --[[
+            index: number
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_RemovePalette] = function(state, action)
-            local _, paletteIndex = getPalette(state.colorEditor.palettes, action.name)
-            if (not paletteIndex) then return state end
-
-            state = copy(state)
-            table.remove(state.colorEditor.palettes, paletteIndex)
-
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
-        end,
-
-        [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(state, action)
             local palettes = state.colorEditor.palettes
-
-            local _, paletteIndex = getPalette(palettes, action.name)
-            if (not paletteIndex) then return state end
-
-            local newPaletteName = getNewPaletteName(palettes, action.name)
+            local index = action.index
+            if (not palettes[index]) then return state end
 
             state = copy(state)
             palettes = state.colorEditor.palettes
 
-            local paletteCopy = copy(palettes[paletteIndex])
-            paletteCopy.name = newPaletteName
-
-            table.insert(palettes, paletteCopy)
+            table.remove(palettes, index)
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
+        --[[
+            index: number
+        ]]
+        [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(state, action)
+            local palettes = state.colorEditor.palettes
+            local index = action.index
+
+            local palette = palettes[index]
+            if (not palette) then return state end
+
+            state = copy(state)
+            palettes = state.colorEditor.palettes
+            palette = palettes[index]
+
+            local newPaletteName = getNewPaletteName(palettes, palette.name)
+            local newPalette = copy(palette)
+            newPalette.name = newPaletteName
+            
+            table.insert(palettes, newPalette)
+            state.colorEditor.lastPaletteModification = os.clock()
+            return state
+        end,
+
+        --[[
+            index: number
+            newName: string
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteName] = function(state, action)
-            local _, paletteIndex = getPalette(state.colorEditor.palettes, action.name)
-            if (not paletteIndex) then return state end
+            local palettes = state.colorEditor.palettes
+            local index = action.index
 
-            local newPaletteName = getNewPaletteName(state.colorEditor.palettes, action.newName, paletteIndex)
-            if (newPaletteName == action.name) then return state end
-
-            state = copy(state)
-            state.colorEditor.palettes[paletteIndex].name = newPaletteName
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
-        end,
-
-        [PluginEnums.StoreActionType.ColorEditor_AddPaletteColor] = function(state, action)
-            local palette = getPalette(state.colorEditor.palettes, action.palette)
+            local palette = palettes[index]
             if (not palette) then return state end
 
+            local newPaletteName = getNewPaletteName(palettes, action.newName, index)
+            if (newPaletteName == palette.name) then return state end
+
             state = copy(state)
-            palette = getPalette(state.colorEditor.palettes, action.palette)
+            palettes = state.colorEditor.palettes
 
-            local paletteColors = palette.colors
-            local colorName = getNewPaletteColorName(paletteColors, action.name or "New Color")
-
-            table.insert(paletteColors, {
-                name = colorName,
-                color = action.color
-            })
-
+            palettes[index].name = newPaletteName
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
+        --[[
+            paletteIndex: number,
+            newName: string?
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(state, action)
-            local palette = getPalette(state.colorEditor.palettes, action.palette)
-            if (not palette) then return state end
-
-            state = copy(state)
-            palette = getPalette(state.colorEditor.palettes, action.palette)
-
-            local paletteColors = palette.colors
-            local colorName = getNewPaletteColorName(paletteColors, action.name or "New Color")
-
-            table.insert(paletteColors, {
-                name = colorName,
-                color = state.colorEditor.color
-            })
-
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
-        end,
-
-        [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(state, action)
-            local palette = getPalette(state.colorEditor.palettes, action.palette)
+            local palettes = state.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
             if (not palette) then return state end
 
             local paletteColors = palette.colors
-
-            local colorIndex = getPaletteColorIndex(paletteColors, action.name)
-            if (not colorIndex) then return state end
+            local newColorName = getNewPaletteColorName(paletteColors, action.newName or "New Color")
 
             state = copy(state)
-            palette = getPalette(state.colorEditor.palettes, action.palette)
+            palettes = state.colorEditor.palettes
+            palette = palettes[paletteIndex]
             paletteColors = palette.colors
 
-            table.remove(paletteColors, colorIndex)
+            table.insert(paletteColors, {
+                name = newColorName,
+                color = state.colorEditor.color,
+            })
+
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
-        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(state, action)
-            local palette = getPalette(state.colorEditor.palettes, action.palette)
+        --[[
+            paletteIndex: number,
+            colorIndex: number
+        ]]
+        [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(state, action)
+            local palettes = state.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
             if (not palette) then return state end
 
             local paletteColors = palette.colors
+            local colorIndex = action.colorIndex
 
-            local colorIndex = getPaletteColorIndex(paletteColors, action.name)
-            if (not colorIndex) then return state end
+            local color = paletteColors[colorIndex]
+            if (not color) then return state end
+
+            state = copy(state)
+            palettes = state.colorEditor.palettes
+            palette = palettes[paletteIndex]
+
+            table.remove(palette.colors, colorIndex)
+            state.colorEditor.lastPaletteModification = os.clock()
+            return state
+        end,
+
+        --[[
+            paletteIndex: number,
+            colorIndex: number,
+            newName: string
+        ]]
+        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(state, action)
+            local palettes = state.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
+            if (not palette) then return state end
+
+            local paletteColors = palette.colors
+            local colorIndex = action.colorIndex
+
+            local color = paletteColors[colorIndex]
+            if (not color) then return state end
 
             local newColorName = getNewPaletteColorName(paletteColors, action.newName, colorIndex)
-            if (newColorName == action.name) then return state end
+            if (newColorName == color.name) then return state end
 
             state = copy(state)
-            palette = getPalette(state.colorEditor.palettes, action.palette)
+            palettes = state.colorEditor.palettes
+            palette = palettes[paletteIndex]
             paletteColors = palette.colors
-
+            
             paletteColors[colorIndex].name = newColorName
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
+        --[[
+            paletteIndex: number,
+            colorIndex: number,
+            offset: number,
+        ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(state, action)
-            local palette = getPalette(state.colorEditor.palettes, action.palette)
+            local palettes = state.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
             if (not palette) then return state end
 
             local paletteColors = palette.colors
-
-            local colorIndex = getPaletteColorIndex(paletteColors, action.name)
-            if (not colorIndex) then return state end
-
-            local newColorIndex = colorIndex + action.offset
-            if (not paletteColors[newColorIndex]) then return state end
+            local colorIndex = action.colorIndex
+            local otherColorIndex = colorIndex + action.offset
+            if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return state end
 
             state = copy(state)
-            palette = getPalette(state.colorEditor.palettes, action.palette)
+            palettes = state.colorEditor.palettes
+            palette = palettes[paletteIndex]
             paletteColors = palette.colors
 
-            paletteColors[newColorIndex], paletteColors[colorIndex] = paletteColors[colorIndex], paletteColors[newColorIndex]
+            paletteColors[colorIndex], paletteColors[otherColorIndex] = paletteColors[otherColorIndex], paletteColors[colorIndex]
             state.colorEditor.lastPaletteModification = os.clock()
             return state
         end,
 
+        --[[
+            snap: number
+        ]]
         [PluginEnums.StoreActionType.ColorSequenceEditor_SetSnapValue] = function(state, action)
             state = copy(state)
 
             state.colorSequenceEditor.snap = action.snap
+            return state
+        end,
+
+        --[[
+            name: string,
+            color: ColorSequence,
+        ]]
+        [PluginEnums.StoreActionType.ColorSequenceEditor_AddPaletteColor] = function(state, action)
+            state = copy(state)
+
+            local colorSequencePalette = state.colorSequenceEditor.palette
+            local newColorName = getNewPaletteColorName(colorSequencePalette, action.name or "New Gradient")
+
+            table.insert(colorSequencePalette, {
+                name = newColorName,
+                color = action.color,
+            })
+
+            state.colorSequenceEditor.lastPaletteModification = os.clock()
+            return state
+        end,
+
+        --[[
+            index: number
+        ]]
+        [PluginEnums.StoreActionType.ColorSequenceEditor_RemovePaletteColor] = function(state, action)
+            local colorSequencePalette = state.colorSequenceEditor.palette
+            local index = action.index
+            if (not colorSequencePalette[index]) then return state end
+
+            state = copy(state)
+            colorSequencePalette = state.colorSequenceEditor.palette
+
+            table.remove(colorSequencePalette, action.index)
+            state.colorEditor.lastPaletteModification = os.clock()
+            return state
+        end,
+
+        --[[
+            index: number,
+            newName: string
+        ]]
+        [PluginEnums.StoreActionType.ColorSequenceEditor_ChangePaletteColorName] = function(state, action)
+            local colorSequencePalette = state.colorSequenceEditor.palette
+            local index = action.index
+
+            local color = colorSequencePalette[index]
+            if (not color) then return state end
+
+            local newColorName = getNewPaletteColorName(colorSequencePalette, action.newName, index)
+            if (newColorName == color.name) then return state end
+
+            state = copy(state)
+            colorSequencePalette = state.colorSequenceEditor.palette
+
+            colorSequencePalette[index].name = newColorName
+            state.colorSequenceEditor.lastPaletteModification = os.clock()
+            return state
+        end,
+
+        --[[
+            index: number,
+            offset: number,
+        ]]
+        [PluginEnums.StoreActionType.ColorSequenceEditor_ChangePaletteColorPosition] = function(state, action)
+            local colorSequencePalette = state.colorSequenceEditor.palette
+            local index = action.index
+            if (not colorSequencePalette[index]) then return state end
+
+            local newColorIndex = index + action.offset
+            if (not colorSequencePalette[newColorIndex]) then return state end
+
+            state = copy(state)
+            colorSequencePalette = state.colorSequenceEditor.palette
+
+            colorSequencePalette[newColorIndex], colorSequencePalette[index] = colorSequencePalette[index], colorSequencePalette[newColorIndex]
+            state.colorSequenceEditor.lastPaletteModification = os.clock()
             return state
         end,
     }))

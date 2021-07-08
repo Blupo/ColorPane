@@ -146,7 +146,7 @@ RenamePalette.render = function(self)
 
                 onActivated = function()
                     if (selectedPalette) then
-                        self.props.changePaletteName(selectedPalette.name, actualNewPaletteName)
+                        self.props.changePaletteName(paletteIndex, actualNewPaletteName)
                     else
                         self.props.addPalette(newPaletteName)
                         self.props.updatePalettePage(2, #palettes + 1)
@@ -184,11 +184,11 @@ end, function(dispatch)
             })
         end,
 
-        changePaletteName = function(oldPaletteName, newPaletteName)
+        changePaletteName = function(index, newName)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteName,
-                name = oldPaletteName,
-                newName = newPaletteName
+                index = index,
+                newName = newName,
             })
         end
     }

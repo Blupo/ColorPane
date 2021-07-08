@@ -9,17 +9,19 @@ return function(plugin)
     if (toolbarComponents) then return toolbarComponents end
 
     local toolbar = plugin:CreateToolbar("ColorPane")
-    local editorButton = toolbar:CreateButton("ColorPane_OpenEditor", "Open the Color Editor", Style.ToolbarColorEditorButtonImage, "Color Editor")
+    local colorEditorButton = toolbar:CreateButton("ColorPane_ColorEditor", "Open the Color Editor", Style.ToolbarColorEditorButtonImage, "Color Editor")
+    local csEditorButton = toolbar:CreateButton("ColorPane_CSEditor", "Open the Gradient Editor", Style.ToolbarColorEditorButtonImage, "Gradient Editor")
     local propertiesButton = toolbar:CreateButton("ColorPane_Properties", "Open the Color Properties window", Style.ToolbarColorPropertiesButtonImage, "Color Properties")
-    local loadButton = toolbar:CreateButton("ColorPane_LoadAPI", "Inject the ColorPane API script", Style.ToolbarLoadAPIButtonImage, "Inject API")
+    local injectAPIButton = toolbar:CreateButton("ColorPane_InjectAPI", "Inject the ColorPane API script", Style.ToolbarInjectAPIButtonImage, "Inject API")
     local settingsButton = toolbar:CreateButton("ColorPane_Settings", "Open the Settings window", Style.ToolbarSettingsButtonImage, "Settings")
 
     toolbarComponents = {
         Toolbar = toolbar,
-        ColorEditorButton = editorButton,
+        ColorEditorButton = colorEditorButton,
         ColorPropertiesButton = propertiesButton,
-        LoadAPIButton = loadButton,
+        InjectAPIButton = injectAPIButton,
         SettingsButton = settingsButton,
+        ColorSequenceEditorButton = csEditorButton,
     }
 
     return toolbarComponents

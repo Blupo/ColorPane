@@ -35,8 +35,8 @@ RemovePalette.render = function(self)
     local theme = self.props.theme
     local palettes = self.props.palettes
 
-    local selectedPalette = palettes[self.props.paletteIndex]
-    local promptText = string.format("Are your sure you want to delete %s?", selectedPalette.name)
+    local paletteIndex = self.props.paletteIndex
+    local promptText = string.format("Are your sure you want to delete %s?", palettes[paletteIndex].name)
 
     return Roact.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -118,7 +118,7 @@ RemovePalette.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                 onActivated = function()
-                    self.props.removePalette(selectedPalette.name)
+                    self.props.removePalette(paletteIndex)
                     self.props.updatePalettePage(1, 1)
                     self.props.onPromptClosed(true)
                 end
@@ -145,10 +145,10 @@ end, function(dispatch)
             })
         end,
 
-        removePalette = function(paletteName)
+        removePalette = function(index)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_RemovePalette,
-                name = paletteName,
+                index = index,
             })
         end,
     }

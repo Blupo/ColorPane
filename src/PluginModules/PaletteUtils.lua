@@ -43,26 +43,6 @@ local getNewItemName = function(items, originalName, selfIndex)
     return itemName, numDuplicates
 end
 
-local getPalette = function(palettes, paletteName)
-	for i = 1, #palettes do
-		local palette = palettes[i]
-
-		if (palette.name == paletteName) then
-			return palette, i
-		end
-	end
-end
-
-local getPaletteColorIndex = function(paletteColors, colorName)
-    for i = 1, #paletteColors do
-        local color = paletteColors[i]
-
-        if (color.name == colorName) then
-            return i
-        end
-    end
-end
-
 local validate = function(palette)
     -- type check
     local typeCheckSuccess, message = paletteTypeCheck(palette)
@@ -97,7 +77,5 @@ end
 return {
     getNewPaletteName = getNewItemName,
     getNewPaletteColorName = getNewItemName,
-    getPalette = getPalette,
-    getPaletteColorIndex = getPaletteColorIndex,
     validate = validate,
 }

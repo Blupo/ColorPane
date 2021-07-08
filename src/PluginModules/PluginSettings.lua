@@ -28,6 +28,7 @@ local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AutoSave] = true,
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = 5,
     [PluginEnums.PluginSettingKey.CacheAPIData] = false,
+    [PluginEnums.PluginSettingKey.UserColorSequences] = {},
 }
 
 ---

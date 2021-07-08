@@ -162,7 +162,6 @@ TextInput.render = function(self)
         BackgroundColor3 = borderColor,
 
         [Roact.Ref] = self.textBoxContainer,
-        [Roact.Change.AbsolutePosition] = self.updateOffsets,
         [Roact.Change.AbsoluteSize] = self.updateOffsets,
 
         [Roact.Event.MouseEnter] = function()
@@ -302,14 +301,17 @@ TextInput.render = function(self)
                 [Roact.Change.TextBounds] = function(obj)
                     if (self.unmounting) then return end
 
-                    local textBoxContainer = self.textBoxContainer:getValue()
+                    local textBoxContainer = obj.Parent
                     if (not textBoxContainer) then return end
     
                     local textBounds = obj.TextBounds
                     local containerSize = textBoxContainer.AbsoluteSize
+
+                    local actualContainerSize = containerSize.X - (Style.TextObjectPadding * 2)
+                    if (actualContainerSize <= 0) then return end
     
                     obj.Size = UDim2.new(
-                        (textBounds.X > (containerSize.X - (Style.TextObjectPadding * 2))) and UDim.new(0, textBounds.X) or UDim.new(1, 0),
+                        (textBounds.X > actualContainerSize) and UDim.new(0, textBounds.X) or UDim.new(1, 0),
                         UDim.new(1, 0)
                     )
 

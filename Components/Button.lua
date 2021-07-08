@@ -27,10 +27,10 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         disabledBackgroundColor: Color3?
         disabledDisplayColor: Color3?
 
-        displayType: "image" | "text" | "color"
+        displayType: "image" | "text" | "color" | "colorSequence"
         image: Content?
         text: string?
-        color: Color3?
+        color: Color3? | ColorSequence?
 
         disabled: boolean?
         onActivated: () -> nil
@@ -41,7 +41,8 @@ local merge = Util.mergeTable
 local buttonTypes = {
     image = "ImageButton",
     text = "TextButton",
-    color = "TextButton"
+    color = "TextButton",
+    colorSequence = "TextButton",
 }
 
 local getImageButtonProps = function(image, imageColor)
@@ -70,6 +71,12 @@ local getColorButtonProps = function(color)
         Text = ""
     }
 end
+
+local colorSequenceButtonProps = {
+    BackgroundColor3 = Color3.new(1, 1, 1),
+    TextTransparency = 1,
+    Text = ""
+}
 
 ---
 
@@ -121,6 +128,8 @@ Button.render = function(self)
         buttonProps = merge(buttonProps, getTextButtonProps(self.props.text, displayColor))
     elseif (displayType == "color") then
         buttonProps = merge(buttonProps, getColorButtonProps(self.props.color))
+    elseif (displayType == "colorSequence") then
+        buttonProps = merge(buttonProps, colorSequenceButtonProps)
     end
 
     if ((not self.props.disabled) and ((displayType == "image") or (displayType == "text"))) then
@@ -151,6 +160,12 @@ Button.render = function(self)
             UICorner = Roact.createElement("UICorner", {
                 CornerRadius = UDim.new(0, 4),
             }),
+
+            UIGradient = (displayType == "colorSequence") and
+                Roact.createElement("UIGradient", {
+                    Color = self.props.color,
+                })
+            or nil,
         })
     })
 end

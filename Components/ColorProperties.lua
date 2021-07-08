@@ -18,7 +18,7 @@ local Button = require(Components:FindFirstChild("Button"))
 local Checkbox = require(Components:FindFirstChild("Checkbox"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local Padding = require(Components:FindFirstChild("Padding"))
-local PropertiesList = require(Components:FindFirstChild("PropertiesList"))
+local ColorPropertiesList = require(Components:FindFirstChild("ColorPropertiesList"))
 
 ---
 
@@ -184,7 +184,7 @@ ColorProperties.willUnmount = function(self)
 end
 
 ColorProperties.render = function(self)
-    return Roact.createElement(self.state.apiLoaded and PropertiesList or NoAPIAlert)
+    return Roact.createElement(self.state.apiLoaded and ColorPropertiesList or NoAPIAlert)
 end
 
 ---

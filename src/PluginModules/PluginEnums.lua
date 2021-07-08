@@ -35,7 +35,11 @@ return setmetatable({
         "ColorEditor_ChangePaletteColorName",
         "ColorEditor_ChangePaletteColorPosition",
 
-        "ColorSequenceEditor_SetSnapValue"
+        "ColorSequenceEditor_SetSnapValue",
+        "ColorSequenceEditor_AddPaletteColor",
+        "ColorSequenceEditor_RemovePaletteColor",
+        "ColorSequenceEditor_ChangePaletteColorName",
+        "ColorSequenceEditor_ChangePaletteColorPosition",
     }),
 
     PluginSettingKey = makeEnum("PluginEnums.PluginSettingKey", {
@@ -48,6 +52,7 @@ return setmetatable({
         "AutoSave",
         "AutoSaveInterval",
         "CacheAPIData",
+        "UserColorSequences",
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {

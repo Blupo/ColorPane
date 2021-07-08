@@ -12,6 +12,7 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorEditorInput = require(PluginModules:FindFirstChild("ColorEditorInput"))
+local ColorSequencePaletteWidget = require(PluginModules:FindFirstChild("ColorSequencePaletteWidget"))
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
@@ -26,8 +27,9 @@ local Components = root:FindFirstChild("Components")
 local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
 local Settings = require(Components:FindFirstChild("Settings"))
 
+PluginSettings.init(plugin) -- priority
 ColorEditorInput.init(plugin)
-PluginSettings.init(plugin)
+ColorSequencePaletteWidget.init(plugin)
 RepeatingCallback.init(plugin)
 RobloxAPI.init(plugin)
 SelectionManager.init(plugin)
@@ -42,21 +44,23 @@ local settingsWidget = MakeWidget(plugin, "Settings")
 
 local toolbarComponents = MakeToolbar(plugin)
 local colorEditorButton = toolbarComponents.ColorEditorButton
+local csEditorButton = toolbarComponents.ColorSequenceEditorButton
 local colorPropertiesButton = toolbarComponents.ColorPropertiesButton
-local loadAPIButton = toolbarComponents.LoadAPIButton
+local injectAPIButton = toolbarComponents.InjectAPIButton
 local settingsButton = toolbarComponents.SettingsButton
 
 local colorPropertiesTree
 local settingsTree
 local colorEditPromise
+local csEditPromise
 
-local loadAPI = function()
+local injectAPI = function()
     local success = pcall(function()
         APIScript.Parent = CoreGui
     end)
 
     if (success) then
-        loadAPIButton.Enabled = false
+        injectAPIButton.Enabled = false
     end
 
     return success
@@ -115,7 +119,7 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate)) then
 end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
-    local success = loadAPI()
+    local success = injectAPI()
 
     if (not success) then
         warn("The ColorPane API could not be automatically loaded. Please make sure that you have allowed script injection and try again.")
@@ -145,7 +149,7 @@ end
 
 ---
 
-loadAPIButton.Click:Connect(loadAPI)
+injectAPIButton.Click:Connect(injectAPI)
 
 colorEditorButton.Click:Connect(function()
     if (colorEditPromise) then
@@ -161,6 +165,23 @@ colorEditorButton.Click:Connect(function()
     colorEditPromise:finally(function()
         colorEditPromise = nil
         colorEditorButton:SetActive(false)
+    end)
+end)
+
+csEditorButton.Click:Connect(function()
+    if (csEditPromise) then
+        csEditPromise:cancel()
+        csEditPromise = nil
+
+        return
+    end
+
+    csEditPromise = ColorPane.PromptForColorSequence()
+    csEditorButton:SetActive(true)
+
+    csEditPromise:finally(function()
+        csEditPromise = nil
+        csEditorButton:SetActive(false)
     end)
 end)
 
@@ -210,4 +231,5 @@ APIScript.Archivable = false
 APIScript.Name = "ColorPane"
 
 colorEditorButton.ClickableWhenViewportHidden = true
-loadAPIButton.ClickableWhenViewportHidden = true
+csEditorButton.ClickableWhenViewportHidden = true
+injectAPIButton.ClickableWhenViewportHidden = true

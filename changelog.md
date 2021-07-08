@@ -10,6 +10,8 @@
 - Users can now use the arrow keys to traverse palettes when a color is selected, as well as switch between keypoints in the ColorSequence editor when one is selected
 - Setting data will now automatically save instead of only when the plugin is unloaded or when the Settings window is closed, with options to disable this or modify the interval in the Settings
 - Users now have the option to cache the Roblox API data so that Color Properties can be used during testing with the "Cache Roblox API data" setting
+- Added a ColorSequence palette
+- Added a toolbar button to summon the Gradient Editor
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
@@ -26,6 +28,7 @@
 - Several text inputs, mainly for color components, will now select their entire text when you focus on them
 - Palette search will now update as the search text changes and no longer requires the user to release the TextBox's focus
 - Text inputs will now respond to overflow text and changes to the cursor position
+- When adding a new color to a palette, the search query will reset and the new color will be selected
 
 ## [0.2.1] - 2021-03-29
 ### Fixed

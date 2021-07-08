@@ -20,15 +20,16 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 --[[
     props
 
-    palette: Palette
-    readOnly: boolean?
+        palette: Palette?
+            OR
+        paletteIndex: number?
+
+        readOnly: boolean?
 ]]
 
 local Palette = Roact.PureComponent:extend("Palette")
 
 Palette.init = function(self)
-    self.layout = Roact.createRef()
-
     self:setState({
         searchDisplayText = "",
 
@@ -37,12 +38,14 @@ Palette.init = function(self)
 end
 
 Palette.render = function(self)
-    local isReadOnly = self.props.readOnly
     local palette = self.props.palette
+    local paletteIndex = self.props.paletteIndex
     local paletteLayout = self.props.paletteLayout
+    local isReadOnly = self.props.readOnly or (not paletteIndex)
 
     local searchTerm = self.state.searchTerm
-    local selectedColor = palette.colors[self.state.selectedColorIndex]
+    local selectedColorIndex = self.state.selectedColorIndex
+    local selectedColor = palette.colors[selectedColorIndex]
 
     local paletteColorsSlice = {}
     local paletteColorsSliceArray = {}
@@ -65,14 +68,14 @@ Palette.render = function(self)
     end
 
     if (searchTerm) then
-        for paletteIndex in pairs(paletteColorsSlice) do 
-            table.insert(paletteColorsSliceToWholeMap, paletteIndex)
+        for paletteColorIndex in pairs(paletteColorsSlice) do 
+            table.insert(paletteColorsSliceToWholeMap, paletteColorIndex)
         end
 
         table.sort(paletteColorsSliceToWholeMap)
 
-        for sliceIndex, paletteIndex in pairs(paletteColorsSliceToWholeMap) do
-            paletteColorsWholeToSliceMap[paletteIndex] = sliceIndex
+        for sliceColorIndex, paletteColorIndex in pairs(paletteColorsSliceToWholeMap) do
+            paletteColorsWholeToSliceMap[paletteColorIndex] = sliceColorIndex
         end
 
         for i = 1, #paletteColorsSliceToWholeMap do
@@ -161,7 +164,14 @@ Palette.render = function(self)
                     image = Style.AddImage,
 
                     onActivated = function()
-                        self.props.addCurrentColorToPalette(palette.name)
+                        self:setState({
+                            selectedColorIndex = #palette.colors + 1,
+
+                            searchDisplayText = "",
+                            searchTerm = Roact.None,
+                        })
+
+                        self.props.addCurrentColorToPalette(paletteIndex)
                     end
                 })
             or nil,
@@ -193,31 +203,27 @@ Palette.render = function(self)
                     selectedColorIndex = Roact.None,
                 })
                 
-                self.props.removePaletteColor(palette.name, selectedColor.name)
+                self.props.removePaletteColor(paletteIndex, selectedColorIndex)
             end,
 
             onColorNameChanged = function(newName)
-                self.props.changePaletteColorName(palette.name, selectedColor.name, newName)
+                self.props.changePaletteColorName(paletteIndex, selectedColorIndex, newName)
             end,
 
             onColorMovedUp = function()
-                self:setState(function(prevState)
-                    return {
-                        selectedColorIndex = prevState.selectedColorIndex - 1
-                    }
-                end)
+                self:setState({
+                    selectedColorIndex = selectedColorIndex - 1
+                })
                 
-                self.props.changePaletteColorPosition(palette.name, selectedColor.name, -1)
+                self.props.changePaletteColorPosition(paletteIndex, selectedColorIndex, -1)
             end,
 
             onColorMovedDown = function()
-                self:setState(function(prevState)
-                    return {
-                        selectedColorIndex = prevState.selectedColorIndex + 1
-                    }
-                end)
+                self:setState({
+                    selectedColorIndex = selectedColorIndex + 1
+                })
 
-                self.props.changePaletteColorPosition(palette.name, selectedColor.name, 1)
+                self.props.changePaletteColorPosition(paletteIndex, selectedColorIndex, 1)
             end,
         })
     })
@@ -226,7 +232,7 @@ end
 return RoactRodux.connect(function(state)
     return {
         theme = state.theme,
-        paletteLayout = state.sessionData.paletteLayout,
+        paletteLayout = state.sessionData.paletteLayout
     }
 end, function(dispatch)
     return {
@@ -246,46 +252,36 @@ end, function(dispatch)
             })
         end,
 
-        addPaletteColor = function(paletteName, newColor, newColorName)
-            dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddPaletteColor,
-                palette = paletteName,
-                color = newColor,
-                name = newColorName,
-            })
-        end,
-
-        addCurrentColorToPalette = function(paletteName, newColorName)
+        addCurrentColorToPalette = function(paletteIndex)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette,
-                palette = paletteName,
-                name = newColorName,
+                paletteIndex = paletteIndex
             })
         end,
 
-        removePaletteColor = function(paletteName, colorName)
+        removePaletteColor = function(paletteIndex, colorIndex)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor,
-                palette = paletteName,
-                name = colorName
+                paletteIndex = paletteIndex,
+                colorIndex = colorIndex
             })
         end,
 
-        changePaletteColorName = function(paletteName, oldColorName, newColorName)
+        changePaletteColorName = function(paletteIndex, colorIndex, newName)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName,
-                palette = paletteName,
-                name = oldColorName,
-                newName = newColorName
+                paletteIndex = paletteIndex,
+                colorIndex = colorIndex,
+                newName = newName
             })
         end,
 
-        changePaletteColorPosition = function(paletteName, colorName, positionOffset)
+        changePaletteColorPosition = function(paletteIndex, colorIndex, offset)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition,
-                palette = paletteName,
-                name = colorName,
-                offset = positionOffset,
+                paletteIndex = paletteIndex,
+                colorIndex = colorIndex,
+                offset = offset,
             })
         end
     }

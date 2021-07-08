@@ -18,12 +18,7 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 ---
 
-local LIST_ITEM_HEIGHT = 30
 local LIST_ITEM_LEFT_PADDING = 24
-local LIST_ITEM_PADDING = 4
-local COLOR_BUTTON_WIDTH = 70
-local PROP_LABEL_PADDING = 4
-local COLOR_BUTTON_PADDING = 16
 
 local getCellTextSizes = function(propName, displayClassName, showClassName)
     local propNameTextSize = TextService:GetTextSize(propName, Style.StandardTextSize, Style.StandardFont, Vector2.new(math.huge, math.huge))
@@ -132,12 +127,7 @@ PropertyListItem.render = function(self)
             self.props.promptEdit()
         end,
     }, {
-        UIPadding = Roact.createElement("UIPadding", {
-            PaddingTop = UDim.new(0, LIST_ITEM_PADDING),
-            PaddingBottom = UDim.new(0, LIST_ITEM_PADDING),
-            PaddingLeft = UDim.new(0, LIST_ITEM_LEFT_PADDING),
-            PaddingRight = UDim.new(0, LIST_ITEM_PADDING),
-        }),
+        UIPadding = Roact.createElement(Padding, { Style.MinorElementPadding, Style.MinorElementPadding, LIST_ITEM_LEFT_PADDING, Style.MinorElementPadding }),
 
         PropertyNameLabel = Roact.createElement("TextLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
@@ -159,7 +149,7 @@ PropertyListItem.render = function(self)
             Roact.createElement("TextLabel", {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, classNameTextSize.X, 1, 0),
-                Position = UDim2.new(0, propNameTextSize.X + PROP_LABEL_PADDING, 0.5, 0),
+                Position = UDim2.new(0, propNameTextSize.X + Style.MinorElementPadding, 0.5, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
@@ -179,7 +169,7 @@ PropertyListItem.render = function(self)
         ColorButtonContainer = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0.5),
             Position = UDim2.new(1, 0, 0.5, 0),
-            Size = UDim2.new(0, COLOR_BUTTON_WIDTH, 1, 0),
+            Size = UDim2.new(0, Style.ColorSequencePreviewWidth, 1, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
         
@@ -240,9 +230,9 @@ end
 
 ]]
 
-local PropertiesList = Roact.PureComponent:extend("PropertiesList")
+local ColorPropertiesList = Roact.PureComponent:extend("ColorPropertiesList")
 
-PropertiesList.init = function(self)
+ColorPropertiesList.init = function(self)
     self.selectionPropertyValues, self.updateSelectionPropertyValues = Roact.createBinding({})
     self.listLength, self.updateListLength = Roact.createBinding(0)
 
@@ -271,7 +261,7 @@ PropertiesList.init = function(self)
     })
 end
 
-PropertiesList.willUnmount = function(self)
+ColorPropertiesList.willUnmount = function(self)
     if (self.state.editColorPromise) then
         self.state.editColorPromise:cancel()
     end
@@ -282,7 +272,7 @@ PropertiesList.willUnmount = function(self)
     SelectionManager.Disconnect()
 end
 
-PropertiesList.render = function(self)
+ColorPropertiesList.render = function(self)
     local theme = self.props.theme
 
     local listElements = {}
@@ -302,7 +292,8 @@ PropertiesList.render = function(self)
     for propertyData, propertyClassName in pairs(properties) do
         local propertyName = propertyData.Name
         local propNameTextSize, classNameTextSize = getCellTextSizes(propertyName, "(" .. propertyClassName .. ")", propertyNameCounts[propertyName] > 1)
-        local cellWidth = LIST_ITEM_LEFT_PADDING + propNameTextSize.X + PROP_LABEL_PADDING + classNameTextSize.X + COLOR_BUTTON_PADDING + COLOR_BUTTON_WIDTH + LIST_ITEM_PADDING
+        local cellWidth = LIST_ITEM_LEFT_PADDING + propNameTextSize.X + Style.MinorElementPadding +
+            classNameTextSize.X + Style.MajorElementPadding + Style.ColorSequencePreviewWidth + Style.MinorElementPadding
 
         minCellWidth = (cellWidth > minCellWidth) and cellWidth or minCellWidth
     end
@@ -333,7 +324,7 @@ PropertiesList.render = function(self)
         }
 
         listElements[compositeName] = Roact.createElement(PropertyListItem, {
-            Size = UDim2.new(1, 0, 0, LIST_ITEM_HEIGHT),
+            Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
             LayoutOrder = i,
 
             propName = propertyName,
@@ -471,4 +462,4 @@ PropertiesList.render = function(self)
 end
 
 PropertyListItem = ConnectTheme(PropertyListItem)
-return ConnectTheme(PropertiesList)
+return ConnectTheme(ColorPropertiesList)

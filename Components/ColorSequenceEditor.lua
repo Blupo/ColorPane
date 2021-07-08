@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
+local ColorSequencePaletteWidget = require(PluginModules:FindFirstChild("ColorSequencePaletteWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -139,14 +140,6 @@ ColorSequenceEditor.init = function(self, initProps)
     })
 end
 
-ColorSequenceEditor.didMount = function(self)
-    
-end
-
-ColorSequenceEditor.willUnmount = function(self)
-    
-end
-
 ColorSequenceEditor.didUpdate = function(self, _, prevState)
     if (self.state.colorSequence == prevState.colorSequence) then return end
 
@@ -158,6 +151,10 @@ end
 ColorSequenceEditor.willUnmount = function(self)
     if (self.state.colorEditPromise) then
         self.state.colorEditPromise:cancel()
+    end
+
+    if (ColorSequencePaletteWidget.IsOpen()) then
+        ColorSequencePaletteWidget.Close()
     end
 end
 
@@ -727,21 +724,50 @@ ColorSequenceEditor.render = function(self)
         MainActions = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),
-            Size = UDim2.new(0, 226, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, (Style.StandardButtonSize + (Style.DialogButtonWidth * 3) + (Style.SpaciousElementPadding * 3)), 0, Style.StandardButtonSize),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement("UIListLayout", {
-                Padding = UDim.new(0, 8),
+                Padding = UDim.new(0, Style.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 
+            PalettesButton = Roact.createElement(Button, {
+                LayoutOrder = 1,
+
+                displayType = "image",
+                image = Style.PaletteEditorImage,
+
+                onActivated = function()
+                    if (ColorSequencePaletteWidget.IsOpen()) then
+                        ColorSequencePaletteWidget.Close()
+                        return
+                    end
+
+                    -- Do not reference any variables when calling this function
+                    ColorSequencePaletteWidget.Open(function()
+                        return self.state.colorSequence
+                    end, function(newColorSequence)
+                        if (self.state.colorEditPromise) then
+                            self.state.colorEditPromise:cancel()
+                        end
+    
+                        self:setState({
+                            colorSequence = newColorSequence,
+                            selectedKeypoint = Roact.None,
+                            colorEditPromise = Roact.None,
+                        })
+                    end)
+                end
+            }),
+
             ResetButton = Roact.createElement(Button, {
                 Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
-                LayoutOrder = 0,
+                LayoutOrder = 2,
 
                 displayType = "text",
                 text = "Reset",
@@ -767,7 +793,7 @@ ColorSequenceEditor.render = function(self)
 
             CancelButton = Roact.createElement(Button, {
                 Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
-                LayoutOrder = 1,
+                LayoutOrder = 3,
 
                 displayType = "text",
                 text = "Cancel",
@@ -784,7 +810,7 @@ ColorSequenceEditor.render = function(self)
 
             ConfirmButton = Roact.createElement(Button, {
                 Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
-                LayoutOrder = 2,
+                LayoutOrder = 4,
 
                 displayType = "text",
                 text = "OK",
