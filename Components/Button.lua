@@ -10,6 +10,9 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUICorner = StandardComponents.UICorner
+
 ---
 
 --[[
@@ -41,8 +44,8 @@ local merge = Util.mergeTable
 local buttonTypes = {
     image = "ImageButton",
     text = "TextButton",
-    color = "TextButton",
-    colorSequence = "TextButton",
+    color = "ImageButton",
+    colorSequence = "ImageButton",
 }
 
 local getImageButtonProps = function(image, imageColor)
@@ -67,15 +70,15 @@ end
 local getColorButtonProps = function(color)
     return {
         BackgroundColor3 = color,
-        TextTransparency = 1,
-        Text = ""
+        Image = "",
+        ImageTransparency = 1,
     }
 end
 
 local colorSequenceButtonProps = {
     BackgroundColor3 = Color3.new(1, 1, 1),
-    TextTransparency = 1,
-    Text = ""
+    Image = "",
+    ImageTransparency = 1,
 }
 
 ---
@@ -152,14 +155,10 @@ Button.render = function(self)
 
         BackgroundColor3 = borderColor,
     }, {
-        UICorner = Roact.createElement("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-        }),
+        UICorner = Roact.createElement(StandardUICorner),
 
         Button = Roact.createElement(buttonTypes[self.props.displayType], buttonProps, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
+            UICorner = Roact.createElement(StandardUICorner),
 
             UIGradient = (displayType == "colorSequence") and
                 Roact.createElement("UIGradient", {

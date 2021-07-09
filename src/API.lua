@@ -365,12 +365,12 @@ ColorPane = setmetatable({}, {
 scriptReparentedEvent = script:GetPropertyChangedSignal("Parent"):Connect(function()
     if (script.Parent == CoreGui) then return end
 
-    warn("The ColorPane API script was unexpectedly reparented")
+    warn("[ColorPane] The API script was unexpectedly reparented")
     onUnloading(true)
 end)
 
 script:GetPropertyChangedSignal("Source"):Connect(function()
-    warn("The ColorPane API script was unexpectedly modified")
+    warn("[ColorPane] The API script was unexpectedly modified")
     onUnloading()
 end)
 

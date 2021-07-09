@@ -15,6 +15,9 @@ local PaletteColorGrid = require(Components:FindFirstChild("PaletteColorGrid"))
 local PaletteColorList = require(Components:FindFirstChild("PaletteColorList"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 --[[
@@ -91,12 +94,10 @@ Palette.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.MinorElementPadding),
-                FillDirection = Enum.FillDirection.Horizontal,
-                HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                VerticalAlignment = Enum.VerticalAlignment.Center,
+                
+                preset = 2,
             }),
 
             SearchBar = Roact.createElement(TextInput, {

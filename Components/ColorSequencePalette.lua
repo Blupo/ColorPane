@@ -13,8 +13,13 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -277,7 +282,7 @@ ColorSequencePalette.render = function(self)
                 })
             end
         }, {
-            UIPadding = Roact.createElement(Padding, {Style.MinorElementPadding}),
+            UIPadding = Roact.createElement(StandardUIPadding, {Style.MinorElementPadding}),
 
             ColorIndicator = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
@@ -309,17 +314,10 @@ ColorSequencePalette.render = function(self)
                     end,
                 })
             or
-                Roact.createElement("TextLabel", {
+                Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1, 0, 0),
                     Size = UDim2.new(1, -(Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1), 1, 0),
-                    BackgroundTransparency = 1,
-                    BorderSizePixel = 0,
-
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextYAlignment = Enum.TextYAlignment.Center,
                     Text = color.name,
 
                     TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
@@ -334,12 +332,10 @@ ColorSequencePalette.render = function(self)
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
                 }, {
-                    UIListLayout = Roact.createElement("UIListLayout", {
+                    UIListLayout = Roact.createElement(StandardUIListLayout, {
                         Padding = UDim.new(0, Style.MinorElementPadding),
-                        FillDirection = Enum.FillDirection.Horizontal,
-                        HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                        SortOrder = Enum.SortOrder.LayoutOrder,
-                        VerticalAlignment = Enum.VerticalAlignment.Center,
+                        
+                        preset = 2,
                     }),
 
                     RemoveColorButton = (isSelected and (not isReadOnly)) and
@@ -347,7 +343,7 @@ ColorSequencePalette.render = function(self)
                             LayoutOrder = 1,
             
                             displayType = "image",
-                            image = Style.RemoveImage,
+                            image = Style.DeleteImage,
 
                             onActivated = function()
                                 self:setState({
@@ -399,16 +395,12 @@ ColorSequencePalette.render = function(self)
         }))
     end
 
-    listElements["UIListLayout"] = Roact.createElement("UIListLayout", {
-        Padding = UDim.new(0, 0),
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
-
+    listElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateListLength(obj.AbsoluteContentSize.Y)
-        end
+        end,
+
+        preset = 1,
     })
 
     return Roact.createElement("Frame", {
@@ -420,7 +412,7 @@ ColorSequencePalette.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
     }, {
-        UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
 
         SearchBar = Roact.createElement(TextInput, {
             AnchorPoint = Vector2.new(0, 0),
@@ -474,30 +466,14 @@ ColorSequencePalette.render = function(self)
             end,
         }),
 
-        Sequences = Roact.createElement("ScrollingFrame", {
+        Sequences = Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
             Size = UDim2.new(1, -2, 1, -(Style.StandardInputHeight + Style.MinorElementPadding + 2)),
-            BackgroundTransparency = 0,
-            BorderSizePixel = 1,
     
             CanvasSize = self.listLength:map(function(listLength)
                 return UDim2.new(0, 0, 0, listLength)
             end),
-    
-            CanvasPosition = Vector2.new(0, 0),
-            TopImage = Style.ScrollbarImage,
-            MidImage = Style.ScrollbarImage,
-            BottomImage = Style.ScrollbarImage,
-            HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-            ScrollBarThickness = Style.ScrollbarThickness,
-            ClipsDescendants = true,
-    
-            ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
-            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
     
             [Roact.Event.InputBegan] = function(_, input)
                 if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
@@ -520,6 +496,8 @@ ColorSequencePalette.render = function(self)
     
                 inputRepeater:stop()
             end,
+
+            useMainBackgroundColor = true,
         }, listElements)
     })
 end

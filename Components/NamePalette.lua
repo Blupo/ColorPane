@@ -13,6 +13,10 @@ local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 --[[
@@ -51,20 +55,11 @@ RenamePalette.render = function(self)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {
-        PromptLabel = Roact.createElement("TextLabel", {
+        PromptLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
             Text = selectedPalette and "Rename " .. selectedPalette.name or "Name the Palette",
-
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
         }),
 
         NameInput = Roact.createElement(TextInput, {
@@ -84,20 +79,11 @@ RenamePalette.render = function(self)
             canClear = false,
         }),
 
-        NameIsOKLabel = Roact.createElement("TextLabel", {
+        NameIsOKLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.LargeButtonSize + (Style.MinorElementPadding * 2)),
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
             Text = (newPaletteName ~= actualNewPaletteName) and ("The palette will be renamed to '" .. actualNewPaletteName .. "'") or "The palette name is OK",
-
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
         }),
 
         Buttons = Roact.createElement("Frame", {
@@ -107,12 +93,10 @@ RenamePalette.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.SpaciousElementPadding),
-                FillDirection = Enum.FillDirection.Horizontal,
-                HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                VerticalAlignment = Enum.VerticalAlignment.Center,
+                
+                preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {

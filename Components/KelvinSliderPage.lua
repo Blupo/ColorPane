@@ -11,9 +11,12 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
-local Padding = require(Components:FindFirstChild("Padding"))
 local SimpleList = require(Components:FindFirstChild("SimpleList"))
 local Slider = require(Components:FindFirstChild("Slider"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -119,22 +122,16 @@ KelvinSliderPage.render = function(self)
             end,
 
             [Roact.Children] = {
-                UIPadding = Roact.createElement(Padding, {0, Style.SpaciousElementPadding}),
+                UIPadding = Roact.createElement(StandardUIPadding, {0, Style.SpaciousElementPadding}),
 
-                KelvinLabel = Roact.createElement("TextLabel", {
+                KelvinLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(1, 0.5),
                     Position = UDim2.new(1, 0, 0.5, 0),
                     Size = UDim2.new(1, 0, 1, 0),
-                    BackgroundTransparency = 1,
-                    BorderSizePixel = 0,
 
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
+                    Text = preset.kelvin,
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextYAlignment = Enum.TextYAlignment.Center,
-                    Text = preset.kelvin,
-
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
                 })
             }
         }
@@ -170,36 +167,21 @@ KelvinSliderPage.render = function(self)
             end
         }),
 
-        ScaleLowerLimitLabel = Roact.createElement("TextLabel", {
+        ScaleLowerLimitLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 40),
             Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
             Text = LOWER_RANGE,
-
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
         }),
 
-        ScaleUpperLimitLabel = Roact.createElement("TextLabel", {
+        ScaleUpperLimitLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, 40),
             Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
 
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
+            Text = UPPER_RANGE,
             TextXAlignment = Enum.TextXAlignment.Right,
             TextYAlignment = Enum.TextYAlignment.Center,
-            Text = UPPER_RANGE,
-
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
         }),
 
         PresetsContainer = Roact.createElement("Frame", {
@@ -209,19 +191,11 @@ KelvinSliderPage.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            PresetsLabel = Roact.createElement("TextLabel", {
+            PresetsLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
                 Text = "Presets",
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
 
             PresetsList = Roact.createElement(SimpleList, {

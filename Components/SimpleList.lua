@@ -1,14 +1,16 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Style = require(PluginModules:FindFirstChild("Style"))
-
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -57,23 +59,19 @@ SimpleList.render = function(self)
         end
 
         if (shouldShowSectionHeader) then
-            table.insert(listItems, Roact.createElement("TextLabel", {
+            table.insert(listItems, Roact.createElement(StandardTextLabel, {
                 Size = UDim2.new(1, 0, 0, self.props.itemHeight),
-                BackgroundTransparency = 0,
-                BorderSizePixel = 0,
                 LayoutOrder = #listItems + 1,
+                BackgroundTransparency = 0,
 
+                Text = section.name,
                 Font = Enum.Font.SourceSansBold,
                 TextSize = self.props.TextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
-                Text = section.name,
-
+                
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.HeaderSection),
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
             }, {
                 UIPadding = self.props.itemPadding and
-                    Roact.createElement(Padding, {0, 0, self.props.itemPadding, 0})
+                    Roact.createElement(StandardUIPadding, {0, 0, self.props.itemPadding, 0})
                 or nil,
             }))
         end
@@ -87,7 +85,7 @@ SimpleList.render = function(self)
             else
                 if (self.props.itemPadding) then
                     children = {
-                        UIPadding = Roact.createElement(Padding, {0, 0, self.props.itemPadding, 0})
+                        UIPadding = Roact.createElement(StandardUIPadding, {0, 0, self.props.itemPadding, 0})
                     }
                 end
             end
@@ -131,41 +129,22 @@ SimpleList.render = function(self)
         end
     end
 
-    listItems["UIListLayout"] = Roact.createElement("UIListLayout", {
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
-        
+    listItems.UIListLayout = Roact.createElement(StandardUIListLayout, {
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateListLength(obj.AbsoluteContentSize.Y)
-        end
+        end,
+
+        preset = 1,
     })
 
-    return Roact.createElement("ScrollingFrame", {
+    return Roact.createElement(StandardScrollingFrame, {
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
         Size = self.props.Size,
-        BackgroundTransparency = 0,
-        BorderSizePixel = 1,
-        ClipsDescendants = true,
        
         CanvasSize = self.listLength:map(function(listLength)
             return UDim2.new(0, 0, 0, listLength)
         end),
-
-        CanvasPosition = Vector2.new(0, 0),
-        TopImage = Style.ScrollbarImage,
-        MidImage = Style.ScrollbarImage,
-        BottomImage = Style.ScrollbarImage,
-        HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-        ScrollBarThickness = Style.ScrollbarThickness,
-
-        ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-        BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
-        BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
     }, listItems)
 end
 

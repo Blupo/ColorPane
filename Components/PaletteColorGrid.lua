@@ -11,6 +11,9 @@ local Button = require(Components:FindFirstChild("Button"))
 local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 local PaletteColorGrid = Roact.PureComponent:extend("PaletteColorGrid")
@@ -117,19 +120,17 @@ PaletteColorGrid.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                UIListLayout = Roact.createElement("UIListLayout", {
+                UIListLayout = Roact.createElement(StandardUIListLayout, {
                     Padding = UDim.new(0, Style.MinorElementPadding),
-                    FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    VerticalAlignment = Enum.VerticalAlignment.Center,
+                    
+                    preset = 2,
                 }),
 
                 RemoveColorButton = Roact.createElement(Button, {
                     LayoutOrder = 0,
     
                     displayType = "image",
-                    image = Style.RemoveImage,
+                    image = Style.DeleteImage,
                     disabled = ((not selected) or isReadOnly),
 
                     onActivated = self.props.onColorRemoved,

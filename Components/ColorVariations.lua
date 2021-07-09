@@ -13,6 +13,9 @@ local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+
 ---
 
 local MIN_STEPS = 4
@@ -21,7 +24,6 @@ local MAX_STEPS = 14
 local ColorVariations = Roact.PureComponent:extend("ColorVariations")
 
 ColorVariations.render = function(self)
-    local theme = self.props.theme
     local variationSteps = self.props.variationSteps
 
     local modifiedColors = {
@@ -70,7 +72,7 @@ ColorVariations.render = function(self)
                 Position = UDim2.new(0, 60 + Style.MinorElementPadding, 0.5, 0),
 
                 displayType = "image",
-                image = Style.RemoveImage,
+                image = Style.SubtractImage,
                 disabled = (variationSteps <= MIN_STEPS),
 
                 onActivated = function()
@@ -78,36 +80,22 @@ ColorVariations.render = function(self)
                 end,
             }),
 
-            StepsLabel = Roact.createElement("TextLabel", {
+            StepsLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, 60, 1, 0),
                 Position = UDim2.new(0, 0, 0.5, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
                 Text = "Color Steps",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
 
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
             }),
 
-            StepsCountLabel = Roact.createElement("TextLabel", {
+            StepsCountLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Size = UDim2.new(0, 20, 1, 0),
                 Position = UDim2.new(1, -(Style.StandardButtonSize + Style.MinorElementPadding), 0.5, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = variationSteps,
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Center,
                 TextYAlignment = Enum.TextYAlignment.Center,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
             })
         }),
 
@@ -130,9 +118,7 @@ end
 
 return RoactRodux.connect(function(state)
     return {
-        theme = state.theme,
         color = state.colorEditor.color,
-
         variationSteps = state.sessionData.variationSteps,
     }
 end, function(dispatch)

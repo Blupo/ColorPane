@@ -9,8 +9,11 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local SimpleList = require(Components:FindFirstChild("SimpleList"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -148,7 +151,7 @@ Dropdown.render = function(self)
                 end,
 
                 [Roact.Children] = {
-                    Padding = Roact.createElement(Padding, {0, 0, Style.SpaciousElementPadding, 0}),
+                    UIPadding = Roact.createElement(StandardUIPadding, {0, 0, Style.SpaciousElementPadding, 0}),
                 }
             })
         end
@@ -187,9 +190,7 @@ Dropdown.render = function(self)
 
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder),
         }, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
+            UICorner = Roact.createElement(StandardUICorner),
 
             Display = Roact.createElement("TextButton", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
@@ -278,11 +279,8 @@ Dropdown.render = function(self)
                     end)
                 end,
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4),
-                }),
-
-                UIPadding = Roact.createElement(Padding, {0, 0, Style.SpaciousElementPadding, 0}),
+                UICorner = Roact.createElement(StandardUICorner),
+                UIPadding = Roact.createElement(StandardUIPadding, {0, 0, Style.SpaciousElementPadding, 0}),
 
                 Icon = (numItemsListItems >= 1) and
                     Roact.createElement("ImageLabel", {

@@ -13,8 +13,13 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -197,9 +202,7 @@ ColorSequenceEditor.render = function(self)
             )),
         }, {
             UICorner = (not isFixed) and
-                Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4)
-                })
+                Roact.createElement(StandardUICorner)
             or nil,
 
             Inner = (selectedKeypoint == i) and
@@ -212,16 +215,14 @@ ColorSequenceEditor.render = function(self)
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, Enum.StudioStyleGuideModifier.Selected),
                 }, {
                     UICorner = (not isFixed) and
-                        Roact.createElement("UICorner", {
-                            CornerRadius = UDim.new(0, 4)
-                        })
+                        Roact.createElement(StandardUICorner)
                     or nil,
                 })
             or nil
         }))
     end
 
-    gradientElements["Marker"] = (self.state.showTimelineMarker or self.state.tracking) and
+    gradientElements.Marker = (self.state.showTimelineMarker or self.state.tracking) and
         Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Size = UDim2.new(0, 1, 1, 0),
@@ -242,11 +243,8 @@ ColorSequenceEditor.render = function(self)
         })
     or nil
 
-    gradientElements["UICorner"] = Roact.createElement("UICorner", {
-        CornerRadius = UDim.new(0, 4)
-    })
-
-    gradientElements["UIGradient"] = Roact.createElement("UIGradient", {
+    gradientElements.UICorner = Roact.createElement(StandardUICorner)
+    gradientElements.UIGradient = Roact.createElement("UIGradient", {
         Color = colorSequence
     })
 
@@ -293,7 +291,7 @@ ColorSequenceEditor.render = function(self)
             self.calculateTimelineProgress(cursorPosition)
         end,
     }, {
-        UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
 
         SequenceEditor = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
@@ -309,9 +307,7 @@ ColorSequenceEditor.render = function(self)
 
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4)
-                }),
+                UICorner = Roact.createElement(StandardUICorner),
 
                 SequenceGradient = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -402,19 +398,11 @@ ColorSequenceEditor.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                ColorLabel = Roact.createElement("TextLabel", {
+                ColorLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 0, 0.5, 0),
                     Size = UDim2.new(0, 28, 1, 0),
-                    BackgroundTransparency = 1,
-
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextYAlignment = Enum.TextYAlignment.Center,
                     Text = "Color",
-
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
                 }),
 
                 EditColor = Roact.createElement(Button, {
@@ -514,35 +502,24 @@ ColorSequenceEditor.render = function(self)
                     end,
                 }),
 
-                ProgressLabel = Roact.createElement("TextLabel", {
+                ProgressLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 28 + 50 + 50 + (Style.MinorElementPadding * 2) + Style.SpaciousElementPadding, 0.5, 0),
                     Size = UDim2.new(0, 10, 1, 0),
-                    BackgroundTransparency = 1,
-
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextYAlignment = Enum.TextYAlignment.Center,
                     Text = "%",
-
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
                 }),
             })
         or nil,
 
-        KeypointCount = Roact.createElement("TextLabel", {
+        KeypointCount = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, -(Style.StandardButtonSize + Style.SpaciousElementPadding)),
             Size = UDim2.new(0, 82, 0, Style.StandardTextSize),
-            BackgroundTransparency = 1,
 
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
+            Text = #keypoints .. "/" .. MAX_COLORSEQUENCE_KEYPOINTS .. " Keypoints",
             TextXAlignment = Enum.TextXAlignment.Right,
             TextYAlignment = Enum.TextYAlignment.Center,
-            Text = #keypoints .. "/" .. MAX_COLORSEQUENCE_KEYPOINTS .. " Keypoints",
-
+            
             TextColor3 = theme:GetColor((#keypoints == MAX_COLORSEQUENCE_KEYPOINTS) and Enum.StudioStyleGuideColor.WarningText or Enum.StudioStyleGuideColor.MainText)
         }),
 
@@ -553,11 +530,9 @@ ColorSequenceEditor.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
-                Padding = UDim.new(0, 8),
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
+                Padding = UDim.new(0, Style.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
-                HorizontalAlignment = Enum.HorizontalAlignment.Left,
-                SortOrder = Enum.SortOrder.LayoutOrder,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 
@@ -567,7 +542,7 @@ ColorSequenceEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = Style.RemoveImage,
+                image = Style.DeleteImage,
                 disabled = (colorEditPromise or (not selectedKeypoint) or (selectedKeypoint == 1) or (selectedKeypoint == #keypoints)),
 
                 onActivated = function()
@@ -662,19 +637,14 @@ ColorSequenceEditor.render = function(self)
                 BorderSizePixel = 0,
                 LayoutOrder = 6,
             }, {
-                SnapLabel = Roact.createElement("TextLabel", {
+                SnapLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 0, 0.5, 0),
                     Size = UDim2.new(0, 26, 1, 0),
-                    BackgroundTransparency = 1,
     
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
+                    Text = "Snap",
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextYAlignment = Enum.TextYAlignment.Center,
-                    Text = "Snap",
-    
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
                 }),
     
                 SnapInput = Roact.createElement(TextInput, {
@@ -704,19 +674,14 @@ ColorSequenceEditor.render = function(self)
                     canClear = false,
                 }),
     
-                SnapUnitLabel = Roact.createElement("TextLabel", {
+                SnapUnitLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 84, 0.5, 0),
                     Size = UDim2.new(0, 10, 1, 0),
-                    BackgroundTransparency = 1,
-    
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
+
+                    Text = "%",
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextYAlignment = Enum.TextYAlignment.Center,
-                    Text = "%",
-    
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
                 }),
             }),
         }),
@@ -728,11 +693,10 @@ ColorSequenceEditor.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                SortOrder = Enum.SortOrder.LayoutOrder,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 

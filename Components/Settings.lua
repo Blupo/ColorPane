@@ -13,10 +13,15 @@ local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
+local Button = require(Components:FindFirstChild("Button"))
 local Checkbox = require(Components:FindFirstChild("Checkbox"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -28,6 +33,7 @@ local SETTINGS = {
     [PluginEnums.PluginSettingKey.AutoSave] = true,
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = true,
     [PluginEnums.PluginSettingKey.CacheAPIData] = true,
+    [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
 
 ---
@@ -61,44 +67,31 @@ Settings.willUnmount = function(self)
 end
 
 Settings.render = function(self)
-    local theme = self.props.theme
     local isEdit = RunService:IsEdit()
 
-    return Roact.createElement("ScrollingFrame", {
+    return Roact.createElement(StandardScrollingFrame, {
         AnchorPoint = Vector2.new(0.5, 0),
         Position = UDim2.new(0.5, 0, 0, 0),
         Size = UDim2.new(1, 0, 1, 0),
-        BackgroundTransparency = 0,
         BorderSizePixel = 0,
 
         CanvasSize = self.listLength:map(function(length)
             return UDim2.new(0, 0, 0, length)
         end),
 
-        TopImage = Style.ScrollbarImage,
-        MidImage = Style.ScrollbarImage,
-        BottomImage = Style.ScrollbarImage,
-        HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-        ScrollBarThickness = Style.ScrollbarThickness,
-        ClipsDescendants = true,
-
-        ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-        BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
+        useMainBackgroundColor = true,
     }, {
-        UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
 
-        UIListLayout = Roact.createElement("UIListLayout", {
-            Padding = UDim.new(0, Style.MinorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
+            Padding = UDim.new(0, Style.SpaciousElementPadding),
             HorizontalAlignment = Enum.HorizontalAlignment.Left,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
 
             [Roact.Change.AbsoluteContentSize] = function(obj)
                 self.updateListLength(obj.AbsoluteContentSize.Y + (Style.PagePadding * 2))
             end,
+
+            preset = 1,
         }),
 
         AutoLoadAPICheckbox = Roact.createElement(Checkbox, {
@@ -128,7 +121,7 @@ Settings.render = function(self)
         }),
 
         AutoSaveCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
+            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 3,
             
             disabled = (not isEdit),
@@ -146,20 +139,14 @@ Settings.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            Label = Roact.createElement("TextLabel", {
+            Label = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Size = UDim2.new(1, -(30 + Style.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = "Auto-save interval (in minutes)",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
 
             Input = Roact.createElement(TextInput, {
@@ -203,7 +190,7 @@ Settings.render = function(self)
         }),
 
         AutoCheckForUpdateCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
+            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 6,
             
             disabled = (not isEdit),
@@ -216,7 +203,7 @@ Settings.render = function(self)
         }),
 
         AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, 22),
+            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 7,
             
             disabled = (not isEdit),
@@ -227,7 +214,21 @@ Settings.render = function(self)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
             end,
         }),
+        
+        ResetSessionDataButton = Roact.createElement(Button, {
+            Size = UDim2.new(0, 110, 0, Style.StandardInputHeight),
+            LayoutOrder = 8,
+
+            disabled = (not isEdit),
+            displayType = "text",
+            text = "Release Session Lock",
+
+            onActivated = function()
+                PluginSettings.ReleaseSessionLock()
+                warn("[ColorPane] Session lock has been released")
+            end,
+        }),
     })
 end
 
-return ConnectTheme(Settings)
+return Settings

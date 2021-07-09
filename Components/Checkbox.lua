@@ -9,6 +9,10 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+
 ---
 
 --[[
@@ -67,9 +71,7 @@ Checkbox.render = function(self)
 
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground),
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, Style.StandardCornerRadius),
-                }),
+                UICorner = Roact.createElement(StandardUICorner),
             }),
 
             CheckboxIndicator = self.props.value and
@@ -85,31 +87,22 @@ Checkbox.render = function(self)
                         disabled and Enum.StudioStyleGuideModifier.Disabled or Enum.StudioStyleGuideModifier.Selected
                     ),
                 }, {
-                    UICorner = Roact.createElement("UICorner", {
-                        CornerRadius = UDim.new(0, Style.StandardCornerRadius),
-                    }),
+                    UICorner = Roact.createElement(StandardUICorner),
                 })
             or nil,
 
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, Style.StandardCornerRadius),
-            }),
+            UICorner = Roact.createElement(StandardUICorner),
         }),
 
-        Text = Roact.createElement("TextLabel", {
+        Text = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 0),
             Size = UDim2.new(1, -(Style.StandardButtonSize + Style.SpaciousElementPadding), 1, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
 
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
+            Text = self.props.text,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Top,
             TextWrapped = true,
-            Text = self.props.text,
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
         })
     })
 end

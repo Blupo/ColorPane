@@ -20,9 +20,14 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local RadioButtonGroup = require(Components:FindFirstChild("RadioButtonGroup"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -145,21 +150,11 @@ ImportPalette.render = function(self)
             BorderSizePixel = 0,
             LayoutOrder = 3,
         }, {
-            Instructions = Roact.createElement("TextLabel", {
+            Instructions = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
                 Text = "Select a ModuleScript from the Explorer",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
-                TextStrokeTransparency = 1,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
 
             ConfirmButton = Roact.createElement(Button, {
@@ -226,22 +221,15 @@ ImportPalette.render = function(self)
                 [Roact.Ref] = self.statusIcon,
             }),
 
-            StatusText = Roact.createElement("TextLabel", {
+            StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = self.state.statusMessage or "Waiting for import...",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
-                TextStrokeTransparency = 1,
                 TextWrapped = true,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
         })
     elseif (importType == "StringValue") then
@@ -251,21 +239,11 @@ ImportPalette.render = function(self)
             BorderSizePixel = 0,
             LayoutOrder = 3,
         }, {
-            Instructions = Roact.createElement("TextLabel", {
+            Instructions = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
                 Text = "Select a StringValue from the Explorer",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
-                TextStrokeTransparency = 1,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
 
             ConfirmButton = Roact.createElement(Button, {
@@ -327,22 +305,15 @@ ImportPalette.render = function(self)
                 [Roact.Ref] = self.statusIcon,
             }),
 
-            StatusText = Roact.createElement("TextLabel", {
+            StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = self.state.statusMessage or "Waiting for import...",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
-                TextStrokeTransparency = 1,
                 TextWrapped = true,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
         })
     elseif (importType == "File") then
@@ -410,22 +381,15 @@ ImportPalette.render = function(self)
                 [Roact.Ref] = self.statusIcon,
             }),
 
-            StatusText = Roact.createElement("TextLabel", {
+            StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.StandardButtonSize + Style.MinorElementPadding),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = self.state.statusMessage or "Waiting for import...",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
-                TextStrokeTransparency = 1,
                 TextWrapped = true,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
         })
     elseif (importType == "URL") then
@@ -521,28 +485,21 @@ ImportPalette.render = function(self)
                 [Roact.Ref] = self.statusIcon,
             }),
 
-            StatusText = Roact.createElement("TextLabel", {
+            StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.StandardInputHeight + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Text = self.state.statusMessage or "Waiting for import...",
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
-                TextStrokeTransparency = 1,
                 TextWrapped = true,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             }),
         })
     end
 
     return Roact.createFragment({
-        Dialog = Roact.createElement("ScrollingFrame", {
+        Dialog = Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 0),
             Size = UDim2.new(1, 0, 1, -(Style.StandardButtonSize + Style.SpaciousElementPadding)),
             Position = UDim2.new(0.5, 0, 0, 0),
@@ -552,31 +509,17 @@ ImportPalette.render = function(self)
             CanvasSize = self.listLength:map(function(length)
                 return UDim2.new(0, 0, 0, length)
             end),
-
-            TopImage = Style.ScrollbarImage,
-            MidImage = Style.ScrollbarImage,
-            BottomImage = Style.ScrollbarImage,
-            HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-            ScrollBarThickness = Style.ScrollbarThickness,
-            ClipsDescendants = true,
-
-            ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
         }, {
-            UIPadding = Roact.createElement(Padding, { 0, 0, 0, Style.SpaciousElementPadding }),
+            UIPadding = Roact.createElement(StandardUIPadding, { 0, 0, 0, Style.SpaciousElementPadding }),
 
-            UIListLayout = Roact.createElement("UIListLayout", {
-                FillDirection = Enum.FillDirection.Vertical,
-                HorizontalAlignment = Enum.HorizontalAlignment.Left,
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                VerticalAlignment = Enum.VerticalAlignment.Top,
-
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.SpaciousElementPadding),
 
                 [Roact.Change.AbsoluteContentSize] = function(obj)
                     self.updateListLength(obj.AbsoluteContentSize.Y)
                 end,
+
+                preset = 1,
             }),
             
             ImportType = Roact.createElement(RadioButtonGroup, {
@@ -653,20 +596,11 @@ ImportPalette.render = function(self)
                         end,
                     }),
             
-                    NameIsOKLabel = Roact.createElement("TextLabel", {
+                    NameIsOKLabel = Roact.createElement(StandardTextLabel, {
                         AnchorPoint = Vector2.new(0, 0),
                         Position = UDim2.new(0, 0, 0, Style.StandardInputHeight + Style.MinorElementPadding),
                         Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-                        BackgroundTransparency = 1,
-                        BorderSizePixel = 0,
-            
-                        Font = Style.StandardFont,
-                        TextSize = Style.StandardTextSize,
-                        TextXAlignment = Enum.TextXAlignment.Left,
-                        TextYAlignment = Enum.TextYAlignment.Center,
                         Text = (paletteName ~= newPaletteName) and ("The palette will be renamed to '" .. newPaletteName .. "'") or "The palette name is OK",
-            
-                        TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
                     }),
                 })
             or nil,
@@ -679,12 +613,10 @@ ImportPalette.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.SpaciousElementPadding),
-                FillDirection = Enum.FillDirection.Horizontal,
-                HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                VerticalAlignment = Enum.VerticalAlignment.Center,
+                
+                preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {

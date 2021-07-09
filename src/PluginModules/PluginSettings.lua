@@ -15,8 +15,9 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 
 local SETTINGS_KEY = "ColorPane_Settings"
 local SESSION_LOCK_KEY = "ColorPane_SessionLock"
-local SESSION_COUNT_KEY = "ColorPane_Sessions"
-local API_DUMP_CACHE_KEY = "ColorPane_APIDumpCache"
+local API_CACHE_LAST_REFRESH_KEY = "ColorPane_RobloxAPICacheLastRefresh"
+local API_CACHE_KEY = "ColorPane_RobloxAPICache"
+local API_CACHE_REFRESH_TIME = 8 * 3600
 
 local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = true,
@@ -29,6 +30,7 @@ local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = 5,
     [PluginEnums.PluginSettingKey.CacheAPIData] = false,
     [PluginEnums.PluginSettingKey.UserColorSequences] = {},
+    [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
 
 ---
@@ -60,6 +62,12 @@ PluginSettings.AcquireSessionLock = function(): boolean
     else
         return (sessionLockId == sessionId)
     end
+end
+
+PluginSettings.ReleaseSessionLock = function()
+    if (not RunService:IsEdit()) then return false end
+
+    plugin:SetSetting(SESSION_LOCK_KEY, nil)
 end
 
 PluginSettings.Get = function(key)
@@ -105,32 +113,25 @@ PluginSettings.Flush = function()
     settingsModified = false
 end
 
-PluginSettings.GetCachedAPIDump = function(): string?
+PluginSettings.GetCachedRobloxAPIData = function()
     if (not pluginSettings[PluginEnums.PluginSettingKey.CacheAPIData]) then return end
 
-    local cachedAPIDump = plugin:GetSetting(API_DUMP_CACHE_KEY)
-    if (not cachedAPIDump) then return end
+    local cachedAPIData = plugin:GetSetting(API_CACHE_KEY)
+    if (not cachedAPIData) then return end
 
-    return cachedAPIDump
+    return cachedAPIData
 end
 
-PluginSettings.CacheAPIDump = function(api: string)
+PluginSettings.CacheRobloxAPIData = function(api)
     if (not pluginSettings[PluginEnums.PluginSettingKey.CacheAPIData]) then return end
 
-    local cachedAPIDump = plugin:GetSetting(API_DUMP_CACHE_KEY)
-    if (cachedAPIDump) then return end
-
-    -- minify the JSON string to reduce the resulting file size
-    api = HttpService:JSONEncode(HttpService:JSONDecode(api))
-
-    plugin:SetSetting(API_DUMP_CACHE_KEY, api)
+    plugin:SetSetting(API_CACHE_LAST_REFRESH_KEY, os.time())
+    plugin:SetSetting(API_CACHE_KEY, api)
 end
 
-PluginSettings.ClearCachedAPIDump = function()
-    local cachedAPIDump = plugin:GetSetting(API_DUMP_CACHE_KEY)
-    if (not cachedAPIDump) then return end
-
-    plugin:SetSetting(API_DUMP_CACHE_KEY, nil)
+PluginSettings.ClearCachedRobloxAPIData = function()
+    plugin:SetSetting(API_CACHE_LAST_REFRESH_KEY, nil)
+    plugin:SetSetting(API_CACHE_KEY, nil)
 end
 
 PluginSettings.init = function(initPlugin)
@@ -143,16 +144,11 @@ PluginSettings.init = function(initPlugin)
         local hasLock = PluginSettings.AcquireSessionLock()
         
         if (not hasLock) then
-            warn("The ColorPane save data is locked by another session. You will need to close the other session(s) to modify settings and save palettes.")
+            warn(
+                "[ColorPane] Data saving is locked to another session. You will need to close the other session(s) to modify settings and save palettes. " ..
+                "If you don't have any other sessions open, you may need to reset the session lock (please consult the User Guide on how to do this)."
+            )
         end
-    end
-
-    do
-        -- add to session count
-        local sessionCount = plugin:GetSetting(SESSION_COUNT_KEY) or 0
-        sessionCount = sessionCount + 1
-
-        plugin:SetSetting(SESSION_COUNT_KEY, sessionCount)
     end
 
     do
@@ -181,13 +177,24 @@ PluginSettings.init = function(initPlugin)
         end
     end
 
+    do
+        local canCache = pluginSettings[PluginEnums.PluginSettingKey.CacheAPIData]
+        local cachedAPIData = plugin:GetSetting(API_CACHE_KEY)
+        local cachedAPIDataLastRefresh = plugin:GetSetting(API_CACHE_LAST_REFRESH_KEY) or 0
+
+        if (cachedAPIData) then
+            if ((not canCache) or (os.time() - cachedAPIDataLastRefresh) >= API_CACHE_REFRESH_TIME) then
+                PluginSettings.ClearCachedRobloxAPIData()
+            end
+        end
+    end
+
     if (pluginSettings[PluginEnums.PluginSettingKey.AutoSave]) then
         scheduleAutoSave()
     end
 
     plugin.Unloading:Connect(function()
         local sessionLockId = plugin:GetSetting(SESSION_LOCK_KEY)
-        local sessionCount = plugin:GetSetting(SESSION_COUNT_KEY) or 0
 
         autoSavePromise:cancel()
         settingChangedEvent:Destroy()
@@ -195,13 +202,6 @@ PluginSettings.init = function(initPlugin)
 
         if (sessionLockId == sessionId) then
             plugin:SetSetting(SESSION_LOCK_KEY, nil)
-        end
-        
-        if (sessionCount > 1) then
-            plugin:SetSetting(SESSION_COUNT_KEY, sessionCount - 1)
-        else
-            plugin:SetSetting(SESSION_COUNT_KEY, nil)
-            PluginSettings.ClearCachedAPIDump()
         end
     end)
 end

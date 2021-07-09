@@ -14,7 +14,10 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local Padding = require(Components:FindFirstChild("Padding"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -49,13 +52,11 @@ RemovePalette.render = function(self)
             self.updatePromptWidth(obj.AbsoluteSize.X)
         end
     }, {
-        UIPadding = Roact.createElement(Padding, {0, Style.MajorElementPadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {0, Style.MajorElementPadding}),
 
-        WarningText = Roact.createElement("TextLabel", {
+        WarningText = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 0.5, -4),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
 
             Size = self.promptWidth:map(function(promptWidth)
                 local promptTextHeight = TextService:GetTextSize(
@@ -68,14 +69,11 @@ RemovePalette.render = function(self)
                 return UDim2.new(1, 0, 0, promptTextHeight)
             end),
 
-            Font = Style.StandardFont,
-            TextSize = Style.LargeTextSize,
             Text = promptText,
-            TextWrapped = true,
+            TextSize = Style.LargeTextSize,
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Bottom,
-
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+            TextWrapped = true,
         }),
 
         Buttons = Roact.createElement("Frame", {

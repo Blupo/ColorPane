@@ -18,9 +18,9 @@ local Promise = require(includes:FindFirstChild("Promise"))
 
 local API_URL = "https://setup.rbxcdn.com/"
 local STUDIO_VERSION_ENDPOINT = "versionQTStudio"
-local API_DUMP_ENDPOINT = "%s-API-Dump.json"
+local API_DATA_ENDPOINT = "%s-API-Dump.json"
 
-local apiDump
+local apiData
 local requestInProgress = false
 local apiDataRequestStartedEvent = Instance.new("BindableEvent")
 local apiDataRequestFinishedEvent = Instance.new("BindableEvent")
@@ -32,7 +32,7 @@ RobloxAPI.DataRequestStarted = apiDataRequestStartedEvent.Event
 RobloxAPI.DataRequestFinished = apiDataRequestFinishedEvent.Event
 
 RobloxAPI.IsAvailable = function()
-    return (apiDump and true or false)
+    return (apiData and true or false)
 end
 
 RobloxAPI.IsRequestRunning = function()
@@ -40,16 +40,16 @@ RobloxAPI.IsRequestRunning = function()
 end
 
 RobloxAPI.GetData = function()
-    if (apiDump or requestInProgress) then return end
+    if (apiData or requestInProgress) then return end
 
     requestInProgress = true
     apiDataRequestStartedEvent:Fire()
 
     Promise.new(function(resolve, reject)
-        local cachedAPIDump = PluginSettings.GetCachedAPIDump()
+        local cachedAPIData = PluginSettings.GetCachedRobloxAPIData()
 
-        if (cachedAPIDump) then
-            resolve(cachedAPIDump, true)
+        if (cachedAPIData) then
+            resolve(cachedAPIData, true)
             return
         end
 
@@ -68,25 +68,25 @@ RobloxAPI.GetData = function()
                 return
             end
 
-            local jsonAPIDumpResponse = HttpService:RequestAsync({
-                Url = API_URL .. string.format(API_DUMP_ENDPOINT, studioVersion),
+            local jsonAPIDataResponse = HttpService:RequestAsync({
+                Url = API_URL .. string.format(API_DATA_ENDPOINT, studioVersion),
                 Method = "GET",
             })
 
-            if (jsonAPIDumpResponse.Success) then
-                resolve(jsonAPIDumpResponse.Body, false)
+            if (jsonAPIDataResponse.Success) then
+                resolve(jsonAPIDataResponse.Body, false)
             else
-                reject(jsonAPIDumpResponse.StatusMessage)
+                reject(jsonAPIDataResponse.StatusMessage)
             end
         else
             reject("No cached API data")
         end
     end):andThen(function(api, usedCache)
+        api = usedCache and api or HttpService:JSONDecode(api)
+        
         if (not usedCache) then
-            PluginSettings.CacheAPIDump(api)
+            PluginSettings.CacheRobloxAPIData(api)
         end
-
-        api = HttpService:JSONDecode(api)
 
         RobloxAPI.APIData = APIUtils.createAPIData(api)
         RobloxAPI.APIInterface = APIUtils.createAPIInterface(RobloxAPI.APIData)
@@ -99,7 +99,7 @@ RobloxAPI.GetData = function()
             RobloxAPI.APIInterface:AddClassMemberBehavior("Terrain", "Property", property.Name, behaviour)
         end
         
-        apiDump = api
+        apiData = api
         apiDataRequestFinishedEvent:Fire(true)
     end, function()
         apiDataRequestFinishedEvent:Fire(false)
@@ -123,11 +123,11 @@ PluginSettings.SettingChanged:Connect(function(key, newValue)
     if (key ~= PluginEnums.PluginSettingKey.CacheAPIData) then return end
 
     if (newValue) then
-        if (not apiDump) then return end
+        if (not apiData) then return end
 
-        PluginSettings.CacheAPIDump(HttpService:JSONEncode(apiDump))
+        PluginSettings.CacheRobloxAPIData(apiData)
     else
-        PluginSettings.ClearCachedAPIDump()
+        PluginSettings.ClearCachedRobloxAPIData()
     end
 end)
 

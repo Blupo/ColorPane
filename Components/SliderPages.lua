@@ -14,6 +14,9 @@ local Components = root:FindFirstChild("Components")
 local Pages = require(Components:FindFirstChild("Pages"))
 local Slider = require(Components:FindFirstChild("Slider"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 local SliderPages
@@ -132,12 +135,10 @@ end)
 
 RGBSliderPage.render = function(self)
     return Roact.createFragment({
-        UIListLayout = Roact.createElement("UIListLayout", {
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.MajorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
+            
+            preset = 1,
         }),
 
         R = Roact.createElement(Slider, {
@@ -263,12 +264,10 @@ end)
 
 CMYKSliderPage.render = function(self)
     return Roact.createFragment({
-        UIListLayout = Roact.createElement("UIListLayout", {
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.MajorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
+            
+            preset = 1,
         }),
 
         C = Roact.createElement(Slider, {
@@ -439,12 +438,10 @@ end)
 
 HSBSliderPage.render = function(self)
     return Roact.createFragment({
-        UIListLayout = Roact.createElement("UIListLayout", {
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.MajorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
+            
+            preset = 1,
         }),
 
         H = Roact.createElement(Slider, {
@@ -585,12 +582,10 @@ end)
 
 HSLSliderPage.render = function(self)
     return Roact.createFragment({
-        UIListLayout = Roact.createElement("UIListLayout", {
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.MajorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
+            
+            preset = 1,
         }),
 
         H = Roact.createElement(Slider, {
@@ -719,12 +714,10 @@ end)
 
 GreyscaleSliderPage.render = function(self)
     return Roact.createFragment({
-        UIListLayout = Roact.createElement("UIListLayout", {
+        UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.MajorElementPadding),
-            FillDirection = Enum.FillDirection.Vertical,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Top,
+            
+            preset = 1,
         }),
 
         Slider = Roact.createElement(Slider, {

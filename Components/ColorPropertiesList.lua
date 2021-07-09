@@ -6,6 +6,8 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorPane = require(PluginModules:FindFirstChild("APIBroker"))
+local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
@@ -13,8 +15,14 @@ local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
-local Padding = require(Components:FindFirstChild("Padding"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -127,36 +135,22 @@ PropertyListItem.render = function(self)
             self.props.promptEdit()
         end,
     }, {
-        UIPadding = Roact.createElement(Padding, { Style.MinorElementPadding, Style.MinorElementPadding, LIST_ITEM_LEFT_PADDING, Style.MinorElementPadding }),
+        UIPadding = Roact.createElement(StandardUIPadding, { Style.MinorElementPadding, Style.MinorElementPadding, LIST_ITEM_LEFT_PADDING, Style.MinorElementPadding }),
 
-        PropertyNameLabel = Roact.createElement("TextLabel", {
+        PropertyNameLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0, 0.5),
             Size = UDim2.new(0, propNameTextSize.X, 1, 0),
             Position = UDim2.new(0, 0, 0.5, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
             Text = self.props.propName,
 
             TextColor3 = propertyLabelTextColor,
         }),
 
         ClassNameLabel = self.props.showClassName and
-            Roact.createElement("TextLabel", {
+            Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, classNameTextSize.X, 1, 0),
                 Position = UDim2.new(0, propNameTextSize.X + Style.MinorElementPadding, 0.5, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
                 Text = displayClassName,
 
                 TextColor3 = theme:GetColor(
@@ -175,19 +169,14 @@ PropertyListItem.render = function(self)
         
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border)
         }, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
+            UICorner = Roact.createElement(StandardUICorner),
 
-            ColorButton = Roact.createElement("TextLabel", {
+            ColorButton = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 Position = UDim2.new(0.5, 0, 0.5, 0),
                 Size = UDim2.new(1, -2, 1, -2),
                 BackgroundTransparency = 0,
-                BorderSizePixel = 0,
 
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
                 TextXAlignment = Enum.TextXAlignment.Center,
                 TextYAlignment = Enum.TextYAlignment.Center,
 
@@ -195,17 +184,13 @@ PropertyListItem.render = function(self)
                     return (not value) and "(Multiple)" or "" 
                 end),
 
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
-
                 BackgroundColor3 = color:map(function(value)
                     local colorValue = isColorSequence and Color3.new(1, 1, 1) or value
 
                     return colorValue or theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
                 end),
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4),
-                }),
+                UICorner = Roact.createElement(StandardUICorner),
 
                 UIGradient = isColorSequence and
                     Roact.createElement("UIGradient", {
@@ -252,12 +237,21 @@ ColorPropertiesList.init = function(self)
         self.updateSelectionPropertyValues(SelectionManager.GetCommonColorPropertyValues())
     end)
 
+    self.settingChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
+        if (key ~= PluginEnums.PluginSettingKey.ColorPropertiesLivePreview) then return end
+
+        self:setState({
+            livePreview = newValue
+        })
+    end)
+
     SelectionManager.Connect()
     SelectionManager.RegenerateCommonColorPropertyValues()
     self.updateSelectionPropertyValues(SelectionManager.GetCommonColorPropertyValues())
 
     self:setState({
         properties = SelectionManager.GetColorProperties(),
+        livePreview = PluginSettings.Get(PluginEnums.PluginSettingKey.ColorPropertiesLivePreview)
     })
 end
 
@@ -268,13 +262,12 @@ ColorPropertiesList.willUnmount = function(self)
 
     self.selectionChanged:Disconnect()
     self.selectionColorsChanged:Disconnect()
+    self.settingChanged:Disconnect()
 
     SelectionManager.Disconnect()
 end
 
 ColorPropertiesList.render = function(self)
-    local theme = self.props.theme
-
     local listElements = {}
     local minCellWidth = 0
 
@@ -313,7 +306,10 @@ ColorPropertiesList.render = function(self)
 
         local editColorPromptOptions = {
             PromptTitle = propertyClassName .. "." .. propertyName,
+
             OnColorChanged = function(intermediateColor)
+                if (not self.state.livePreview) then return end
+
                 local transformedColor = isColorSequence and intermediateColor or fromColor3(intermediateColor, valueType)
                 local newCommonColorValues = self.selectionPropertyValues:getValue()
 
@@ -403,63 +399,39 @@ ColorPropertiesList.render = function(self)
         })
     end
 
-    listElements["UIListLayout"] = Roact.createElement("UIListLayout", {
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
-
+    listElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateListLength(obj.AbsoluteContentSize.Y)
-        end
+        end,
+
+        preset = 1,
     })
 
     return (#propertiesArray > 0) and
-        Roact.createElement("ScrollingFrame", {
+        Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0.5, 0, 0.5, 0),
-            BorderSizePixel = 1,
-            ClipsDescendants = true,
-
-            CanvasPosition = Vector2.new(0, 0),
-            TopImage = Style.ScrollbarImage,
-            MidImage = Style.ScrollbarImage,
-            BottomImage = Style.ScrollbarImage,
-            HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-            VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-            ScrollBarThickness = 16,
             
             CanvasSize = self.listLength:map(function(length)
                 return UDim2.new(0, minCellWidth, 0, length)
             end),
-
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
-            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
-            ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
         }, listElements)
     or
-        Roact.createElement("TextLabel", {
+        Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Size = UDim2.new(1, 0, 1, 0),
             Position = UDim2.new(0.5, 0, 0.5, 0),
             BackgroundTransparency = 0,
-            BorderSizePixel = 0,
 
             Text = "The selected item(s) do not have any color properties",
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Center,
             TextWrapped = true,
-
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
         }, {
-            UIPadding = Roact.createElement(Padding, {Style.PagePadding})
+            UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding})
         })
 end
 
 PropertyListItem = ConnectTheme(PropertyListItem)
-return ConnectTheme(ColorPropertiesList)
+return ColorPropertiesList

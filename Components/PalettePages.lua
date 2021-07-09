@@ -11,7 +11,7 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
-local BuiltInPalettes = require(Components:FindFirstChild("BuiltInPalettes"))
+local BuiltInPaletteComponents = require(Components:FindFirstChild("BuiltInPaletteComponents"))
 local ExportPalette = require(Components:FindFirstChild("ExportPalette"))
 local ImportPalette = require(Components:FindFirstChild("ImportPalette"))
 local NamePalette = require(Components:FindFirstChild("NamePalette"))
@@ -99,7 +99,7 @@ end
 
 PalettePages.render = function(self)
     local palettes = self.props.palettes
-    local numBuiltInPalettes = #BuiltInPalettes
+    local numBuiltInPalettes = #BuiltInPaletteComponents
 
     local selectedPage = self.props.lastPalettePage
     local selectedPageSection, selectedPageNum = selectedPage[1], selectedPage[2]
@@ -110,7 +110,7 @@ PalettePages.render = function(self)
     local userPalettePages = {}
 
     for i = 1, numBuiltInPalettes do
-        local palette = BuiltInPalettes[i]
+        local palette = BuiltInPaletteComponents[i]
 
         table.insert(builtInPalettePages, {
             name = palette.name,

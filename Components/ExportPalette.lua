@@ -19,6 +19,10 @@ local Button = require(Components:FindFirstChild("Button"))
 local Dropdown = require(Components:FindFirstChild("Dropdown"))
 local RadioButtonGroup = require(Components:FindFirstChild("RadioButtonGroup"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 local exportTypeKeys = {
@@ -35,7 +39,7 @@ local exportTypeKeys = {
     onPromptClosed: (boolean) -> nil
 ]]
 
-local ExportPalette = Roact.Component:extend("ExportPalette")
+local ExportPalette = Roact.PureComponent:extend("ExportPalette")
 
 ExportPalette.init = function(self, initProps)
     self:setState({
@@ -100,13 +104,10 @@ ExportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                UIListLayout = Roact.createElement("UIListLayout", {
-                    FillDirection = Enum.FillDirection.Vertical,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Left,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    VerticalAlignment = Enum.VerticalAlignment.Top,
-
+                UIListLayout = Roact.createElement(StandardUIListLayout, {
                     Padding = UDim.new(0, Style.SpaciousElementPadding),
+
+                    preset = 1,
                 }),
 
                 ExportType = Roact.createElement(RadioButtonGroup, {
@@ -123,20 +124,10 @@ ExportPalette.render = function(self)
                 }),
 
                 ExportLocation = paletteName and
-                    Roact.createElement("TextLabel", {
+                    Roact.createElement(StandardTextLabel, {
                         Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-                        BackgroundTransparency = 1,
-                        BorderSizePixel = 0,
                         LayoutOrder = 4,
-
                         Text = "The palette will be exported to ServerStorage as:\n" .. paletteName .. ".palette",
-                        TextSize = Style.StandardTextSize,
-                        Font = Style.StandardFont,
-                        TextStrokeTransparency = 1,
-                        TextXAlignment = Enum.TextXAlignment.Left,
-                        TextYAlignment = Enum.TextYAlignment.Center,
-
-                        TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
                     })
                 or nil,
             })
@@ -150,12 +141,10 @@ ExportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                UIListLayout = Roact.createElement("UIListLayout", {
+                UIListLayout = Roact.createElement(StandardUIListLayout, {
                     Padding = UDim.new(0, Style.SpaciousElementPadding),
-                    FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    VerticalAlignment = Enum.VerticalAlignment.Center,
+                    
+                    preset = 2,
                 }),
 
                 CancelButton = Roact.createElement(Button, {

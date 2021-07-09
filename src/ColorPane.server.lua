@@ -110,19 +110,19 @@ end
 
 ColorPane.init(plugin)
 
-if (CoreGui:FindFirstChild("ColorPane")) then
-    warn("ColorPane is already loaded")
-end
-
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate)) then
     UpdateChecker.Check()
 end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
-    local success = injectAPI()
+    if (CoreGui:FindFirstChild("ColorPane")) then
+        warn("[ColorPane] Another instance of ColorPane has already injected its API script.")
+    else
+        local success = injectAPI()
 
-    if (not success) then
-        warn("The ColorPane API could not be automatically loaded. Please make sure that you have allowed script injection and try again.")
+        if (not success) then
+            warn("[ColorPane] The API script could not be automatically injected. Please make sure that you have allowed script injection and try again.")
+        end
     end
 end
 
@@ -132,11 +132,8 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) th
         startupRequestFinished:Disconnect()
         startupRequestFinished = nil
 
-        if (not success) then
-            warn("The Color Properties window could not be automatically loaded. " .. (RunService:IsEdit() and
-                "Please make sure that you have allowed HTTP requests for setup.rbxcdn.com and try again." or
-                "Please make sure that the Roblox API data is cached."
-            ))
+        if ((not success) and RunService:IsEdit()) then
+            warn("[ColorPane] Color Properties could not be automatically loaded. Please make sure that you have allowed HTTP requests for setup.rbxcdn.com and try again.")
         end
     end)
 

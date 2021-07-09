@@ -6,14 +6,18 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
+local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
-local BuiltInPalettes = Components:FindFirstChild("BuiltInPalettes")
-local WebColorsPalette = require(BuiltInPalettes:FindFirstChild("WebColors"))
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+
+local WebColorsPalette = BuiltInPalettes.WebColors
 
 ---
 
@@ -148,7 +152,6 @@ local infoComponents = {
 local ColorInfo = Roact.PureComponent:extend("ColorInfo")
 
 ColorInfo.render = function(self)
-    local theme = self.props.theme
     local color = self.props.color
 
     local pageElement = {}
@@ -162,20 +165,11 @@ ColorInfo.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            ComponentLabel = Roact.createElement("TextLabel", {
+            ComponentLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(0, 30, 1, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
                 Text = component.name,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
             }),
 
             ComponentInput = Roact.createElement(TextInput, {
@@ -198,12 +192,10 @@ ColorInfo.render = function(self)
         }))
     end
 
-    pageElement["UIListLayout"] = Roact.createElement("UIListLayout", {
+    pageElement.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.SpaciousElementPadding),
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
+
+        preset = 1,
     })
 
     return Roact.createFragment(pageElement)
@@ -211,7 +203,6 @@ end
 
 return RoactRodux.connect(function(state)
     return {
-        theme = state.theme,
         color = state.colorEditor.color,
     }
 end, function(dispatch)

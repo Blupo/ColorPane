@@ -17,8 +17,11 @@ local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local Checkbox = require(Components:FindFirstChild("Checkbox"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local ColorPropertiesList = require(Components:FindFirstChild("ColorPropertiesList"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -75,26 +78,21 @@ NoAPIAlert.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
     }, {
-        UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
 
-        Notice = Roact.createElement("TextLabel", {
+        Notice = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Size = UDim2.new(1, 0, 0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
 
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Center,
-            TextYAlignment = Enum.TextYAlignment.Bottom,
-            TextWrapped = true,
             Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. " .. (isEdit and
                 "This screen will change once the data has been loaded." or
                 "\n\nNote: To use Color Properties during testing, you must have already loaded the data with the \"Cache Roblox API data\" option enabled before testing."
             ),
             
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
+            TextXAlignment = Enum.TextXAlignment.Center,
+            TextYAlignment = Enum.TextYAlignment.Bottom,
+            TextWrapped = true,
         }),
 
         LoadButton = Roact.createElement(Button, {

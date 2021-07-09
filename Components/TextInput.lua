@@ -12,7 +12,10 @@ local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -180,9 +183,7 @@ TextInput.render = function(self)
             })
         end
     }, {
-        UICorner = Roact.createElement("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-        }),
+        UICorner = Roact.createElement(StandardUICorner),
 
         Background = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
@@ -194,11 +195,8 @@ TextInput.render = function(self)
 
             BackgroundColor3 = backgroundColor,
         }, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
-
-            UIPadding = Roact.createElement(Padding, {0, Style.TextObjectPadding}),
+            UICorner = Roact.createElement(StandardUICorner),
+            UIPadding = Roact.createElement(StandardUIPadding, {0, Style.TextObjectPadding}),
 
             Input = Roact.createElement("TextBox", {
                 AnchorPoint = Vector2.new(0, 0.5),

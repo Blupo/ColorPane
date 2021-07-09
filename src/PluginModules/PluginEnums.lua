@@ -53,6 +53,7 @@ return setmetatable({
         "AutoSaveInterval",
         "CacheAPIData",
         "UserColorSequences",
+        "ColorPropertiesLivePreview"
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {

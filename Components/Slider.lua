@@ -11,6 +11,10 @@ local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+
 ---
 
 --[[
@@ -116,19 +120,11 @@ Slider.render = function(self)
         BackgroundTransparency = 1,
         BorderSizePixel = 0
     }, {
-        NameLabel = Roact.createElement("TextLabel", {
+        NameLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
             Size = UDim2.new(1, 0, 0, 14),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-
-            Font = Style.StandardFont,
-            TextSize = Style.StandardTextSize,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Center,
             Text = self.props.sliderLabel,
-            TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
         }),
 
         SliderBorder = Roact.createElement("Frame", {
@@ -143,9 +139,7 @@ Slider.render = function(self)
                 self.state.tracking and Enum.StudioStyleGuideModifier.Selected or nil
             ),
         }, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
+            UICorner = Roact.createElement(StandardUICorner),
 
             Slider = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
@@ -196,9 +190,7 @@ Slider.render = function(self)
                     self.updateSliderSize(sliderSize.X)
                 end,
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4),
-                }),
+                UICorner = Roact.createElement(StandardUICorner),
 
                 UIGradient = Roact.createElement("UIGradient", {
                     Color = self.props.sliderGradient
@@ -216,9 +208,7 @@ Slider.render = function(self)
 
                     BackgroundColor3 = self.props.markerColor or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)
                 }, {
-                    UICorner = Roact.createElement("UICorner", {
-                        CornerRadius = UDim.new(1, 0),
-                    }),
+                    UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 }),
             }),
         }),
@@ -258,20 +248,11 @@ Slider.render = function(self)
             }),
 
             UnitLabel = self.props.unitLabel and
-                Roact.createElement("TextLabel", {
+                Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(1, 0.5),
                     Position = UDim2.new(1, 0, 0.5, 0),
                     Size = UDim2.new(0, 10, 1, 0),
-                    BackgroundTransparency = 1,
-                    BorderSizePixel = 0,
-
-                    Font = Style.StandardFont,
-                    TextSize = Style.StandardTextSize,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextYAlignment = Enum.TextYAlignment.Center,
                     Text = self.props.unitLabel,
-
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
                 })
             or nil
         })

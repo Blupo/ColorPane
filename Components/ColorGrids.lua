@@ -10,8 +10,12 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local Padding = require(Components:FindFirstChild("Padding"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardScrollingFrame = StandardComponents.ScrollingFrame
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -120,7 +124,7 @@ ColorGrid.render = function(self)
         })
     end
 
-    colorElements["UIGridLayout"] = Roact.createElement("UIGridLayout", {
+    colorElements.UIGridLayout = Roact.createElement("UIGridLayout", {
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Left,
         SortOrder = Enum.SortOrder.LayoutOrder,
@@ -151,19 +155,11 @@ ColorGrid.render = function(self)
         BorderSizePixel = 0,
     }, {
         GridLabel = self.props.title and
-            Roact.createElement("TextLabel", {
+            Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
-
-                Font = Enum.Font.SourceSans,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
                 Text = self.props.title,
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             })
         or nil,
 
@@ -200,8 +196,6 @@ ColorGrids.init = function(self)
 end
 
 ColorGrids.render = function(self)
-    local theme = self.props.theme
-
     local listElements = {}
 
     for gridName, gridColors in pairs(self.props.colorLists) do
@@ -216,44 +210,26 @@ ColorGrids.render = function(self)
         })
     end
 
-    listElements["UIListLayout"] = Roact.createElement("UIListLayout", {
+    listElements.UIPadding = Roact.createElement(StandardUIPadding, {Style.MinorElementPadding})
+    listElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.MinorElementPadding),
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
         SortOrder = Enum.SortOrder.Name,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
 
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateListLength(obj.AbsoluteContentSize.Y)
-        end
+        end,
+
+        preset = 1,
     })
 
-    listElements["UIPadding"] = Roact.createElement(Padding, {Style.MinorElementPadding})
-
-    return Roact.createElement("ScrollingFrame", {
+    return Roact.createElement(StandardScrollingFrame, {
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
         Size = self.props.Size,
-        BackgroundTransparency = 0,
-        BorderSizePixel = 1,
 
         CanvasSize = self.listLength:map(function(listLength)
             return UDim2.new(0, 0, 0, listLength + (Style.MinorElementPadding * 2))
-        end),
-
-        CanvasPosition = Vector2.new(0, 0),
-        TopImage = Style.ScrollbarImage,
-        MidImage = Style.ScrollbarImage,
-        BottomImage = Style.ScrollbarImage,
-        HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
-        VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-        ScrollBarThickness = Style.ScrollbarThickness,
-        ClipsDescendants = true,
-
-        ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
-        BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
-        BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
+        end)
     }, listElements)
 end
 
@@ -268,4 +244,4 @@ ColorGrid = RoactRodux.connect(function(state)
     }
 end)(ColorGrid)
 
-return ConnectTheme(ColorGrids)
+return ColorGrids

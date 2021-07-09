@@ -36,7 +36,7 @@ UpdateChecker.Check = function()
         if (sessionNotificationShown) then return end
 
         warn(string.format(
-            "A new version of ColorPane is available: v%d.%d.%d; you're currently using v%d.%d.%d",
+            "[ColorPane] A new version of ColorPane is available: v%d.%d.%d; you're currently using v%d.%d.%d",
             latestReleaseMajor, latestReleaseMinor, latestReleasePatch,
             releaseMajor, releaseMinor, releasePatch
         ))

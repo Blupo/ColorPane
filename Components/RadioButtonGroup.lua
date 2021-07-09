@@ -9,6 +9,11 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 --[[
@@ -65,9 +70,7 @@ RadioButtonGroup.render = function(self)
 
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder)
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(1, 0)
-                }),
+                UICorner = Roact.createElement(StandardUICorner, { circular = true }),
 
                 Inner = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -78,9 +81,7 @@ RadioButtonGroup.render = function(self)
 
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground),
                 }, {
-                    UICorner = Roact.createElement("UICorner", {
-                        CornerRadius = UDim.new(1, 0)
-                    }),
+                    UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 }),
 
                 Indicator = (self.state.selected == i) and
@@ -94,38 +95,25 @@ RadioButtonGroup.render = function(self)
 
                         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
                     }, {
-                        UICorner = Roact.createElement("UICorner", {
-                            CornerRadius = UDim.new(1, 0)
-                        })
+                        UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                     })
                 or nil,
             }),
 
-            Label = Roact.createElement("TextLabel", {
+            Label = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Size = UDim2.new(1, -(Style.StandardInputHeight + Style.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
                 BackgroundTransparency = 1,
-                BorderSizePixel = 1,
-
                 Text = options[i],
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
-
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText),
             })
         })
     end
 
-    optionsChildren["UIListLayout"] = Roact.createElement("UIListLayout", {
+    optionsChildren.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.MinorElementPadding),
 
-        FillDirection = Enum.FillDirection.Vertical,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        VerticalAlignment = Enum.VerticalAlignment.Top,
+        preset = 1,
     })
 
     return Roact.createElement("Frame", {

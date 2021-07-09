@@ -16,10 +16,15 @@ local Button = require(Components:FindFirstChild("Button"))
 local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
 local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
 local ColorWheel = require(Components:FindFirstChild("ColorWheel"))
-local Padding = require(Components:FindFirstChild("Padding"))
 local PalettePages = require(Components:FindFirstChild("PalettePages"))
 local SliderPages = require(Components:FindFirstChild("SliderPages"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
@@ -201,15 +206,14 @@ ColorEditor.render = function(self)
         })
     end
 
-    editorPageElements["UIListLayout"] = Roact.createElement("UIListLayout", {
+    editorPageElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
+        Padding = UDim.new(0, Style.MajorElementPadding),
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Center,
-        Padding = UDim.new(0, Style.MajorElementPadding)
     })
 
-    quickPaletteElements["UIGridLayout"] = Roact.createElement("UIGridLayout", {
+    quickPaletteElements.UIGridLayout = Roact.createElement("UIGridLayout", {
         CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
         CellSize = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
         FillDirection = Enum.FillDirection.Horizontal,
@@ -219,7 +223,7 @@ ColorEditor.render = function(self)
         SortOrder = Enum.SortOrder.LayoutOrder,
     })
 
-    quickPaletteElements["AddColorButton"] = Roact.createElement(Button, {
+    quickPaletteElements.AddColorButton = Roact.createElement(Button, {
         LayoutOrder = 0,
         
         displayType = "image",
@@ -251,7 +255,7 @@ ColorEditor.render = function(self)
             editorInputBindableEvents.InputEnded:Fire(input, gameProcessedEvent)
         end,
     }, {
-        UIPadding = Roact.createElement(Padding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
 
         EditorPages = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
@@ -317,9 +321,7 @@ ColorEditor.render = function(self)
 
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
             }, {
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 4),
-                }),
+                UICorner = Roact.createElement(StandardUICorner),
 
                 ColorIndicator = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0),
@@ -367,20 +369,14 @@ ColorEditor.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            Label = Roact.createElement("TextLabel", {
+            Label = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(0, 6, 1, 0),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
     
-                Font = Enum.Font.SourceSans,
-                TextSize = 14,
+                Text = "#",
                 TextXAlignment = Enum.TextXAlignment.Center,
                 TextYAlignment = Enum.TextYAlignment.Center,
-                Text = "#",
-    
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
             }),
 
             Input = Roact.createElement(TextInput, {
@@ -411,12 +407,10 @@ ColorEditor.render = function(self)
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
-            UIListLayout = Roact.createElement("UIListLayout", {
-                Padding = UDim.new(0, 8),
-                FillDirection = Enum.FillDirection.Horizontal,
-                HorizontalAlignment = Enum.HorizontalAlignment.Right,
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                VerticalAlignment = Enum.VerticalAlignment.Center,
+            UIListLayout = Roact.createElement(StandardUIListLayout, {
+                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                
+                preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {

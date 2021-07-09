@@ -14,6 +14,9 @@ local Components = root:FindFirstChild("Components")
 local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardUICorner = StandardComponents.UICorner
+
 ---
 
 local ANALOGY_ANGLE = math.pi / 5
@@ -352,9 +355,7 @@ ColorWheel.render = function(self)
                 ))
             end),
         }, {
-            UICorner = Roact.createElement("UICorner", {
-                CornerRadius = UDim.new(1, 0)
-            }),
+            UICorner = Roact.createElement(StandardUICorner, { circular = true }),
 
             Indicator = self.state.trackingH and
                 Roact.createElement("Frame", {
@@ -366,9 +367,7 @@ ColorWheel.render = function(self)
                         return Color.toColor3(Color.fromHSB(components.h, 1, 1))
                     end)
                 }, {
-                    UICorner = Roact.createElement("UICorner", {
-                        CornerRadius = UDim.new(1, 0)
-                    })
+                    UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 })
             or nil
         })
@@ -485,9 +484,7 @@ ColorWheel.render = function(self)
                     DominantAxis = Enum.DominantAxis.Width
                 }),
 
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(1, 0)
-                }),
+                UICorner = Roact.createElement(StandardUICorner, { circular = true }),
 
                 RingOverlay = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
@@ -498,9 +495,7 @@ ColorWheel.render = function(self)
 
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)
                 }, {
-                    UICorner = Roact.createElement("UICorner", {
-                        CornerRadius = UDim.new(1, 0)
-                    }),
+                    UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 }),
 
                 Markers = Roact.createFragment(hueMarkers)
@@ -592,9 +587,7 @@ ColorWheel.render = function(self)
                             ))
                         end),
                     }, {
-                        UICorner = Roact.createElement("UICorner", {
-                            CornerRadius = UDim.new(1, 0)
-                        }),
+                        UICorner = Roact.createElement(StandardUICorner, { circular = true }),
 
                         Indicator = Roact.createElement("Frame", {
                             AnchorPoint = Vector2.new(0.5, 0.5),
@@ -607,9 +600,7 @@ ColorWheel.render = function(self)
                                 return Color.toColor3(Color.fromHSB(components.h, components.s, components.b))
                             end),
                         }, {
-                            UICorner = Roact.createElement("UICorner", {
-                                CornerRadius = UDim.new(1, 0)
-                            })
+                            UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                         })
                     })
                 })

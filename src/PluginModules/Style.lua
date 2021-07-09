@@ -67,7 +67,8 @@ local Style = {
     CSEditorSwapKeypointRightImage = "rbxassetid://330699633",
 
     -- toolbar
-    ToolbarColorEditorButtonImage = "rbxassetid://6498550308",
+    ToolbarColorEditorButtonImage = "rbxassetid://7066707717",
+    ToolbarGradientEditorButtonImage = "rbxassetid://7066742393",
     ToolbarInjectAPIButtonImage = "rbxassetid://6498542225",
     ToolbarSettingsButtonImage = "rbxassetid://6528624327",
     ToolbarColorPropertiesButtonImage = "rbxassetid://6531028502",
@@ -79,7 +80,8 @@ local Style = {
 
     -- add/remove
     AddImage = "rbxassetid://919844482",
-    RemoveImage = "rbxassetid://6213137847",
+    SubtractImage = "rbxassetid://6213137847",
+    DeleteImage = "rbxassetid://919846965",
 
     -- other
     MarkerSize = 8,

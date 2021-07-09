@@ -1,6 +1,7 @@
 local root = script.Parent.Parent
 
 local includes = root:FindFirstChild("includes")
+local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
@@ -8,9 +9,9 @@ local ColorBrewerPalettes = require(Components:FindFirstChild("ColorBrewerPalett
 local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
 local Palette = require(Components:FindFirstChild("Palette"))
 
-local BrickColors = require(script:FindFirstChild("BrickColors"))
-local CopicColors = require(script:FindFirstChild("CopicColors"))
-local WebColors = require(script:FindFirstChild("WebColors"))
+local BrickColors = BuiltInPalettes.BrickColors
+local CopicColors = BuiltInPalettes.CopicColors
+local WebColors = BuiltInPalettes.WebColors
 
 ---
 

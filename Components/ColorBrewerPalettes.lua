@@ -6,13 +6,18 @@ local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
-local ColorBrewer = require(includes:FindFirstChild("ColorBrewer"))
+local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
 local ColorGrids = require(Components:FindFirstChild("ColorGrids"))
+
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+
+local ColorBrewer = BuiltInPalettes.ColorBrewer
 
 ---
 
@@ -64,11 +69,9 @@ end
 
 ---
 
-local ColorBrewerPalettes = Roact.Component:extend("ColorBrewerPalettes")
+local ColorBrewerPalettes = Roact.PureComponent:extend("ColorBrewerPalettes")
 
 ColorBrewerPalettes.render = function(self)
-    local theme = self.props.theme
-
     local includedColorSchemes = {}
     local numIncludedColorSchemes = 0
 
@@ -111,20 +114,15 @@ ColorBrewerPalettes.render = function(self)
         }),
 
         InfoText = (numIncludedColorSchemes == 0) and
-            Roact.createElement("TextLabel", {
+            Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
                 Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.MajorElementPadding)),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
-                Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
+                Text = "There are no schemes that satisfy this criteria",
                 TextXAlignment = Enum.TextXAlignment.Center,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
-                Text = "There are no schemes that satisfy this criteria",
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             })
         or nil,
 
@@ -147,7 +145,6 @@ return RoactRodux.connect(function(state)
     local sessionData = state.sessionData
 
     return {
-        theme = state.theme,
         dataClass = sessionData.cbDataClass,
         numDataClasses = sessionData.cbNumDataClasses,
     }

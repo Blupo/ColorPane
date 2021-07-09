@@ -10,6 +10,11 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
+local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardTextLabel = StandardComponents.TextLabel
+local StandardUICorner = StandardComponents.UICorner
+local StandardUIListLayout = StandardComponents.UIListLayout
+
 ---
 
 --[[
@@ -143,15 +148,10 @@ ButtonBar.render = function(self)
         buttonElements[buttonInfo.name] = Roact.createElement(buttonTypes[displayType], buttonProps)
     end
 
-    buttonElements["UICorner"] = Roact.createElement("UICorner", {
-        CornerRadius = UDim.new(0, 4),
-    })
-
-    buttonElements["UIListLayout"] = Roact.createElement("UIListLayout", {
-        Padding = UDim.new(0, 0),
+    buttonElements.UICorner = Roact.createElement(StandardUICorner)
+    buttonElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         FillDirection = self.props.vertical and Enum.FillDirection.Vertical or Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        SortOrder = Enum.SortOrder.LayoutOrder,
         VerticalAlignment = Enum.VerticalAlignment.Center,
     })
 
@@ -164,30 +164,25 @@ ButtonBar.render = function(self)
         BorderSizePixel = 0,
     }, {
         TitleLabel = (self.props.title and (not self.props.vertical)) and
-            Roact.createElement("TextLabel", {
+            Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
-                BackgroundTransparency = 1,
-                BorderSizePixel = 0,
 
                 Font = Style.StandardFont,
-                TextSize = Style.StandardTextSize,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Center,
                 Text = self.props.title .. ": " .. self.props.buttons[selected].name,
-                TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText)
             })
         or nil,
 
         Buttons = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 1),
-            Size = self.props.vertical and
-                UDim2.new(1, 0, 1, 0)
-            or UDim2.new(1, 0, 1, self.props.title and -(Style.StandardTextSize + Style.MinorElementPadding) or 0),
             Position = UDim2.new(0.5, 0, 1, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
+
+            Size = self.props.vertical and
+                UDim2.new(1, 0, 1, 0)
+            or UDim2.new(1, 0, 1, self.props.title and -(Style.StandardTextSize + Style.MinorElementPadding) or 0),
 
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder)
         }, buttonElements)
