@@ -1,6 +1,6 @@
 ## ColorBrewer
 
-This product includes color specifications and designs developed by Cynthia Brewer ([http://colorbrewer.org/](http://colorbrewer.org/)). The license for the ColorBrewer color schemes is included below:
+This product includes color specifications and designs developed by Cynthia Brewer ([http://colorbrewer.org/](http://colorbrewer.org/)).
 
 ```
 Apache-Style Software License for ColorBrewer software and ColorBrewer Color
@@ -43,18 +43,26 @@ may "ColorBrewer" appear in their name, without prior written permission of
 Cynthia Brewer.
 ```
 
+## Copic
+
+ColorPane includes a built-in Copic color palette. Copic is a registered trademark of [Too Corporation, Japan](https://www.toomarker.co.jp/en).
+
 ## @neilbartlett/color-temperature
 
 The implementation of the Kelvin color module is based on Neil Bartlett's [color-temperature](https://github.com/neilbartlett/color-temperature), which is licensed under the MIT License.
 
 ## Material Icons
 
-ColorPane makes use of Google's [Material Icons](https://fonts.google.com/icons), which are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+ColorPane makes extensive use of Google's [Material Icons](https://fonts.google.com/icons), which are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## @roblox/roact, rodux, roact-rodux
 
-[roact](https://github.com/Roblox/roact), [rodux](https://github.com/Roblox/rodux), and [roact-rodux](https://github.com/Roblox/roact-rodux) are included in ColorPane. They licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+[@roblox](https://github.com/Roblox)'s [roact](https://github.com/Roblox/roact), [rodux](https://github.com/Roblox/rodux), and [roact-rodux](https://github.com/Roblox/roact-rodux) are included in ColorPane. They are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## @evaera/roblox-lua-promise
 
-[roblox-lua-promise](https://github.com/evaera/roblox-lua-promise) is included in ColorPane. It is licensed under the [MIT License](https://github.com/evaera/roblox-lua-promise/blob/master/LICENSE).
+[@evaera](https://github.com/evaera)'s [roblox-lua-promise](https://github.com/evaera/roblox-lua-promise) is included in ColorPane. It is licensed under the [MIT License](https://github.com/evaera/roblox-lua-promise/blob/master/LICENSE).
+
+## @osyrisrblx/t
+
+[@osyrisrblx](https://github.com/osyrisrblx)'s [t](https://github.com/osyrisrblx/t) is included in ColorPane. It is licensed under the [MIT License](https://github.com/osyrisrblx/t/blob/master/LICENSE).

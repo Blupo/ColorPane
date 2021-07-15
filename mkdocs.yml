@@ -14,14 +14,16 @@ nav:
   - Home: index.md
   - User Guide:
     - Color Editor: user-guide/color-editor.md
-    - ColorSequence Editor: user-guide/colorsequence-editor.md
+    - Gradient Editor: user-guide/gradient-editor.md
     - Color Properties: user-guide/color-properties.md
-    - API Integrations: user-guide/api-integrations.md
-  - API:
-    - Usage: api/usage.md
-    - Reference: api/reference.md
+    - API: user-guide/api.md
+    - Tips and Tricks: user-guide/tips.md
+  - Technical:
+    - Palette Format: technical/palette-format.md
+    - API Reference: technical/api-reference.md 
   - Attribution: attribution.md
-  
+  - Support ColorPane: support.md
+
 markdown_extensions:
   - admonition
   - codehilite:

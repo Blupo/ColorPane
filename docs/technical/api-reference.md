@@ -32,18 +32,18 @@ Returns whether the ColorSequence editor is open or not.
 ### ColorPane.PromptForColor
 
 ```
-ColorPane.PromptForColor(promptOptions: PromptOptions?): Promise
+ColorPane.PromptForColor(promptOptions: PromptOptions?): Promise<Color3>
 ```
 
-Prompts the user for a color. Returns a Promise that will resolve with a [Color3](https://developer.roblox.com/en-us/api-reference/datatype/Color3), or reject if *either* prompt is already open. Cancelling the Promise will close the prompt and a value will not be returned.
+Prompts the user for a color. Returns a Promise that will resolve with a [Color3](https://developer.roblox.com/en-us/api-reference/datatype/Color3), or immediately reject if either the color editor or gradient editor prompts are already open. If the user closes the prompt without submitting a color, the Promise will be cancelled.
 
 ### ColorPane.PromptForColorSequence
 
 ```
-ColorPane.PromptForColorSequence(promptOptions: PromptOptions?): Promise
+ColorPane.PromptForColorSequence(promptOptions: PromptOptions?): Promise<ColorSequence>
 ```
 
-Prompts the user for a color. Returns a Promise that will resolve with a [ColorSequence](https://developer.roblox.com/en-us/api-reference/datatype/ColorSequence), or reject if the prompt is already open. Cancelling the Promise will close the prompt and a value will not be returned.
+Prompts the user for a gradient. Returns a Promise that will resolve with a [ColorSequence](https://developer.roblox.com/en-us/api-reference/datatype/ColorSequence), or immediately reject if the prompt is already open. If the user closes the prompt without submitting a gradient, the Promise will be cancelled.
 
 ## Events
 
@@ -63,7 +63,7 @@ Fires when the API is unloading. You should use this event to clean up any scrip
 {
     PromptTitle: string?,
     InitialColor: (Color3 | ColorSequence)?,
-    OnColorChanged: ((Color3 | ColorSequence) -> nil)?,
+    OnColorChanged: (Color3 | ColorSequence)? -> nil,
 }
 ```
 

@@ -1,93 +1,76 @@
-![The color editor](../images/all-editors.png)
-
-The color editor has several components to it:
-
-[TOC]
-
-If the editor window is large enough, then all of the components will be shown at the same time, otherwise you can use the button bar at the right of the window to pick which one to view. By default, the window is only large enough to show the wheel and sliders.
-
-![The plugin toolbar](../images/toolbar.png)
-
-You can use the toolbar to bring up the color editor at any time using the *Color Editor* button.
-
 ## Color Wheel
 
 ![Color wheel](../images/color-wheel.png)
 
-The color wheel is a standard [HSB](https://wikipedia.org/wiki/HSL_and_HSV) color wheel, with a ring for the hue and an inner square for the saturation and brightness. There is also a button bar at the bottom for basic color harmonies. The main color markers are denoted as circles, while any harmonies are denoted as squares.
+The buttons below the wheel let you select [color harmonies](https://en.wikipedia.org/wiki/Harmony_(color)), which will be marked on the wheel using squares, while the main color marker will be a circle.
 
 ## Sliders
 
-![RGB sliders](../images/rgb-sliders.png)
+![Color sliders](../images/color-sliders.png)
 
-There are 6 types of sliders:
+The editor includes several sliders:
 
 - RGB
 - CMYK
-- HSB
-- HSL
-- Monochrome (black-and-white)
+- HSB/L
+- Monochrome
 - Temperature
-    - Lets you pick colors corresponding to Kelvin temperatures, with some presets. Implementation is based on [neilbartlett's color-temperature](https://github.com/neilbartlett/color-temperature).
-
-!!! hint
-    On the Slider and Palette editors, you can use the scroll wheel on the respective page selector to traverse the page list without having to open the dropdown.
 
 ## Palettes
 
-![The grid view for palettes](../images/palettes.png)
+![The grid layout for palettes](../images/palettes.png)
 
-Palettes let you store lists of colors. The overflow menu lets you create, duplicate, rename and delete palettes. You can use the search bar to filter colors, and you can use the ![plus](../images/plus.png) button to add colors to the palette.
+Palettes let you store lists of colors. For most palettes, you will see a search bar, buttons to select a grid or list layout, a button to add the current color, and the list of colors.
 
-!!! hint
-    By default you will be prompted to name palettes before creating them. You can disable this in the Settings.
+The dropdown lists the palettes you have as well as the ones included with ColorPane, and the overflow menu has several options such as creating new palettes, deleting existing palettes, and importing palettes.
 
-### Grid View
+### Layouts
 
-Grid view (pictured above) is the default view for palettes, and allows for easy access to colors. Clicking on a color will select it, which allows you to use the color options:
+The grid layout (pictured above) is the default layout, and allows for quick access to colors. Clicking on a color will select it, which then allows you to change the color's position in the list, rename the color, remove the color, or set the current color.
 
-- The *Set Color* button will set the current color to the selected color (you can also double-click on the color)
-- The ![minus](../images/minus.png) button will remove the color from the palette
-- The ![left](../images/left.png) and ![right](../images/right.png) buttons will move the color around the list
-- You can rename the color using the text box
+The list layout (pictured below) is useful for palettes where color names are important. In this layout, clicking on a color (meaning the box that shows the color) will set the current color, and clicking anywhere else inside the cell will select it.
 
-### List View
+![The list layout for palettes](../images/palettes-list.png)
 
-![The list view for palettes](../images/palettes-list.png)
+Some built-in palettes (i.e. the ColorBrewer and Variations palettes) have custom layouts.
 
-List view is useful for palettes where the color names are important. Clicking on a list item will select it, which shows the color options:
+### Import and Export
 
-- The ![minus](../images/minus.png) button will remove the color from the palette
-- The ![up](../images/up.png) and ![down](../images/down.png) buttons will move the color around the list
-- The name label will turn into a text box, with which you can change the name of the color
+Palettes can be imported and exported, for things such as sharing them with collaborators or for backing up your palettes. You can access the import/export options from the overflow menu (the Export option will not appear when a built-in palette is selected).
 
-To set the current color, click on the color box inside the list item.
+#### Import
 
-### Built-In Palettes
+There are various ways to import palettes, but the UI will look similar for each method. After you extract the palette from the method you choose and the palette is determined to be in the [correct format](../../technical/palette-format/), the *Import* button will be enabled. You can also change the name of the palette before you import, which will be pre-filled with the name from the palette itself.
 
-ColorPane includes some built-in palettes:
+!!! attention
+    When importing via URL, you will be prompted by Studio to allow HTTP requests to whatever domain your URL contains. If you deny this permission, you will not be able to import palettes from that domain.
 
-- A [BrickColor](https://developer.roblox.com/articles/BrickColor-Codes) palette
-- A page for the [ColorBrewer](https://colorbrewer2.org) palettes (clicking on a color in the ColorBrewer page will immediately set the current color instead of selecting it)
-- A [web colors](https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors) palette
+![Palette import dialog](../images/import-palette.png)
 
-## Color Information
+#### Export
 
-![The color information](../images/color-info.png)
+Palettes can be exported as ModuleScripts or StringValues to ServerStorage, and the exported object will contain the JSON string for the palette as well as some metadata for ModuleScripts.
 
-The information page shows the components for different color conversions. You can copy from the text boxes if you need to use the color somewhere else, or paste into the text boxes (in the format you see) to change the color.
-
-## Quick Palette
-
-![The quick palette](../images/quick-palette.png)
-
-The quick palette at the bottom of the window lets you temporarily store colors for quick access. The ![plus](../images/plus.png) button will add the current color, and clicking on a color will set the current color.
+!!! attention
+    If exporting to a ModuleScript, you will be prompted by Studio to allow script injection. If you do not allow script injection, you will not be able to export ModuleScripts.
 
 !!! info
-    The quick palette will display as many colors as the size of the window can accomodate, and stores up to 99. If you add more colors after the 99th, colors will be removed from the end of the list to accommodate.
+    Palettes cannot be exported to JSON files, as the Roblox API does not have any functions for this. If you need to have your palette in a JSON file, you can copy the content of the JSON string into a file.
 
-## Comparison and Hex Input
+    For StringValues, copy the Value. For ModuleScripts, copy the text inside the double-square-brackets (`[[...]]`).
 
-![The comparison and hex input](../images/tools.png)
+![Palette export dialog](../images/export-palette.png)
 
-The comparison square shows the current and starting colors (on the top and bottom respectively), and you can click on the starting color to set the current color, in case you want to start over. The hex input accepts either 3 (`ABC` = `AABBCC`) or 6 (`ABCDEF`) digits.
+## Color Info
+
+![Color information](../images/color-info.png)
+
+The information page shows the current color in different representations. You can copy from the text boxes to paste into somewhere else, and paste into them to change the current color, assuming what you paste follows the same format.
+
+## Others
+
+![The quick palette, hex input, and current and starting color values](../images/other-tools.png)
+
+The two colors in a square on the bottom-left of the editor represent the current (top) and starting (bottom) colors. You can click on the starting color if you want to reset the current color. The hex input below it accepts either 3 (`ABC` = `AABBCC`) or 6 (`ABCDEF`) digits.
+
+The quick palette on the right lets you temporarily store colors for quick access. You can add as many colors as you like, but you cannot remove any colors. The number of colors that the quick palette displays depends on the size of the window (i.e. a larger window displays more colors). Clicking on a color will set the current color.

@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
           submodules: true
 
       - name: Setup Foreman
-        uses: Roblox/setup-foreman@v1
+        uses: Roblox/setup-foreman@v1.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       
@@ -24,13 +24,8 @@ jobs:
         run: rojo build --output ColorPane.rbxmx
       
       - name: Create
-        uses: anton-yurchenko/git-release@v3.4.3
+        uses: anton-yurchenko/git-release@v4.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRAFT_RELEASE: "false"
-          PRE_RELEASE: "false"
-          CHANGELOG_FILE: "changelog.md"
-          ALLOW_EMPTY_CHANGELOG: "false"
-          ALLOW_TAG_PREFIX: "true"
         with:
           args: ./ColorPane.rbxmx
