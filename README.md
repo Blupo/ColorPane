@@ -1,14 +1,18 @@
 # ColorPane
 
-![Color Editor](docs/images/color-editor.png)
-
 ColorPane is a suite of color tools for designing Roblox games. Included in this plugin are:
 
 - A color editor with a color wheel, several types of sliders, and various color palettes, with the ability to create, import, and export your own palettes.
 - A gradient editor, similar to the Studio editor, with some quality-of-life changes including keypoint snapping, buttons to swap keypoint colors around, and a gradient palette.
 - A Color Properties panel, which lets you use the color picker and gradient editor to edit the colors of parts, UIs, or other objects in your games.
 
-ColorPane also has an API that allows you to use these tools in your own plugins so that you don't have to create them yourself.
+ColorPane also has an API that allows you to use these tools in your own plugins so that you don't have to create them yourself. To learn more about ColorPane and how to use it, you can read the [full documentation](https://blupo.github.io/ColorPane).
+
+## Screenshots
+
+![Color Editor](docs/images/color-editor.png)
+
+![Gradient Editor](docs/images/gradient-editor.png)
 
 ## Installing
 
@@ -31,5 +35,3 @@ ColorPane is and will remain a free-to-use, open-source project. Because of that
 
 - [Patreon](https://patreon.com/Blupo) (for recurring donations), or
 - [Ko-fi](https://ko-fi.com/Blupo) (for one-time donations)
-
-Thank you for using ColorPane.

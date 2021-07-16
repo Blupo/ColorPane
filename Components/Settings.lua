@@ -214,10 +214,23 @@ Settings.render = function(self)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
             end,
         }),
+
+        ColorPropertiesLivePreviewCheckbox = Roact.createElement(Checkbox, {
+            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            LayoutOrder = 8,
+            
+            disabled = (not isEdit),
+            value = self.state[PluginEnums.PluginSettingKey.ColorPropertiesLivePreview],
+            text = "Preview color changes before applying them when using Color Properties",
+
+            onChecked = function(newValue)
+                PluginSettings.Set(PluginEnums.PluginSettingKey.ColorPropertiesLivePreview, newValue)
+            end,
+        }),
         
         ResetSessionDataButton = Roact.createElement(Button, {
-            Size = UDim2.new(0, 110, 0, Style.StandardInputHeight),
-            LayoutOrder = 8,
+            Size = UDim2.new(0, 120, 0, Style.StandardInputHeight),
+            LayoutOrder = 9,
 
             disabled = (not isEdit),
             displayType = "text",

@@ -96,7 +96,7 @@ PaletteColorGrid.render = function(self)
                 canClear = false,
                 disabled = ((not selected) or isReadOnly),
 
-                onTextChanged = self.props.onColorNameChanged,
+                onSubmit = self.props.onColorNameChanged,
             }),
 
             SetColorButton = Roact.createElement(Button, {

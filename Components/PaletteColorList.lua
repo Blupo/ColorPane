@@ -182,7 +182,7 @@ PaletteColorList.render = function(self)
 
                     disabled = isReadOnly,
                     canClear = false,
-                    onTextChanged = self.props.onColorNameChanged,
+                    onSubmit = self.props.onColorNameChanged,
                 })
             or
                 Roact.createElement(StandardTextLabel, {

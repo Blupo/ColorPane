@@ -294,6 +294,10 @@ ColorSequencePalette.render = function(self)
 
                 onActivated = function()
                     self.props.setCurrentColorSequence(color.color)
+
+                    self:setState({
+                        selected = wholeIndex
+                    })
                 end,
             }),
 

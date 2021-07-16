@@ -16,8 +16,6 @@ local Rodux = require(includes:FindFirstChild("Rodux"))
 
 ---
 
-local MAX_QP_COLORS = 99
-
 local getNewPaletteName = PaletteUtils.getNewPaletteName
 local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 
@@ -139,10 +137,6 @@ return function(plugin)
 
             local quickPalette = state.colorEditor.quickPalette
             table.insert(quickPalette, 1, action.color)
-
-            if (quickPalette[MAX_QP_COLORS + 1]) then
-                quickPalette[MAX_QP_COLORS + 1] = nil
-            end
 
             return state
         end,

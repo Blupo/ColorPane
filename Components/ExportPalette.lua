@@ -189,24 +189,48 @@ ExportPalette.render = function(self)
                         end
 
                         local instance
+                        local jsonPalette = HttpService:JSONEncode(palette)
 
                         if (exportType == "ModuleScript") then
-                            instance = Instance.new("ModuleScript")
+                            local highestLevelStringBrackets = -1
+
+                            for lBracket, equals, rBracket in string.gmatch(jsonPalette, "([%[%]])(=*)([%[%]])") do
+                                if ((lBracket == "[") and (rBracket == "[")) or ((lBracket == "]") and (rBracket == "]")) then
+                                    local numEquals = string.len(equals)
+
+                                    if (numEquals > highestLevelStringBrackets) then
+                                        highestLevelStringBrackets = numEquals
+                                    end
+                                end
+                            end
                             
+                            instance = Instance.new("ModuleScript")
                             instance.Source = "-- ColorPane Palette Export\n" ..
                                 "-- " .. paletteName .. "\n" ..
                                 "-- " .. os.date("%x, %H:%M:%S") .. "\n" ..
                                 "\n" ..
-                                "return [[" .. HttpService:JSONEncode(palette) .. "]]"
+                                "return [" .. string.rep("=", highestLevelStringBrackets + 1) .. "[" ..
+                                jsonPalette ..
+                                "]" .. string.rep("=", highestLevelStringBrackets + 1) .. "]"
                         elseif (exportType == "StringValue") then
                             instance = Instance.new("StringValue")
-                            instance.Value = HttpService:JSONEncode(palette)
+                            instance.Value = jsonPalette
                         end
 
                         instance.Name = paletteName .. ".palette"
-                        instance.Parent = ServerStorage
+
+                        local success = pcall(function()
+                            instance.Parent = ServerStorage
+                        end)
                         
-                        Selection:Set({instance})
+                        if (not success) then
+                            if (exportType == "ModuleScript") then
+                                warn("[ColorPane] The palette export ModuleScript for \"" .. paletteName .."\" could not be parented to ServerStorage, most likely because script injection was denied.")
+                            end
+                        else
+                            Selection:Set({instance})
+                        end
+                        
                         self.props.onPromptClosed(true)
                     end
                 }),
