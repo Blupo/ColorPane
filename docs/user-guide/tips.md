@@ -15,8 +15,6 @@
 - If you have a keypoint selected, you can use the left and right arrow keys to select a different keypoint.
 - You can right-click on a keypoint to delete it instead of having to use the dedicated delete button.
 
-## Resetting Session Lock (TENTATIVE)
+## Resetting Session Locks
 
-In some cases where ColorPane can't clear the session lock (usually because of an error during execution), new sessions won't be able to save any changes to settings and you'll see a warning in the output about this. In this case, you can use the *Release Session Lock* button at the bottom of the Settings so that the session lock can be claimed by another session.
-
-The session lock will be claimed by the first session that attempts to save data, which may *not necessarily* be the session you used to release the lock, if there are multiple sessions open.
+ColorPane uses session locks to prevent multiple sessions trying to write settings at the same time. If ColorPane errors or for some reason cannot clear the session lock, you will receive a message to close other sessions even though you don't have any other sessions open. To fix this, simply use the *Claim Session Lock* button in the Settings.

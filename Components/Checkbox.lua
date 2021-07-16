@@ -31,9 +31,16 @@ local StandardUICorner = StandardComponents.UICorner
 
 local Checkbox = Roact.PureComponent:extend("Checkbox")
 
+Checkbox.init = function(self)
+    self:setState({
+        hover = false
+    })
+end
+
 Checkbox.render = function(self)
     local theme = self.props.theme
     local disabled = self.props.disabled
+    local hover = self.state.hover
 
     return Roact.createElement("Frame", {
         AnchorPoint = self.props.AnchorPoint,
@@ -54,12 +61,29 @@ Checkbox.render = function(self)
             Text = "",
             TextTransparency = 1,
 
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder),
+            BackgroundColor3 = disabled and theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder)
+                or theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, hover and Enum.StudioStyleGuideModifier.Hover or nil),
 
             [Roact.Event.MouseButton1Click] = function()
                 if (disabled) then return end
 
                 self.props.onChecked(not self.props.value)
+            end,
+
+            [Roact.Event.MouseEnter] = function()
+                if (disabled) then return end
+
+                self:setState({
+                    hover = true
+                })
+            end,
+
+            [Roact.Event.MouseLeave] = function()
+                if (disabled) then return end
+
+                self:setState({
+                    hover = false
+                })
             end
         }, {
             CheckboxBackground = Roact.createElement("Frame", {
@@ -69,7 +93,8 @@ Checkbox.render = function(self)
                 BackgroundTransparency = 0,
                 BorderSizePixel = 0,
 
-                BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground),
+                BackgroundColor3 = disabled and theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground)
+                    or theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground, hover and Enum.StudioStyleGuideModifier.Hover or nil),
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
             }),
@@ -103,6 +128,11 @@ Checkbox.render = function(self)
             TextXAlignment = Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Top,
             TextWrapped = true,
+
+            TextColor3 = theme:GetColor(
+                Enum.StudioStyleGuideColor.MainText,
+                disabled and Enum.StudioStyleGuideModifier.Disabled or nil
+            )
         })
     })
 end

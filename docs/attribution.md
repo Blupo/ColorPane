@@ -45,7 +45,7 @@ Cynthia Brewer.
 
 ## Copic
 
-ColorPane includes a built-in Copic color palette. Copic is a registered trademark of [Too Corporation, Japan](https://www.toomarker.co.jp/en).
+Copic is a registered trademark of [Too Corporation, Japan](https://www.toomarker.co.jp/en).
 
 ## @neilbartlett/color-temperature
 

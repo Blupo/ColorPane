@@ -47,9 +47,16 @@ NoAPIAlert.init = function(self)
             [key] = newValue
         })
     end)
+
+    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:Connect(function(canSave)
+        self:setState({
+            canSave = canSave
+        })
+    end)
     
     self:setState({
         requestRunning = RobloxAPI.IsRequestRunning(),
+        canSave = PluginSettings.GetSavingAbility(),
 
         [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties),
         [PluginEnums.PluginSettingKey.CacheAPIData] = PluginSettings.Get(PluginEnums.PluginSettingKey.CacheAPIData)
@@ -60,6 +67,7 @@ NoAPIAlert.willUnmount = function(self)
     self.apiDataRequestStarted:Disconnect()
     self.apiDataRequestFinished:Disconnect()
     self.settingsChanged:Disconnect()
+    self.savingAbilityChanged:Disconnect()
 
     PluginSettings.Flush()
 end
@@ -67,7 +75,7 @@ end
 NoAPIAlert.render = function(self)
     local theme = self.props.theme
     local requestRunning = self.state.requestRunning
-    local isEdit = RunService:IsEdit()
+    local canSave = self.state.canSave
 
     return Roact.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -85,7 +93,7 @@ NoAPIAlert.render = function(self)
             Size = UDim2.new(1, 0, 0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
 
-            Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. " .. (isEdit and
+            Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. " .. (RunService:IsEdit() and
                 "This screen will change once the data has been loaded." or
                 "\n\nNote: To use Color Properties during testing, you must have already loaded the data with the \"Cache Roblox API data\" option enabled before testing."
             ),
@@ -124,7 +132,7 @@ NoAPIAlert.render = function(self)
             Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 2)),
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
             text = "Automatically load the Roblox API data on startup",
 
@@ -138,7 +146,7 @@ NoAPIAlert.render = function(self)
             Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 3) + (Style.StandardTextSize * 2)),
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
             text = "Cache the Roblox API data for use during testing sessions",
 

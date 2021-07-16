@@ -15,6 +15,7 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local Checkbox = require(Components:FindFirstChild("Checkbox"))
+local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
@@ -49,6 +50,10 @@ Settings.init = function(self)
 
     self.listLength, self.updateListLength = Roact.createBinding(0)
     self:setState(initSettings)
+
+    self:setState({
+        canSave = PluginSettings.GetSavingAbility()
+    })
 end
 
 Settings.didMount = function(self)
@@ -59,14 +64,23 @@ Settings.didMount = function(self)
             [key] = newValue,
         })
     end)
+
+    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:Connect(function(canSave)
+        self:setState({
+            canSave = canSave
+        })
+    end)
 end
 
 Settings.willUnmount = function(self)
     self.settingsChanged:Disconnect()
+    self.savingAbilityChanged:Disconnect()
     PluginSettings.Flush()
 end
 
 Settings.render = function(self)
+    local theme = self.props.theme
+    local canSave = self.state.canSave
     local isEdit = RunService:IsEdit()
 
     return Roact.createElement(StandardScrollingFrame, {
@@ -98,7 +112,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 1,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadAPI],
             text = "Automatically inject the ColorPane API script on startup",
 
@@ -111,7 +125,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 2,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
             text = "Automatically load the Roblox API data for Color Properties on startup",
 
@@ -124,7 +138,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 3,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoSave],
             text = "Auto-save settings and palettes",
 
@@ -147,6 +161,11 @@ Settings.render = function(self)
                 Text = "Auto-save interval (in minutes)",
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
+
+                TextColor3 = theme:GetColor(
+                    Enum.StudioStyleGuideColor.MainText,
+                    (not canSave) and Enum.StudioStyleGuideModifier.Disabled or nil
+                )
             }),
 
             Input = Roact.createElement(TextInput, {
@@ -157,7 +176,7 @@ Settings.render = function(self)
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 canClear = false,
-                disabled = (not isEdit) or (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
+                disabled = (not canSave) or (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
 
                 isTextAValidValue = function(text)
                     local interval = tonumber(text)
@@ -180,7 +199,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 5,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
             text = "Cache Roblox API data for use during testing sessions",
 
@@ -193,7 +212,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 6,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoCheckForUpdate],
             text = "Check for updates on startup",
 
@@ -206,7 +225,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
             LayoutOrder = 7,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
             text = "Name palettes before creating them",
 
@@ -219,7 +238,7 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
             LayoutOrder = 8,
             
-            disabled = (not isEdit),
+            disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.ColorPropertiesLivePreview],
             text = "Preview color changes before applying them when using Color Properties",
 
@@ -228,20 +247,20 @@ Settings.render = function(self)
             end,
         }),
         
-        ResetSessionDataButton = Roact.createElement(Button, {
+        ClaimSessionLockButton = Roact.createElement(Button, {
             Size = UDim2.new(0, 120, 0, Style.StandardInputHeight),
             LayoutOrder = 9,
 
             disabled = (not isEdit),
             displayType = "text",
-            text = "Release Session Lock",
+            text = "Claim Session Lock",
 
             onActivated = function()
-                PluginSettings.ReleaseSessionLock()
-                warn("[ColorPane] Session lock has been released")
+                PluginSettings.UpdateSavingAbility(true)
+                warn("[ColorPane] Session lock has been claimed")
             end,
         }),
     })
 end
 
-return Settings
+return ConnectTheme(Settings)

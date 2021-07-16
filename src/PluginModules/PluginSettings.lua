@@ -39,10 +39,13 @@ local plugin
 local pluginSettings
 local autoSavePromise
 local lastScheduleTime = 0
+
+local canSave = false
 local settingsModified = false
 
 local sessionId = HttpService:GenerateGUID(false)
 local settingChangedEvent = Instance.new("BindableEvent")
+local savingAbilityChanged = Instance.new("BindableEvent")
 
 local scheduleAutoSave
 
@@ -50,24 +53,32 @@ local scheduleAutoSave
 
 local PluginSettings = {}
 PluginSettings.SettingChanged = settingChangedEvent.Event
+PluginSettings.SavingAbilityChanged = savingAbilityChanged.Event
 
-PluginSettings.AcquireSessionLock = function(): boolean
-    if (not RunService:IsEdit()) then return false end
-
-    local sessionLockId = plugin:GetSetting(SESSION_LOCK_KEY)
-    
-    if (sessionLockId == nil) then
-        plugin:SetSetting(SESSION_LOCK_KEY, sessionId)
-        return true
-    else
-        return (sessionLockId == sessionId)
-    end
+PluginSettings.GetSavingAbility = function(): boolean
+    return canSave
 end
 
-PluginSettings.ReleaseSessionLock = function()
-    if (not RunService:IsEdit()) then return false end
+PluginSettings.UpdateSavingAbility = function(force: boolean)
+    local newCanSave
 
-    plugin:SetSetting(SESSION_LOCK_KEY, nil)
+    if (not RunService:IsEdit()) then
+        newCanSave = false
+    else
+        local sessionLockId = plugin:GetSetting(SESSION_LOCK_KEY)
+
+        if ((sessionLockId == nil) or force) then
+            plugin:SetSetting(SESSION_LOCK_KEY, sessionId)
+            newCanSave = true
+        else
+            newCanSave = (sessionLockId == sessionId)
+        end
+    end
+
+    if (newCanSave == canSave) then return end
+
+    canSave = newCanSave
+    savingAbilityChanged:Fire(newCanSave)
 end
 
 PluginSettings.Get = function(key)
@@ -75,8 +86,9 @@ PluginSettings.Get = function(key)
 end
 
 PluginSettings.Set = function(key, newValue)
-    local hasLock = PluginSettings.AcquireSessionLock()
-    if (not hasLock) then return end
+    PluginSettings.UpdateSavingAbility()
+
+    if (not canSave) then return end
     if (pluginSettings[key] == newValue) then return end
 
     pluginSettings[key] = newValue
@@ -105,8 +117,9 @@ PluginSettings.Set = function(key, newValue)
 end
 
 PluginSettings.Flush = function()
-    local hasLock = PluginSettings.AcquireSessionLock()
-    if (not hasLock) then return end
+    PluginSettings.UpdateSavingAbility()
+
+    if (not canSave) then return end
     if (not settingsModified) then return end
 
     plugin:SetSetting(SETTINGS_KEY, pluginSettings)
@@ -141,14 +154,20 @@ PluginSettings.init = function(initPlugin)
     pluginSettings = plugin:GetSetting(SETTINGS_KEY) or {}
 
     if (RunService:IsEdit()) then
-        local hasLock = PluginSettings.AcquireSessionLock()
-        
-        if (not hasLock) then
-            warn(
-                "[ColorPane] Data saving is locked to another session. You will need to close the other session(s) to modify settings and save palettes. " ..
-                "If you don't have any other sessions open, you may need to reset the session lock (please consult the User Guide on how to do this)."
-            )
+        local sessionLockId = plugin:GetSetting(SESSION_LOCK_KEY)
+
+        if (sessionLockId == nil) then
+            plugin:SetSetting(SESSION_LOCK_KEY, sessionId)
+            canSave = true
+        else
+            canSave = (sessionLockId == sessionId)
         end
+        
+        if (not canSave) then
+            warn("[ColorPane] Data saving is locked to another session. You will need to close the other session(s) to modify settings and save palettes.")
+        end
+    else
+        canSave = false
     end
 
     do
@@ -202,6 +221,7 @@ PluginSettings.init = function(initPlugin)
 
         if (sessionLockId == sessionId) then
             plugin:SetSetting(SESSION_LOCK_KEY, nil)
+            canSave = false
         end
     end)
 end

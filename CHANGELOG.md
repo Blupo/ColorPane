@@ -12,6 +12,7 @@
 - Users now have the option to cache the Roblox API data so that Color Properties can be used during testing or offline with the "Cache Roblox API data" setting
 - Added a gradient palette
 - Added a toolbar button to summon the Gradient Editor
+- Added a setting to toggle previewing color changes before applying them when using Color Properties
 
 ### Fixed
 - Fixed a bug that occurred when the API script was modified while the API wasn't loaded
@@ -31,6 +32,8 @@
 - When adding a new color to a palette, the search query will reset and the new color will be selected
 - Changed the icons for the Color and Gradient Editor toolbar buttons
 - Differentiated the icon denoting a removal from a subtraction
+- Removed the 99 quick palette color limit
+- Settings will now visually indicate to the user if saving is disabled
 
 ## [0.2.1] - 2021-03-29
 ### Fixed
