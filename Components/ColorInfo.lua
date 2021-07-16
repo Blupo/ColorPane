@@ -186,7 +186,6 @@ ColorInfo.render = function(self)
                     self.props.setColor(Color.toColor3(component.getColor(newText)))
                 end,
 
-                canClear = false,
                 selectTextOnFocus = (component.name == "Hex"),
             })
         }))

@@ -75,8 +75,6 @@ RenamePalette.render = function(self)
                     newPaletteName = newText
                 })
             end,
-
-            canClear = false,
         }),
 
         NameIsOKLabel = Roact.createElement(StandardTextLabel, {

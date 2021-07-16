@@ -387,9 +387,6 @@ ColorEditor.render = function(self)
                 Text = string.upper(Color.toHex(Color.fromColor3(self.props.color))),
                 TextXAlignment = Enum.TextXAlignment.Center,
 
-                canClear = false,
-                selectTextOnFocus = true,
-
                 isTextAValidValue = function(text)
                     return Color.fromHex(text) and true or false
                 end,
@@ -397,6 +394,8 @@ ColorEditor.render = function(self)
                 onSubmit = function(text)
                     self.props.setColor(Color.toColor3(Color.fromHex(text)))
                 end,
+                
+                selectTextOnFocus = true,
             }),
         }),
 

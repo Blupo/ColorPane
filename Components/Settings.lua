@@ -175,9 +175,6 @@ Settings.render = function(self)
                 Text = self.state[PluginEnums.PluginSettingKey.AutoSaveInterval],
                 TextXAlignment = Enum.TextXAlignment.Center,
 
-                canClear = false,
-                disabled = (not canSave) or (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
-
                 isTextAValidValue = function(text)
                     local interval = tonumber(text)
                     if (not interval) then return false end
@@ -192,6 +189,8 @@ Settings.render = function(self)
 
                     PluginSettings.Set(PluginEnums.PluginSettingKey.AutoSaveInterval, interval)
                 end,
+                
+                disabled = (not canSave) or (not self.state[PluginEnums.PluginSettingKey.AutoSave]),
             })
         }),
 

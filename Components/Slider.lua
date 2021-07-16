@@ -229,7 +229,6 @@ Slider.render = function(self)
                 TextXAlignment = Enum.TextXAlignment.Center,
                 Text = self.props.value:map(self.props.valueToText),
 
-                canClear = false,
                 usesTextBinding = true,
                 selectTextOnFocus = true,
     

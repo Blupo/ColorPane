@@ -181,7 +181,6 @@ PaletteColorList.render = function(self)
                     TextXAlignment = Enum.TextXAlignment.Left,
 
                     disabled = isReadOnly,
-                    canClear = false,
                     onSubmit = self.props.onColorNameChanged,
                 })
             or

@@ -30,7 +30,7 @@ local StandardUIPadding = StandardComponents.UIPadding
         TextSize?
         TextXAlignment?
 
-        canClear: boolean?
+        canSubmitEmptyString: boolean?
         disabled: boolean?
         usesTextBinding: boolean?
         selectTextOnFocus: boolean?
@@ -275,6 +275,16 @@ TextInput.render = function(self)
                         obj.Text = originalText
                         return
                     end
+
+                    if ((not self.props.canSubmitEmptyString) and (newText == "")) then
+                        self:setState({
+                            focused = false,
+                        })
+
+                        self.lastText = originalText
+                        obj.Text = originalText
+                        return
+                    end
     
                     if (isValid and onSubmit) then
                         --[[
@@ -321,13 +331,7 @@ TextInput.render = function(self)
                     if (disabled) then return end
     
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
-    
-                    if ((not self.props.canClear) and (newText == "")) then
-                        obj.Text = self.lastText
-                        return
-                    else
-                        self.lastText = newText
-                    end
+                    self.lastText = newText
     
                     if (onTextChanged) then
                         onTextChanged(newText)

@@ -130,7 +130,7 @@ Palette.render = function(self)
                     })
                 end,
 
-                canClear = true,
+                canSubmitEmptyString = true,
             }),
 
             LayoutPicker = Roact.createElement(ButtonBar, {

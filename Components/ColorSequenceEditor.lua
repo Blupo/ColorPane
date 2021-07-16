@@ -471,9 +471,6 @@ ColorSequenceEditor.render = function(self)
                     Text = string.format("%.3f", keypoints[selectedKeypoint].Time * 100),
                     TextXAlignment = Enum.TextXAlignment.Center,
     
-                    canClear = false,
-                    disabled = (colorEditPromise and true or false),
-    
                     isTextAValidValue = function(text)
                         local n = tonumber(text)
                         if (not n) then return false end
@@ -500,6 +497,8 @@ ColorSequenceEditor.render = function(self)
                             selectedKeypoint = newKeypointIndex
                         })
                     end,
+                    
+                    disabled = (colorEditPromise and true or false),
                 }),
 
                 ProgressLabel = Roact.createElement(StandardTextLabel, {
@@ -670,8 +669,6 @@ ColorSequenceEditor.render = function(self)
 
                         self.props.setSnapValue(n)
                     end,
-
-                    canClear = false,
                 }),
     
                 SnapUnitLabel = Roact.createElement(StandardTextLabel, {

@@ -93,9 +93,7 @@ PaletteColorGrid.render = function(self)
                 Text = colors[selected] and colors[selected].name or "",
                 PlaceholderText = "Select a color",
 
-                canClear = false,
                 disabled = ((not selected) or isReadOnly),
-
                 onSubmit = self.props.onColorNameChanged,
             }),
 

@@ -413,7 +413,7 @@ ImportPalette.render = function(self)
                     })
                 end,
 
-                canClear = true,
+                canSubmitEmptyString = true,
                 selectTextOnFocus = true,
             }),
 
@@ -586,8 +586,6 @@ ImportPalette.render = function(self)
             
                         Text = self.state.paletteName,
                         TextSize = Style.StandardTextSize,
-            
-                        canClear = false,
 
                         onSubmit = function(newText)
                             self:setState({

@@ -310,12 +310,11 @@ ColorSequencePalette.render = function(self)
                     Text = color.name,
                     TextXAlignment = Enum.TextXAlignment.Left,
 
-                    disabled = isReadOnly,
-                    canClear = false,
-
                     onSubmit = function(newText)
                         self.props.changePaletteColorName(realIndex, newText)
                     end,
+                    
+                    disabled = isReadOnly,
                 })
             or
                 Roact.createElement(StandardTextLabel, {
@@ -448,7 +447,7 @@ ColorSequencePalette.render = function(self)
                 })
             end,
 
-            canClear = true,
+            canSubmitEmptyString = true,
         }),
 
         AddColorButton = Roact.createElement(Button, {
