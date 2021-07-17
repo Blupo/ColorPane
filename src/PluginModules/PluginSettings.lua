@@ -202,7 +202,7 @@ PluginSettings.init = function(initPlugin)
         local cachedAPIDataLastRefresh = plugin:GetSetting(API_CACHE_LAST_REFRESH_KEY) or 0
 
         if (cachedAPIData) then
-            if ((not canCache) or (os.time() - cachedAPIDataLastRefresh) >= API_CACHE_REFRESH_TIME) then
+            if ((not canCache) or ((os.time() - cachedAPIDataLastRefresh) >= API_CACHE_REFRESH_TIME)) then
                 PluginSettings.ClearCachedRobloxAPIData()
             end
         end

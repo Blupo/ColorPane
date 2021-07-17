@@ -42,9 +42,7 @@ local StandardUIPadding = StandardComponents.UIPadding
 
 local TextInput = Roact.PureComponent:extend("TextInput")
 
-TextInput.init = function(self, initProps)
-    self.lastText = initProps.usesTextBinding and initProps.Text:getValue() or initProps.Text
-
+TextInput.init = function(self)
     self.textBox = Roact.createRef()
     self.textBoxContainer = Roact.createRef()
     self.textBoxOffset, self.updateTextBoxOffset = Roact.createBinding(0)
@@ -104,8 +102,6 @@ TextInput.didUpdate = function(self, prevProps)
     local prevText = prevProps.Text
 
     if (newText ~= prevText) then
-        self.lastText = newText
-
         self:setState({
             invalidInput = false
         })
@@ -225,7 +221,9 @@ TextInput.render = function(self)
                                     invalidInput = false
                                 })
                             else
-                                return self.lastText
+                                local textBox = self.textBox:getValue()
+
+                                return textBox and textBox.Text or ""
                             end
                         end
     
@@ -271,7 +269,6 @@ TextInput.render = function(self)
                             focused = false,
                         })
     
-                        self.lastText = originalText
                         obj.Text = originalText
                         return
                     end
@@ -281,7 +278,6 @@ TextInput.render = function(self)
                             focused = false,
                         })
 
-                        self.lastText = originalText
                         obj.Text = originalText
                         return
                     end
@@ -331,7 +327,6 @@ TextInput.render = function(self)
                     if (disabled) then return end
     
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
-                    self.lastText = newText
     
                     if (onTextChanged) then
                         onTextChanged(newText)
