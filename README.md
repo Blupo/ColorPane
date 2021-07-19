@@ -1,4 +1,10 @@
-# ColorPane
+<h1 align="center">ColorPane</h1>
+<div align="center">
+    <a href="https://roblox.com/library/6474565567"><img src="https://img.shields.io/badge/roblox-install-green.svg" alt="Install" /></a>
+	<a href="https://blupo.github.io/ColorPane"><img src="https://img.shields.io/badge/docs-website-green.svg" alt="Documentation" /></a>
+    <a href="https://patreon.com/Blupo"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon" /></a>
+    <a href="https://ko-fi.com/Blupo"><img src="https://img.shields.io/badge/ko--fi-donate-yellow.svg" alt="Ko-fi" /></a>
+</div>
 
 ColorPane is a suite of color tools for designing Roblox games. Included in this plugin are:
 
@@ -16,22 +22,12 @@ ColorPane also has an API that allows you to use these tools in your own plugins
 
 ## Installing
 
-ColorPane is available in the plugin library [here](https://roblox.com/library/6474565567/ColorPane). You can also grab a [release](https://github.com/Blupo/ColorPane/releases) from GitHub and install it manually.
+ColorPane is available in the plugin library [here](https://roblox.com/library/6474565567). You can also grab a [release](https://github.com/Blupo/ColorPane/releases) from GitHub and install it manually.
 
 If you know how to use [Rojo](https://rojo.space), you can build the latest code from the development branch to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
 
-## Contributing
+The release build of the plugin in the library does not share palettes or preferences with any locally-installed builds. All locally-installed builds will have the same palettes and preferences.
 
-If you find a bug, find something wrong with the documentation, or want to request a feature, you can do so by:
+## Support
 
-- Opening an issue or submitting a pull request on [GitHub](https://github.com/Blupo/ColorPane/)
-    - Pull requests must be submitted to the development branch
-- Messaging [BlupoV2](https://devforum.roblox.com/u/blupov2/) via the DevForum
-- Replying to the [main DevForum thread](https://devforum.roblox.com/t/1106112), although the previous methods are preferred
-
-## Donations
-
-ColorPane is and will remain a free-to-use, open-source project. Because of that, donations are greatly appreciated so that development can continue and new features can be added. If you want to support ColorPane by donating, you can use either:
-
-- [Patreon](https://patreon.com/Blupo) (for recurring donations), or
-- [Ko-fi](https://ko-fi.com/Blupo) (for one-time donations)
+If you would like to support ColorPane, either through reporting bugs, contributing code, or donating, please read the [Support ColorPane](https://blupo.github.io/ColorPane/support/) page in the documentation.

@@ -16,4 +16,4 @@ ColorPane is available in the plugin library [here](https://roblox.com/library/6
 
 If you know how to use [Rojo](https://rojo.space), you can build the latest code from the development branch to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
 
-The release build of the plugin in the library does not share palettes or preferences with any locally-installed builds. All locally-installed builds will have the same palettes and preferences. Multiple installations of ColorPane will generally not cause problems, unless you're trying to [inject ColorPane's API](user-guide/api/) for multiple installations.
+The release build of the plugin in the library does not share palettes or preferences with any locally-installed builds. All locally-installed builds will have the same palettes and preferences.

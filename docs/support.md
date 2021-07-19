@@ -1,19 +1,27 @@
 ## Contributing
 
-If you find a bug, find something wrong with the documentation, or want to request a feature, you can do so by:
+### Bug Reports
 
-- Opening an issue or submitting a pull request on [GitHub](https://github.com/Blupo/ColorPane/)
-    - Pull requests must be submitted to the development branch
-- Messaging [BlupoV2](https://devforum.roblox.com/u/blupov2/) via the DevForum
-- Replying to the [main DevForum thread](https://devforum.roblox.com/t/1106112), although the previous methods are preferred
+Bugs should be reported by [opening issues](https://github.com/Blupo/ColorPane/issues) or by replying to the [DevForum thread](https://devforum.roblox.com/t/1106112). Please include a detailed description and a screenshot or video of the bug to make it easier to track down.
 
-ColorPane uses [Rojo](https://rojo.space) for builds (`place.project.json` is used for development) and [MkDocs](https://www.mkdocs.org/) with the [Material](https://squidfunk.github.io/mkdocs-material/) theme for documentation.
+### Documentation
+
+If you find any errors or places for improvement in the documentation, feel free to [open an issue](https://github.com/Blupo/ColorPane/issues), submit a [pull request](https://github.com/Blupo/ColorPane/pulls), or reply to the [DevForum thread](https://devforum.roblox.com/t/1106112). ColorPane uses [MkDocs](https://www.mkdocs.org/) with the [Material](https://squidfunk.github.io/mkdocs-material/) theme for its documentation.
+
+### Feature Requests
+
+Features should be requested by replying to the [DevForum thread](https://devforum.roblox.com/t/1106112). Feature requests should align with ColorPane's purpose of being a general-purpose suite of color tools. New features should be fully discussed before contributing any code to avoid any wasted time and/or effort.
+
+### Code Contributions
+
+If you have code you would like to contribute to ColorPane, please submit a [pull request](https://github.com/Blupo/ColorPane/pulls). ColorPane uses [Rojo](https://rojo.space) for project management. Please use `place.project.json` when working in Studio (`default.project.json` is used for building the plugin file).
+
+!!! info
+    Please only submit pulls on the development branch.
 
 ## Donations
 
 ColorPane is and will remain a free-to-use, open-source project. Because of that, donations are greatly appreciated so that development can continue and new features can be added. If you want to support ColorPane by donating, you can use either:
 
-- [Patreon](https://patreon.com/Blupo) (for recurring donations), or
-- [Ko-fi](https://ko-fi.com/Blupo) (for one-time donations)
-
-Thank you for using ColorPane.
+- [Patreon](https://patreon.com/Blupo) for recurring donations, or
+- [Ko-fi](https://ko-fi.com/Blupo) for one-time donations
