@@ -21,6 +21,7 @@ nav:
   - Technical:
     - Palette Format: technical/palette-format.md
     - API Reference: technical/api-reference.md 
+  - Changelog: changelog.md
   - Attribution: attribution.md
   - Support ColorPane: support.md
 

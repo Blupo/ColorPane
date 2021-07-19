@@ -27,5 +27,6 @@ jobs:
         uses: anton-yurchenko/git-release@v4.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGELOG_FILE: "docs/changelog.md"
         with:
           args: ./ColorPane.rbxmx
