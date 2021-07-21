@@ -26,8 +26,6 @@ ColorPane is available in the plugin library [here](https://roblox.com/library/6
 
 If you know how to use [Rojo](https://rojo.space), you can build the latest code from the development branch to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
 
-The release build of the plugin in the library does not share palettes or preferences with any locally-installed builds. All locally-installed builds will have the same palettes and preferences.
-
 ## Support
 
 If you would like to support ColorPane, either through reporting bugs, contributing code, or donating, please read the [Support ColorPane](https://blupo.github.io/ColorPane/support/) page in the documentation.

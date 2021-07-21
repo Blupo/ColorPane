@@ -1,4 +1,4 @@
-## Unreleased
+## [0.3.0] - 2021-07-21
 
 ### Added
 - Added the ability to import palettes from ModuleScripts, StringValues, JSON files, or URLs
