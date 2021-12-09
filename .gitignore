@@ -1,6 +1,7 @@
 # Roblox files
-/build.rbxmx
-/colorpane.rbxl*
+/*.rbxmx
+/*.rbxl
+/*.rbxl.lock
 
 # roblox.toml
 /roblox.toml

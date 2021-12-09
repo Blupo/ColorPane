@@ -47,6 +47,62 @@ Dropdown.init = function(self)
         dropdownOpen = false,
         optionsOpen = false,
     })
+
+    self.updateSelection = function(delta)
+        return function()
+            if (self.state.dropdownOpen) then return end
+            
+            local itemSections = self.props.itemSections
+            local selectedItemIndices = self.props.selectedItem
+            if (not (itemSections and selectedItemIndices)) then return end
+
+            local selectedItemSectionNum, selectedItemNum = selectedItemIndices[1], selectedItemIndices[2]
+
+            local nextSection
+            local nextItem = selectedItemNum + delta
+            
+            if (nextItem <= 0) then
+                nextSection = selectedItemSectionNum - 1
+                nextSection = (nextSection == 0) and #itemSections or nextSection
+
+                nextItem = #itemSections[nextSection].items
+            elseif (nextItem > #itemSections[selectedItemSectionNum].items) then
+                nextSection = selectedItemSectionNum + 1
+                nextSection = (nextSection > #itemSections) and 1 or nextSection
+
+                nextItem = 1
+            else
+                nextSection = selectedItemSectionNum
+            end
+
+            if (nextSection ~= selectedItemSectionNum) then
+                -- This does not account for the case where every section is empty,
+                -- which should not happen in production.
+
+                local section = itemSections[nextSection]
+
+                while (#section.items <= 0) do
+                    nextSection = nextSection + delta
+
+                    if (nextSection <= 0) then
+                        nextSection = #itemSections
+                    elseif (nextSection > #itemSections) then
+                        nextSection = 1
+                    end
+
+                    section = itemSections[nextSection]
+                end
+                
+                if (delta == -1) then
+                    nextItem = #section.items
+                elseif (delta == 1) then
+                    nextItem = 1
+                end
+            end
+
+            self.props.onItemChanged(nextSection, nextItem)
+        end
+    end
 end
 
 Dropdown.didUpdate = function(self, _, prevState)
@@ -209,52 +265,8 @@ Dropdown.render = function(self)
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Button),
                 TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
 
-                [Roact.Event.InputChanged] = function(_, input)
-                    if (self.state.dropdownOpen) then return end
-                    if (input.UserInputType ~= Enum.UserInputType.MouseWheel) then return end
-
-                    local delta = input.Position.Z
-                    local nextItem = selectedItemNum - delta
-                    local nextSection
-
-                    if (nextItem <= 0) then
-                        nextSection = selectedItemSectionNum - 1
-                        nextSection = (nextSection > 0) and nextSection or #itemSections
-
-                        nextItem = #itemSections[nextSection].items
-                    elseif (nextItem > #selectedItemSection.items) then
-                        nextSection = selectedItemSectionNum + 1
-                        nextSection = (nextSection <= #itemSections) and nextSection or 1
-
-                        nextItem = 1
-                    else
-                        nextSection = selectedItemSectionNum
-                    end
-
-                    -- handle the case of empty sections
-                    -- note: this will cause an infinite loop if every section is empty
-                    local section = itemSections[nextSection]
-
-                    while (#section.items < 1) do
-                        nextSection = nextSection - delta
-                        
-                        if (nextSection <= 0) then
-                            nextSection = #itemSections
-                        elseif (nextSection > #itemSections) then
-                            nextSection = 1
-                        end
-
-                        section = itemSections[nextSection]
-                        
-                        if (delta == -1) then
-                            nextItem = 1
-                        elseif (delta == 1) then
-                            nextItem = #section.items
-                        end
-                    end
-
-                    self.props.onItemChanged(nextSection, nextItem)
-                end,
+                [Roact.Event.MouseWheelForward] = self.updateSelection(-1),
+                [Roact.Event.MouseWheelBackward] = self.updateSelection(1),
 
                 [Roact.Event.MouseEnter] = function(obj)
                     if (numItemsListItems < 1) then return end

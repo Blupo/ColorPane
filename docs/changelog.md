@@ -1,3 +1,8 @@
+## [0.3.1] - 2021-12-09
+
+### Fixed
+- Fixed a bug where trying to use the scroll wheel on a dropdown selected (e.g. slider or palette pickers) resulted in a blank page
+
 ## [0.3.0] - 2021-07-21
 
 ### Added
