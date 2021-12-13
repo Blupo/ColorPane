@@ -26,6 +26,7 @@ local includes = root:FindFirstChild("includes")
 local Promise = require(includes:FindFirstChild("Promise"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local Components = root:FindFirstChild("Components")
 local ColorEditor = require(Components:FindFirstChild("ColorEditor"))
@@ -51,9 +52,9 @@ local colorSequenceEditorTree
 local colorSequenceEditorWidget
 local colorSequenceEditorWidgetEnabledChanged
 
-local unloadingEvent = Instance.new("BindableEvent")
-local colorEditingFinishedEvent = Instance.new("BindableEvent")
-local colorSequenceEditingFinishedEvent = Instance.new("BindableEvent")
+local unloadingEvent = Signal.new()
+local colorEditingFinishedEvent = Signal.new()
+local colorSequenceEditingFinishedEvent = Signal.new()
 
 local copy = Util.copy
 local noYield = Util.noYield
@@ -75,8 +76,6 @@ local onUnloading = function(waitToDestroy)
 
     if (unloadingEvent) then
         unloadingEvent:Fire()
-        unloadingEvent:Destroy()
-        unloadingEvent = nil
     end
 
     if (plugin) then
@@ -86,12 +85,10 @@ local onUnloading = function(waitToDestroy)
 
         if (colorEditorTree) then
             colorEditingFinishedEvent:Fire(false)
-            colorEditingFinishedEvent:Destroy()
         end
 
         if (colorSequenceEditorTree) then
             colorSequenceEditingFinishedEvent:Fire(false)
-            colorSequenceEditingFinishedEvent:Destroy()
         end
     end
     
@@ -143,7 +140,7 @@ end
 
 local ColorPane = {}
 ColorPane.PromiseStatus = Promise.Status
-ColorPane.Unloading = unloadingEvent.Event
+ColorPane.Unloading = unloadingEvent
 
 ColorPane.IsColorEditorOpen = function(): boolean
     if (colorSequenceEditorTree) then return true end
@@ -170,10 +167,10 @@ local internalPromptForColor = function(promptOptions)
     promptOptions.PromptTitle = promptOptions.PromptTitle or "Select a color"
     promptOptions.InitialColor = promptOptions.InitialColor or DEFAULT_COLOR
 
-    local resolveEvent = Instance.new("BindableEvent")
+    local resolveEvent = Signal.new()
 
     local editPromise = Promise.new(function(resolve)
-        resolve(resolveEvent.Event:Wait())
+        resolve(resolveEvent:Wait())
     end)
 
     local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
@@ -186,7 +183,7 @@ local internalPromptForColor = function(promptOptions)
     end)
 
     local editingFinished
-    editingFinished = colorEditingFinishedEvent.Event:Connect(function(didConfirm)
+    editingFinished = colorEditingFinishedEvent:Connect(function(didConfirm)
         editingFinished:Disconnect()
 
         if (not didConfirm) then
@@ -204,8 +201,6 @@ local internalPromptForColor = function(promptOptions)
     end)
 
     editPromise:finally(function()
-        resolveEvent:Destroy()
-
         storeChanged.disconnect()
         Roact.unmount(colorEditorTree)
         colorEditorTree = nil
@@ -246,14 +241,14 @@ ColorPane.PromptForColorSequence = function(promptOptions)
     promptOptions.PromptTitle = promptOptions.PromptTitle or "Create a gradient"
     promptOptions.InitialColor = promptOptions.InitialColor or DEFAULT_COLORSEQUENCE
 
-    local resolveEvent = Instance.new("BindableEvent")
+    local resolveEvent = Signal.new()
 
     local editPromise = Promise.new(function(resolve)
-        resolve(resolveEvent.Event:Wait())
+        resolve(resolveEvent:Wait())
     end)
 
     local editingFinished
-    editingFinished = colorSequenceEditingFinishedEvent.Event:Connect(function(didConfirm, newColor)
+    editingFinished = colorSequenceEditingFinishedEvent:Connect(function(didConfirm, newColor)
         editingFinished:Disconnect()
 
         if (not didConfirm) then
@@ -269,8 +264,6 @@ ColorPane.PromptForColorSequence = function(promptOptions)
     end)
 
     editPromise:finally(function()
-        resolveEvent:Destroy()
-
         Roact.unmount(colorSequenceEditorTree)
         colorSequenceEditorTree = nil
         colorSequenceEditorWidget.Enabled = false

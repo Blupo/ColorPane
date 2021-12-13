@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -295,7 +296,7 @@ ColorWheel.shouldUpdate = function(self, nextProps, nextState)
 end
 
 ColorWheel.didMount = function(self)
-    self.inputChanged = self.props.editorInputChanged:Connect(function(input, gameProcessedEvent)
+    self.inputChanged = ColorEditorInputSignals.InputChanged:Connect(function(input, gameProcessedEvent)
         if gameProcessedEvent then return end
         if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
         
@@ -619,8 +620,6 @@ return RoactRodux.connect(function(state)
         color = state.colorEditor.color,
         editor = state.colorEditor.authoritativeEditor,
         harmony = state.sessionData.lastHueHarmony,
-
-        editorInputChanged = state.colorEditor.editorInputChanged,
     }
 end, function(dispatch)
     return {

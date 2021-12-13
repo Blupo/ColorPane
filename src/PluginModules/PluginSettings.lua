@@ -7,6 +7,7 @@ local root = script.Parent.Parent
 
 local includes = root:FindFirstChild("includes")
 local Promise = require(includes:FindFirstChild("Promise"))
+local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
@@ -44,16 +45,13 @@ local canSave = false
 local settingsModified = false
 
 local sessionId = HttpService:GenerateGUID(false)
-local settingChangedEvent = Instance.new("BindableEvent")
-local savingAbilityChanged = Instance.new("BindableEvent")
-
 local scheduleAutoSave
 
 ---
 
 local PluginSettings = {}
-PluginSettings.SettingChanged = settingChangedEvent.Event
-PluginSettings.SavingAbilityChanged = savingAbilityChanged.Event
+PluginSettings.SettingChanged = Signal.new()
+PluginSettings.SavingAbilityChanged = Signal.new()
 
 PluginSettings.GetSavingAbility = function(): boolean
     return canSave
@@ -78,7 +76,7 @@ PluginSettings.UpdateSavingAbility = function(force: boolean)
     if (newCanSave == canSave) then return end
 
     canSave = newCanSave
-    savingAbilityChanged:Fire(newCanSave)
+    PluginSettings.SavingAbilityChanged:Fire(newCanSave)
 end
 
 PluginSettings.Get = function(key)
@@ -113,7 +111,7 @@ PluginSettings.Set = function(key, newValue)
         end
     end
 
-    settingChangedEvent:Fire(key, newValue)
+    PluginSettings.SettingChanged:Fire(key, newValue)
 end
 
 PluginSettings.Flush = function()
@@ -216,7 +214,6 @@ PluginSettings.init = function(initPlugin)
         local sessionLockId = plugin:GetSetting(SESSION_LOCK_KEY)
 
         autoSavePromise:cancel()
-        settingChangedEvent:Destroy()
         PluginSettings.Flush()
 
         if (sessionLockId == sessionId) then

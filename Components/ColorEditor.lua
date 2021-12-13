@@ -2,7 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Color = require(PluginModules:FindFirstChild("Color"))
-local ColorEditorInput = require(PluginModules:FindFirstChild("ColorEditorInput"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -34,7 +34,6 @@ local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
 
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
 local shallowCompare = Util.shallowCompare
-local editorInputBindableEvents = ColorEditorInput.GetInputBindableEvents()
 
 local getMaxPages = function(width)
     local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
@@ -244,15 +243,15 @@ ColorEditor.render = function(self)
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
         [Roact.Event.InputBegan] = function(_, input, gameProcessedEvent)
-            editorInputBindableEvents.InputBegan:Fire(input, gameProcessedEvent)
+            ColorEditorInputSignals.InputBegan:Fire(input, gameProcessedEvent)
         end,
 
         [Roact.Event.InputChanged] = function(_, input, gameProcessedEvent)
-            editorInputBindableEvents.InputChanged:Fire(input, gameProcessedEvent)
+            ColorEditorInputSignals.InputChanged:Fire(input, gameProcessedEvent)
         end,
 
         [Roact.Event.InputEnded] = function(_, input, gameProcessedEvent)
-            editorInputBindableEvents.InputEnded:Fire(input, gameProcessedEvent)
+            ColorEditorInputSignals.InputEnded:Fire(input, gameProcessedEvent)
         end,
     }, {
         UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),

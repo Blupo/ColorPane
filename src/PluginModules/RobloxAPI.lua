@@ -13,6 +13,7 @@ local TerrainMaterialColors = require(PluginModules:FindFirstChild("TerrainMater
 local includes = root:FindFirstChild("includes")
 local APIUtils = require(includes:FindFirstChild("APIUtils"))
 local Promise = require(includes:FindFirstChild("Promise"))
+local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 ---
 
@@ -22,14 +23,12 @@ local API_DATA_ENDPOINT = "%s-API-Dump.json"
 
 local apiData
 local requestInProgress = false
-local apiDataRequestStartedEvent = Instance.new("BindableEvent")
-local apiDataRequestFinishedEvent = Instance.new("BindableEvent")
 
 ---
 
 local RobloxAPI = {}
-RobloxAPI.DataRequestStarted = apiDataRequestStartedEvent.Event
-RobloxAPI.DataRequestFinished = apiDataRequestFinishedEvent.Event
+RobloxAPI.DataRequestStarted = Signal.new()
+RobloxAPI.DataRequestFinished = Signal.new()
 
 RobloxAPI.IsAvailable = function()
     return (apiData and true or false)
@@ -43,7 +42,7 @@ RobloxAPI.GetData = function()
     if (apiData or requestInProgress) then return end
 
     requestInProgress = true
-    apiDataRequestStartedEvent:Fire()
+    RobloxAPI.DataRequestStarted:Fire()
 
     Promise.new(function(resolve, reject)
         local cachedAPIData = PluginSettings.GetCachedRobloxAPIData()
@@ -100,20 +99,11 @@ RobloxAPI.GetData = function()
         end
         
         apiData = api
-        apiDataRequestFinishedEvent:Fire(true)
+        RobloxAPI.DataRequestFinished:Fire(true)
     end, function()
-        apiDataRequestFinishedEvent:Fire(false)
+        RobloxAPI.DataRequestFinished:Fire(false)
     end):finally(function()
         requestInProgress = false
-    end)
-end
-
-RobloxAPI.init = function(initPlugin)
-    RobloxAPI.init = nil
-
-    initPlugin.Unloading:Connect(function()
-        apiDataRequestStartedEvent:Destroy()
-        apiDataRequestFinishedEvent:Destroy()    
     end)
 end
 

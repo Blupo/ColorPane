@@ -16,3 +16,6 @@
 [submodule "includes/Promise"]
 	path = includes/Promise
 	url = https://github.com/evaera/roblox-lua-promise
+[submodule "includes/Color"]
+	path = includes/Color
+	url = https://github.com/Blupo/Color

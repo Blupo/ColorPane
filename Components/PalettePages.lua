@@ -1,6 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
@@ -54,7 +55,7 @@ PalettePages.shouldUpdate = function(self, nextProps, nextState)
 end
 
 PalettePages.didMount = function(self)
-    self.keyDown = self.props.editorInputBegan:Connect(function(input)
+    self.keyDown = ColorEditorInputSignals.InputBegan:Connect(function(input)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         if (input.KeyCode == Enum.KeyCode.LeftShift) then
@@ -68,7 +69,7 @@ PalettePages.didMount = function(self)
         end
     end)
 
-    self.keyUp = self.props.editorInputEnded:Connect(function(input)
+    self.keyUp = ColorEditorInputSignals.InputEnded:Connect(function(input)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         if (input.KeyCode == Enum.KeyCode.LeftShift) then
@@ -291,9 +292,6 @@ return RoactRodux.connect(function(state)
         palettes = state.colorEditor.palettes,
         lastPaletteModification = state.colorEditor.lastPaletteModification,
         lastPalettePage = state.sessionData.lastPalettePage,
-
-        editorInputBegan = state.colorEditor.editorInputBegan,
-        editorInputEnded = state.colorEditor.editorInputEnded,
     }
 end, function(dispatch)
     return {

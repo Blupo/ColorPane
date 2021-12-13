@@ -1,15 +1,16 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
+local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
@@ -71,7 +72,7 @@ PaletteColorList.init = function(self)
 end
 
 PaletteColorList.didMount = function(self)
-    self.keyDown = self.props.editorInputBegan:Connect(function(input)
+    self.keyDown = ColorEditorInputSignals.InputBegan:Connect(function(input)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         local inputRepeater = self.keyInputRepeaters[input.KeyCode]
@@ -84,7 +85,7 @@ PaletteColorList.didMount = function(self)
         inputRepeater:start()
     end)
 
-    self.keyUp = self.props.editorInputEnded:Connect(function(input)
+    self.keyUp = ColorEditorInputSignals.InputEnded:Connect(function(input)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         local inputRepeater = self.keyInputRepeaters[input.KeyCode]
@@ -270,11 +271,4 @@ end
 
 ---
 
-return RoactRodux.connect(function(state)
-    return {
-        theme = state.theme,
-
-        editorInputBegan = state.colorEditor.editorInputBegan,
-        editorInputEnded = state.colorEditor.editorInputEnded,
-    }
-end)(PaletteColorList)
+return ConnectTheme(PaletteColorList)

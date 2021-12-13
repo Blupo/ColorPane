@@ -11,7 +11,6 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInput = require(PluginModules:FindFirstChild("ColorEditorInput"))
 local ColorSequencePaletteWidget = require(PluginModules:FindFirstChild("ColorSequencePaletteWidget"))
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
@@ -28,10 +27,8 @@ local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
 local Settings = require(Components:FindFirstChild("Settings"))
 
 PluginSettings.init(plugin) -- priority
-ColorEditorInput.init(plugin)
 ColorSequencePaletteWidget.init(plugin)
 RepeatingCallback.init(plugin)
-RobloxAPI.init(plugin)
 SelectionManager.init(plugin)
 
 ---

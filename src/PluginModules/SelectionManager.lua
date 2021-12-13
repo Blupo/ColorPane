@@ -3,7 +3,12 @@ local Selection = game:GetService("Selection")
 
 ---
 
-local PluginModules = script.Parent
+local root = script.Parent.Parent
+
+local includes = root:FindFirstChild("includes")
+local Signal = require(includes:FindFirstChild("GoodSignal"))
+
+local PluginModules = root:FindFirstChild("PluginModules")
 local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
 
 local APIData
@@ -22,8 +27,8 @@ local selectionCommonPropertyValuesMap = {}
 local selectionPropertyValuesChangedConnections = {}
 
 local selectionChanged
-local selectionChangedEvent = Instance.new("BindableEvent")
-local selectionColorsChangedEvent = Instance.new("BindableEvent")
+local selectionChangedEvent = Signal.new()
+local selectionColorsChangedEvent = Signal.new()
 
 local getClassPropertiesFilterParams = {
     IncludeInheritedMembers = false,
@@ -209,8 +214,8 @@ end
 ---
 
 local SelectionManager = {}
-SelectionManager.SelectionChanged = selectionChangedEvent.Event
-SelectionManager.SelectionColorsChanged = selectionColorsChangedEvent.Event
+SelectionManager.SelectionChanged = selectionChangedEvent
+SelectionManager.SelectionColorsChanged = selectionColorsChangedEvent
 
 SelectionManager.GetColorProperties = function()
     return selectionPropertiesMap
@@ -316,9 +321,6 @@ SelectionManager.init = function(plugin)
             selectionChanged:Disconnect()
             selectionChanged = nil
         end
-
-        selectionChangedEvent:Destroy()
-        selectionColorsChangedEvent:Destroy()
     end)
 end
 
