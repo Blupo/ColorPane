@@ -29,6 +29,10 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
         BackgroundColor3? = StudioTheme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
         TextColor3? = StudioTheme:GetColor(Enum.StudioStyleGuideColor.MainText)
+    
+    store props
+
+        theme: StudioTheme
 ]]
 
 local StandardTextLabel = Roact.PureComponent:extend("StandardTextLabel")

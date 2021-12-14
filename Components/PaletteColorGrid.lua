@@ -16,8 +16,6 @@ local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 
-local PaletteColorGrid = Roact.PureComponent:extend("PaletteColorGrid")
-
 --[[
     props
 
@@ -41,6 +39,8 @@ local PaletteColorGrid = Roact.PureComponent:extend("PaletteColorGrid")
         onColorMovedUp: () -> nil
         onColorMovedDown: () -> nil
 ]]
+
+local PaletteColorGrid = Roact.PureComponent:extend("PaletteColorGrid")
 
 PaletteColorGrid.render = function(self)
     local isReadOnly = self.props.readOnly

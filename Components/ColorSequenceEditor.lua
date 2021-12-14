@@ -77,6 +77,23 @@ end
 
 ---
 
+--[[
+    props
+
+        originalColor: ColorSequence
+        finishedEvent: Signal
+
+        onValueChanged: (ColorSequence)
+        promptForColorEdit: (PromptOptions)
+
+    store props
+
+        theme: StudioTheme
+        timeSnapValue: number
+
+        setSnapValue: (number) -> nil
+]]
+
 local ColorSequenceEditor = Roact.PureComponent:extend("ColorSequenceEditor")
 
 ColorSequenceEditor.init = function(self, initProps)

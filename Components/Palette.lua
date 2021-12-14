@@ -28,6 +28,18 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         paletteIndex: number?
 
         readOnly: boolean?
+
+    store props
+
+        theme: StudioTheme
+        paletteLayout: number
+
+        updatePaletteLayout: (number) -> nil
+        setColor: (Color3) -> nil
+        addCurrentColorToPalette: (number) -> nil
+        removePaletteColor: (number, number) -> nil
+        changePaletteColorName: (number, number, string) -> nil
+        changePaletteColorPosition: (number, number, number) -> nil
 ]]
 
 local Palette = Roact.PureComponent:extend("Palette")

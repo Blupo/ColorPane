@@ -21,6 +21,18 @@ local StandardTextLabel = StandardComponents.TextLabel
 local MIN_STEPS = 4
 local MAX_STEPS = 14
 
+---
+
+--[[
+    store props
+
+        color: Color3
+        variationSteps: number
+
+        setColor: (Color3) -> nil
+        updateVariationSteps: (number) -> nil
+]]
+
 local ColorVariations = Roact.PureComponent:extend("ColorVariations")
 
 ColorVariations.render = function(self)

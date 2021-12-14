@@ -70,6 +70,16 @@ local kelvinPresets = {
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+        color: Color3
+        editor: string
+
+        setColor: (Color3) -> nil
+]]
+
 local KelvinSliderPage = Roact.Component:extend("KelvinSliderPage")
 
 KelvinSliderPage.init = function(self, initProps)

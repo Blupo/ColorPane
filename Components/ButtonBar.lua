@@ -45,6 +45,10 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         }>
 
         onButtonActivated: (number) -> nil
+    
+    store props
+
+        theme: StudioTheme
 ]]
 
 local merge = Util.mergeTable

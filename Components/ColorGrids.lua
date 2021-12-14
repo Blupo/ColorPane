@@ -38,6 +38,10 @@ local KEY_CODE_DELTAS = {
         selected: number?
 
         onColorSelected: (number) -> nil
+
+    store props
+    
+        theme: StudioTheme
 ]]
 
 local ColorGrid = Roact.PureComponent:extend("ColorGrid")

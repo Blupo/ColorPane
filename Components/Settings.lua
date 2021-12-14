@@ -39,6 +39,12 @@ local SETTINGS = {
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+]]
+
 local Settings = Roact.PureComponent:extend("Settings")
 
 Settings.init = function(self)

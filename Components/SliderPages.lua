@@ -29,6 +29,16 @@ local KelvinSliderPage = require(Components:FindFirstChild("KelvinSliderPage"))
 
 local shallowCompare = Util.shallowCompare
 
+--[[
+    store props
+
+        theme: StudioTheme
+        color: Color3
+        editor: string
+
+        setColor: (Color3, string?) -> nil
+]]
+
 local ConnectStore = RoactRodux.connect(function(state)
     return {
         theme = state.theme,
@@ -751,6 +761,13 @@ GreyscaleSliderPage.render = function(self)
 end
 
 ---
+
+--[[
+    store props
+
+        lastSliderPage: number
+        updateSliderPage: (number) -> nil
+]]
 
 SliderPages = function(props)
     return Roact.createElement(Pages, {

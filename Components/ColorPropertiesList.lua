@@ -75,6 +75,10 @@ end
         color: Binding(Color3 | ColorSequence | nil)
 
         promptEdit: () -> nil
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local PropertyListItem = Roact.PureComponent:extend("PropertyListItem")

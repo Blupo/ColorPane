@@ -70,6 +70,13 @@ local importStatusMessages = {
     props
 
         onPromptClosed: (boolean) -> nil
+    
+    store props
+
+        theme: StudioTheme
+        palettes: array<Palette>
+
+        addPalette: (Palette) -> nil
 ]]
 
 local ImportPalette = Roact.PureComponent:extend("ImportPalette")

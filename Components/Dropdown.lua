@@ -38,6 +38,10 @@ local StandardUIPadding = StandardComponents.UIPadding
 
         onExpandedStateToggle: (boolean) -> nil
         onItemChanged: (number, number) -> nil
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local Dropdown = Roact.PureComponent:extend("Dropdown")

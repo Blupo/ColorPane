@@ -36,6 +36,10 @@ local StandardUIPadding = StandardComponents.UIPadding
                 [Roact.Children]: dictionary<any, Element>? 
             }>
         }>
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local SimpleList = Roact.PureComponent:extend("SimpleList")

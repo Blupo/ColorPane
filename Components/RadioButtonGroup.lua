@@ -26,6 +26,10 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         selected: number?,
         options: array<string>,
         onSelected: (number)
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local RadioButtonGroup = Roact.PureComponent:extend("RadioButtonGroup")

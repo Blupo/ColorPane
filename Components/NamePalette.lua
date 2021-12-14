@@ -20,11 +20,19 @@ local StandardUIListLayout = StandardComponents.UIListLayout
 ---
 
 --[[
-
     props
 
         paletteIndex: number?
         onPromptClosed: (boolean) -> nil
+
+    store props
+
+        theme: StudioTheme
+        palettes: array<Palette>
+
+        updatePalettePage: (number, number) -> nil
+        addPalette: (string) -> nil
+        changePaletteName: (number, string) -> nil
 ]]
 
 local RenamePalette = Roact.PureComponent:extend("RenamePalette")

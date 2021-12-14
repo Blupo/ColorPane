@@ -27,6 +27,10 @@ local StandardUICorner = StandardComponents.UICorner
         value: boolean
         text: string
         onChecked: (boolean) -> nil
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local Checkbox = Roact.PureComponent:extend("Checkbox")

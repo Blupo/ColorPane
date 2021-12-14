@@ -26,6 +26,20 @@ local shallowCompare = Util.shallowCompare
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+        palettes: array<Palette>
+        lastPaletteModification: number
+        lastPalettePage: number
+
+        updatePalettePage: (number, number) -> nil
+        addPalette: (string) -> nil
+        duplicatePalette: (number) -> nil
+        removePalette: (number) -> nil
+]]
+
 local PalettePages = Roact.Component:extend("PalettePages")
 
 PalettePages.init = function(self)

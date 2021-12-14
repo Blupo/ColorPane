@@ -24,8 +24,16 @@ local StandardUIPadding = StandardComponents.UIPadding
 --[[
     props
 
-    paletteIndex: number,
-    onPromptClosed: (boolean) -> nil
+        paletteIndex: number,
+        onPromptClosed: (boolean) -> nil
+
+    store props
+
+        theme: StudioTheme
+        palettes: array<Palette>
+
+        updatePalettePage: (number, number) -> nil
+        removePalette: (number) -> nil
 ]]
 
 local RemovePalette = Roact.PureComponent:extend("RemovePalette")

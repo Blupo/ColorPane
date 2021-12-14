@@ -86,6 +86,17 @@ local numBuiltInSequences = #builtInSequences
 
         getCurrentColorSequence: () -> ColorSequence
         setCurrentColorSequence: (ColorSequence) -> nil
+
+    store props
+
+        theme: StudioTheme
+        colorSequences: array<ColorSequence>
+        lastPaletteModification: number
+
+        addPaletteColor: (ColorSequence) -> nil
+        removePaletteColor: (number) -> nil
+        changePaletteColorName: (number, string) -> nil
+        changePaletteColorPosition: (number, number) -> nil
 ]]
 
 local ColorSequencePalette = Roact.Component:extend("ColorSequencePalette")

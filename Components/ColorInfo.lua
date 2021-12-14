@@ -151,6 +151,13 @@ local infoComponents = {
 
 ---
 
+--[[
+    store props
+
+        color: Color3
+        setColor: (Color3) -> nil
+]]
+
 local ColorInfo = Roact.PureComponent:extend("ColorInfo")
 
 ColorInfo.render = function(self)

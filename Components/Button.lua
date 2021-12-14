@@ -15,30 +15,6 @@ local StandardUICorner = StandardComponents.UICorner
 
 ---
 
---[[
-    props
-        AnchorPoint?
-        LayoutOrder?
-        Position?
-        Size?
-
-        borderColor: Color3?
-        backgroundColor: Color3?
-        hoverColor: Color3?
-        displayColor: Color3?
-
-        disabledBackgroundColor: Color3?
-        disabledDisplayColor: Color3?
-
-        displayType: "image" | "text" | "color" | "colorSequence"
-        image: Content?
-        text: string?
-        color: Color3? | ColorSequence?
-
-        disabled: boolean?
-        onActivated: () -> nil
-]]
-
 local merge = Util.mergeTable
 
 local buttonTypes = {
@@ -82,6 +58,34 @@ local colorSequenceButtonProps = {
 }
 
 ---
+
+--[[
+    props
+        AnchorPoint?
+        LayoutOrder?
+        Position?
+        Size?
+
+        borderColor: Color3?
+        backgroundColor: Color3?
+        hoverColor: Color3?
+        displayColor: Color3?
+
+        disabledBackgroundColor: Color3?
+        disabledDisplayColor: Color3?
+
+        displayType: "image" | "text" | "color" | "colorSequence"
+        image: Content?
+        text: string?
+        color: Color3? | ColorSequence?
+
+        disabled: boolean?
+        onActivated: () -> nil
+
+    store props
+
+        theme: StudioTheme
+]]
 
 local Button = Roact.PureComponent:extend("Button")
 

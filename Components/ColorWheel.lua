@@ -147,6 +147,23 @@ local harmonies = {
 
 ---
 
+--[[
+    props
+
+        harmony: string
+        angleNum: number
+        ringWidth: number
+        
+        h: Binding<number>
+        wheelRadius: Binding<number>
+
+        updateH: (number) -> nil
+
+    store props
+        
+        theme: StudioTheme
+]]
+
 local HueHarmonyMarker = Roact.PureComponent:extend("HueHarmonyMarker")
 
 HueHarmonyMarker.render = function(self)
@@ -195,6 +212,22 @@ HueHarmonyMarker.render = function(self)
 end
 
 ---
+
+--[[
+    props
+
+        ringWidth: number
+
+    store props
+
+        theme: StudioTheme
+        color: Color3
+        editor: string
+        harmony: number
+
+        setColor: (Color3) -> nil
+        setHarmony: (number) -> nil
+]]
 
 local ColorWheel = Roact.Component:extend("ColorWheel")
 

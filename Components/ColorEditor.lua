@@ -96,6 +96,24 @@ local editorTabs = {
 
 ---
 
+--[[
+    props
+
+        originalColor: Color3
+        finishedEvent: Signal
+
+    store props
+
+        theme: StudioTheme
+        editorPage: number
+        color: Color3
+        quickPalette: array<Color3>
+
+        setColor: (Color3) -> nil
+        addQuickPaletteColor: (Color3) -> nil
+        setEditorPage: (number) -> nil
+]]
+
 local ColorEditor = Roact.Component:extend("ColorEditor")
 
 ColorEditor.init = function(self)

@@ -47,6 +47,10 @@ local KEY_CODE_DELTAS = {
         onColorNameChanged: (string) -> nil
         onColorMovedUp: () -> nil
         onColorMovedDown: () -> nil
+
+    store props
+    
+        theme: StudioTheme
 ]]
 
 local PaletteColorList = Roact.PureComponent:extend("PaletteColorList")

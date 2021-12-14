@@ -41,6 +41,10 @@ local StandardUICorner = StandardComponents.UICorner
         valueToText: (number) -> string
         textToValue: (string) -> number?
         valueChanged: (number) -> nil
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local Slider = Roact.PureComponent:extend("Slider")

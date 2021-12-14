@@ -69,6 +69,17 @@ end
 
 ---
 
+--[[
+    store props
+
+        dataClass: number
+        numDataClasses: number
+
+        setColor: (Color3) -> nil
+        setDataClass: (number) -> nil
+        setNumDataClasses: (number) -> nil
+]]
+
 local ColorBrewerPalettes = Roact.PureComponent:extend("ColorBrewerPalettes")
 
 ColorBrewerPalettes.render = function(self)

@@ -25,6 +25,12 @@ local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+]]
+
 local NoAPIAlert = Roact.PureComponent:extend("NoAPIAlert")
 
 NoAPIAlert.init = function(self)

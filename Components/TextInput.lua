@@ -38,6 +38,10 @@ local StandardUIPadding = StandardComponents.UIPadding
         isTextAValidValue: (string)? -> boolean
         onTextChanged: (string)?
         onSubmit: (string)?
+
+    store props
+
+        theme: StudioTheme
 ]]
 
 local TextInput = Roact.PureComponent:extend("TextInput")

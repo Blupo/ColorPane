@@ -26,6 +26,10 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         [Roact.Event.InputEnded]?
 
         useMainBackgroundColor: boolean?
+    
+    store props
+
+        theme: StudioTheme
 ]]
 
 local StandardScrollingFrame = Roact.PureComponent:extend("StandardScrollingFrame")

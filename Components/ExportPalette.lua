@@ -35,8 +35,13 @@ local exportTypeKeys = {
 --[[
     props
 
-    paletteIndex: number?
-    onPromptClosed: (boolean) -> nil
+        paletteIndex: number?
+        onPromptClosed: (boolean) -> nil
+
+    store props
+
+        theme: StudioTheme
+        palettes: array<Palette>
 ]]
 
 local ExportPalette = Roact.PureComponent:extend("ExportPalette")
