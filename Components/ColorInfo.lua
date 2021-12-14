@@ -1,11 +1,11 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
@@ -58,7 +58,7 @@ local infoComponents = {
         name = "CMYK",
 
         getComponentString = function(color)
-            local c, m, y, k = Color.toCMYK(Color.fromColor3(color))
+            local c, m, y, k = Color.fromColor3(color):toCMYK()
             c, m, y, k = math.floor(c * 100), math.floor(m * 100), math.floor(y * 100), math.floor(k * 100)
 
             return string.format("%d, %d, %d, %d", c, m, y, k)
@@ -76,8 +76,9 @@ local infoComponents = {
         name = "HSB",
 
         getComponentString = function(color)
-            local h, s, b = Color.toHSB(Color.fromColor3(color))
-            h, s, b = math.floor(h * 360), math.floor(s * 100), math.floor(b * 100)
+            local h, s, b = Color.fromColor3(color):toHSB()
+            h = (h ~= h) and 0 or h
+            s, b = math.floor(s * 100), math.floor(b * 100)
 
             return string.format("%d, %d, %d", h, s, b)
         end,
@@ -86,7 +87,7 @@ local infoComponents = {
             local h, s, b = parseComponents(componentString, 3)
             if (not (h and s and b)) then return end
 
-            return Color.fromHSB(h / 360, s / 100, b / 100)
+            return Color.fromHSB(h, s / 100, b / 100)
         end
     },
 
@@ -94,8 +95,9 @@ local infoComponents = {
         name = "HSL",
 
         getComponentString = function(color)
-            local h, s, l = Color.toHSL(Color.fromColor3(color))
-            h, s, l = math.floor(h * 360), math.floor(s * 100), math.floor(l * 100)
+            local h, s, l = Color.fromColor3(color):toHSL()
+            h = (h ~= h) and 0 or h
+            s, l = math.floor(s * 100), math.floor(l * 100)
 
             return string.format("%d, %d, %d", h, s, l)
         end,
@@ -104,7 +106,7 @@ local infoComponents = {
             local h, s, l = parseComponents(componentString, 3)
             if (not (h and s and l)) then return end
 
-            return Color.fromHSL(h / 360, s / 100, l / 100)
+            return Color.fromHSL(h, s / 100, l / 100)
         end
     },
 
@@ -112,7 +114,7 @@ local infoComponents = {
         name = "Hex",
 
         getComponentString = function(color)
-            return string.upper(Color.toHex(Color.fromColor3(color)))
+            return string.upper(Color.fromColor3(color):toHex())
         end,
 
         getColor = Color.fromHex
@@ -183,7 +185,7 @@ ColorInfo.render = function(self)
                 end,
 
                 onSubmit = function(newText)
-                    self.props.setColor(Color.toColor3(component.getColor(newText)))
+                    self.props.setColor(component.getColor(newText):toColor3())
                 end,
 
                 selectTextOnFocus = (component.name == "Hex"),

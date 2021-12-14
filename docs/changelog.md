@@ -2,6 +2,9 @@
 
 ## [0.4.0]
 
+### Changed
+- The plugin now uses the dedicated [Color](https://github.com/Blupo/Color) module for color calculations, which may result in slightly different color representations
+
 ## [0.3.1] - 2021-12-09
 
 ### Fixed

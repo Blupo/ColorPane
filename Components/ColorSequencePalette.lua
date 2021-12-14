@@ -1,13 +1,13 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -67,12 +67,12 @@ local builtInSequences = {
         name = "Temperature",
 
         color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color.toColor3(Color.fromKelvin(1000))),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.toColor3(Color.fromKelvin(2000))),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.toColor3(Color.fromKelvin(6000))),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.toColor3(Color.fromKelvin(6500))),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.toColor3(Color.fromKelvin(7000))),
-            ColorSequenceKeypoint.new(1, Color.toColor3(Color.fromKelvin(10000))),
+            ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
+            ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.fromTemperature(2000):toColor3()),
+            ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.fromTemperature(6000):toColor3()),
+            ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.fromTemperature(6500):toColor3()),
+            ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.fromTemperature(7000):toColor3()),
+            ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
         })
     }
 }

@@ -1,13 +1,15 @@
+-- TODO: Complex
+
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -20,7 +22,7 @@ local StandardUICorner = StandardComponents.UICorner
 
 ---
 
-local ANALOGY_ANGLE = math.pi / 5
+local ANALOGY_ANGLE = math.deg(math.pi / 6)
 
 local shallowCompare = Util.shallowCompare
 
@@ -41,7 +43,9 @@ local harmonies = {
 
         numAngles = 1,
         getAngles = function(angle)
-            return {(angle + math.pi) % (2 * math.pi)}
+            return {
+                (angle + (360 / 2 * 1)) % 360
+            }
         end
     },
 
@@ -53,8 +57,8 @@ local harmonies = {
         numAngles = 2,
         getAngles = function(angle)
             return {
-                (angle + ((2 * math.pi) / 3)) % (2 * math.pi),
-                (angle + ((4 * math.pi) / 3)) % (2 * math.pi)
+                (angle + (360 / 3 * 1)) % 360,
+                (angle + (360 / 3 * 2)) % 360
             }
         end
     },
@@ -67,9 +71,9 @@ local harmonies = {
         numAngles = 3,
         getAngles = function(angle)
             return {
-                (angle + (math.pi / 2)) % (2 * math.pi),
-                (angle + ((2 * math.pi) / 2)) % (2 * math.pi),
-                (angle + ((3 * math.pi) / 2)) % (2 * math.pi)
+                (angle + (360 / 4 * 1)) % 360,
+                (angle + (360 / 4 * 2)) % 360,
+                (angle + (360 / 4 * 3)) % 360
             }
         end
     },
@@ -82,11 +86,11 @@ local harmonies = {
         numAngles = 5,
         getAngles = function(angle)
             return {
-                (angle + (math.pi / 3)) % (2 * math.pi),
-                (angle + ((2 * math.pi) / 3)) % (2 * math.pi),
-                (angle + ((3 * math.pi) / 3)) % (2 * math.pi),
-                (angle + ((4 * math.pi) / 3)) % (2 * math.pi),
-                (angle + ((5 * math.pi) / 3)) % (2 * math.pi),
+                (angle + (360 / 6 * 1)) % 360,
+                (angle + (360 / 6 * 2)) % 360,
+                (angle + (360 / 6 * 3)) % 360,
+                (angle + (360 / 6 * 4)) % 360,
+                (angle + (360 / 6 * 5)) % 360,
             }
         end
     },
@@ -99,8 +103,8 @@ local harmonies = {
         numAngles = 2,
         getAngles = function(angle)
             return {
-                (angle + ANALOGY_ANGLE) % (2 * math.pi),
-                (angle - ANALOGY_ANGLE) % (2 * math.pi),
+                (angle + ANALOGY_ANGLE) % 360,
+                (angle - ANALOGY_ANGLE) % 360,
             }
         end
     },
@@ -112,11 +116,11 @@ local harmonies = {
             
         numAngles = 2,
         getAngles = function(angle)
-            local complementAngle = angle + math.pi
+            local complementAngle = angle + 180
 
             return {
-                (complementAngle + ANALOGY_ANGLE) % (2 * math.pi),
-                (complementAngle - ANALOGY_ANGLE) % (2 * math.pi)
+                (complementAngle + ANALOGY_ANGLE) % 360,
+                (complementAngle - ANALOGY_ANGLE) % 360
             }
         end
     },
@@ -129,13 +133,13 @@ local harmonies = {
         numAngles = 3,
         getAngles = function(angle)
             local analogy1 = angle + ANALOGY_ANGLE
-            local complement = angle + math.pi
+            local complement = angle + 180
             local analogy2 = complement + ANALOGY_ANGLE
 
             return {
-                analogy1 % (2 * math.pi),
-                complement % (2 * math.pi),
-                analogy2 % (2 * math.pi)
+                analogy1 % 360,
+                complement % 360,
+                analogy2 % 360
             }
         end
     }
@@ -156,8 +160,7 @@ HueHarmonyMarker.render = function(self)
             h = self.props.h,
             wheelRadius = self.props.wheelRadius,
         }):map(function(values)
-            local hueAngle = values.h * (2 * math.pi)
-            local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
+            local harmonyAngle = math.rad(harmonies[self.props.harmony].getAngles(values.h)[self.props.angleNum])
 
             return UDim2.new(
                 0.5, math.cos(harmonyAngle) * (values.wheelRadius - (self.props.ringWidth / 2)),
@@ -174,21 +177,19 @@ HueHarmonyMarker.render = function(self)
         TextTransparency = 1,
 
         BackgroundColor3 = self.props.h:map(function(h)
-            local hueAngle = h * (2 * math.pi)
-            local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
+            local harmonyAngle = harmonies[self.props.harmony].getAngles(h)[self.props.angleNum]
 
-            return Color.toColor3(Color.getBestContrastingColor(
-                Color.fromHSB(harmonyAngle / (2 * math.pi), 1, 1),
+            return Color.fromHSB(harmonyAngle, 1, 1):bestContrastingColor(
                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            ))
+                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+            ):toColor3()
         end),
 
         [Roact.Event.Activated] = function()
-            local hueAngle = self.props.h:getValue() * (2 * math.pi)
+            local hueAngle = self.props.h:getValue()
             local harmonyAngle = harmonies[self.props.harmony].getAngles(hueAngle)[self.props.angleNum]
             
-            self.props.updateH(harmonyAngle / (2 * math.pi))
+            self.props.updateH(harmonyAngle)
         end,
     })
 end
@@ -198,14 +199,14 @@ end
 local ColorWheel = Roact.Component:extend("ColorWheel")
 
 ColorWheel.init = function(self, initProps)
-    local initH, initS, initB = Color.toHSB(Color.fromColor3(initProps.color))
+    local initH, initS, initB = Color.fromColor3(initProps.color):toHSB()
 
     self.planeSize, self.updatePlaneSize = Roact.createBinding(Vector2.new(0, 0))
     self.wheelCenter, self.updateWheelCenter = Roact.createBinding(Vector2.new(0, 0))
     self.wheelRadius, self.updateWheelRadius = Roact.createBinding(0)
 
     self.components, self.updateComponents = Roact.createBinding({
-        h = initH,
+        h = (initH ~= initH) and 0 or initH,
         s = initS,
         b = initB,
     })
@@ -225,7 +226,7 @@ ColorWheel.init = function(self, initProps)
             hueAngle = mouseAngle + (2 * math.pi)
         end
 
-        h = hueAngle / (2 * math.pi)
+        h = math.deg(hueAngle)
 
         self.updateComponents({
             h = h,
@@ -233,7 +234,7 @@ ColorWheel.init = function(self, initProps)
             b = components.b,
         })
 
-        self.props.setColor(Color.toColor3(Color.fromHSB(h, components.s, components.b)))
+        self.props.setColor(Color.fromHSB(h, components.s, components.b):toColor3())
     end
 
     self.updateSB = function(cursorPosition)
@@ -250,7 +251,7 @@ ColorWheel.init = function(self, initProps)
             b = b
         })
 
-        self.props.setColor(Color.toColor3(Color.fromHSB(components.h, s, b)))
+        self.props.setColor(Color.fromHSB(components.h, s, b):toColor3())
     end
 
     self:setState({
@@ -265,10 +266,10 @@ ColorWheel.shouldUpdate = function(self, nextProps, nextState)
 
     if (table.find(propsDiff, "color")) then
         if (nextProps.editor ~= PluginEnums.EditorKey.ColorWheel) then
-            local h, s, b = Color.toHSB(Color.fromColor3(nextProps.color))
+            local h, s, b = Color.fromColor3(nextProps.color):toHSB()
 
             self.updateComponents({
-                h = h,
+                h = (h ~= h) and 0 or h,
                 s = s,
                 b = b,
             })
@@ -340,7 +341,7 @@ ColorWheel.render = function(self)
                 h = self.components:map(function(components) return components.h end),
                 wheelRadius = self.wheelRadius
             }):map(function(values)
-                local hueAngle = values.h * (2 * math.pi)
+                local hueAngle = math.rad(values.h)
 
                 return UDim2.new(
                     0.5, math.cos(hueAngle) * (values.wheelRadius - (self.props.ringWidth / 2)),
@@ -349,11 +350,10 @@ ColorWheel.render = function(self)
             end),
 
             BackgroundColor3 = self.components:map(function(components)
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromHSB(components.h, 1, 1),
+                return Color.fromHSB(components.h, 1, 1):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
         }, {
             UICorner = Roact.createElement(StandardUICorner, { circular = true }),
@@ -365,7 +365,7 @@ ColorWheel.render = function(self)
                     Size = UDim2.new(1, -10, 1, -10),
                     
                     BackgroundColor3 = self.components:map(function(components)
-                        return Color.toColor3(Color.fromHSB(components.h, 1, 1))
+                        return Color.fromHSB(components.h, 1, 1):toColor3()
                     end)
                 }, {
                     UICorner = Roact.createElement(StandardUICorner, { circular = true }),
@@ -395,7 +395,7 @@ ColorWheel.render = function(self)
                         b = components.b
                     })
 
-                    self.props.setColor(Color.toColor3(Color.fromHSB(h, components.s, components.b)))
+                    self.props.setColor(Color.fromHSB(h, components.s, components.b):toColor3())
                 end
             })
         end
@@ -533,7 +533,7 @@ ColorWheel.render = function(self)
                     BackgroundColor3 = Color3.new(1, 1, 1),
 
                     ImageColor3 = self.components:map(function(components)
-                        return Color.toColor3(Color.fromHSB(components.h, 1, 1))
+                        return Color.fromHSB(components.h, 1, 1):toColor3()
                     end),
 
                     [Roact.Event.InputBegan] = function(_, input)
@@ -581,11 +581,10 @@ ColorWheel.render = function(self)
                         end),
 
                         BackgroundColor3 = self.components:map(function(components)
-                            return Color.toColor3(Color.getBestContrastingColor(
-                                Color.fromHSB(components.h, components.s, components.b),
+                            return Color.fromHSB(components.h, components.s, components.b):bestContrastingColor(
                                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                            ))
+                                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                            ):toColor3()
                         end),
                     }, {
                         UICorner = Roact.createElement(StandardUICorner, { circular = true }),
@@ -598,7 +597,7 @@ ColorWheel.render = function(self)
                             BorderSizePixel = 0,
                             
                             BackgroundColor3 = self.components:map(function(components)
-                                return Color.toColor3(Color.fromHSB(components.h, components.s, components.b))
+                                return Color.fromHSB(components.h, components.s, components.b):toColor3()
                             end),
                         }, {
                             UICorner = Roact.createElement(StandardUICorner, { circular = true }),

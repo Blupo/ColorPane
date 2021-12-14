@@ -1,13 +1,13 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -383,15 +383,15 @@ ColorEditor.render = function(self)
                 Position = UDim2.new(1, 0, 0.5, 0),
                 Size = UDim2.new(1, -6 - Style.MinorElementPadding, 0, Style.StandardInputHeight),
                 
-                Text = string.upper(Color.toHex(Color.fromColor3(self.props.color))),
+                Text = string.upper(Color.fromColor3(self.props.color):toHex()),
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 isTextAValidValue = function(text)
-                    return Color.fromHex(text) and true or false
+                    return (pcall(Color.fromHex, text)) and true or false
                 end,
 
                 onSubmit = function(text)
-                    self.props.setColor(Color.toColor3(Color.fromHex(text)))
+                    self.props.setColor(Color.fromHex(text):toColor3())
                 end,
                 
                 selectTextOnFocus = true,

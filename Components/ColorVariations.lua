@@ -1,11 +1,11 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -36,14 +36,15 @@ ColorVariations.render = function(self)
     for i = 1, variationSteps do
         local color = Color.fromColor3(self.props.color)
 
-        modifiedColors.Shades[i] = Color.toColor3(Color.darken(color, i/2))
-        modifiedColors.Tints[i] = Color.toColor3(Color.brighten(color, i/2))
-        modifiedColors.Tones[i] = Color.toColor3(Color.desaturate(color, i/2))
+        modifiedColors.Shades[i] = Color.darken(color, i/2):toColor3()
+        modifiedColors.Tints[i] = Color.brighten(color, i/2):toColor3()
+        modifiedColors.Tones[i] = Color.desaturate(color, i/2):toColor3()
 
-        local h, s, b = Color.toHSB(color)
-        h = (h + (i / (MAX_STEPS + 1))) % 1
+        local h, s, b = color:toHSB()
+        h = (h ~= h) and 0 or h
+        h = (h + (360 / (MAX_STEPS + 1) * i)) % 360
 
-        modifiedColors.Hues[i] = Color.toColor3(Color.fromHSB(h, s, b))
+        modifiedColors.Hues[i] = Color.fromHSB(h, s, b):toColor3()
     end
 
     return Roact.createFragment({

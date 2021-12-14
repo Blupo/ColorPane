@@ -1,12 +1,12 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -48,12 +48,12 @@ local textToValue = function(text)
 end
 
 local kelvinGradient = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color.toColor3(Color.fromKelvin(1000))),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.toColor3(Color.fromKelvin(2000))),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.toColor3(Color.fromKelvin(6000))),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.toColor3(Color.fromKelvin(6500))),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.toColor3(Color.fromKelvin(7000))),
-    ColorSequenceKeypoint.new(1, Color.toColor3(Color.fromKelvin(10000))),
+    ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
+    ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.fromTemperature(2000):toColor3()),
+    ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.fromTemperature(6000):toColor3()),
+    ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.fromTemperature(6500):toColor3()),
+    ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.fromTemperature(7000):toColor3()),
+    ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
 })
 
 local kelvinPresets = {
@@ -73,7 +73,7 @@ local kelvinPresets = {
 local KelvinSliderPage = Roact.Component:extend("KelvinSliderPage")
 
 KelvinSliderPage.init = function(self, initProps)
-    self.kelvin, self.updateKelvin = Roact.createBinding(getKelvinRangeValue(Color.toKelvin(Color.fromColor3(initProps.color))))
+    self.kelvin, self.updateKelvin = Roact.createBinding(getKelvinRangeValue(Color.fromColor3(initProps.color):toTemperature()))
 end
 
 KelvinSliderPage.shouldUpdate = function(self, nextProps, nextState)
@@ -82,7 +82,7 @@ KelvinSliderPage.shouldUpdate = function(self, nextProps, nextState)
 
     if (table.find(propsDiff, "color")) then
         if (nextProps.editor ~= PluginEnums.EditorKey.KelvinSlider) then
-            self.updateKelvin(getKelvinRangeValue(Color.toKelvin(Color.fromColor3(nextProps.color))))
+            self.updateKelvin(getKelvinRangeValue(Color.fromColor3(nextProps.color):toTemperature()))
         end
     end
 
@@ -118,7 +118,7 @@ KelvinSliderPage.render = function(self)
 
             onActivated = function()
                 self.updateKelvin(getKelvinRangeValue(preset.kelvin))
-                self.props.setColor(Color.toColor3(Color.fromKelvin(preset.kelvin)))
+                self.props.setColor(Color.fromTemperature(preset.kelvin):toColor3())
             end,
 
             [Roact.Children] = {
@@ -147,11 +147,10 @@ KelvinSliderPage.render = function(self)
             unitLabel = "K",
 
             markerColor = self.kelvin:map(function(k)
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromKelvin(getValueRangeKelvin(k)),
+                return Color.fromTemperature(getValueRangeKelvin(k)):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
 
             valueToText = valueToText,
@@ -163,7 +162,7 @@ KelvinSliderPage.render = function(self)
 
             valueChanged = function(value)
                 self.updateKelvin(value)
-                self.props.setColor(Color.toColor3(Color.fromKelvin(getValueRangeKelvin(value))))
+                self.props.setColor(Color.fromTemperature(getValueRangeKelvin(value)):toColor3())
             end
         }),
 

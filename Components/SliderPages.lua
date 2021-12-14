@@ -1,12 +1,12 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -113,11 +113,10 @@ RGBSliderPage.init = function(self, initProps)
     self.markerColor = self.components:map(function(components)
         local theme = self.props.theme
 
-        return Color.toColor3(Color.getBestContrastingColor(
-            Color.fromRGB(components.r, components.g, components.b),
+        return Color.new(components.r, components.g, components.b):bestContrastingColor(
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-            Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-        ))
+            Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+        ):toColor3()
     end)
 
     self.setColor = function(newColor)
@@ -227,7 +226,7 @@ end
 ---
 
 CMYKSliderPage.init = function(self, initProps)
-    local initC, initM, initY, initK = Color.toCMYK(Color.fromColor3(initProps.color))
+    local initC, initM, initY, initK = Color.fromColor3(initProps.color):toCMYK()
 
     self.components, self.updateComponents = Roact.createBinding({
         c = initC,
@@ -239,11 +238,10 @@ CMYKSliderPage.init = function(self, initProps)
     self.markerColor = self.components:map(function(components)
         local theme = self.props.theme
 
-        return Color.toColor3(Color.getBestContrastingColor(
-            Color.fromCMYK(components.c, components.m, components.y, components.k),
+        return Color.fromCMYK(components.c, components.m, components.y, components.k):bestContrastingColor(
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-            Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-        ))
+            Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+        ):toColor3()
     end)
 
     self.setColor = function(newColor)
@@ -252,7 +250,7 @@ CMYKSliderPage.init = function(self, initProps)
 end
 
 CMYKSliderPage.shouldUpdate = sliderShouldUpdateFactory(PluginEnums.EditorKey.CMYKSlider, function(self, color)
-    local c, m, y, k = Color.toCMYK(Color.fromColor3(color))
+    local c, m, y, k = Color.fromColor3(color):toCMYK()
 
     self.updateComponents({
         c = c,
@@ -280,8 +278,8 @@ CMYKSliderPage.render = function(self)
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(
-                    Color.toColor3(Color.fromCMYK(0, components.m, components.y, components.k)),
-                    Color.toColor3(Color.fromCMYK(1, components.m, components.y, components.k))
+                    Color.fromCMYK(0, components.m, components.y, components.k):toColor3(),
+                    Color.fromCMYK(1, components.m, components.y, components.k):toColor3()
                 )
             end),
 
@@ -298,7 +296,7 @@ CMYKSliderPage.render = function(self)
                     k = components.k
                 })
 
-                self.setColor(Color.toColor3(Color.fromCMYK(value, components.m, components.y, components.k)))
+                self.setColor(Color.fromCMYK(value, components.m, components.y, components.k):toColor3())
             end
         }),
 
@@ -312,8 +310,8 @@ CMYKSliderPage.render = function(self)
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(
-                    Color.toColor3(Color.fromCMYK(components.c, 0, components.y, components.k)),
-                    Color.toColor3(Color.fromCMYK(components.c, 1, components.y, components.k))
+                    Color.fromCMYK(components.c, 0, components.y, components.k):toColor3(),
+                    Color.fromCMYK(components.c, 1, components.y, components.k):toColor3()
                 )
             end),
 
@@ -330,7 +328,7 @@ CMYKSliderPage.render = function(self)
                     k = components.k
                 })
 
-                self.setColor(Color.toColor3(Color.fromCMYK(components.c, value, components.y, components.k)))
+                self.setColor(Color.fromCMYK(components.c, value, components.y, components.k):toColor3())
             end
         }),
 
@@ -344,8 +342,8 @@ CMYKSliderPage.render = function(self)
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(
-                    Color.toColor3(Color.fromCMYK(components.c, components.m, 0, components.k)),
-                    Color.toColor3(Color.fromCMYK(components.c, components.m, 1, components.k))
+                    Color.fromCMYK(components.c, components.m, 0, components.k):toColor3(),
+                    Color.fromCMYK(components.c, components.m, 1, components.k):toColor3()
                 )
             end),
 
@@ -362,7 +360,7 @@ CMYKSliderPage.render = function(self)
                     k = components.k
                 })
 
-                self.setColor(Color.toColor3(Color.fromCMYK(components.c, components.m, value, components.k)))
+                self.setColor(Color.fromCMYK(components.c, components.m, value, components.k):toColor3())
             end
         }),
 
@@ -376,8 +374,8 @@ CMYKSliderPage.render = function(self)
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new(
-                    Color.toColor3(Color.fromCMYK(components.c, components.m, components.y, 0)),
-                    Color.toColor3(Color.fromCMYK(components.c, components.m, components.y, 1))
+                    Color.fromCMYK(components.c, components.m, components.y, 0):toColor3(),
+                    Color.fromCMYK(components.c, components.m, components.y, 1):toColor3()
                 )
             end),
 
@@ -394,7 +392,7 @@ CMYKSliderPage.render = function(self)
                     k = value
                 })
 
-                self.setColor(Color.toColor3(Color.fromCMYK(components.c, components.m, components.y, value)))
+                self.setColor(Color.fromCMYK(components.c, components.m, components.y, value):toColor3())
             end
         }),
     })
@@ -403,10 +401,10 @@ end
 ---
 
 HSBSliderPage.init = function(self, initProps)
-    local initH, initS, initB = Color.toHSB(Color.fromColor3(initProps.color))
+    local initH, initS, initB = Color.fromColor3(initProps.color):toHSB()
 
     self.components, self.updateComponents = Roact.createBinding({
-        h = initH,
+        h = (initH ~= initH) and 0 or initH,
         s = initS,
         b = initB,
     })
@@ -414,11 +412,10 @@ HSBSliderPage.init = function(self, initProps)
     self.markerColor = self.components:map(function(components)
         local theme = self.props.theme
 
-        return Color.toColor3(Color.getBestContrastingColor(
-            Color.fromHSB(components.h, components.s, components.b),
+        return Color.fromHSB(components.h, components.s, components.b):bestContrastingColor(
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-            Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-        ))
+            Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+        ):toColor3()
     end)
 
     self.setColor = function(newColor)
@@ -427,10 +424,10 @@ HSBSliderPage.init = function(self, initProps)
 end
 
 HSBSliderPage.shouldUpdate = sliderShouldUpdateFactory(PluginEnums.EditorKey.HSBSlider, function(self, color)
-    local h, s, b = Color.toHSB(Color.fromColor3(color))
+    local h, s, b = Color.fromColor3(color):toHSB()
 
     self.updateComponents({
-        h = h,
+        h = (h ~= h) and 0 or h,
         s = s,
         b = b,
     })
@@ -447,17 +444,16 @@ HSBSliderPage.render = function(self)
         H = Roact.createElement(Slider, {
             LayoutOrder = 0,
             
-            value = self.components:map(function(components) return components.h end),
+            value = self.components:map(function(components) return components.h / 360 end),
             sliderLabel = "Hue",
             unitLabel = "°",
             markerColor = self.components:map(function(components)
                 local theme = self.props.theme
 
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromHSB(components.h, 1, 1),
+                return Color.fromHSB(components.h, 1, 1):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
 
             sliderGradient = ColorSequence.new({
@@ -474,15 +470,16 @@ HSBSliderPage.render = function(self)
             textToValue = textToValueFactory(360),
 
             valueChanged = function(value)
+                local h = value * 360
                 local components = self.components:getValue()
 
                 self.updateComponents({
-                    h = value,
+                    h = h,
                     s = components.s,
                     b = components.b
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSB(value, components.s, components.b)))
+                self.setColor(Color.fromHSB(h, components.s, components.b):toColor3())
             end
         }),
 
@@ -510,7 +507,7 @@ HSBSliderPage.render = function(self)
                     b = components.b
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSB(components.h, value, components.b)))
+                self.setColor(Color.fromHSB(components.h, value, components.b):toColor3())
             end
         }),
 
@@ -538,7 +535,7 @@ HSBSliderPage.render = function(self)
                     b = value
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSB(components.h, components.s, value)))
+                self.setColor(Color.fromHSB(components.h, components.s, value):toColor3())
             end
         }),
     })
@@ -547,10 +544,10 @@ end
 ---
 
 HSLSliderPage.init = function(self, initProps)
-    local initH, initS, initL = Color.toHSL(Color.fromColor3(initProps.color))
+    local initH, initS, initL = Color.fromColor3(initProps.color):toHSL()
 
     self.components, self.updateComponents = Roact.createBinding({
-        h = initH,
+        h = (initH ~= initH) and 0 or initH,
         s = initS,
         l = initL
     })
@@ -558,11 +555,10 @@ HSLSliderPage.init = function(self, initProps)
     self.markerColor = self.components:map(function(components)
         local theme = self.props.theme
 
-        return Color.toColor3(Color.getBestContrastingColor(
-            Color.fromHSL(components.h, components.s, components.l),
+        return Color.fromHSL(components.h, components.s, components.l):bestContrastingColor(
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-            Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-        ))
+            Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+        ):toColor3()
     end)
 
     self.setColor = function(newColor)
@@ -571,10 +567,10 @@ HSLSliderPage.init = function(self, initProps)
 end
 
 HSLSliderPage.shouldUpdate = sliderShouldUpdateFactory(PluginEnums.EditorKey.HSLSlider, function(self, color)
-    local h, s, l = Color.toHSL(Color.fromColor3(color))
+    local h, s, l = Color.fromColor3(color):toHSL()
 
     self.updateComponents({
-        h = h,
+        h = (h ~= h) and 0 or h,
         s = s,
         l = l,
     })
@@ -591,18 +587,17 @@ HSLSliderPage.render = function(self)
         H = Roact.createElement(Slider, {
             LayoutOrder = 0,
 
-            value = self.components:map(function(components) return components.h end),
+            value = self.components:map(function(components) return components.h / 360 end),
             sliderLabel = "Hue",
             unitLabel = "°",
 
             markerColor = self.components:map(function(components)
                 local theme = self.props.theme
 
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromHSL(components.h, 1, 0.5),
+                return Color.fromHSL(components.h, 1, 0.5):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
 
             sliderGradient = ColorSequence.new({
@@ -619,15 +614,16 @@ HSLSliderPage.render = function(self)
             textToValue = textToValueFactory(360),
 
             valueChanged = function(value)
+                local h = value * 360
                 local components = self.components:getValue()
 
                 self.updateComponents({
-                    h = value,
+                    h = h,
                     s = components.s,
                     l = components.l
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSL(value, components.s, components.l)))
+                self.setColor(Color.fromHSL(h, components.s, components.l):toColor3())
             end
         }),
 
@@ -640,10 +636,11 @@ HSLSliderPage.render = function(self)
             markerColor = self.markerColor,
 
             sliderGradient = self.components:map(function(components)
-                return ColorSequence.new(
-                    Color3.fromHSV(components.h, 0, components.l),
-                    Color3.fromHSV(components.h, 1, components.l)
-                )
+                return ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color.fromHSL(components.h, 0, components.l):toColor3()),
+                    ColorSequenceKeypoint.new(0.5, Color.fromHSL(components.h, 0.5, components.l):toColor3()),
+                    ColorSequenceKeypoint.new(1, Color.fromHSL(components.h, 1, components.l):toColor3())
+                })
             end),
 
             valueToText = percentValueToText,
@@ -658,7 +655,7 @@ HSLSliderPage.render = function(self)
                     l = components.l
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSL(components.h, value, components.l)))
+                self.setColor(Color.fromHSL(components.h, value, components.l):toColor3())
             end
         }),
 
@@ -672,9 +669,9 @@ HSLSliderPage.render = function(self)
 
             sliderGradient = self.components:map(function(components)
                 return ColorSequence.new({
-                    ColorSequenceKeypoint.new(0, Color.toColor3(Color.fromHSL(components.h, components.s, 0))),
-                    ColorSequenceKeypoint.new(0.5, Color.toColor3(Color.fromHSL(components.h, components.s, 0.5))),
-                    ColorSequenceKeypoint.new(1, Color.toColor3(Color.fromHSL(components.h, components.s, 1)))
+                    ColorSequenceKeypoint.new(0, Color.fromHSL(components.h, components.s, 0):toColor3()),
+                    ColorSequenceKeypoint.new(0.5, Color.fromHSL(components.h, components.s, 0.5):toColor3()),
+                    ColorSequenceKeypoint.new(1, Color.fromHSL(components.h, components.s, 1):toColor3())
                 })
             end),
 
@@ -690,7 +687,7 @@ HSLSliderPage.render = function(self)
                     l = value
                 })
 
-                self.setColor(Color.toColor3(Color.fromHSL(components.h, components.s, value)))
+                self.setColor(Color.fromHSL(components.h, components.s, value):toColor3())
             end
         }),
     })
@@ -728,11 +725,10 @@ GreyscaleSliderPage.render = function(self)
             markerColor = self.brightness:map(function(brightness)
                 local theme = self.props.theme
 
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromRGB(brightness, brightness, brightness),
+                return Color.gray(brightness):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
 
             keypoints = {
@@ -748,7 +744,7 @@ GreyscaleSliderPage.render = function(self)
 
             valueChanged = function(value)
                 self.updateBrightness(value)
-                self.setColor(Color3.new(value, value, value))
+                self.setColor(Color.gray(value):toColor3())
             end
         })
     })

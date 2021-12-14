@@ -1,13 +1,13 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Color = require(PluginModules:FindFirstChild("Color"))
 local ColorSequencePaletteWidget = require(PluginModules:FindFirstChild("ColorSequencePaletteWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -195,11 +195,10 @@ ColorSequenceEditor.render = function(self)
             BorderSizePixel = 0,
             ZIndex = 2,
 
-            BackgroundColor3 = Color.toColor3(Color.getBestContrastingColor(
-                Color.fromColor3(keypoint.Value),
+            BackgroundColor3 = Color.fromColor3(keypoint.Value):bestContrastingColor(
                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-            )),
+                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+            ):toColor3(),
         }, {
             UICorner = (not isFixed) and
                 Roact.createElement(StandardUICorner)
@@ -234,11 +233,10 @@ ColorSequenceEditor.render = function(self)
             end),
 
             BackgroundColor3 = self.markerTime:map(function(markerTime)
-                return Color.toColor3(Color.getBestContrastingColor(
-                    Color.fromColor3(evalutateColorSequence(colorSequence, markerTime)),
+                return Color.fromColor3(evalutateColorSequence(colorSequence, markerTime)):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.invert(Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)))
-                ))
+                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+                ):toColor3()
             end),
         })
     or nil
