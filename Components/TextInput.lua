@@ -32,7 +32,6 @@ local StandardUIPadding = StandardComponents.UIPadding
 
         canSubmitEmptyString: boolean?
         disabled: boolean?
-        usesTextBinding: boolean?
         selectTextOnFocus: boolean?
 
         isTextAValidValue: (string)? -> boolean
@@ -100,8 +99,6 @@ TextInput.init = function(self)
 end
 
 TextInput.didUpdate = function(self, prevProps)
-    if (self.props.usesTextBinding) then return end
-
     local newText = self.props.Text
     local prevText = prevProps.Text
 
@@ -124,7 +121,6 @@ end
 TextInput.render = function(self)
     local theme = self.props.theme
     local disabled = self.props.disabled
-    local usesTextBinding = self.props.usesTextBinding
 
     local isTextAValidValue = self.props.isTextAValidValue
     local onTextChanged = self.props.onTextChanged
@@ -216,25 +212,7 @@ TextInput.render = function(self)
                 TextXAlignment = self.props.TextXAlignment or Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Center,
                 PlaceholderText = self.props.PlaceholderText or "",
-
-                Text = usesTextBinding and
-                    self.props.Text:map(function(text)
-                        if (self.state.invalidInput) then
-                            if (text ~= self.lastBindingText) then
-                                self:setState({
-                                    invalidInput = false
-                                })
-                            else
-                                local textBox = self.textBox:getValue()
-
-                                return textBox and textBox.Text or ""
-                            end
-                        end
-    
-                        self.lastBindingText = text
-                        return text
-                    end)
-                or self.props.Text,
+                Text = self.props.Text,
     
                 TextColor3 = theme:GetColor(
                     Enum.StudioStyleGuideColor.MainText,
@@ -266,7 +244,7 @@ TextInput.render = function(self)
     
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
                     local isValid = (not isTextAValidValue) and true or isTextAValidValue(newText)
-                    local originalText = usesTextBinding and self.props.Text:getValue() or self.props.Text
+                    local originalText = self.props.Text
     
                     if (newText == originalText) then
                         self:setState({

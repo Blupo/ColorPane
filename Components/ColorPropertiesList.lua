@@ -216,7 +216,6 @@ end
         AnchorPoint?
         Size?
         Position?
-
 ]]
 
 local ColorPropertiesList = Roact.PureComponent:extend("ColorPropertiesList")

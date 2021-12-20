@@ -3,7 +3,6 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
-local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -20,23 +19,22 @@ local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 
+local EDITOR_KEY = PluginEnums.EditorKey.KelvinSlider
 local LOWER_RANGE = 1000
 local UPPER_RANGE = 10000
 
-local shallowCompare = Util.shallowCompare
-
-local getKelvinRangeValue = function(k)
+local getTemperatureRangeValue = function(k)
     k = math.clamp(k, LOWER_RANGE, UPPER_RANGE)
 
     return (k - LOWER_RANGE) / (UPPER_RANGE - LOWER_RANGE)
 end
 
-local getValueRangeKelvin = function(v)
+local getValueRangeTemperature = function(v)
     return (v * (UPPER_RANGE - LOWER_RANGE)) + LOWER_RANGE
 end
 
 local valueToText = function(value)
-    return math.floor(getValueRangeKelvin(value))
+    return math.floor(getValueRangeTemperature(value))
 end
 
 local textToValue = function(text)
@@ -44,28 +42,28 @@ local textToValue = function(text)
     if (not n) then return end
     if ((n < LOWER_RANGE) or (n > UPPER_RANGE)) then return end
 
-    return getKelvinRangeValue(n)
+    return getTemperatureRangeValue(n)
 end
 
-local kelvinGradient = ColorSequence.new({
+local temperatureGradient = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.fromTemperature(2000):toColor3()),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.fromTemperature(6000):toColor3()),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.fromTemperature(6500):toColor3()),
-    ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.fromTemperature(7000):toColor3()),
+    ColorSequenceKeypoint.new(getTemperatureRangeValue(2000), Color.fromTemperature(2000):toColor3()),
+    ColorSequenceKeypoint.new(getTemperatureRangeValue(6000), Color.fromTemperature(6000):toColor3()),
+    ColorSequenceKeypoint.new(getTemperatureRangeValue(6500), Color.fromTemperature(6500):toColor3()),
+    ColorSequenceKeypoint.new(getTemperatureRangeValue(7000), Color.fromTemperature(7000):toColor3()),
     ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
 })
 
-local kelvinPresets = {
-    { name = "Match Flame", kelvin = 1700 },
-    { name = "Candlelight", kelvin = 1850 },
-    { name = "Incandescent", kelvin = 2400 },
-    { name = "Soft White Incandescent", kelvin = 2550 },
-    { name = "Soft White", kelvin = 2700 },
-    { name = "Warm White", kelvin = 3000 },
-    { name = "Horizon Daylight", kelvin = 5000 },
-    { name = "Daylight", kelvin = 6500 },
-    { name = "Clear Sky", kelvin = 10000 },
+local temperaturePresets = {
+    { name = "Match Flame", temperature = 1700 },
+    { name = "Candlelight", temperature = 1850 },
+    { name = "Incandescent", temperature = 2400 },
+    { name = "Soft White Incandescent", temperature = 2550 },
+    { name = "Soft White", temperature = 2700 },
+    { name = "Warm White", temperature = 3000 },
+    { name = "Horizon Daylight", temperature = 5000 },
+    { name = "Daylight", temperature = 6500 },
+    { name = "Clear Sky", temperature = 10000 },
 }
 
 ---
@@ -80,55 +78,52 @@ local kelvinPresets = {
         setColor: (Color3) -> nil
 ]]
 
-local KelvinSliderPage = Roact.Component:extend("KelvinSliderPage")
+local TemperatureSliderPage = Roact.PureComponent:extend("TemperatureSliderPage")
 
-KelvinSliderPage.init = function(self, initProps)
-    self.kelvin, self.updateKelvin = Roact.createBinding(getKelvinRangeValue(Color.fromColor3(initProps.color):toTemperature()))
+TemperatureSliderPage.init = function(self, initProps)
+    self:setState({
+        temperature = Color.fromColor3(initProps.color):toTemperature()
+    })
 end
 
-KelvinSliderPage.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = shallowCompare(self.props, nextProps)
-    local stateDiff = shallowCompare(self.state, nextState)
-
-    if (table.find(propsDiff, "color")) then
-        if (nextProps.editor ~= PluginEnums.EditorKey.KelvinSlider) then
-            self.updateKelvin(getKelvinRangeValue(Color.fromColor3(nextProps.color):toTemperature()))
-        end
+TemperatureSliderPage.getDerivedStateFromProps = function(props, state)
+    if (props.editor == EDITOR_KEY) then return end
+    
+    if (state.captureFocus) then
+        return {
+            captureFocus = Roact.None,
+        }
     end
 
-    if (#stateDiff > 0) then return true end
+    local temperature = Color.fromColor3(props.color):toTemperature()
+    if (temperature == state.temperature) then return end
 
-    if (#propsDiff == 1) then
-        return (propsDiff[1] ~= "color")
-    elseif (#propsDiff == 2) then
-        if (
-            ((propsDiff[1] == "color") and (propsDiff[2] == "editor")) or
-            ((propsDiff[1] == "editor") and (propsDiff[2] == "color"))
-        ) then
-            return false
-        else
-            return true
-        end
-    elseif (#propsDiff > 2) then
-        return true
-    end
-
-    return false
+    return {
+        temperature = temperature
+    }
 end
 
-KelvinSliderPage.render = function(self)
+TemperatureSliderPage.render = function(self)
     local theme = self.props.theme
+    local editor = self.props.editor
+    local temperature = self.state.temperature
+
     local presetItems = {}
 
-    for i = 1, #kelvinPresets do
-        local preset = kelvinPresets[i]
+    for i = 1, #temperaturePresets do
+        local preset = temperaturePresets[i]
+        local presetTemperature = preset.temperature
 
         presetItems[i] = {
             name = preset.name,
 
             onActivated = function()
-                self.updateKelvin(getKelvinRangeValue(preset.kelvin))
-                self.props.setColor(Color.fromTemperature(preset.kelvin):toColor3())
+                self:setState({
+                    captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                    temperature = presetTemperature
+                })
+
+                self.props.setColor(Color.fromTemperature(presetTemperature):toColor3())
             end,
 
             [Roact.Children] = {
@@ -139,7 +134,7 @@ KelvinSliderPage.render = function(self)
                     Position = UDim2.new(1, 0, 0.5, 0),
                     Size = UDim2.new(1, 0, 1, 0),
 
-                    Text = preset.kelvin,
+                    Text = preset.temperature,
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextYAlignment = Enum.TextYAlignment.Center,
                 })
@@ -149,19 +144,17 @@ KelvinSliderPage.render = function(self)
 
     return Roact.createFragment({
         Slider = Roact.createElement(Slider, {
-            value = self.kelvin,
+            value = getTemperatureRangeValue(temperature),
             layoutOrder = 0,
 
             sliderLabel = "Temperature",
-            sliderGradient = kelvinGradient,
+            sliderGradient = temperatureGradient,
             unitLabel = "K",
 
-            markerColor = self.kelvin:map(function(k)
-                return Color.fromTemperature(getValueRangeKelvin(k)):bestContrastingColor(
-                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
-                    Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
-                ):toColor3()
-            end),
+            markerColor = Color.fromTemperature(temperature):bestContrastingColor(
+                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
+                Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
+            ):toColor3(),
 
             valueToText = valueToText,
             textToValue = textToValue,
@@ -171,8 +164,14 @@ KelvinSliderPage.render = function(self)
             end,
 
             valueChanged = function(value)
-                self.updateKelvin(value)
-                self.props.setColor(Color.fromTemperature(getValueRangeKelvin(value)):toColor3())
+                local newTemperature = getValueRangeTemperature(value)
+
+                self:setState({
+                    captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                    temperature = newTemperature
+                })
+
+                self.props.setColor(Color.fromTemperature(newTemperature):toColor3())
             end
         }),
 
@@ -238,8 +237,8 @@ end, function(dispatch)
             dispatch({
                 type = PluginEnums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
-                editor = PluginEnums.EditorKey.KelvinSlider
+                editor = EDITOR_KEY
             })
         end
     }
-end)(KelvinSliderPage)
+end)(TemperatureSliderPage)

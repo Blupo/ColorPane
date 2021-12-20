@@ -27,8 +27,7 @@ local StandardUICorner = StandardComponents.UICorner
 
         sliderLabel: string
         unitLabel: string?
-
-        value: Binding -> number
+        value: number
 
         markerColor: Color3?
         sliderGradient: ColorSequence
@@ -86,6 +85,8 @@ end
 
 Slider.render = function(self)
     local theme = self.props.theme
+    local value = self.props.value
+
     local keypointsFrame
 
     if (self.props.keypoints) then
@@ -203,13 +204,10 @@ Slider.render = function(self)
                 
                 Marker = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
+                    Position = UDim2.new(value, 0, 0.5, 0),
                     Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
                     BackgroundTransparency = 0,
                     BorderSizePixel = 1,
-
-                    Position = self.props.value:map(function(value)
-                        return UDim2.new(value, 0, 0.5, 0)
-                    end),
 
                     BackgroundColor3 = self.props.markerColor or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)
                 }, {
@@ -232,9 +230,8 @@ Slider.render = function(self)
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.MinorElementPadding) or 0, 1, 0),
                 TextXAlignment = Enum.TextXAlignment.Center,
-                Text = self.props.value:map(self.props.valueToText),
+                Text = self.props.valueToText(value),
 
-                usesTextBinding = true,
                 selectTextOnFocus = true,
     
                 isTextAValidValue = function(text)
