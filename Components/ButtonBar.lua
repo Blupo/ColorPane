@@ -51,8 +51,6 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         theme: StudioTheme
 ]]
 
-local merge = Util.mergeTable
-
 local buttonTypes = {
     image = "ImageButton",
     text = "TextButton"
@@ -92,7 +90,7 @@ ButtonBar.render = function(self)
     for i = 1, numButtons do
         local buttonInfo = self.props.buttons[i]
 
-        local buttonProps = {
+        local buttonProps: {[any]: any} = {
             Size = self.props.vertical and
                 UDim2.new(1, -2, 1 / numButtons, ((i == 1) or (i == numButtons)) and -1 or 0)
             or UDim2.new(1 / numButtons, ((i == 1) or (i == numButtons)) and -1 or 0, 1, -2),
@@ -144,9 +142,9 @@ ButtonBar.render = function(self)
         end
 
         if (displayType == "image") then
-            buttonProps = merge(buttonProps, getImageButtonProps(buttonInfo.image, displayColor))
+            buttonProps = Util.table.merge(buttonProps, getImageButtonProps(buttonInfo.image, displayColor))
         elseif (displayType == "text") then
-            buttonProps = merge(buttonProps, getTextButtonProps(buttonInfo.name, displayColor))
+            buttonProps = Util.table.merge(buttonProps, getTextButtonProps(buttonInfo.name, displayColor))
         end
 
         buttonElements[buttonInfo.name] = Roact.createElement(buttonTypes[displayType], buttonProps)

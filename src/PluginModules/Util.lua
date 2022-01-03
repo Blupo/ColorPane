@@ -1,26 +1,44 @@
-local copy
-copy = function(t)
-    local tCopy = {}
+--!strict
+
+local noYieldReturnHandler = function(routine: thread, success: boolean, ...: any)
+    if (not success) then
+		error(debug.traceback(routine, (...)))
+	end
+
+	if (coroutine.status(routine) ~= "dead") then
+		error(debug.traceback("callback must not yield"))
+	end
+
+	return ...
+end
+
+---
+
+local Util = {}
+Util.table = {}
+
+Util.table.deepCopy = function(t: {[any]: any}): {[any]: any}
+    local copy: {[any]: any} = {}
 
     for k, v in pairs(t) do
-        tCopy[(type(k) == "table") and copy(k) or k] = (type(v) == "table") and copy(v) or v
+        copy[(type(k) == "table") and Util.table.deepCopy(k) or k] = (type(v) == "table") and Util.table.deepCopy(v) or v
     end
 
-    return tCopy
+    return copy
 end
 
-local dictionaryCount = function(t)
-    local count = 0
+Util.table.numKeys = function(t: {[any]: any}): number
+    local n: number = 0
 
     for _ in pairs(t) do
-        count = count + 1
+        n = n + 1
     end
 
-    return count
+    return n
 end
 
-local mergeTable = function(t, slice)
-    if (dictionaryCount(slice) < 1) then return t end
+Util.table.merge = function(t: {[any]: any}, slice: {[any]: any}): {[any]: any}
+    if (Util.table.numKeys(slice) < 1) then return t end
 
     for key, newValue in pairs(slice) do
         t[key] = newValue or t[key]
@@ -29,17 +47,17 @@ local mergeTable = function(t, slice)
     return t
 end
 
-local shallowCompare = function(t1, t2)
+Util.table.shallowCompare = function(t: {[any]: any}, u: {[any]: any}): {string}
     local diff = {}
 
-    for k, v in pairs(t1) do
-        if (t2[k] ~= v) then
+    for k, v in pairs(t) do
+        if (u[k] ~= v) then
             table.insert(diff, k)
         end
     end
 
-    for k, v in pairs(t2) do
-        if ((not table.find(diff, k)) and (t1[k] ~= v)) then
+    for k, v in pairs(u) do
+        if ((not table.find(diff, k)) and (t[k] ~= v)) then
             table.insert(diff, k)
         end
     end
@@ -47,27 +65,22 @@ local shallowCompare = function(t1, t2)
     return diff
 end
 
-local noYieldReturnHandler = function(routine, success, ...)
-    if (not success) then
-		error(debug.traceback(routine, (...)))
-	end
-
-	if (coroutine.status(routine) ~= "dead") then
-		error(debug.traceback("OnColorChanged must not yield"))
-	end
-
-	return ...
+Util.lerp = function(a: number, b: number, t: number): number
+    return ((1 - t) * a) + (t * b)
 end
 
-local noYield = function(callback, ...)
+Util.inverseLerp = function(a: number, b: number, v: number): number
+    return (v - a) / (b - a)
+end
+
+Util.noYield = function(callback: (...any) -> any, ...: any)
     local routine = coroutine.create(callback)
     
     return noYieldReturnHandler(routine, coroutine.resume(routine, ...))
 end
 
-return {
-    copy = copy,
-    mergeTable = mergeTable,
-    shallowCompare = shallowCompare,
-    noYield = noYield,
-}
+Util.escapeText = function(s: string): string
+    return (string.gsub(s, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
+end
+
+return Util

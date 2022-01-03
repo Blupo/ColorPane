@@ -33,7 +33,6 @@ local EDITOR_ICON_SELECTED_COLOR = Color3.new(1, 1, 1)
 local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
 
 local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
-local shallowCompare = Util.shallowCompare
 
 local getMaxPages = function(width)
     local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
@@ -123,8 +122,8 @@ ColorEditor.init = function(self)
 end
 
 ColorEditor.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = shallowCompare(self.props, nextProps)
-    local stateDiff = shallowCompare(self.state, nextState)
+    local propsDiff = Util.table.shallowCompare(self.props, nextProps)
+    local stateDiff = Util.table.shallowCompare(self.state, nextState)
 
     if (#stateDiff == 1) then
         if (stateDiff[1] == "editorWidth") then
@@ -141,7 +140,7 @@ ColorEditor.shouldUpdate = function(self, nextProps, nextState)
 
     if (#propsDiff == 1) then
         if (propsDiff[1] == "quickPalette") then
-            return (#shallowCompare(self.props.quickPalette, nextProps.quickPalette) > 0)
+            return (#Util.table.shallowCompare(self.props.quickPalette, nextProps.quickPalette) > 0)
         else
             return true
         end

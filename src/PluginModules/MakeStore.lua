@@ -18,16 +18,13 @@ local Rodux = require(includes:FindFirstChild("Rodux"))
 local getNewPaletteName = PaletteUtils.getNewPaletteName
 local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 
-local copy = Util.copy
-local mergeTable = Util.mergeTable
-
 local pluginStore
 
 return function(plugin)
     if (pluginStore) then return pluginStore end
 
-    local userPalettes = copy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
-    local userColorSequences = copy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserColorSequences) or {})
+    local userPalettes = Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
+    local userColorSequences = Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserColorSequences) or {})
 
     for i = 1, #userPalettes do
         local palette = userPalettes[i]
@@ -94,7 +91,7 @@ return function(plugin)
             theme: StudioTheme
         ]]
         [PluginEnums.StoreActionType.SetTheme] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             
             state.theme = action.theme
             return state
@@ -104,9 +101,9 @@ return function(plugin)
             slice: dictionary<any, any>
         ]]
         [PluginEnums.StoreActionType.UpdateSessionData] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
-            mergeTable(state.sessionData, action.slice)
+            Util.table.merge(state.sessionData, action.slice)
             return state
         end,
         
@@ -115,7 +112,7 @@ return function(plugin)
             editor: PluginEnums.EditorKey?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
             state.colorEditor.color = action.color
             state.colorEditor.authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
@@ -127,7 +124,7 @@ return function(plugin)
             color: Color3
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
             local quickPalette = state.colorEditor.quickPalette
             table.insert(quickPalette, 1, action.color)
@@ -140,7 +137,7 @@ return function(plugin)
             name: string?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
             local palettes = state.colorEditor.palettes
 
@@ -167,7 +164,7 @@ return function(plugin)
             local index = action.index
             if (not palettes[index]) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
 
             table.remove(palettes, index)
@@ -185,12 +182,12 @@ return function(plugin)
             local palette = palettes[index]
             if (not palette) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
             palette = palettes[index]
 
             local newPaletteName = getNewPaletteName(palettes, palette.name)
-            local newPalette = copy(palette)
+            local newPalette = Util.table.deepCopy(palette)
             newPalette.name = newPaletteName
             
             table.insert(palettes, newPalette)
@@ -212,7 +209,7 @@ return function(plugin)
             local newPaletteName = getNewPaletteName(palettes, action.newName, index)
             if (newPaletteName == palette.name) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
 
             palettes[index].name = newPaletteName
@@ -234,7 +231,7 @@ return function(plugin)
             local paletteColors = palette.colors
             local newColorName = getNewPaletteColorName(paletteColors, action.newName or "New Color")
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
             palette = palettes[paletteIndex]
             paletteColors = palette.colors
@@ -265,7 +262,7 @@ return function(plugin)
             local color = paletteColors[colorIndex]
             if (not color) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
             palette = palettes[paletteIndex]
 
@@ -295,7 +292,7 @@ return function(plugin)
             local newColorName = getNewPaletteColorName(paletteColors, action.newName, colorIndex)
             if (newColorName == color.name) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
             palette = palettes[paletteIndex]
             paletteColors = palette.colors
@@ -322,7 +319,7 @@ return function(plugin)
             local otherColorIndex = colorIndex + action.offset
             if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             palettes = state.colorEditor.palettes
             palette = palettes[paletteIndex]
             paletteColors = palette.colors
@@ -336,7 +333,7 @@ return function(plugin)
             snap: number
         ]]
         [PluginEnums.StoreActionType.ColorSequenceEditor_SetSnapValue] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
             state.colorSequenceEditor.snap = action.snap
             return state
@@ -347,7 +344,7 @@ return function(plugin)
             color: ColorSequence,
         ]]
         [PluginEnums.StoreActionType.ColorSequenceEditor_AddPaletteColor] = function(state, action)
-            state = copy(state)
+            state = Util.table.deepCopy(state)
 
             local colorSequencePalette = state.colorSequenceEditor.palette
             local newColorName = getNewPaletteColorName(colorSequencePalette, action.name or "New Gradient")
@@ -369,7 +366,7 @@ return function(plugin)
             local index = action.index
             if (not colorSequencePalette[index]) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             colorSequencePalette = state.colorSequenceEditor.palette
 
             table.remove(colorSequencePalette, action.index)
@@ -391,7 +388,7 @@ return function(plugin)
             local newColorName = getNewPaletteColorName(colorSequencePalette, action.newName, index)
             if (newColorName == color.name) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             colorSequencePalette = state.colorSequenceEditor.palette
 
             colorSequencePalette[index].name = newColorName
@@ -411,7 +408,7 @@ return function(plugin)
             local newColorIndex = index + action.offset
             if (not colorSequencePalette[newColorIndex]) then return state end
 
-            state = copy(state)
+            state = Util.table.deepCopy(state)
             colorSequencePalette = state.colorSequenceEditor.palette
 
             colorSequencePalette[newColorIndex], colorSequencePalette[index] = colorSequencePalette[index], colorSequencePalette[newColorIndex]

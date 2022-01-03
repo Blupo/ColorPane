@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -52,20 +53,18 @@ SliderPage.init = function(self, initProps)
         componentDictionary[componentKeys[i]] = components[i]
     end
 
-    -- inverse lerp
     self.componentValueToNormal = function(component, value)
         local componentRanges = self.props.componentRanges[component]
         local min, max = componentRanges[1], componentRanges[2]
 
-        return (value - min) / (max - min)
+        return Util.inverseLerp(min, max, value)
     end
 
-    -- lerp
     self.componentNormalToValue = function(component, normal)
         local componentRanges = self.props.componentRanges[component]
         local min, max = componentRanges[1], componentRanges[2]
 
-        return ((1 - normal) * min) + (normal * max)
+        return Util.lerp(min, max, normal)
     end
 
     self.componentNormalToDisplay = function(component, normal)
@@ -78,7 +77,7 @@ SliderPage.init = function(self, initProps)
         local displayRange = componentDisplayRanges[component]
         local min, max = displayRange[1], displayRange[2]
 
-        return ((1 - normal) * min) + (normal * max)
+        return Util.lerp(min, max, normal)
     end
 
     self.componentNormalToTextFactory = function(component)

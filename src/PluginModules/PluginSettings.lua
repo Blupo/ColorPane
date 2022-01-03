@@ -57,7 +57,7 @@ PluginSettings.GetSavingAbility = function(): boolean
     return canSave
 end
 
-PluginSettings.UpdateSavingAbility = function(force: boolean)
+PluginSettings.UpdateSavingAbility = function(force: boolean?)
     local newCanSave
 
     if (not RunService:IsEdit()) then
@@ -77,6 +77,16 @@ PluginSettings.UpdateSavingAbility = function(force: boolean)
 
     canSave = newCanSave
     PluginSettings.SavingAbilityChanged:Fire(newCanSave)
+end
+
+PluginSettings.Flush = function()
+    PluginSettings.UpdateSavingAbility()
+
+    if (not canSave) then return end
+    if (not settingsModified) then return end
+
+    plugin:SetSetting(SETTINGS_KEY, pluginSettings)
+    settingsModified = false
 end
 
 PluginSettings.Get = function(key)
@@ -112,16 +122,6 @@ PluginSettings.Set = function(key, newValue)
     end
 
     PluginSettings.SettingChanged:Fire(key, newValue)
-end
-
-PluginSettings.Flush = function()
-    PluginSettings.UpdateSavingAbility()
-
-    if (not canSave) then return end
-    if (not settingsModified) then return end
-
-    plugin:SetSetting(SETTINGS_KEY, pluginSettings)
-    settingsModified = false
 end
 
 PluginSettings.GetCachedRobloxAPIData = function()

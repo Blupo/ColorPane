@@ -10,8 +10,6 @@ local Terrain = Workspace.Terrain
 
 ---
 
-local copy = Util.copy
-
 local terrainMaterialColorProperties = {}
 local terrainMaterialColorBehaviours = {}
 local materialEnumItems = Enum.Material:GetEnumItems()
@@ -44,7 +42,7 @@ for _, materialEnumItem in pairs(materialEnumItems) do
     end)
 
     if success then
-        local newPropertyData = copy(propertyDataTemplate)
+        local newPropertyData = Util.table.deepCopy(propertyDataTemplate)
         newPropertyData.Name = materialEnumItem.Name .. " Color"
 
         local newPropertyBehaviour = {

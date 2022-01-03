@@ -21,7 +21,7 @@ local ColorBrewer = BuiltInPalettes.ColorBrewer
 
 ---
 
-local colorSchemes = Util.copy(ColorBrewer)
+local colorSchemes = Util.table.deepCopy(ColorBrewer)
 local buttonBarHeight = Style.StandardButtonSize + Style.StandardTextSize + Style.MinorElementPadding
 
 local dataClasses = {

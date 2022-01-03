@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -123,7 +124,7 @@ Palette.render = function(self)
                 Text = self.state.searchDisplayText,
 
                 onTextChanged = function(newText)
-                    local newSearchTerm = string.lower(string.gsub(newText, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
+                    local newSearchTerm = string.lower(Util.escapeText(newText))
                     local resetSelected
 
                     if (selectedColor) then

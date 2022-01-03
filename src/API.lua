@@ -56,9 +56,6 @@ local unloadingEvent = Signal.new()
 local colorEditingFinishedEvent = Signal.new()
 local colorSequenceEditingFinishedEvent = Signal.new()
 
-local copy = Util.copy
-local noYield = Util.noYield
-
 local isOptionalType = function(value, typeName)
     return ((typeof(value) == typeName) or (typeof(value) == "nil"))
 end
@@ -178,7 +175,7 @@ local internalPromptForColor = function(promptOptions)
         if (newState.colorEditor.color == oldState.colorEditor.color) then return end
 
         if (promptOptions.OnColorChanged) then
-            noYield(promptOptions.OnColorChanged, newState.colorEditor.color)
+            Util.noYield(promptOptions.OnColorChanged, newState.colorEditor.color)
         end
     end)
 
@@ -302,7 +299,7 @@ ColorPane.init = function(pluginObj)
 
     persistentSettingsChanged = colorPaneStore.changed:connect(function(newState, oldState)
         if (newState.colorEditor.lastPaletteModification ~= oldState.colorEditor.lastPaletteModification) then
-            local newPalettes = copy(newState.colorEditor.palettes)
+            local newPalettes = Util.table.deepCopy(newState.colorEditor.palettes)
 
             for i = 1, #newPalettes do
                 local palette = newPalettes[i]
@@ -319,7 +316,7 @@ ColorPane.init = function(pluginObj)
         end
 
         if (newState.colorSequenceEditor.lastPaletteModification ~= oldState.colorSequenceEditor.lastPaletteModification) then
-            local newPalette = copy(newState.colorSequenceEditor.palette)
+            local newPalette = Util.table.deepCopy(newState.colorSequenceEditor.palette)
 
             for i = 1, #newPalette do
                 local color = newPalette[i]

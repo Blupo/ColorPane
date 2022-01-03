@@ -183,7 +183,7 @@ ExportPalette.render = function(self)
                     displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                     onActivated = function()
-                        local palette = Util.copy(palettes[paletteIndex])
+                        local palette = Util.table.deepCopy(palettes[paletteIndex])
                         local colors = palette.colors
 
                         -- convert Color3 to tables

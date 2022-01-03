@@ -29,8 +29,6 @@ local CURSOR_KEYPOINT_SNAP_VALUE = 1/100
 local MIN_SNAP_VALUE = 0.001/100
 local MAX_SNAP_VALUE= 25/100
 
-local noYield = Util.noYield
-
 local round = function(n, power)
     local place = 10 ^ power
 
@@ -166,7 +164,7 @@ ColorSequenceEditor.didUpdate = function(self, _, prevState)
     if (self.state.colorSequence == prevState.colorSequence) then return end
 
     if (self.props.onValueChanged) then
-        noYield(self.props.onValueChanged, self.state.colorSequence)
+        Util.noYield(self.props.onValueChanged, self.state.colorSequence)
     end
 end
 

@@ -22,10 +22,6 @@ local RemovePalette = require(Components:FindFirstChild("RemovePalette"))
 
 ---
 
-local shallowCompare = Util.shallowCompare
-
----
-
 --[[
     store props
 
@@ -53,8 +49,8 @@ PalettePages.init = function(self)
 end
 
 PalettePages.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = shallowCompare(self.props, nextProps)
-    local stateDiff = shallowCompare(self.state, nextState)
+    local propsDiff = Util.table.shallowCompare(self.props, nextProps)
+    local stateDiff = Util.table.shallowCompare(self.state, nextState)
 
     if (#stateDiff > 0) then return true end
 

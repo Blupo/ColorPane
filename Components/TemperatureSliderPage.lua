@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -23,18 +24,8 @@ local EDITOR_KEY = PluginEnums.EditorKey.KelvinSlider
 local LOWER_RANGE = 1000
 local UPPER_RANGE = 10000
 
-local getTemperatureRangeValue = function(k)
-    k = math.clamp(k, LOWER_RANGE, UPPER_RANGE)
-
-    return (k - LOWER_RANGE) / (UPPER_RANGE - LOWER_RANGE)
-end
-
-local getValueRangeTemperature = function(v)
-    return (v * (UPPER_RANGE - LOWER_RANGE)) + LOWER_RANGE
-end
-
 local valueToText = function(value)
-    return math.floor(getValueRangeTemperature(value))
+    return math.floor(Util.lerp(LOWER_RANGE, UPPER_RANGE, value))
 end
 
 local textToValue = function(text)
@@ -42,15 +33,15 @@ local textToValue = function(text)
     if (not n) then return end
     if ((n < LOWER_RANGE) or (n > UPPER_RANGE)) then return end
 
-    return getTemperatureRangeValue(n)
+    return Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, n)
 end
 
 local temperatureGradient = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
-    ColorSequenceKeypoint.new(getTemperatureRangeValue(2000), Color.fromTemperature(2000):toColor3()),
-    ColorSequenceKeypoint.new(getTemperatureRangeValue(6000), Color.fromTemperature(6000):toColor3()),
-    ColorSequenceKeypoint.new(getTemperatureRangeValue(6500), Color.fromTemperature(6500):toColor3()),
-    ColorSequenceKeypoint.new(getTemperatureRangeValue(7000), Color.fromTemperature(7000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 2000), Color.fromTemperature(2000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 6000), Color.fromTemperature(6000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 6500), Color.fromTemperature(6500):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 7000), Color.fromTemperature(7000):toColor3()),
     ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
 })
 
@@ -144,7 +135,7 @@ TemperatureSliderPage.render = function(self)
 
     return Roact.createFragment({
         Slider = Roact.createElement(Slider, {
-            value = getTemperatureRangeValue(temperature),
+            value = Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, temperature),
             layoutOrder = 0,
 
             sliderLabel = "Temperature",
@@ -164,7 +155,7 @@ TemperatureSliderPage.render = function(self)
             end,
 
             valueChanged = function(value)
-                local newTemperature = getValueRangeTemperature(value)
+                local newTemperature = Util.lerp(LOWER_RANGE, UPPER_RANGE, value)
 
                 self:setState({
                     captureFocus = (editor ~= EDITOR_KEY) and true or nil,

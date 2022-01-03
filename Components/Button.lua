@@ -15,8 +15,6 @@ local StandardUICorner = StandardComponents.UICorner
 
 ---
 
-local merge = Util.mergeTable
-
 local buttonTypes = {
     image = "ImageButton",
     text = "TextButton",
@@ -112,7 +110,7 @@ Button.render = function(self)
         )
     end
 
-    local buttonProps = {
+    local buttonProps: {[any]: any} = {
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(1, -2, 1, -2),
@@ -130,13 +128,13 @@ Button.render = function(self)
     }
 
     if (displayType == "image") then
-        buttonProps = merge(buttonProps, getImageButtonProps(self.props.image, displayColor))
+        buttonProps = Util.table.merge(buttonProps, getImageButtonProps(self.props.image, displayColor))
     elseif (displayType == "text") then
-        buttonProps = merge(buttonProps, getTextButtonProps(self.props.text, displayColor))
+        buttonProps = Util.table.merge(buttonProps, getTextButtonProps(self.props.text, displayColor))
     elseif (displayType == "color") then
-        buttonProps = merge(buttonProps, getColorButtonProps(self.props.color))
+        buttonProps = Util.table.merge(buttonProps, getColorButtonProps(self.props.color))
     elseif (displayType == "colorSequence") then
-        buttonProps = merge(buttonProps, colorSequenceButtonProps)
+        buttonProps = Util.table.merge(buttonProps, colorSequenceButtonProps)
     end
 
     if ((not self.props.disabled) and ((displayType == "image") or (displayType == "text"))) then

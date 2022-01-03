@@ -31,14 +31,6 @@ local KEY_CODE_DELTAS = {
     [Enum.KeyCode.Down] = 1,
 }
 
-local shallowCompare = Util.shallowCompare
-
-local getKelvinRangeValue = function(k)
-    k = math.clamp(k, KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE)
-
-    return (k - KELVIN_LOWER_RANGE) / (KELVIN_UPPER_RANGE - KELVIN_LOWER_RANGE)
-end
-
 local builtInSequences = {
     {
         name = "Black to White",
@@ -68,10 +60,10 @@ local builtInSequences = {
 
         color = ColorSequence.new({
             ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(2000), Color.fromTemperature(2000):toColor3()),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(6000), Color.fromTemperature(6000):toColor3()),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(6500), Color.fromTemperature(6500):toColor3()),
-            ColorSequenceKeypoint.new(getKelvinRangeValue(7000), Color.fromTemperature(7000):toColor3()),
+            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 2000), Color.fromTemperature(2000):toColor3()),
+            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 6000), Color.fromTemperature(6000):toColor3()),
+            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 6500), Color.fromTemperature(6500):toColor3()),
+            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 7000), Color.fromTemperature(7000):toColor3()),
             ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
         })
     }
@@ -179,8 +171,8 @@ ColorSequencePalette.init = function(self)
 end
 
 ColorSequencePalette.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = shallowCompare(self.props, nextProps)
-    local stateDiff = shallowCompare(self.state, nextState)
+    local propsDiff = Util.table.shallowCompare(self.props, nextProps)
+    local stateDiff = Util.table.shallowCompare(self.state, nextState)
 
     if (#stateDiff > 0) then return true end
 
@@ -437,7 +429,7 @@ ColorSequencePalette.render = function(self)
             Text = self.state.searchDisplayText,
 
             onTextChanged = function(newText)
-                local newSearchTerm = string.lower(string.gsub(newText, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
+                local newSearchTerm = string.lower(Util.escapeText(newText))
 
                 local selectedColor = colorSequences[selected]
                 local resetSelected

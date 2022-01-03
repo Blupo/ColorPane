@@ -655,7 +655,7 @@ ImportPalette.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                 onActivated = function()
-                    palette = Util.copy(palette)
+                    palette = Util.table.deepCopy(palette)
                     palette.name = newPaletteName
 
                     -- convert tables to colors
