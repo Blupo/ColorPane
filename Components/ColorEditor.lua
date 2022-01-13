@@ -153,6 +153,8 @@ end
 
 ColorEditor.render = function(self)
     local theme = self.props.theme
+    local color = self.props.color
+    local originalColor = self.props.originalColor
     local selectedEditor = self.props.editorPage
 
     local editorPageElements = {}
@@ -208,16 +210,16 @@ ColorEditor.render = function(self)
     end
 
     for i = 1, #self.props.quickPalette do
-        local color = self.props.quickPalette[i]
+        local quickPaletteColor = self.props.quickPalette[i]
 
         quickPaletteElements[i] = Roact.createElement(Button, {
             LayoutOrder = i,
 
             displayType = "color",
-            color = color,
+            color = quickPaletteColor,
 
             onActivated = function()
-                self.props.setColor(color)
+                self.props.setColor(quickPaletteColor)
             end
         })
     end
@@ -246,7 +248,7 @@ ColorEditor.render = function(self)
         image = Style.AddImage,
 
         onActivated = function()
-            self.props.addQuickPaletteColor(self.props.color)
+            self.props.addQuickPaletteColor(color)
         end
     })
 
@@ -346,7 +348,7 @@ ColorEditor.render = function(self)
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
 
-                    BackgroundColor3 = self.props.color,
+                    BackgroundColor3 = color,
                 }),
 
                 OriginalColorIndicator = Roact.createElement("TextButton", {
@@ -360,10 +362,10 @@ ColorEditor.render = function(self)
                     Text = "",
                     TextTransparency = 1,
     
-                    BackgroundColor3 = self.props.originalColor,
+                    BackgroundColor3 = originalColor,
     
                     [Roact.Event.Activated] = function()
-                        self.props.setColor(self.props.originalColor)
+                        self.props.setColor(originalColor)
                     end
                 })
             }),
@@ -400,7 +402,7 @@ ColorEditor.render = function(self)
                 Position = UDim2.new(1, 0, 0.5, 0),
                 Size = UDim2.new(1, -6 - Style.MinorElementPadding, 0, Style.StandardInputHeight),
                 
-                Text = string.upper(Color.fromColor3(self.props.color):toHex()),
+                Text = string.upper(Color.fromColor3(color):toHex()),
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 isTextAValidValue = function(text)

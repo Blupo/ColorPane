@@ -34,7 +34,7 @@ end)
 
 ### Getting Colors
 
-You can obtain colors with the [PromptForColor](../../technical/api-reference/#colorpanepromptforcolor) and [PromptForColorSequence](../../technical/api-reference/#colorpanepromptforcolorsequence) functions. You can also pass options to them (refer to [PromptOptions](../../technical/api-reference/#promptoptions)) to modify the prompt and subscribe to color changes.
+You can obtain colors with the [PromptForColor](../../technical/api-reference/#colorpanepromptforcolor) and [PromptForGradient](../../technical/api-reference/#colorpanepromptforgradient) functions. You can also pass options to them (refer to [PromptOptions](../../technical/api-reference/#promptoption-types)) to modify the prompt and subscribe to color changes.
 
 !!! attention
     You **must** use the dot operator (`.`) when calling functions from the API.

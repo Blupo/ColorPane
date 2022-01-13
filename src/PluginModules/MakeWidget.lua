@@ -15,8 +15,8 @@ local widgetsInfo = {
 		),
 	},
 
-	ColorSequenceEditor = {
-		Id = "ColorPane_CS_Editor",
+	GradientEditor = {
+		Id = "ColorPane_Gradient_Editor",
 		Title = "ColorPane ColorSequence Editor",
 	    Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true,
 			Style.PagePadding + ((Style.EditorPageWidth + Style.MajorElementPadding) * 2) + Style.LargeButtonSize + 2 + Style.PagePadding, 130,
@@ -36,12 +36,21 @@ local widgetsInfo = {
 	    Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.EditorPageWidth, 200, Style.EditorPageWidth, 200),
 	},
 
-	ColorSequencePalette = {
-		Id = "ColorPane_CS_Palette",
-		Title = "ColorPane ColorSequence Palette",
+	GradientPalette = {
+		Id = "ColorPane_Gradient_Palette",
+		Title = "ColorPane Gradient Palette",
 		Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true,
 			Style.PagePadding + 230, (Style.PagePadding * 2) + Style.StandardInputHeight + Style.MinorElementPadding + (((Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)) * 6) + 2,
 			Style.PagePadding + 230, (Style.PagePadding * 2) + Style.StandardInputHeight + Style.MinorElementPadding + (((Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)) * 6) + 2
+		),
+	},
+
+    GradientInfo = {
+		Id = "ColorPane_Gradient_Info",
+		Title = "ColorPane Gradient Info",
+		Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true,
+			Style.PagePadding + 230, (Style.PagePadding * 2) + (Style.StandardTextSize * 3) + (Style.StandardButtonSize * 5) + Style.StandardInputHeight + (Style.MinorElementPadding * 6) + (Style.SpaciousElementPadding * 2),
+			Style.PagePadding + 230, (Style.PagePadding * 2) + (Style.StandardTextSize * 3) + (Style.StandardButtonSize * 5) + Style.StandardInputHeight + (Style.MinorElementPadding * 6) + (Style.SpaciousElementPadding * 2)
 		),
 	},
 }

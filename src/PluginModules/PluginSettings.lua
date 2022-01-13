@@ -30,7 +30,7 @@ local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AutoSave] = true,
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = 5,
     [PluginEnums.PluginSettingKey.CacheAPIData] = false,
-    [PluginEnums.PluginSettingKey.UserColorSequences] = {},
+    [PluginEnums.PluginSettingKey.UserGradients] = {},
     [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
 
@@ -170,6 +170,8 @@ PluginSettings.init = function(initPlugin)
 
     do
         -- Migrate old settings (before v0.2)
+        -- TODO: Remove for v1.0
+
         local oldPalettes, oldSnap = PluginSettings.Get("palettes"), PluginSettings.Get("snap")
     
         if (oldPalettes) then
@@ -183,6 +185,36 @@ PluginSettings.init = function(initPlugin)
         end
     
         if (oldPalettes or oldSnap) then
+            PluginSettings.Flush()
+        end
+    end
+
+    do
+        -- Migrate old gradient palette (before v0.4)
+        -- TODO: Remove for v1.0
+
+        local oldGradientPalette = PluginSettings.Get(PluginEnums.PluginSettingKey.UserColorSequences)
+
+        if (oldGradientPalette) then
+            for i = 1, #oldGradientPalette do
+                local gradient = oldGradientPalette[i]
+                local keypoints = gradient.color
+
+                for j = 1, #keypoints do
+                    local keypoint = keypoints[j]
+                    
+                    keypoints[j] = {
+                        Time = keypoint[1],
+                        Color = keypoint[2]
+                    }
+                end
+
+                gradient.keypoints = keypoints
+                gradient.color = nil
+            end
+
+            PluginSettings.Set(PluginEnums.PluginSettingKey.UserGradients, oldGradientPalette)
+            PluginSettings.Set(PluginEnums.PluginSettingKey.UserColorSequences, nil)
             PluginSettings.Flush()
         end
     end

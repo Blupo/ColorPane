@@ -1,13 +1,14 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
+local ColorLib = require(includes:FindFirstChild("Color"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -21,92 +22,99 @@ local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout
 local StandardUIPadding = StandardComponents.UIPadding
 
----
+local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 
-local KELVIN_LOWER_RANGE = 1000
-local KELVIN_UPPER_RANGE = 10000
+---
 
 local KEY_CODE_DELTAS = {
     [Enum.KeyCode.Up] = -1,
     [Enum.KeyCode.Down] = 1,
 }
 
-local builtInSequences = {
+local builtInGradients = {
     {
         name = "Black to White",
 
-        color = ColorSequence.new(
-            Color3.new(0, 0, 0),
-            Color3.new(1, 1, 1)
-        )
+        keypoints = {
+            { Time = 0, Color = Color.new(0, 0, 0) },
+            { Time = 1, Color = Color.new(1, 1, 1) }
+        }
     },
 
     {
         name = "Hue",
+        colorSpace = "HSB",
 
-        color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 1, 1)),
-            ColorSequenceKeypoint.new(1/6, Color3.fromHSV(1/6, 1, 1)),
-            ColorSequenceKeypoint.new(2/6, Color3.fromHSV(2/6, 1, 1)),
-            ColorSequenceKeypoint.new(3/6, Color3.fromHSV(3/6, 1, 1)),
-            ColorSequenceKeypoint.new(4/6, Color3.fromHSV(4/6, 1, 1)),
-            ColorSequenceKeypoint.new(5/6, Color3.fromHSV(5/6, 1, 1)),
-            ColorSequenceKeypoint.new(1, Color3.fromHSV(1, 1, 1))
-        })
+        keypoints = {
+            { Time = 0, Color = Color.fromHSB(0, 1, 1) },
+            { Time = 1/6, Color = Color.fromHSB(60, 1, 1) },
+            { Time = 2/6, Color = Color.fromHSB(120, 1, 1) },
+            { Time = 3/6, Color = Color.fromHSB(180, 1, 1) },
+            { Time = 4/6, Color = Color.fromHSB(240, 1, 1) },
+            { Time = 5/6, Color = Color.fromHSB(300, 1, 1) },
+            { Time = 1, Color = Color.fromHSB(360, 1, 1) }
+        }
     },
 
     {
         name = "Temperature",
 
-        color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
-            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 2000), Color.fromTemperature(2000):toColor3()),
-            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 6000), Color.fromTemperature(6000):toColor3()),
-            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 6500), Color.fromTemperature(6500):toColor3()),
-            ColorSequenceKeypoint.new(Util.inverseLerp(KELVIN_LOWER_RANGE, KELVIN_UPPER_RANGE, 7000), Color.fromTemperature(7000):toColor3()),
-            ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
-        })
+        keypoints = {
+            { Time = 0, Color = Color.fromTemperature(1000) },
+            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 2000), Color = Color.fromTemperature(2000) },
+            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6000), Color = Color.fromTemperature(6000) },
+            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6500), Color = Color.fromTemperature(6500) },
+            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 7000), Color = Color.fromTemperature(7000) },
+            { Time = 1, Color = Color.fromTemperature(10000) },
+        }
     }
 }
 
-local numBuiltInSequences = #builtInSequences
+local numBuiltInGradients = #builtInGradients
 
 ---
 
 --[[
     props
 
-        getCurrentColorSequence: () -> ColorSequence
-        setCurrentColorSequence: (ColorSequence) -> nil
+        beforeSetGradient: () -> nil
 
     store props
 
         theme: StudioTheme
-        colorSequences: array<ColorSequence>
+
+        keypoints: array<GradientKeypoint>
+        colorSpace: string
+        hueAdjustment: string
+        precision: number
+
+        gradients: array<array<GradientKeypoint>>
         lastPaletteModification: number
 
-        addPaletteColor: (ColorSequence) -> nil
+        addPaletteColor: (array<GradientKeypoint>) -> nil
         removePaletteColor: (number) -> nil
         changePaletteColorName: (number, string) -> nil
         changePaletteColorPosition: (number, number) -> nil
+
+        setGradient: (array<GradientKeypoint>, string, string, number) -> nil
 ]]
 
-local ColorSequencePalette = Roact.Component:extend("ColorSequencePalette")
+local GradientPalette = Roact.Component:extend("GradientPalette")
 
-ColorSequencePalette.init = function(self)
+GradientPalette.init = function(self)
     self.listLength, self.updateListLength = Roact.createBinding(0)
     self.keyInputRepeaters = {}
 
-    self.combinePaletteItems = function()
+    self.getCombinedPalette = function()
         local combinedPalette = {}
-        local userColorSequences = self.props.colorSequences
+        local userGradients = self.props.gradients
 
-        for i = 1, numBuiltInSequences do
-            table.insert(combinedPalette, builtInSequences[i])
+        for i = 1, numBuiltInGradients do
+            table.insert(combinedPalette, builtInGradients[i])
         end
-    
-        for i = 1, #userColorSequences do
-            table.insert(combinedPalette, userColorSequences[i])
+
+        for i = 1, #userGradients do
+            table.insert(combinedPalette, userGradients[i])
         end
 
         return combinedPalette
@@ -121,12 +129,12 @@ ColorSequencePalette.init = function(self)
             local searchTerm = self.state.searchTerm
 
             if (searchTerm) then
-                local colorSequences = self.combinePaletteItems()
+                local gradients = self.combinePaletteItems()
                 local paletteColorsSlice = {}
                 local paletteColorsSliceToWholeMap = {} --> slice index to palette index
 
-                for i = 1, #colorSequences do
-                    local color = colorSequences[i]
+                for i = 1, #gradients do
+                    local color = gradients[i]
                     local include = true
             
                     if (searchTerm) then
@@ -155,7 +163,7 @@ ColorSequencePalette.init = function(self)
                 nextSelected = selected + delta
             end
 
-            if ((nextSelected < 1) or (nextSelected > (numBuiltInSequences + #self.props.colorSequences))) then return end
+            if ((nextSelected < 1) or (nextSelected > (numBuiltInGradients + #self.props.gradients))) then return end
 
             self:setState({
                 selected = nextSelected
@@ -170,7 +178,7 @@ ColorSequencePalette.init = function(self)
     })
 end
 
-ColorSequencePalette.shouldUpdate = function(self, nextProps, nextState)
+GradientPalette.shouldUpdate = function(self, nextProps, nextState)
     local propsDiff = Util.table.shallowCompare(self.props, nextProps)
     local stateDiff = Util.table.shallowCompare(self.state, nextState)
 
@@ -186,7 +194,7 @@ ColorSequencePalette.shouldUpdate = function(self, nextProps, nextState)
     return false
 end
 
-ColorSequencePalette.willUnmount = function(self)
+GradientPalette.willUnmount = function(self)
     for _, repeater in pairs(self.keyInputRepeaters) do
         repeater:destroy()
     end
@@ -194,11 +202,11 @@ ColorSequencePalette.willUnmount = function(self)
     self.keyInputRepeaters = nil
 end
 
-ColorSequencePalette.render = function(self)
+GradientPalette.render = function(self)
     local theme = self.props.theme
     local selected = self.state.selected
 
-    local colorSequences = self.combinePaletteItems()
+    local gradients = self.getCombinedPalette()
     local listElements = {}
 
     local searchTerm = self.state.searchTerm
@@ -207,8 +215,8 @@ ColorSequencePalette.render = function(self)
     local paletteColorsSliceToWholeMap = {} --> slice index to palette index
     local paletteColorsWholeToSliceMap = {} --> palette index to slice index
 
-    for i = 1, #colorSequences do
-        local color = colorSequences[i]
+    for i = 1, #gradients do
+        local color = gradients[i]
         local include = true
 
         if (searchTerm) then
@@ -238,11 +246,11 @@ ColorSequencePalette.render = function(self)
         end
     end
 
-    for i, color in pairs(searchTerm and paletteColorsSliceArray or paletteColorsSlice) do
+    for i, gradient in pairs(searchTerm and paletteColorsSliceArray or paletteColorsSlice) do
         local wholeIndex = searchTerm and paletteColorsSliceToWholeMap[i] or i
-        local isReadOnly = (wholeIndex <= numBuiltInSequences)
+        local isReadOnly = (wholeIndex <= numBuiltInGradients)
         local isSelected = (selected == wholeIndex)
-        local realIndex = wholeIndex - numBuiltInSequences
+        local realIndex = wholeIndex - numBuiltInGradients
 
         local listItemHeight
 
@@ -293,10 +301,25 @@ ColorSequencePalette.render = function(self)
                 Size = UDim2.new(0, Style.ColorSequencePreviewWidth, 0, Style.StandardButtonSize),
 
                 displayType = "colorSequence",
-                color = color.color,
+
+                color = Gradient.new(
+                    Util.generateFullKeypointList(
+                        gradient.keypoints,
+                        gradient.colorSpace or "RGB",
+                        gradient.hueAdjustment or "Shorter",
+                        gradient.precision or 0
+                    )
+                ):colorSequence(),
 
                 onActivated = function()
-                    self.props.setCurrentColorSequence(color.color)
+                    self.props.beforeSetGradient()
+
+                    self.props.setGradient(
+                        Util.table.deepCopyPreserveColors(gradient.keypoints),
+                        gradient.colorSpace or "RGB",
+                        gradient.hueAdjustment or "Shorter",
+                        gradient.precision or 0
+                    )
 
                     self:setState({
                         selected = wholeIndex
@@ -310,7 +333,7 @@ ColorSequencePalette.render = function(self)
                     Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.MinorElementPadding, 0, 0),
                     Size = UDim2.new(1, -(Style.ColorSequencePreviewWidth + Style.MinorElementPadding), 0, Style.StandardButtonSize),
 
-                    Text = color.name,
+                    Text = gradient.name,
                     TextXAlignment = Enum.TextXAlignment.Left,
 
                     onSubmit = function(newText)
@@ -324,7 +347,7 @@ ColorSequencePalette.render = function(self)
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1, 0, 0),
                     Size = UDim2.new(1, -(Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1), 1, 0),
-                    Text = color.name,
+                    Text = gradient.name,
 
                     TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
                 }),
@@ -367,7 +390,7 @@ ColorSequencePalette.render = function(self)
             
                             displayType = "image",
                             image = Style.PaletteColorMoveUpImage,
-                            disabled = (selected == (numBuiltInSequences + 1)),
+                            disabled = (selected == (numBuiltInGradients + 1)),
                                     
                             onActivated = function()
                                 self:setState({
@@ -385,7 +408,7 @@ ColorSequencePalette.render = function(self)
             
                             displayType = "image",
                             image = Style.PaletteColorMoveDownImage,
-                            disabled = (selected == #colorSequences),
+                            disabled = (selected == #gradients),
 
                             onActivated = function()
                                 self:setState({
@@ -431,7 +454,7 @@ ColorSequencePalette.render = function(self)
             onTextChanged = function(newText)
                 local newSearchTerm = string.lower(Util.escapeText(newText))
 
-                local selectedColor = colorSequences[selected]
+                local selectedColor = gradients[selected]
                 local resetSelected
 
                 if (selectedColor) then
@@ -462,13 +485,13 @@ ColorSequencePalette.render = function(self)
 
             onActivated = function()
                 self:setState({
-                    selected = #colorSequences + 1,
+                    selected = #gradients + 1,
 
                     searchDisplayText = "",
                     searchTerm = Roact.None,
                 })
 
-                self.props.addPaletteColor(self.props.getCurrentColorSequence())
+                self.props.addPaletteColor(self.props.keypoints, self.props.colorSpace, self.props.hueAdjustment, self.props.precision)
             end,
         }),
 
@@ -514,28 +537,48 @@ return RoactRodux.connect(function(state)
     return {
         theme = state.theme,
 
-        colorSequences = state.colorSequenceEditor.palette,
-        lastPaletteModification = state.colorSequenceEditor.lastPaletteModification,
+        keypoints = state.gradientEditor.keypoints,
+        colorSpace = state.gradientEditor.colorSpace,
+        hueAdjustment = state.gradientEditor.hueAdjustment,
+        precision = state.gradientEditor.precision,
+
+        gradients = state.gradientEditor.palette,
+        lastPaletteModification = state.gradientEditor.lastPaletteModification,
     }
 end, function(dispatch)
     return {
-        addPaletteColor = function(color)
+        setGradient = function(keypoints, colorSpace, hueAdjustment, precision)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorSequenceEditor_AddPaletteColor,
-                color = color,
+                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+
+                keypoints = keypoints,
+                colorSpace = colorSpace,
+                hueAdjustment = hueAdjustment,
+                precision = precision,
+            })
+        end,
+
+        addPaletteColor = function(keypoints, colorSpace, hueAdjustment, precision)
+            dispatch({
+                type = PluginEnums.StoreActionType.GradientEditor_AddPaletteColor,
+
+                keypoints = keypoints,
+                colorSpace = colorSpace,
+                hueAdjustment = hueAdjustment,
+                precision = precision,
             })
         end,
 
         removePaletteColor = function(index)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorSequenceEditor_RemovePaletteColor,
+                type = PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor,
                 index = index,
             })
         end,
 
         changePaletteColorName = function(index, newColorName)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorSequenceEditor_ChangePaletteColorName,
+                type = PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName,
                 index = index,
                 newName = newColorName
             })
@@ -543,10 +586,10 @@ end, function(dispatch)
 
         changePaletteColorPosition = function(index, positionOffset)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorSequenceEditor_ChangePaletteColorPosition,
+                type = PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition,
                 index = index,
                 offset = positionOffset,
             })
         end
     }
-end)(ColorSequencePalette)
+end)(GradientPalette)

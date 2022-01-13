@@ -11,7 +11,8 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorSequencePaletteWidget = require(PluginModules:FindFirstChild("ColorSequencePaletteWidget"))
+local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
+local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
@@ -27,7 +28,8 @@ local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
 local Settings = require(Components:FindFirstChild("Settings"))
 
 PluginSettings.init(plugin) -- priority
-ColorSequencePaletteWidget.init(plugin)
+GradientInfoWidget.init(plugin)
+GradientPaletteWidget.init(plugin)
 RepeatingCallback.init(plugin)
 SelectionManager.init(plugin)
 
@@ -170,7 +172,7 @@ csEditorButton.Click:Connect(function()
         return
     end
 
-    csEditPromise = ColorPane.PromptForColorSequence()
+    csEditPromise = ColorPane.PromptForGradient()
     csEditorButton:SetActive(true)
 
     csEditPromise:finally(function()

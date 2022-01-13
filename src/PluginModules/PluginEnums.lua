@@ -35,11 +35,14 @@ return setmetatable({
         "ColorEditor_ChangePaletteColorName",
         "ColorEditor_ChangePaletteColorPosition",
 
-        "ColorSequenceEditor_SetSnapValue",
-        "ColorSequenceEditor_AddPaletteColor",
-        "ColorSequenceEditor_RemovePaletteColor",
-        "ColorSequenceEditor_ChangePaletteColorName",
-        "ColorSequenceEditor_ChangePaletteColorPosition",
+        "GradientEditor_ResetState",
+        "GradientEditor_SetKeypoints",
+        "GradientEditor_SetGradient",
+        "GradientEditor_SetSnapValue",
+        "GradientEditor_AddPaletteColor",
+        "GradientEditor_RemovePaletteColor",
+        "GradientEditor_ChangePaletteColorName",
+        "GradientEditor_ChangePaletteColorPosition",
     }),
 
     PluginSettingKey = makeEnum("PluginEnums.PluginSettingKey", {
@@ -52,8 +55,11 @@ return setmetatable({
         "AutoSave",
         "AutoSaveInterval",
         "CacheAPIData",
+        "UserGradients",
+        "ColorPropertiesLivePreview",
+        
+        -- DEPRECATED
         "UserColorSequences",
-        "ColorPropertiesLivePreview"
     }),
 
     EditorKey = makeEnum("PluginEnums.EditorKey", {

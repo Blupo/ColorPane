@@ -307,20 +307,33 @@ ColorPropertiesList.render = function(self)
         local valueType = propertyData.ValueType.Name
         local isColorSequence = (valueType == "ColorSequence")
 
-        local editColorPromptOptions = {
-            PromptTitle = propertyClassName .. "." .. propertyName,
+        local editValuePromptOptions
+        local promptTitle = propertyClassName .. "." .. propertyName
 
-            OnColorChanged = function(intermediateColor)
-                if (not self.state.livePreview) then return end
+        local onValueChanged = function(intermediateColor)
+            if (not self.state.livePreview) then return end
 
-                local transformedColor = isColorSequence and intermediateColor or fromColor3(intermediateColor, valueType)
-                local newCommonColorValues = self.selectionPropertyValues:getValue()
+            local transformedColor = isColorSequence and intermediateColor or fromColor3(intermediateColor, valueType)
+            local newCommonColorValues = self.selectionPropertyValues:getValue()
 
-                newCommonColorValues[propertyClassName][propertyName] = transformedColor
-                self.updateSelectionPropertyValues(newCommonColorValues)
-                SelectionManager.ApplyColorProperty(propertyClassName, propertyName, transformedColor, false)
-            end
-        }
+            newCommonColorValues[propertyClassName][propertyName] = transformedColor
+            self.updateSelectionPropertyValues(newCommonColorValues)
+            SelectionManager.ApplyColorProperty(propertyClassName, propertyName, transformedColor, false)
+        end
+
+        if (isColorSequence) then
+            editValuePromptOptions = {
+                PromptTitle = promptTitle,
+                OnGradientChanged = onValueChanged,
+                GradientType = "ColorSequence",
+            }
+        else
+            editValuePromptOptions = {
+                PromptTitle = promptTitle,
+                OnColorChanged = onValueChanged,
+                ColorType = "Color3",
+            }
+        end
 
         listElements[compositeName] = Roact.createElement(PropertyListItem, {
             Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
@@ -352,18 +365,18 @@ ColorPropertiesList.render = function(self)
                 end
 
                 local propertyValues = self.selectionPropertyValues:getValue()
-                local initialColor = propertyValues[propertyClassName] and propertyValues[propertyClassName][propertyName] or nil
+                local initialValue = propertyValues[propertyClassName] and propertyValues[propertyClassName][propertyName] or nil
 
                 if (isColorSequence) then
-                    editColorPromptOptions.InitialColor = initialColor
+                    editValuePromptOptions.InitialGradient = initialValue
                 else
-                    editColorPromptOptions.InitialColor = initialColor and toColor3(initialColor, valueType) or nil
+                    editValuePromptOptions.InitialColor = initialValue and toColor3(initialValue, valueType) or nil
                 end
 
                 local editColorPromise = isColorSequence and
-                    ColorPane.PromptForColorSequence(editColorPromptOptions)
+                    ColorPane.PromptForGradient(editValuePromptOptions)
                 or
-                    ColorPane.PromptForColor(editColorPromptOptions)
+                    ColorPane.PromptForColor(editValuePromptOptions)
                 
                 editColorPromise:andThen(function(newColor)
                     SelectionManager.ApplyColorProperty(propertyClassName, propertyName, 

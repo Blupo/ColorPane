@@ -1,5 +1,16 @@
 --!strict
 
+local root = script.Parent.Parent
+local includes = root:FindFirstChild("includes")
+
+local ColorLib = require(includes:FindFirstChild("Color"))
+local Color = ColorLib.Color
+
+---
+
+type Color = ColorLib.Color
+type GradientKeypoint = ColorLib.GradientKeypoint
+
 local noYieldReturnHandler = function(routine: thread, success: boolean, ...: any)
     if (not success) then
 		error(debug.traceback(routine, (...)))
@@ -21,7 +32,29 @@ Util.table.deepCopy = function(t: {[any]: any}): {[any]: any}
     local copy: {[any]: any} = {}
 
     for k, v in pairs(t) do
-        copy[(type(k) == "table") and Util.table.deepCopy(k) or k] = (type(v) == "table") and Util.table.deepCopy(v) or v
+        local newK = (type(k) == "table") and Util.table.deepCopy(k) or k
+        local newV = (type(v) == "table") and Util.table.deepCopy(v) or v
+
+        copy[newK] = newV
+    end
+
+    return copy
+end
+
+Util.table.deepCopyPreserveColors = function(t: {[any]: any}): {[any]: any}
+    local copy: {[any]: any} = {}
+
+    for k, v in pairs(t) do
+        local newK = (type(k) == "table") and Util.table.deepCopyPreserveColors(k) or k
+        local newV
+
+        if ((type(v) == "table") and (not Color.isAColor(v))) then
+            newV = Util.table.deepCopyPreserveColors(v)
+        else
+            newV = v
+        end
+
+        copy[newK] = newV
     end
 
     return copy
@@ -41,7 +74,15 @@ Util.table.merge = function(t: {[any]: any}, slice: {[any]: any}): {[any]: any}
     if (Util.table.numKeys(slice) < 1) then return t end
 
     for key, newValue in pairs(slice) do
-        t[key] = newValue or t[key]
+        local value
+
+        if (newValue ~= nil) then
+            value = newValue
+        else
+            value = t[key]
+        end
+
+        t[key] = value
     end
 
     return t
@@ -73,6 +114,12 @@ Util.inverseLerp = function(a: number, b: number, v: number): number
     return (v - a) / (b - a)
 end
 
+Util.round = function(n: number, optionalE: number?): number
+    local e: number = optionalE or 0
+
+    return math.floor((n / 10^e) + 0.5) * 10^e
+end
+
 Util.noYield = function(callback: (...any) -> any, ...: any)
     local routine = coroutine.create(callback)
     
@@ -82,5 +129,41 @@ end
 Util.escapeText = function(s: string): string
     return (string.gsub(s, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
 end
+
+Util.getMaxUserKeypoints = function(maxKeypoints: number, precision: number): number
+    return math.floor(((maxKeypoints - 1) / (precision + 1)) + 1)
+end
+
+Util.getUtilisedKeypoints = function(keypoints: number, precision: number): number
+    return (precision * (keypoints - 1)) + keypoints
+end
+
+Util.generateFullKeypointList = function(keypoints: {GradientKeypoint}, colorSpace: string?, hueAdjustment: string?, precision: number): {GradientKeypoint}
+    local fullKeypoints: {GradientKeypoint} = {}
+
+    for i = 1, (#keypoints - 1) do
+        local thisKeypoint: GradientKeypoint = keypoints[i]
+        local nextKeypoint: GradientKeypoint = keypoints[i + 1]
+
+        table.insert(fullKeypoints, thisKeypoint)
+
+        for j = 1, precision do
+            local t: number = (j + 1) / (precision + 2)
+
+            local newKeypointTime: number = Util.lerp(thisKeypoint.Time, nextKeypoint.Time, t)
+            local newKeypointColor: Color = thisKeypoint.Color:mix(nextKeypoint.Color, t, colorSpace, hueAdjustment)
+
+            table.insert(fullKeypoints, {
+                Time = newKeypointTime,
+                Color = newKeypointColor
+            })
+        end
+    end
+
+    table.insert(fullKeypoints, keypoints[#keypoints])
+    return fullKeypoints
+end
+
+---
 
 return Util

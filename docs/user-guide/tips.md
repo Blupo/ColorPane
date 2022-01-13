@@ -2,7 +2,7 @@
 
 ### Page Pickers
 
-- On the Slider and Palette sections, you can use the scroll wheel on the dropdown to quickly switch between pages.
+- On the Slider and Palette sections, you can use the scroll wheel on the dropdown button to quickly switch between pages.
 
 ### Palettes
 
@@ -13,7 +13,7 @@
 ## Gradient Editor
 
 - If you have a keypoint selected, you can use the left and right arrow keys to select a different keypoint.
-- You can right-click on a keypoint to delete it instead of having to use the dedicated delete button.
+- You can right-click on a keypoint to delete it instead of having to use the delete button.
 
 ## Resetting Session Locks
 

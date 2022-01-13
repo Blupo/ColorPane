@@ -9,7 +9,7 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
-local ColorSequencePalette = require(Components:FindFirstChild("ColorSequencePalette"))
+local GradientInfo = require(Components:FindFirstChild("GradientInfo"))
 
 ---
 
@@ -21,48 +21,45 @@ local widgetEnabledChanged
 
 ---
 
-local ColorSequencePaletteWidget = {}
+local GradientInfoWidget = {}
 
-ColorSequencePaletteWidget.IsOpen = function()
+GradientInfoWidget.IsOpen = function()
     return (tree and true or false)
 end
 
-ColorSequencePaletteWidget.Open = function(getCurrentColorSequence, setCurrentColorSequence)
+GradientInfoWidget.Open = function()
     if (tree) then return end
 
     tree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
         store = colorPaneStore,
     }, {
-        App = Roact.createElement(ColorSequencePalette, {
-            getCurrentColorSequence = getCurrentColorSequence,
-            setCurrentColorSequence = setCurrentColorSequence,
-        })
+        App = Roact.createElement(GradientInfo)
     }), widget)
 
-    widget.Title = "Gradients"
+    widget.Title = "Gradient Info"
     widget.Enabled = true
 end
 
-ColorSequencePaletteWidget.Close = function()
+GradientInfoWidget.Close = function()
     if (not tree) then return end
 
     Roact.unmount(tree)
     tree = nil
     widget.Enabled = false
-    widget.Title = "ColorPane ColorSequence Palette"
+    widget.Title = "ColorPane Gradient Info"
 end
 
-ColorSequencePaletteWidget.init = function(plugin)
-    ColorSequencePaletteWidget.init = nil
+GradientInfoWidget.init = function(plugin)
+    GradientInfoWidget.init = nil
 
     colorPaneStore = MakeStore(plugin)
-    widget = MakeWidget(plugin, "ColorSequencePalette")
+    widget = MakeWidget(plugin, "GradientInfo")
 
     widgetEnabledChanged = widget:GetPropertyChangedSignal("Enabled"):Connect(function()
         if (widget.Enabled and (not tree)) then
             widget.Enabled = false
         elseif ((not widget.Enabled) and tree) then
-            ColorSequencePaletteWidget.Close()
+            GradientInfoWidget.Close()
         end
     end)
 
@@ -71,4 +68,4 @@ ColorSequencePaletteWidget.init = function(plugin)
     end)
 end
 
-return ColorSequencePaletteWidget
+return GradientInfoWidget

@@ -24,6 +24,7 @@ local StandardUIPadding = StandardComponents.UIPadding
         AnchorPoint?
         Position?
         Size?
+        LayoutOrder?
         
         Text
         PlaceholderText?
@@ -157,6 +158,7 @@ TextInput.render = function(self)
         Size = self.props.Size,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,
+        LayoutOrder = self.props.LayoutOrder,
 
         BackgroundColor3 = borderColor,
 

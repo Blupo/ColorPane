@@ -1,9 +1,18 @@
 ## [Unreleased]
 
-## [0.4.0]
+### Added
+- Added `API.GetVersion` which allows external applications to check which version of the plugin is installed
+- Added `API.PromptForGradient` as a replacement for `API.PromptForColorSequence`, which can prompt for either [Gradients](https://blupo.github.io/Color/api/gradient/) or [ColorSequences](https://developer.roblox.com/api-reference/datatype/ColorSequence)
+- Added color interpolation controls to the Gradient Editor
+- Added ColorSequence code exporting to the Gradient Editor
 
 ### Changed
-- The plugin now uses the dedicated [Color](https://github.com/Blupo/Color) module for color calculations, which may result in slightly different color representations
+- `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)
+- Improved keypoint dragging behaviour in the Gradient Editor
+
+### Deprecated
+- `API.PromptForColorSequence` has been deprecated, please use `API.PromptForGradient` for new work
+- `API.IsColorSequenceEditorOpen` has been deprecated, please use `API.IsGradientEditorOpen` for new work
 
 ## [0.3.1] - 2021-12-09
 

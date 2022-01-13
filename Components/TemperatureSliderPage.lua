@@ -1,6 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -21,27 +22,25 @@ local StandardUIPadding = StandardComponents.UIPadding
 ---
 
 local EDITOR_KEY = PluginEnums.EditorKey.KelvinSlider
-local LOWER_RANGE = 1000
-local UPPER_RANGE = 10000
 
 local valueToText = function(value)
-    return math.floor(Util.lerp(LOWER_RANGE, UPPER_RANGE, value))
+    return math.floor(Util.lerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, value))
 end
 
 local textToValue = function(text)
     local n = tonumber(text)
     if (not n) then return end
-    if ((n < LOWER_RANGE) or (n > UPPER_RANGE)) then return end
+    if ((n < Constants.KELVIN_LOWER_RANGE) or (n > Constants.KELVIN_UPPER_RANGE)) then return end
 
-    return Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, n)
+    return Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, n)
 end
 
 local temperatureGradient = ColorSequence.new({
     ColorSequenceKeypoint.new(0, Color.fromTemperature(1000):toColor3()),
-    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 2000), Color.fromTemperature(2000):toColor3()),
-    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 6000), Color.fromTemperature(6000):toColor3()),
-    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 6500), Color.fromTemperature(6500):toColor3()),
-    ColorSequenceKeypoint.new(Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, 7000), Color.fromTemperature(7000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 2000), Color.fromTemperature(2000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6000), Color.fromTemperature(6000):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6500), Color.fromTemperature(6500):toColor3()),
+    ColorSequenceKeypoint.new(Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 7000), Color.fromTemperature(7000):toColor3()),
     ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
 })
 
@@ -135,7 +134,7 @@ TemperatureSliderPage.render = function(self)
 
     return Roact.createFragment({
         Slider = Roact.createElement(Slider, {
-            value = Util.inverseLerp(LOWER_RANGE, UPPER_RANGE, temperature),
+            value = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, temperature),
             layoutOrder = 0,
 
             sliderLabel = "Temperature",
@@ -155,7 +154,7 @@ TemperatureSliderPage.render = function(self)
             end,
 
             valueChanged = function(value)
-                local newTemperature = Util.lerp(LOWER_RANGE, UPPER_RANGE, value)
+                local newTemperature = Util.lerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, value)
 
                 self:setState({
                     captureFocus = (editor ~= EDITOR_KEY) and true or nil,
@@ -170,7 +169,7 @@ TemperatureSliderPage.render = function(self)
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 40),
             Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
-            Text = LOWER_RANGE,
+            Text = Constants.KELVIN_LOWER_RANGE,
         }),
 
         ScaleUpperLimitLabel = Roact.createElement(StandardTextLabel, {
@@ -178,7 +177,7 @@ TemperatureSliderPage.render = function(self)
             Position = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, 40),
             Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
 
-            Text = UPPER_RANGE,
+            Text = Constants.KELVIN_UPPER_RANGE,
             TextXAlignment = Enum.TextXAlignment.Right,
             TextYAlignment = Enum.TextYAlignment.Center,
         }),

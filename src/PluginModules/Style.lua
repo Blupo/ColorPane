@@ -61,10 +61,15 @@ local Style = {
     PaletteEditorImage = "rbxassetid://6333569516",
     ColorInfoEditorImage = "rbxassetid://6554131676",
 
-    -- cs editor icons
-    CSEditorReverseSequenceImage = "rbxassetid://6409046433",
-    CSEditorSwapKeypointLeftImage = "rbxassetid://330699522",
-    CSEditorSwapKeypointRightImage = "rbxassetid://330699633",
+    -- gradient editor icons
+    GradientEditorReverseSequenceImage = "rbxassetid://6409046433",
+    GradientEditorSwapKeypointLeftImage = "rbxassetid://330699522",
+    GradientEditorSwapKeypointRightImage = "rbxassetid://330699633",
+    GradientInfoEditorImage = "rbxassetid://6554131676",
+    GradientEditorShowCodeImage = "rbxassetid://8521488559",
+    GradientEditorHideCodeImage  = "rbxassetid://8521969115",
+    GradientEditorShowMarkersImage = "rbxassetid://8192654831",
+    GradientEditorHideMarkersImage = "rbxassetid://8522117240",
 
     -- toolbar
     ToolbarColorEditorButtonImage = "rbxassetid://7066707717",
