@@ -98,18 +98,18 @@ local editorTabs = {
 --[[
     props
 
-        originalColor: Color3
+        originalColor: Color
         finishedEvent: Signal
 
     store props
 
         theme: StudioTheme
         editorPage: number
-        color: Color3
-        quickPalette: array<Color3>
+        color: Color
+        quickPalette: array<Color>
 
-        setColor: (Color3) -> nil
-        addQuickPaletteColor: (Color3) -> nil
+        setColor: (Color) -> nil
+        addQuickPaletteColor: (Color) -> nil
         setEditorPage: (number) -> nil
 ]]
 
@@ -216,7 +216,7 @@ ColorEditor.render = function(self)
             LayoutOrder = i,
 
             displayType = "color",
-            color = quickPaletteColor,
+            color = quickPaletteColor:toColor3(),
 
             onActivated = function()
                 self.props.setColor(quickPaletteColor)
@@ -348,7 +348,7 @@ ColorEditor.render = function(self)
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
 
-                    BackgroundColor3 = color,
+                    BackgroundColor3 = color:toColor3(),
                 }),
 
                 OriginalColorIndicator = Roact.createElement("TextButton", {
@@ -362,7 +362,7 @@ ColorEditor.render = function(self)
                     Text = "",
                     TextTransparency = 1,
     
-                    BackgroundColor3 = originalColor,
+                    BackgroundColor3 = originalColor:toColor3(),
     
                     [Roact.Event.Activated] = function()
                         self.props.setColor(originalColor)
@@ -402,7 +402,7 @@ ColorEditor.render = function(self)
                 Position = UDim2.new(1, 0, 0.5, 0),
                 Size = UDim2.new(1, -6 - Style.MinorElementPadding, 0, Style.StandardInputHeight),
                 
-                Text = string.upper(Color.fromColor3(color):toHex()),
+                Text = string.upper(color:toHex()),
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 isTextAValidValue = function(text)
@@ -410,7 +410,7 @@ ColorEditor.render = function(self)
                 end,
 
                 onSubmit = function(text)
-                    self.props.setColor(Color.fromHex(text):toColor3())
+                    self.props.setColor(Color.fromHex(text))
                 end,
                 
                 selectTextOnFocus = true,

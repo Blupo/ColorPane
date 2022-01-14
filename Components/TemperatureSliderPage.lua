@@ -62,17 +62,17 @@ local temperaturePresets = {
     store props
 
         theme: StudioTheme
-        color: Color3
+        color: Color
         editor: string
 
-        setColor: (Color3) -> nil
+        setColor: (Color) -> nil
 ]]
 
 local TemperatureSliderPage = Roact.PureComponent:extend("TemperatureSliderPage")
 
 TemperatureSliderPage.init = function(self, initProps)
     self:setState({
-        temperature = Color.fromColor3(initProps.color):toTemperature()
+        temperature = initProps.color:toTemperature()
     })
 end
 
@@ -85,7 +85,7 @@ TemperatureSliderPage.getDerivedStateFromProps = function(props, state)
         }
     end
 
-    local temperature = Color.fromColor3(props.color):toTemperature()
+    local temperature = props.color:toTemperature()
     if (temperature == state.temperature) then return end
 
     return {
@@ -113,7 +113,7 @@ TemperatureSliderPage.render = function(self)
                     temperature = presetTemperature
                 })
 
-                self.props.setColor(Color.fromTemperature(presetTemperature):toColor3())
+                self.props.setColor(Color.fromTemperature(presetTemperature))
             end,
 
             [Roact.Children] = {
@@ -161,7 +161,7 @@ TemperatureSliderPage.render = function(self)
                     temperature = newTemperature
                 })
 
-                self.props.setColor(Color.fromTemperature(newTemperature):toColor3())
+                self.props.setColor(Color.fromTemperature(newTemperature))
             end
         }),
 

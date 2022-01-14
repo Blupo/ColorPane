@@ -26,10 +26,10 @@ local MAX_STEPS = 14
 --[[
     store props
 
-        color: Color3
+        color: Color
         variationSteps: number
 
-        setColor: (Color3) -> nil
+        setColor: (Color) -> nil
         updateVariationSteps: (number) -> nil
 ]]
 
@@ -37,6 +37,7 @@ local ColorVariations = Roact.PureComponent:extend("ColorVariations")
 
 ColorVariations.render = function(self)
     local variationSteps = self.props.variationSteps
+    local color = self.props.color
 
     local modifiedColors = {
         Hues = {},
@@ -46,11 +47,9 @@ ColorVariations.render = function(self)
     }
 
     for i = 1, variationSteps do
-        local color = Color.fromColor3(self.props.color)
-
-        modifiedColors.Shades[i] = Color.darken(color, i/2):toColor3()
-        modifiedColors.Tints[i] = Color.brighten(color, i/2):toColor3()
-        modifiedColors.Tones[i] = Color.desaturate(color, i/2):toColor3()
+        modifiedColors.Shades[i] = color:darken(i/2):toColor3()
+        modifiedColors.Tints[i] = color:brighten(i/2):toColor3()
+        modifiedColors.Tones[i] = color:desaturate(i/2):toColor3()
 
         local h, s, b = color:toHSB()
         h = (h ~= h) and 0 or h
@@ -121,7 +120,7 @@ ColorVariations.render = function(self)
             colorLists = modifiedColors,
 
             onColorSelected = function(index, schemeName)
-                self.props.setColor(modifiedColors[schemeName][index])
+                self.props.setColor(Color.fromColor3(modifiedColors[schemeName][index]))
             end
         })
     })

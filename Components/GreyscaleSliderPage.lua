@@ -39,6 +39,16 @@ local percentValueToText, percentTextToValue = valueToTextFactory(100), textToVa
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+        color: Color
+        editor: string
+
+        setColor: (Color) -> nil
+]]
+
 local GreyscaleSliderPage = Roact.PureComponent:extend("GreyscaleSliderPage")
 
 GreyscaleSliderPage.init = function(self, initProps)
@@ -108,7 +118,7 @@ GreyscaleSliderPage.render = function(self)
                     brightness = value
                 })
                 
-                self.props.setColor(Color.gray(value):toColor3())
+                self.props.setColor(Color.gray(value))
             end
         })
     })

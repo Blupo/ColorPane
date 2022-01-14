@@ -186,11 +186,11 @@ ExportPalette.render = function(self)
                         local palette = Util.table.deepCopy(palettes[paletteIndex])
                         local colors = palette.colors
 
-                        -- convert Color3 to tables
+                        -- convert Color3s to tables
                         for i = 1, #colors do
                             local color = colors[i].color
 
-                            colors[i].color = {color.R, color.B, color.G}
+                            colors[i].color = {color.R, color.G, color.B}
                         end
 
                         local instance

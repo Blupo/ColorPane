@@ -6,6 +6,7 @@ local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -36,7 +37,7 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         paletteLayout: number
 
         updatePaletteLayout: (number) -> nil
-        setColor: (Color3) -> nil
+        setColor: (Color) -> nil
         addCurrentColorToPalette: (number) -> nil
         removePaletteColor: (number, number) -> nil
         changePaletteColorName: (number, number, string) -> nil
@@ -209,7 +210,7 @@ Palette.render = function(self)
             onColorSet = function(i)
                 i = searchTerm and paletteColorsSliceToWholeMap[i] or i
                 
-                self.props.setColor(palette.colors[i].color)
+                self.props.setColor(Color.fromColor3(palette.colors[i].color))
             end,
 
             onColorRemoved = function()

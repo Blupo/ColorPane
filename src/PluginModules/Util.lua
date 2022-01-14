@@ -164,6 +164,24 @@ Util.generateFullKeypointList = function(keypoints: {GradientKeypoint}, colorSpa
     return fullKeypoints
 end
 
+Util.typeColorPalette = function(palette, colorType: string)
+    local paletteCopy = Util.table.deepCopy(palette)
+    local colors = paletteCopy.colors
+
+    for i = 1, #colors do
+        local color = colors[i]
+        local colorValue = color.color
+
+        if (colorType == "Color3") then
+            color.color = Color3.fromRGB(colorValue[1], colorValue[2], colorValue[3])
+        elseif (colorType == "Color") then
+            color.color = Color.fromRGB(colorValue[1], colorValue[2], colorValue[3])
+        end
+    end
+
+    return paletteCopy
+end
+
 ---
 
 return Util

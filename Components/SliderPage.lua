@@ -36,17 +36,17 @@ local StandardUIListLayout = StandardComponents.UIListLayout
     store props
 
         theme: StudioTheme
-        color: Color3
+        color: Color
         editor: string
 
-        setColor: (Color3, string) -> nil
+        setColor: (Color, string) -> nil
 ]]
 
 local SliderPage = Roact.PureComponent:extend("SliderPage")
 
 SliderPage.init = function(self, initProps)
     local componentKeys = initProps.componentKeys
-    local components = { Color.fromColor3(initProps.color):to(initProps.colorSpace) }
+    local components = { initProps.color:to(initProps.colorSpace) }
     local componentDictionary = {}
 
     for i = 1, #componentKeys do
@@ -110,7 +110,7 @@ SliderPage.getDerivedStateFromProps = function(props, state)
         }
     end
 
-    local components = { Color.fromColor3(props.color):to(props.colorSpace) }
+    local components = { props.color:to(props.colorSpace) }
 
     local changed = false
     local newComponentsDictionary = {}
@@ -140,7 +140,7 @@ SliderPage.didUpdate = function(self, prevProps)
     if (colorSpace == prevProps.colorSpace) then return end
 
     local componentKeys = self.props.componentKeys
-    local components = { Color.fromColor3(self.props.color):to(colorSpace) }
+    local components = { self.props.color:to(colorSpace) }
     local componentDictionary = {}
 
     for i = 1, #componentKeys do
@@ -224,7 +224,7 @@ SliderPage.render = function(self)
                     components = newComponents,
                 })
 
-                self.props.setColor(Color.from(colorSpace, table.unpack(newComponentsArray)):toColor3(), editorKey)
+                self.props.setColor(Color.from(colorSpace, table.unpack(newComponentsArray)), editorKey)
             end
         })
     end

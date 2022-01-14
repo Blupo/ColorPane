@@ -214,18 +214,18 @@ end
     store props
 
         theme: StudioTheme
-        color: Color3
+        color: Color
         editor: string
         harmony: number
 
-        setColor: (Color3) -> nil
+        setColor: (Color) -> nil
         setHarmony: (number) -> nil
 ]]
 
 local ColorWheel = Roact.PureComponent:extend("ColorWheel")
 
 ColorWheel.init = function(self, initProps)
-    local initH, initS, initB = Color.fromColor3(initProps.color):toHSB()
+    local initH, initS, initB = initProps.color:toHSB()
 
     self.planeSize, self.updatePlaneSize = Roact.createBinding(Vector2.new(0, 0))
     self.wheelCenter, self.updateWheelCenter = Roact.createBinding(Vector2.new(0, 0))
@@ -252,7 +252,7 @@ ColorWheel.init = function(self, initProps)
             h = h,
         })
 
-        self.props.setColor(Color.fromHSB(h, self.state.s, self.state.b):toColor3())
+        self.props.setColor(Color.fromHSB(h, self.state.s, self.state.b))
     end
 
     self.updateSB = function(cursorPosition)
@@ -268,7 +268,7 @@ ColorWheel.init = function(self, initProps)
             b = b
         })
 
-        self.props.setColor(Color.fromHSB(self.state.h, s, b):toColor3())
+        self.props.setColor(Color.fromHSB(self.state.h, s, b))
     end
 
     self:setState({
@@ -290,7 +290,7 @@ ColorWheel.getDerivedStateFromProps = function(props, state)
         }
     end
 
-    local h, s, b = Color.fromColor3(props.color):toHSB()
+    local h, s, b = props.color:toHSB()
     if ((h == state.h) and (s == state.s) and (b == state.b)) then return end
 
     return {
@@ -391,7 +391,7 @@ ColorWheel.render = function(self)
                         h = newH,
                     })
 
-                    self.props.setColor(Color.fromHSB(newH, s, b):toColor3())
+                    self.props.setColor(Color.fromHSB(newH, s, b))
                 end
             })
         end

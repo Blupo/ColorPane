@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -21,7 +22,7 @@ local WebColorsPalette = BuiltInPalettes.WebColors
 
 ---
 
-local webColors = WebColorsPalette.colors
+local webColors = Util.typeColorPalette(WebColorsPalette, "Color").colors
 
 local parseComponents = function(componentString, numComponents)
     local pattern = string.rep("(.+), ?", numComponents - 1) .. "(.+)"
@@ -41,16 +42,17 @@ local infoComponents = {
         name = "RGB",
 
         getComponentString = function(color)
-            local r, g, b = math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)
+            local r, g, b = color:toRGB()
 
             return string.format("%d, %d, %d", r, g, b)
         end,
 
         getColor = function(componentString)
             local r, g, b = parseComponents(componentString, 3)
+            r, g, b = tonumber(r), tonumber(g), tonumber(b)
             if (not (r and g and b)) then return end
 
-            return Color.fromRGB(r / 255, g / 255, b / 255)
+            return Color.fromRGB(r, g, b)
         end
     },
 
@@ -58,7 +60,7 @@ local infoComponents = {
         name = "CMYK",
 
         getComponentString = function(color)
-            local c, m, y, k = Color.fromColor3(color):toCMYK()
+            local c, m, y, k = color:toCMYK()
             c, m, y, k = math.floor(c * 100), math.floor(m * 100), math.floor(y * 100), math.floor(k * 100)
 
             return string.format("%d, %d, %d, %d", c, m, y, k)
@@ -66,6 +68,7 @@ local infoComponents = {
 
         getColor = function(componentString)
             local c, m, y, k = parseComponents(componentString, 4)
+            c, m, y, k = tonumber(c), tonumber(m), tonumber(y), tonumber(k)
             if (not (c and m and y and k)) then return end
 
             return Color.fromCMYK(c / 100, m / 100, y / 100, k / 100)
@@ -76,7 +79,7 @@ local infoComponents = {
         name = "HSB",
 
         getComponentString = function(color)
-            local h, s, b = Color.fromColor3(color):toHSB()
+            local h, s, b = color:toHSB()
             h = (h ~= h) and 0 or h
             s, b = math.floor(s * 100), math.floor(b * 100)
 
@@ -85,6 +88,7 @@ local infoComponents = {
 
         getColor = function(componentString)
             local h, s, b = parseComponents(componentString, 3)
+            h, s, b = tonumber(h), tonumber(s), tonumber(b)
             if (not (h and s and b)) then return end
 
             return Color.fromHSB(h, s / 100, b / 100)
@@ -95,7 +99,7 @@ local infoComponents = {
         name = "HSL",
 
         getComponentString = function(color)
-            local h, s, l = Color.fromColor3(color):toHSL()
+            local h, s, l = color:toHSL()
             h = (h ~= h) and 0 or h
             s, l = math.floor(s * 100), math.floor(l * 100)
 
@@ -104,6 +108,7 @@ local infoComponents = {
 
         getColor = function(componentString)
             local h, s, l = parseComponents(componentString, 3)
+            h, s, l = tonumber(h), tonumber(s), tonumber(l)
             if (not (h and s and l)) then return end
 
             return Color.fromHSL(h, s / 100, l / 100)
@@ -114,7 +119,7 @@ local infoComponents = {
         name = "Hex",
 
         getComponentString = function(color)
-            return string.upper(Color.fromColor3(color):toHex())
+            return string.upper(color:toHex())
         end,
 
         getColor = Color.fromHex
@@ -127,7 +132,7 @@ local infoComponents = {
             for i = 1, #webColors do
                 local webColor = webColors[i]
 
-                if (webColor.color == color) then
+                if (webColor.color:toHex() == color:toHex()) then
                     return table.concat(webColor.keywords, ", ")
                 end
             end
@@ -142,7 +147,7 @@ local infoComponents = {
                 local webColor = webColors[i]
 
                 if (table.find(webColor.keywords, componentString)) then
-                    return Color.fromColor3(webColor.color)
+                    return webColor.color
                 end
             end
         end
@@ -154,8 +159,8 @@ local infoComponents = {
 --[[
     store props
 
-        color: Color3
-        setColor: (Color3) -> nil
+        color: Color
+        setColor: (Color) -> nil
 ]]
 
 local ColorInfo = Roact.PureComponent:extend("ColorInfo")
@@ -192,7 +197,7 @@ ColorInfo.render = function(self)
                 end,
 
                 onSubmit = function(newText)
-                    self.props.setColor(component.getColor(newText):toColor3())
+                    self.props.setColor(component.getColor(newText))
                 end,
 
                 selectTextOnFocus = (component.name == "Hex"),

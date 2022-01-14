@@ -26,8 +26,8 @@ local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 return function(plugin)
     if (pluginStore) then return pluginStore end
 
-    local userPalettes = Util.table.deepCopyPreserveColors(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
-    local userGradients = Util.table.deepCopyPreserveColors(PluginSettings.Get(PluginEnums.PluginSettingKey.UserGradients) or {})
+    local userPalettes = Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
+    local userGradients = Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserGradients) or {})
 
     for i = 1, #userPalettes do
         local palette = userPalettes[i]
@@ -107,7 +107,7 @@ return function(plugin)
         end,
         
         --[[
-            color: Color3
+            color: Color
             editor: PluginEnums.EditorKey?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(state, action)
@@ -120,7 +120,7 @@ return function(plugin)
         end,
 
         --[[
-            color: Color3
+            color: Color
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(state, action)
             state = Util.table.deepCopyPreserveColors(state)
@@ -237,7 +237,7 @@ return function(plugin)
 
             table.insert(paletteColors, {
                 name = newColorName,
-                color = state.colorEditor.color,
+                color = state.colorEditor.color:toColor3(),
             })
 
             state.colorEditor.lastPaletteModification = os.clock()

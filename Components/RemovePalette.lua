@@ -124,8 +124,8 @@ RemovePalette.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                 onActivated = function()
-                    self.props.removePalette(paletteIndex)
                     self.props.updatePalettePage(1, 1)
+                    self.props.removePalette(paletteIndex)
                     self.props.onPromptClosed(true)
                 end
             }),

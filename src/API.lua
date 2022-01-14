@@ -66,8 +66,11 @@ type ColorSequencePromptOptions = {
     OnColorChanged: ((ColorSequence) -> nil)?
 }
 
-local DEFAULT_COLOR = Color3.new(1, 1, 1)
-local DEFAULT_COLORSEQUENCE = ColorSequence.new(DEFAULT_COLOR)
+local DEFAULT_COLOR3 = Color3.new(1, 1, 1)
+local DEFAULT_COLORSEQUENCE = ColorSequence.new(DEFAULT_COLOR3)
+
+local DEFAULT_COLOR = Color.fromColor3(DEFAULT_COLOR3)
+local DEFAULT_GRADIENT = Gradient.fromColorSequence(DEFAULT_COLORSEQUENCE)
 
 local plugin
 local pluginUnloadingEvent
@@ -164,6 +167,10 @@ end
 local mountColorEditor = function(promptOptions, finishedEvent)
     local originalColor = promptOptions.InitialColor
 
+    if (promptOptions.ColorType == "Color3") then
+        originalColor = Color.fromColor3(originalColor)
+    end
+
     colorPaneStore:dispatch({
         type = PluginEnums.StoreActionType.ColorEditor_SetColor,
         color = originalColor,
@@ -254,13 +261,13 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
 
         if (colorType and (not initialColor)) then
             promptOptions.ColorType = colorType
-            promptOptions.InitialColor = (colorType == "Color3") and DEFAULT_COLOR or Color.fromColor3(DEFAULT_COLOR)
+            promptOptions.InitialColor = (colorType == "Color3") and DEFAULT_COLOR3 or DEFAULT_COLOR
         elseif ((not colorType) and initialColor) then
             promptOptions.InitialColor = initialColor
             promptOptions.ColorType = (typeof(initialColor) == "Color3") and "Color3" or "Color"
         elseif ((not colorType) and (not initialColor)) then
             promptOptions.ColorType = "Color3"
-            promptOptions.InitialColor = DEFAULT_COLOR
+            promptOptions.InitialColor = DEFAULT_COLOR3
         else
             if (
                 ((colorType == "Color3") and (typeof(initialColor) ~= "Color3")) or
@@ -271,17 +278,10 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         end
     elseif (type(optionalPromptOptions) == "nil") then
         promptOptions.ColorType = "Color3"
-        promptOptions.InitialColor = DEFAULT_COLOR
+        promptOptions.InitialColor = DEFAULT_COLOR3
     else
         return Promise.reject("Invalid prompt options")
     end
-
-    -- TODO: TEMPORARY
-    if (promptOptions.ColorType == "Color") then
-        promptOptions.ColorType = "Color3"
-        promptOptions.InitialColor = promptOptions.InitialColor:toColor3()
-    end
-    --
 
     local result = checkColorPromptOptions(promptOptions)
     if (not result) then return Promise.reject("Invalid prompt options") end 
@@ -301,6 +301,10 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         if (not (color and oldColor)) then return end
         if (color == oldColor) then return end
 
+        if (promptOptions.ColorType == "Color3") then
+            color = color:toColor3()
+        end
+
         Util.noYield(promptOptions.OnColorChanged, color)
     end)
 
@@ -314,6 +318,10 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         end
 
         local newColor = colorPaneStore:getState().colorEditor.color
+
+        if (promptOptions.ColorType == "Color3") then
+            newColor = newColor:toColor3()
+        end
         
         if (newColor == promptOptions.InitialColor) then
             editPromise:cancel()
@@ -364,7 +372,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
 
         if (gradientType and (not initialGradient)) then
             promptOptions.GradientType = gradientType
-            promptOptions.InitialGradient = (gradientType == "ColorSequence") and DEFAULT_COLORSEQUENCE or Gradient.fromColorSequence(DEFAULT_COLORSEQUENCE)
+            promptOptions.InitialGradient = (gradientType == "ColorSequence") and DEFAULT_COLORSEQUENCE or DEFAULT_GRADIENT
         elseif ((not gradientType) and initialGradient) then
             promptOptions.InitialGradient = initialGradient
             promptOptions.GradientType = (typeof(initialGradient) == "ColorSequence") and "ColorSequence" or "Gradient"
@@ -418,13 +426,11 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
             return
         end
         
-        local gradient
+        local gradient = promptOptions.InitialGradient
         local newGradient = Gradient.new(colorPaneStore:getState().gradientEditor.displayKeypoints)
 
         if (promptOptions.GradientType == "ColorSequence") then
-            gradient = Gradient.fromColorSequence(promptOptions.InitialGradient)
-        elseif (promptOptions.GradientType == "Gradient") then
-            gradient = promptOptions.InitialGradient
+            newGradient = newGradient:colorSequence()
         end
         
         if (newGradient == gradient) then

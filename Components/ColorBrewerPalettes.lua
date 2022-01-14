@@ -7,6 +7,7 @@ local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
+local Color = require(includes:FindFirstChild("Color")).Color
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -146,7 +147,7 @@ ColorBrewerPalettes.render = function(self)
             colorLists = includedColorSchemes,
 
             onColorSelected = function(index, schemeName)
-                self.props.setColor(includedColorSchemes[schemeName][index])
+                self.props.setColor(Color.fromColor3(includedColorSchemes[schemeName][index]))
             end
         }),
     })

@@ -1,5 +1,8 @@
 local root = script.Parent.Parent
 
+local PluginModules = root:FindFirstChild("PluginModules")
+local Util = require(PluginModules:FindFirstChild("Util"))
+
 local includes = root:FindFirstChild("includes")
 local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -21,7 +24,7 @@ return {
         
         getContent = function()
             return Roact.createElement(Palette, {
-                palette = BrickColors,
+                palette = Util.typeColorPalette(BrickColors, "Color3"),
                 readOnly = true
             })
         end
@@ -40,7 +43,7 @@ return {
         
         getContent = function()
             return Roact.createElement(Palette, {
-                palette = CopicColors,
+                palette = Util.typeColorPalette(CopicColors, "Color3"),
                 readOnly = true
             })
         end
@@ -59,7 +62,7 @@ return {
 
         getContent = function()
             return Roact.createElement(Palette, {
-                palette = WebColors,
+                palette = Util.typeColorPalette(WebColors, "Color3"),
                 readOnly = true
             })
         end

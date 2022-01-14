@@ -5,6 +5,7 @@ local TextService = game:GetService("TextService")
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local Constants = require(PluginModules:FindFirstChild("Constants"))
 local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
 local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
@@ -215,7 +216,7 @@ GradientEditor.render = function(self)
 
     local colorEditPromise = self.state.colorEditPromise
     local showCode = self.state.showCode
-    local maxUserKeypoints = Util.getMaxUserKeypoints(Util.MAX_COLORSEQUENCE_KEYPOINTS, precision)
+    local maxUserKeypoints = Util.getMaxUserKeypoints(Constants.MAX_COLORSEQUENCE_KEYPOINTS, precision)
 
     local gradient = Gradient.new(keypoints)
     local displayGradient = Gradient.new(displayKeypoints)
@@ -529,26 +530,24 @@ GradientEditor.render = function(self)
 
                         local editPromise = self.props.promptForColorEdit({
                             PromptTitle = string.format("Gradient keypoint, %.3f%%", keypoints[selectedKeypoint].Time * 100),
-                            ColorType = "Color3",
-                            InitialColor = originalColor:toColor3(),
+                            ColorType = "Color",
+                            InitialColor = originalColor,
 
-                            -- TODO: change to Color when PromptForColor accepts it
                             OnColorChanged = function(color)
                                 local newKeypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
                                 local keypoint = newKeypoints[selectedKeypoint]
 
-                                newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = Color.fromColor3(color) }
+                                newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = color }
 
                                 self.props.setKeypoints(newKeypoints)
                             end,
                         })
 
-                        -- TODO: change to Color when PromptForColor accepts it
                         editPromise:andThen(function(newColor)
                             local newKeypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
                             local keypoint = keypoints[selectedKeypoint]
 
-                            newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = Color.fromColor3(newColor) }
+                            newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = newColor }
 
                             self.props.setKeypoints(newKeypoints)
                         end)

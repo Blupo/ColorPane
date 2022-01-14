@@ -49,7 +49,7 @@ local getMaxKeypointPrecision = function(numKeypoints): number
     if (numKeypoints == 2) then
         return MAX_PRECISION
     else
-        return math.floor((Util.MAX_COLORSEQUENCE_KEYPOINTS - 1) / (numKeypoints - 1)) - 1
+        return math.floor((Constants.MAX_COLORSEQUENCE_KEYPOINTS - 1) / (numKeypoints - 1)) - 1
     end
 end
 
@@ -275,7 +275,7 @@ GradientInfo.render = function(self)
     
                     displayType = "image",
                     image = Style.AddImage,
-                    disabled = (precision >= MAX_PRECISION) or (Util.getUtilisedKeypoints(numKeypoints, precision + 1) > Util.MAX_COLORSEQUENCE_KEYPOINTS),
+                    disabled = (precision >= MAX_PRECISION) or (Util.getUtilisedKeypoints(numKeypoints, precision + 1) > Constants.MAX_COLORSEQUENCE_KEYPOINTS),
     
                     onActivated = function()
                         local newPrecision = precision + 1
@@ -310,7 +310,7 @@ GradientInfo.render = function(self)
                         if (not n) then return false end
                         if (math.floor(n) ~= n) then return false end
 
-                        return (n >= MIN_PRECISION) and (n <= MAX_PRECISION) and (Util.getUtilisedKeypoints(numKeypoints, n) <= Util.MAX_COLORSEQUENCE_KEYPOINTS)
+                        return (n >= MIN_PRECISION) and (n <= MAX_PRECISION) and (Util.getUtilisedKeypoints(numKeypoints, n) <= Constants.MAX_COLORSEQUENCE_KEYPOINTS)
                     end,
     
                     onSubmit = function(text)
