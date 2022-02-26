@@ -89,7 +89,6 @@ local numBuiltInGradients = #builtInGradients
         precision: number
 
         gradients: array<array<GradientKeypoint>>
-        lastPaletteModification: number
 
         addPaletteColor: (array<GradientKeypoint>) -> nil
         removePaletteColor: (number) -> nil
@@ -99,7 +98,7 @@ local numBuiltInGradients = #builtInGradients
         setGradient: (array<GradientKeypoint>, string, string, number) -> nil
 ]]
 
-local GradientPalette = Roact.Component:extend("GradientPalette")
+local GradientPalette = Roact.PureComponent:extend("GradientPalette")
 
 GradientPalette.init = function(self)
     self.listLength, self.updateListLength = Roact.createBinding(0)
@@ -176,22 +175,6 @@ GradientPalette.init = function(self)
     self:setState({
         searchDisplayText = "",
     })
-end
-
-GradientPalette.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = Util.table.shallowCompare(self.props, nextProps)
-    local stateDiff = Util.table.shallowCompare(self.state, nextState)
-
-    if (#stateDiff > 0) then return true end
-
-    if ((#propsDiff == 1) and (propsDiff[1] ~= "palettes")) then
-        -- props.lastPaletteModification will tell us if the palettes changed without having to compare them
-        return true
-    elseif (#propsDiff > 1) then
-        return true
-    end
-
-    return false
 end
 
 GradientPalette.willUnmount = function(self)
@@ -315,7 +298,7 @@ GradientPalette.render = function(self)
                     self.props.beforeSetGradient()
 
                     self.props.setGradient(
-                        Util.table.deepCopyPreserveColors(gradient.keypoints),
+                        Util.table.deepCopy(gradient.keypoints),
                         gradient.colorSpace or "RGB",
                         gradient.hueAdjustment or "Shorter",
                         gradient.precision or 0
@@ -543,7 +526,6 @@ return RoactRodux.connect(function(state)
         precision = state.gradientEditor.precision,
 
         gradients = state.gradientEditor.palette,
-        lastPaletteModification = state.gradientEditor.lastPaletteModification,
     }
 end, function(dispatch)
     return {

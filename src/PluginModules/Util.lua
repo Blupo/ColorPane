@@ -1,15 +1,32 @@
 --!strict
 
 local root = script.Parent.Parent
-local includes = root:FindFirstChild("includes")
 
+local includes = root:FindFirstChild("includes")
 local ColorLib = require(includes:FindFirstChild("Color"))
+local state = require(includes:FindFirstChild("state"))
+local t = require(includes:FindFirstChild("t"))
+
 local Color = ColorLib.Color
 
 ---
 
 type Color = ColorLib.Color
 type GradientKeypoint = ColorLib.GradientKeypoint
+
+local paletteTypeCheck = t.strictInterface({
+    name = t.string,
+
+    colors = t.array(t.strictInterface({
+        name = t.string,
+        
+        color = t.strictInterface({
+            [1] = t.numberConstrained(0, 1),
+            [2] = t.numberConstrained(0, 1),
+            [3] = t.numberConstrained(0, 1),
+        })
+    }))
+})
 
 local noYieldReturnHandler = function(routine: thread, success: boolean, ...: any)
     if (not success) then
@@ -27,78 +44,67 @@ end
 
 local Util = {}
 Util.table = {}
+Util.palette = {}
 
-Util.table.deepCopy = function(t: {[any]: any}): {[any]: any}
+--- TABLE UTIL
+
+Util.table.deepCopy = function(tbl: {[any]: any}): {[any]: any}
     local copy: {[any]: any} = {}
 
-    for k, v in pairs(t) do
-        local newK = (type(k) == "table") and Util.table.deepCopy(k) or k
-        local newV = (type(v) == "table") and Util.table.deepCopy(v) or v
-
-        copy[newK] = newV
-    end
-
-    return copy
-end
-
-Util.table.deepCopyPreserveColors = function(t: {[any]: any}): {[any]: any}
-    local copy: {[any]: any} = {}
-
-    for k, v in pairs(t) do
-        local newK = (type(k) == "table") and Util.table.deepCopyPreserveColors(k) or k
-        local newV
-
-        if ((type(v) == "table") and (not Color.isAColor(v))) then
-            newV = Util.table.deepCopyPreserveColors(v)
+    for k, v in pairs(tbl) do
+        if (type(v) ~= "table") then
+            copy[k] = v
         else
-            newV = v
+            if (getmetatable(v) == nil) then
+                copy[k] = Util.table.deepCopy(v)
+            else
+                copy[k] = v
+            end
         end
-
-        copy[newK] = newV
     end
 
     return copy
 end
 
-Util.table.numKeys = function(t: {[any]: any}): number
+Util.table.numKeys = function(tbl: {[any]: any}): number
     local n: number = 0
 
-    for _ in pairs(t) do
+    for _ in state.iter.pairs(tbl) do
         n = n + 1
     end
 
     return n
 end
 
-Util.table.merge = function(t: {[any]: any}, slice: {[any]: any}): {[any]: any}
-    if (Util.table.numKeys(slice) < 1) then return t end
+Util.table.merge = function(tbl: {[any]: any}, slice: {[any]: any}): {[any]: any}
+    if (Util.table.numKeys(slice) < 1) then return tbl end
 
-    for key, newValue in pairs(slice) do
-        local value
+    for key, newValue in state.iter.pairs(slice) do
+        local value: any
 
         if (newValue ~= nil) then
             value = newValue
         else
-            value = t[key]
+            value = tbl[key]
         end
 
-        t[key] = value
+        tbl[key] = value
     end
 
-    return t
+    return tbl
 end
 
-Util.table.shallowCompare = function(t: {[any]: any}, u: {[any]: any}): {string}
+Util.table.shallowCompare = function(tbl: {[any]: any}, u: {[any]: any}): {string}
     local diff = {}
 
-    for k, v in pairs(t) do
+    for k, v in pairs(tbl) do
         if (u[k] ~= v) then
             table.insert(diff, k)
         end
     end
 
     for k, v in pairs(u) do
-        if ((not table.find(diff, k)) and (t[k] ~= v)) then
+        if ((not table.find(diff, k)) and (tbl[k] ~= v)) then
             table.insert(diff, k)
         end
     end
@@ -106,8 +112,63 @@ Util.table.shallowCompare = function(t: {[any]: any}, u: {[any]: any}): {string}
     return diff
 end
 
-Util.lerp = function(a: number, b: number, t: number): number
-    return ((1 - t) * a) + (t * b)
+--- PALETTE UTIL
+
+Util.palette.getNewItemName = function(items, originalName: string, selfIndex: number?): (string, number)
+    local found: boolean = false
+    local numDuplicates: number = 0
+    local itemName: string = originalName
+
+    repeat
+        found = false
+
+        for i, item in state.iter.ipairs(items) do
+            if ((item.name == itemName) and (i ~= selfIndex)) then
+                found = true
+                numDuplicates = numDuplicates + 1
+                itemName = originalName .. " (" .. numDuplicates .. ")"
+
+                break
+            end
+        end
+    until (not found)
+
+    return itemName, numDuplicates
+end
+
+Util.palette.validate = function(palette: any)
+    -- type check
+    local typeCheckSuccess, message = paletteTypeCheck(palette)
+    if (not typeCheckSuccess) then return false, message end
+
+    -- check for "blank" name
+    local substitutedPaletteName = string.gsub(palette.name, "%s+", "")
+    if (string.len(substitutedPaletteName) < 1) then return false, "palette name is blank" end
+
+    -- check for colors with the same or "blank" names
+    local colorNameMap = {}
+
+    for i = 1, #palette.colors do
+        local color = palette.colors[i]
+        local name = color.name
+
+        local substitutedName = string.gsub(name, "%s+", "")
+        if (string.len(substitutedName) < 1) then return false, "color name is blank" end
+
+        if (colorNameMap[name]) then
+            return false, "duplicate color name"
+        else
+            colorNameMap[name] = true
+        end
+    end
+
+    return true, nil
+end
+
+--- GENERAL UTIL
+
+Util.lerp = function(a: number, b: number, time: number): number
+    return ((1 - time) * a) + (time * b)
 end
 
 Util.inverseLerp = function(a: number, b: number, v: number): number
@@ -116,8 +177,13 @@ end
 
 Util.round = function(n: number, optionalE: number?): number
     local e: number = optionalE or 0
+    local p: number = 10^e
 
-    return math.floor((n / 10^e) + 0.5) * 10^e
+    if (p >= 0) then
+        return math.floor((n / p) + 0.5) * p
+    else
+        return math.floor((n * p) + 0.5) / p
+    end
 end
 
 Util.noYield = function(callback: (...any) -> any, ...: any)
@@ -148,10 +214,10 @@ Util.generateFullKeypointList = function(keypoints: {GradientKeypoint}, colorSpa
         table.insert(fullKeypoints, thisKeypoint)
 
         for j = 1, precision do
-            local t: number = (j + 1) / (precision + 2)
+            local time: number = (j + 1) / (precision + 2)
 
-            local newKeypointTime: number = Util.lerp(thisKeypoint.Time, nextKeypoint.Time, t)
-            local newKeypointColor: Color = thisKeypoint.Color:mix(nextKeypoint.Color, t, colorSpace, hueAdjustment)
+            local newKeypointTime: number = Util.lerp(thisKeypoint.Time, nextKeypoint.Time, time)
+            local newKeypointColor: Color = thisKeypoint.Color:mix(nextKeypoint.Color, time, colorSpace, hueAdjustment)
 
             table.insert(fullKeypoints, {
                 Time = newKeypointTime,

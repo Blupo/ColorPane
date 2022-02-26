@@ -1,9 +1,9 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -54,7 +54,7 @@ RenamePalette.render = function(self)
     local selectedPalette = palettes[paletteIndex]
 
     local newPaletteName = self.state.newPaletteName
-    local actualNewPaletteName = PaletteUtils.getNewPaletteName(palettes, newPaletteName, paletteIndex)
+    local actualNewPaletteName = Util.palette.getNewItemName(palettes, newPaletteName, paletteIndex)
     
     return Roact.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),

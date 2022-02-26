@@ -5,7 +5,6 @@ local Studio = settings().Studio
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -13,13 +12,11 @@ local Util = require(PluginModules:FindFirstChild("Util"))
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
 local Rodux = require(includes:FindFirstChild("Rodux"))
+local state = require(includes:FindFirstChild("state"))
 
 ---
 
 local pluginStore
-
-local getNewPaletteName = PaletteUtils.getNewPaletteName
-local getNewPaletteColorName = PaletteUtils.getNewPaletteColorName
 
 ---
 
@@ -75,13 +72,11 @@ return function(plugin)
             
             quickPalette = {},
             palettes = userPalettes,
-            lastPaletteModification = os.clock(),
         },
 
         gradientEditor = {
             snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
             palette = userGradients,
-            lastPaletteModification = os.clock(),
         }
     }
 
@@ -89,185 +84,156 @@ return function(plugin)
         --[[
             theme: StudioTheme
         ]]
-        [PluginEnums.StoreActionType.SetTheme] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
-            
-            state.theme = action.theme
-            return state
+        [PluginEnums.StoreActionType.SetTheme] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                draftState.theme = action.theme
+            end)
         end,
 
         --[[
             slice: dictionary<any, any>
         ]]
-        [PluginEnums.StoreActionType.UpdateSessionData] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
-
-            Util.table.merge(state.sessionData, action.slice)
-            return state
+        [PluginEnums.StoreActionType.UpdateSessionData] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                Util.table.merge(draftState.sessionData, action.slice)
+            end)
         end,
         
         --[[
             color: Color
             editor: PluginEnums.EditorKey?
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
-
-            state.colorEditor.color = action.color
-            state.colorEditor.authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
-            
-            return state
+        [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                draftState.colorEditor.color = action.color
+                draftState.colorEditor.authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
+            end)
         end,
 
         --[[
             color: Color
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
-
-            local quickPalette = state.colorEditor.quickPalette
-            table.insert(quickPalette, 1, action.color)
-
-            return state
+        [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local quickPalette = draftState.colorEditor.quickPalette
+                state.table.insert(quickPalette, 1, action.color)
+            end)
         end,
 
         --[[
             palette: Palette?
             name: string?
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
+        [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
 
-            local palettes = state.colorEditor.palettes
+                if (action.palette) then
+                    state.table.append(palettes, action.palette)
+                else
+                    local paletteName = Util.palette.getNewItemName(palettes, action.name or "New Palette")
 
-            if (action.palette) then
-                table.insert(palettes, action.palette)
-            else
-                local paletteName = getNewPaletteName(palettes, action.name or "New Palette")
-
-                table.insert(palettes, {
-                    name = paletteName,
-                    colors = {}
-                })
-            end
-            
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                    state.table.append(palettes, {
+                        name = paletteName,
+                        colors = {}
+                    })
+                end
+            end)
         end,
 
         --[[
             index: number
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_RemovePalette] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local index = action.index
-            if (not palettes[index]) then return state end
+        [PluginEnums.StoreActionType.ColorEditor_RemovePalette] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local index = action.index
+                if (not palettes[index]) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-
-            table.remove(palettes, index)
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                state.table.remove(palettes, index)
+            end)
         end,
 
         --[[
             index: number
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local index = action.index
+        [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local index = action.index
 
-            local palette = palettes[index]
-            if (not palette) then return state end
+                local palette = palettes[index]
+                if (not palette) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-            palette = palettes[index]
-
-            local newPaletteName = getNewPaletteName(palettes, palette.name)
-            local newPalette = Util.table.deepCopyPreserveColors(palette)
-            newPalette.name = newPaletteName
-            
-            table.insert(palettes, newPalette)
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                local newPaletteName = Util.palette.getNewItemName(palettes, palette.name)
+                local newPalette = Util.table.deepCopy(oldState.colorEditor.palettes[index])
+                newPalette.name = newPaletteName
+                
+                state.table.append(palettes, newPalette)
+            end)
         end,
 
         --[[
             index: number
             newName: string
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteName] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local index = action.index
+        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteName] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local index = action.index
 
-            local palette = palettes[index]
-            if (not palette) then return state end
+                local palette = palettes[index]
+                if (not palette) then return end
 
-            local newPaletteName = getNewPaletteName(palettes, action.newName, index)
-            if (newPaletteName == palette.name) then return state end
+                local newPaletteName = Util.palette.getNewItemName(palettes, action.newName, index)
+                if (newPaletteName == palette.name) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-
-            palettes[index].name = newPaletteName
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                palettes[index].name = newPaletteName
+            end)
         end,
 
         --[[
             paletteIndex: number,
             newName: string?
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local paletteIndex = action.paletteIndex
-            
-            local palette = palettes[paletteIndex]
-            if (not palette) then return state end
+        [PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local paletteIndex = action.paletteIndex
+                
+                local palette = palettes[paletteIndex]
+                if (not palette) then return end
 
-            local paletteColors = palette.colors
-            local newColorName = getNewPaletteColorName(paletteColors, action.newName or "New Color")
+                local paletteColors = palette.colors
+                local newColorName = Util.palette.getNewItemName(paletteColors, action.newName or "New Color")
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-            palette = palettes[paletteIndex]
-            paletteColors = palette.colors
-
-            table.insert(paletteColors, {
-                name = newColorName,
-                color = state.colorEditor.color:toColor3(),
-            })
-
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                state.table.append(paletteColors, {
+                    name = newColorName,
+                    color = draftState.colorEditor.color:toColor3(),
+                })
+            end)
         end,
 
         --[[
             paletteIndex: number,
             colorIndex: number
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local paletteIndex = action.paletteIndex
-            
-            local palette = palettes[paletteIndex]
-            if (not palette) then return state end
+        [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local paletteIndex = action.paletteIndex
+                
+                local palette = palettes[paletteIndex]
+                if (not palette) then return end
 
-            local paletteColors = palette.colors
-            local colorIndex = action.colorIndex
+                local paletteColors = palette.colors
+                local colorIndex = action.colorIndex
 
-            local color = paletteColors[colorIndex]
-            if (not color) then return state end
+                local color = paletteColors[colorIndex]
+                if (not color) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-            palette = palettes[paletteIndex]
-
-            table.remove(palette.colors, colorIndex)
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                state.table.remove(palette.colors, colorIndex)
+            end)
         end,
 
         --[[
@@ -275,30 +241,25 @@ return function(plugin)
             colorIndex: number,
             newName: string
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local paletteIndex = action.paletteIndex
-            
-            local palette = palettes[paletteIndex]
-            if (not palette) then return state end
+        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(oldState, action)
+            state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local paletteIndex = action.paletteIndex
+                
+                local palette = palettes[paletteIndex]
+                if (not palette) then return end
 
-            local paletteColors = palette.colors
-            local colorIndex = action.colorIndex
+                local paletteColors = palette.colors
+                local colorIndex = action.colorIndex
 
-            local color = paletteColors[colorIndex]
-            if (not color) then return state end
+                local color = paletteColors[colorIndex]
+                if (not color) then return end
 
-            local newColorName = getNewPaletteColorName(paletteColors, action.newName, colorIndex)
-            if (newColorName == color.name) then return state end
+                local newColorName = Util.palette.getNewItemName(paletteColors, action.newName, colorIndex)
+                if (newColorName == color.name) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-            palette = palettes[paletteIndex]
-            paletteColors = palette.colors
-            
-            paletteColors[colorIndex].name = newColorName
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                paletteColors[colorIndex].name = newColorName
+            end)
         end,
 
         --[[
@@ -306,62 +267,61 @@ return function(plugin)
             colorIndex: number,
             offset: number,
         ]]
-        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(state, action)
-            local palettes = state.colorEditor.palettes
-            local paletteIndex = action.paletteIndex
-            
-            local palette = palettes[paletteIndex]
-            if (not palette) then return state end
+        [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local palettes = draftState.colorEditor.palettes
+                local paletteIndex = action.paletteIndex
+                
+                local palette = palettes[paletteIndex]
+                if (not palette) then return end
 
-            local paletteColors = palette.colors
-            local colorIndex = action.colorIndex
-            local otherColorIndex = colorIndex + action.offset
-            if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return state end
+                local paletteColors = palette.colors
+                local colorIndex = action.colorIndex
+                local otherColorIndex = colorIndex + action.offset
+                if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            palettes = state.colorEditor.palettes
-            palette = palettes[paletteIndex]
-            paletteColors = palette.colors
-
-            paletteColors[colorIndex], paletteColors[otherColorIndex] = paletteColors[otherColorIndex], paletteColors[colorIndex]
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                paletteColors[colorIndex], paletteColors[otherColorIndex] = paletteColors[otherColorIndex], paletteColors[colorIndex]
+            end)
         end,
 
-        [PluginEnums.StoreActionType.GradientEditor_ResetState] = function(state)
-            state = Util.table.deepCopyPreserveColors(state)
+        [PluginEnums.StoreActionType.GradientEditor_ResetState] = function(oldState)
+            return state.produce(oldState, function(draftState)
 
-            state.gradientEditor = {
-                snap = state.gradientEditor.snap,
-                palettes = state.gradientEditor.palettes,
-                lastPaletteModification = state.gradientEditor.lastPaletteModification,
-            }
-
-            return state
+                for k in state.iter.pairs(draftState.gradientEditor) do
+                    if (
+                        (k == "snap") or
+                        (k == "palette")
+                    ) then
+                        continue
+                    else
+                        draftState.gradientEditor[k] = nil
+                    end
+                end
+            end)
         end,
 
         --[[
             keypoints: array<GradientKeypoint>?
             selectedKeypoint: number?
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_SetKeypoints] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
+        [PluginEnums.StoreActionType.GradientEditor_SetKeypoints] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local gradientEditorState = draftState.gradientEditor
 
-            state.gradientEditor.keypoints = action.keypoints or state.gradientEditor.keypoints
-            state.gradientEditor.selectedKeypoint = action.selectedKeypoint or state.gradientEditor.selectedKeypoint
+                gradientEditorState.keypoints = action.keypoints or gradientEditorState.keypoints
+                gradientEditorState.selectedKeypoint = action.selectedKeypoint or gradientEditorState.selectedKeypoint
 
-            if (state.gradientEditor.selectedKeypoint == -1) then
-                state.gradientEditor.selectedKeypoint = nil
-            end
+                if (gradientEditorState.selectedKeypoint == -1) then
+                    gradientEditorState.selectedKeypoint = nil
+                end
 
-            state.gradientEditor.displayKeypoints = Util.generateFullKeypointList(
-                state.gradientEditor.keypoints,
-                state.gradientEditor.colorSpace,
-                state.gradientEditor.hueAdjustment,
-                state.gradientEditor.precision
-            )
-
-            return state
+                gradientEditorState.displayKeypoints = Util.generateFullKeypointList(
+                    state.draft.getRef(gradientEditorState.keypoints),
+                    gradientEditorState.colorSpace,
+                    gradientEditorState.hueAdjustment,
+                    gradientEditorState.precision
+                )
+            end)
         end,
 
         --[[
@@ -370,34 +330,31 @@ return function(plugin)
             hueAdjustment: string?,
             precision: number?
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_SetGradient] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
+        [PluginEnums.StoreActionType.GradientEditor_SetGradient] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                Util.table.merge(draftState.gradientEditor, {
+                    keypoints = action.keypoints,
+                    colorSpace = action.colorSpace,
+                    hueAdjustment = action.hueAdjustment,
+                    precision = action.precision,
+                })
 
-            Util.table.merge(state.gradientEditor, {
-                keypoints = action.keypoints,
-                colorSpace = action.colorSpace,
-                hueAdjustment = action.hueAdjustment,
-                precision = action.precision,
-            })
-
-            state.gradientEditor.displayKeypoints = Util.generateFullKeypointList(
-                state.gradientEditor.keypoints,
-                state.gradientEditor.colorSpace,
-                state.gradientEditor.hueAdjustment,
-                state.gradientEditor.precision or 0
-            )
-
-            return state
+                draftState.gradientEditor.displayKeypoints = Util.generateFullKeypointList(
+                    state.draft.getRef(draftState.gradientEditor.keypoints),
+                    draftState.gradientEditor.colorSpace,
+                    draftState.gradientEditor.hueAdjustment,
+                    draftState.gradientEditor.precision or 0
+                )
+            end)
         end,
 
         --[[
             snap: number
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_SetSnapValue] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
-
-            state.gradientEditor.snap = action.snap
-            return state
+        [PluginEnums.StoreActionType.GradientEditor_SetSnapValue] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                draftState.gradientEditor.snap = action.snap
+            end)
         end,
 
         --[[
@@ -408,81 +365,69 @@ return function(plugin)
             hueAdjustment: string?
             precision: number?
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_AddPaletteColor] = function(state, action)
-            state = Util.table.deepCopyPreserveColors(state)
+        [PluginEnums.StoreActionType.GradientEditor_AddPaletteColor] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local gradientPalette = draftState.gradientEditor.palette
+                local newColorName = Util.palette.getNewItemName(gradientPalette, action.name or "New Gradient")
 
-            local gradientPalette = state.gradientEditor.palette
-            local newColorName = getNewPaletteColorName(gradientPalette, action.name or "New Gradient")
+                state.table.append(gradientPalette, {
+                    name = newColorName,
 
-            table.insert(gradientPalette, {
-                name = newColorName,
-
-                keypoints = action.keypoints,
-                colorSpace = action.colorSpace,
-                hueAdjustment = action.hueAdjustment,
-                precision = action.precision,
-            })
-
-            state.gradientEditor.lastPaletteModification = os.clock()
-            return state
+                    keypoints = action.keypoints,
+                    colorSpace = action.colorSpace,
+                    hueAdjustment = action.hueAdjustment,
+                    precision = action.precision,
+                })
+            end)
         end,
 
         --[[
             index: number
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor] = function(state, action)
-            local gradientPalette = state.gradientEditor.palette
-            local index = action.index
-            if (not gradientPalette[index]) then return state end
+        [PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local gradientPalette = draftState.gradientEditor.palette
+                local index = action.index
+                if (not gradientPalette[index]) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            gradientPalette = state.gradientEditor.palette
-
-            table.remove(gradientPalette, action.index)
-            state.colorEditor.lastPaletteModification = os.clock()
-            return state
+                state.table.remove(gradientPalette, action.index)
+            end)
         end,
 
         --[[
             index: number,
             newName: string
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(state, action)
-            local gradientPalette = state.gradientEditor.palette
-            local index = action.index
+        [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local gradientPalette = draftState.gradientEditor.palette
+                local index = action.index
 
-            local color = gradientPalette[index]
-            if (not color) then return state end
+                local color = gradientPalette[index]
+                if (not color) then return end
 
-            local newColorName = getNewPaletteColorName(gradientPalette, action.newName, index)
-            if (newColorName == color.name) then return state end
+                local newColorName = Util.palette.getNewItemName(gradientPalette, action.newName, index)
+                if (newColorName == color.name) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            gradientPalette = state.gradientEditor.palette
-
-            gradientPalette[index].name = newColorName
-            state.gradientEditor.lastPaletteModification = os.clock()
-            return state
+                gradientPalette[index].name = newColorName
+            end)
         end,
 
         --[[
             index: number,
             offset: number,
         ]]
-        [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(state, action)
-            local gradientPalette = state.gradientEditor.palette
-            local index = action.index
-            if (not gradientPalette[index]) then return state end
+        [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(oldState, action)
+            return state.produce(oldState, function(draftState)
+                local gradientPalette = draftState.gradientEditor.palette
+                local index = action.index
+                if (not gradientPalette[index]) then return end
 
-            local newColorIndex = index + action.offset
-            if (not gradientPalette[newColorIndex]) then return state end
+                local newColorIndex = index + action.offset
+                if (not gradientPalette[newColorIndex]) then return end
 
-            state = Util.table.deepCopyPreserveColors(state)
-            gradientPalette = state.gradientEditor.palette
-
-            gradientPalette[newColorIndex], gradientPalette[index] = gradientPalette[index], gradientPalette[newColorIndex]
-            state.gradientEditor.lastPaletteModification = os.clock()
-            return state
+                gradientPalette[newColorIndex], gradientPalette[index] = gradientPalette[index], gradientPalette[newColorIndex]
+            end)
         end,
     }))
 

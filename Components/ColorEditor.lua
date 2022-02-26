@@ -124,6 +124,7 @@ end
 ColorEditor.shouldUpdate = function(self, nextProps, nextState)
     local propsDiff = Util.table.shallowCompare(self.props, nextProps)
     local stateDiff = Util.table.shallowCompare(self.state, nextState)
+    if (#propsDiff >= 1) then return true end
 
     if (#stateDiff == 1) then
         if (stateDiff[1] == "editorWidth") then
@@ -135,16 +136,6 @@ ColorEditor.shouldUpdate = function(self, nextProps, nextState)
             return true
         end
     elseif (#stateDiff > 1) then
-        return true
-    end
-
-    if (#propsDiff == 1) then
-        if (propsDiff[1] == "quickPalette") then
-            return (#Util.table.shallowCompare(self.props.quickPalette, nextProps.quickPalette) > 0)
-        else
-            return true
-        end
-    elseif (#propsDiff > 1) then
         return true
     end
 

@@ -199,7 +199,7 @@ local mountGradientEditor = function(promptOptions, promptForColorEdit, finished
         gradient = promptOptions.InitialGradient
     end
 
-    keypoints = Util.table.deepCopyPreserveColors(gradient.Keypoints)
+    keypoints = Util.table.deepCopy(gradient.Keypoints)
 
     colorPaneStore:dispatch({
         type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
@@ -481,7 +481,7 @@ ColorPane.init = function(pluginObj)
     end)
 
     persistentSettingsChanged = colorPaneStore.changed:connect(function(newState, oldState)
-        if (newState.colorEditor.lastPaletteModification ~= oldState.colorEditor.lastPaletteModification) then
+        if (newState.colorEditor.palettes ~= oldState.colorEditor.palettes) then
             local newPalettes = Util.table.deepCopy(newState.colorEditor.palettes)
 
             for i = 1, #newPalettes do
@@ -498,8 +498,8 @@ ColorPane.init = function(pluginObj)
             PluginSettings.Set(PluginEnums.PluginSettingKey.UserPalettes, newPalettes)
         end
 
-        if (newState.gradientEditor.lastPaletteModification ~= oldState.gradientEditor.lastPaletteModification) then
-            local newPalette = Util.table.deepCopyPreserveColors(newState.gradientEditor.palette)
+        if (newState.gradientEditor.palette ~= oldState.gradientEditor.palette) then
+            local newPalette = Util.table.deepCopy(newState.gradientEditor.palette)
 
             for i = 1, #newPalette do
                 local gradient = newPalette[i]

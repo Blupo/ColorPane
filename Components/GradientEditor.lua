@@ -156,7 +156,7 @@ GradientEditor.init = function(self)
         local selectedKeypointIndex = self.props.selectedKeypoint
         if ((selectedKeypointIndex == 1) or (selectedKeypointIndex == #self.props.keypoints)) then return end
 
-        local keypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
+        local keypoints = Util.table.deepCopy(self.props.keypoints)
 
         local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
         local newTime = self.getNewKeypointTime(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
@@ -175,11 +175,10 @@ GradientEditor.init = function(self)
     end
 
     self.removeKeypoint = function(index)
-        local keypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
-        local selectedKeypoint = self.props.selectedKeypoint
+        local keypoints = Util.table.deepCopy(self.props.keypoints)
 
         table.remove(keypoints, index)
-        self.props.setKeypoints(keypoints, (selectedKeypoint == index) and -1 or nil)
+        self.props.setKeypoints(keypoints, -1)
     end
 
     self:setState({
@@ -205,7 +204,7 @@ end
 GradientEditor.render = function(self)
     local theme = self.props.theme
 
-    local keypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
+    local keypoints = Util.table.deepCopy(self.props.keypoints)
     local displayKeypoints = self.props.displayKeypoints
     local colorSpace = self.props.colorSpace
     local hueAdjustment = self.props.hueAdjustment
@@ -534,7 +533,7 @@ GradientEditor.render = function(self)
                             InitialColor = originalColor,
 
                             OnColorChanged = function(color)
-                                local newKeypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
+                                local newKeypoints = Util.table.deepCopy(self.props.keypoints)
                                 local keypoint = newKeypoints[selectedKeypoint]
 
                                 newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = color }
@@ -544,7 +543,7 @@ GradientEditor.render = function(self)
                         })
 
                         editPromise:andThen(function(newColor)
-                            local newKeypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
+                            local newKeypoints = Util.table.deepCopy(self.props.keypoints)
                             local keypoint = keypoints[selectedKeypoint]
 
                             newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = newColor }
@@ -559,7 +558,7 @@ GradientEditor.render = function(self)
                             if (isCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
 
-                                newKeypoints = Util.table.deepCopyPreserveColors(self.props.keypoints)
+                                newKeypoints = Util.table.deepCopy(self.props.keypoints)
                                 newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = originalColor }
                             end
 

@@ -9,7 +9,6 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
@@ -148,7 +147,7 @@ ImportPalette.render = function(self)
     local palettes = self.props.palettes
     local palette = self.state.palette
     local paletteName = self.state.paletteName
-    local newPaletteName = paletteName and PaletteUtils.getNewPaletteName(palettes, paletteName) or nil
+    local newPaletteName = paletteName and Util.palette.getNewItemName(palettes, paletteName) or nil
 
     if (importType == "ModuleScript") then
         importPage = Roact.createElement("Frame", {
@@ -201,7 +200,7 @@ ImportPalette.render = function(self)
                             newPalette = HttpService:JSONDecode(newPalette)
                         end
 
-                        local isValid, message = PaletteUtils.validate(newPalette)
+                        local isValid, message = Util.palette.validate(newPalette)
 
                         if (isValid) then
                             resolve(newPalette)
@@ -285,7 +284,7 @@ ImportPalette.render = function(self)
                         end
 
                         local newPalette = HttpService:JSONDecode(object.Value)
-                        local isValid, message = PaletteUtils.validate(newPalette)
+                        local isValid, message = Util.palette.validate(newPalette)
 
                         if (isValid) then
                             resolve(newPalette)
@@ -356,7 +355,7 @@ ImportPalette.render = function(self)
                         end
                         
                         local newPalette = HttpService:JSONDecode(file:GetBinaryContents())
-                        local isValid, message = PaletteUtils.validate(newPalette)
+                        local isValid, message = Util.palette.validate(newPalette)
 
                         if (isValid) then
                             resolve(newPalette)
@@ -458,7 +457,7 @@ ImportPalette.render = function(self)
                             return
                         else
                             local newPalette = HttpService:JSONDecode(response.Body)
-                            local isValid, message = PaletteUtils.validate(newPalette)
+                            local isValid, message = Util.palette.validate(newPalette)
 
                             if (isValid) then
                                 resolve(newPalette)

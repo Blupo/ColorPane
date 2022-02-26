@@ -2,7 +2,6 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
-local PaletteUtils = require(PluginModules:FindFirstChild("PaletteUtils"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local Util = require(PluginModules:FindFirstChild("Util"))
@@ -27,7 +26,6 @@ local RemovePalette = require(Components:FindFirstChild("RemovePalette"))
 
         theme: StudioTheme
         palettes: array<Palette>
-        lastPaletteModification: number
         lastPalettePage: number
 
         updatePalettePage: (number, number) -> nil
@@ -36,7 +34,7 @@ local RemovePalette = require(Components:FindFirstChild("RemovePalette"))
         removePalette: (number) -> nil
 ]]
 
-local PalettePages = Roact.Component:extend("PalettePages")
+local PalettePages = Roact.PureComponent:extend("PalettePages")
 
 PalettePages.init = function(self)
     self:setState({
@@ -46,22 +44,6 @@ PalettePages.init = function(self)
         leftShiftDown = false,
         rightShiftDown = false,
     })
-end
-
-PalettePages.shouldUpdate = function(self, nextProps, nextState)
-    local propsDiff = Util.table.shallowCompare(self.props, nextProps)
-    local stateDiff = Util.table.shallowCompare(self.state, nextState)
-
-    if (#stateDiff > 0) then return true end
-
-    if ((#propsDiff == 1) and (propsDiff[1] ~= "palettes")) then
-        -- props.lastPaletteModification will tell us if the palettes changed without having to compare them
-        return true
-    elseif (#propsDiff > 1) then
-        return true
-    end
-
-    return false
 end
 
 PalettePages.didMount = function(self)
@@ -221,7 +203,7 @@ PalettePages.render = function(self)
                         if (self.state.askNameBeforeCreation) then
                             self:setState({
                                 displayPage = "namePalette",
-                                newPaletteName = PaletteUtils.getNewPaletteName(palettes, "New Palette")
+                                newPaletteName = Util.palette.getNewItemName(palettes, "New Palette")
                             })
                         else
                             self.props.addPalette()
@@ -300,7 +282,6 @@ return RoactRodux.connect(function(state)
         theme = state.theme,
 
         palettes = state.colorEditor.palettes,
-        lastPaletteModification = state.colorEditor.lastPaletteModification,
         lastPalettePage = state.sessionData.lastPalettePage,
     }
 end, function(dispatch)
