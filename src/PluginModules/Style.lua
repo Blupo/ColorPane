@@ -59,7 +59,7 @@ local Style = {
     ColorWheelEditorImage = "rbxassetid://6333198466",
     SliderEditorImage = "rbxassetid://6333325727",
     PaletteEditorImage = "rbxassetid://6333569516",
-    ColorInfoEditorImage = "rbxassetid://6554131676",
+    ColorToolsEditorImage = "rbxassetid://8988492544",
 
     -- gradient editor icons
     GradientEditorReverseSequenceImage = "rbxassetid://6409046433",

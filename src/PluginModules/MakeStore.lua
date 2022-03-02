@@ -58,6 +58,7 @@ return function(plugin)
             editorPage = 1,
             lastSliderPage = {1, 1},
             lastPalettePage = {1, 1},
+            lastToolPage = {1, 1},
             lastHueHarmony = 1,
             paletteLayout = "grid",
             
