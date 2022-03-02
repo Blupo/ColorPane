@@ -11,6 +11,7 @@
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)
 - Improved keypoint dragging behaviour in the Gradient Editor
 - Improved performance (probably)
+- `API.PromptForColor` and `API.PromptForGradient` now reject with PromptErrors instead of message strings
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)

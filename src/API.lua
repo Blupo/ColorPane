@@ -239,8 +239,6 @@ ColorPane.GetVersion = function(): (number, number, number)
 end
 
 ColorPane.IsColorEditorOpen = function(): boolean
-    if (gradientEditorTree) then return true end
-
     return (colorEditorTree and true or false)
 end
 
@@ -273,18 +271,18 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
                 ((colorType == "Color3") and (typeof(initialColor) ~= "Color3")) or
                 ((colorType == "Color") and (not Color.isAColor(initialColor)))
             ) then
-                return Promise.reject("Invalid prompt options")
+                return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
             end
         end
     elseif (type(optionalPromptOptions) == "nil") then
         promptOptions.ColorType = "Color3"
         promptOptions.InitialColor = DEFAULT_COLOR3
     else
-        return Promise.reject("Invalid prompt options")
+        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 
     local result = checkColorPromptOptions(promptOptions)
-    if (not result) then return Promise.reject("Invalid prompt options") end 
+    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end 
 
     local resolveEvent = Signal.new()
 
@@ -347,15 +345,15 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
 end
 
 ColorPane.PromptForColor = function(promptOptions: ColorPromptOptions?)
-    if (ColorPane.IsColorEditorOpen()) then return Promise.reject("Editor is already open") end
-    if (ColorPane.IsGradientEditorOpen()) then return Promise.reject("Editor is reserved") end
+    if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
+    if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
     return internalPromptForColor(promptOptions)
 end
 
 ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOptions?)
-    if (ColorPane.IsGradientEditorOpen()) then return Promise.reject("Editor is already open") end
-    if (ColorPane.IsColorEditorOpen()) then return Promise.reject("Cannot reserve color editor") end
+    if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
+    if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
     local promptOptions = {
         PromptTitle = "Create a gradient",
@@ -384,18 +382,18 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
                 ((gradientType == "ColorSequence") and (typeof(initialGradient) ~= "ColorSequence")) or
                 ((gradientType == "Gradient") and (not checkGradient(initialGradient)))
             ) then
-                return Promise.reject("Invalid prompt options")
+                return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
             end
         end
     elseif (type(optionalPromptOptions) == "nil") then
         promptOptions.GradientType = "ColorSequence"
         promptOptions.InitialGradient = DEFAULT_COLORSEQUENCE
     else
-        return Promise.reject("Invalid prompt options")
+        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 
     local result = checkGradientPromptOptions(promptOptions)
-    if (not result) then return Promise.reject("Invalid prompt options") end
+    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
 
     local resolveEvent = Signal.new()
 

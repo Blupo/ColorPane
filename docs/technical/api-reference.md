@@ -3,6 +3,18 @@
 
 ## Properties
 
+### ColorPane.PromptError
+
+```
+ColorPane.PromptError: PromptError
+```
+
+If a prompt cannot be opened, a PromptError will be the value passed through the Promise. It has the following items:
+
+- `InvalidPromptOptions`, if the options passed to the prompt function are invalid (e.g. trying to pass a Color3 value to the `InitialGradient` key of GradientPromptOptions).
+- `PromptAlreadyOpen`, which should be self-explanatory.
+- `ReservationProblem`, if you either try to prompt for a color and the gradient editor is already open, or you try to prompt for a gradient and the color editor is already open.
+
 ### ColorPane.PromiseStatus
 
 ```
@@ -46,7 +58,7 @@ Alias for [`ColorPane.IsGradientEditorOpen`](#colorpaneisgradienteditoropen)
 ### ColorPane.PromptForColor
 
 ```
-ColorPane.PromptForColor(promptOptions: ColorPromptOptions?): Promise<Color | Color3>
+ColorPane.PromptForColor(promptOptions: ColorPromptOptions?): Promise<Color | Color3 | PromptError>
 ```
 
 Prompts the user for a color. Returns a Promise that will resolve with either a [Color](https://blupo.github.io/Color/api/color/) or [Color3](https://developer.roblox.com/en-us/api-reference/datatype/Color3), or immediately reject if either the color editor or gradient editor prompts are already open. If the user closes the prompt without submitting a color, the Promise will be cancelled.
@@ -54,7 +66,7 @@ Prompts the user for a color. Returns a Promise that will resolve with either a 
 ### ColorPane.PromptForGradient
 
 ```
-ColorPane.PromptForGradient(promptOptions: GradientPromptOptions?): Promise<Gradient | ColorSequence>
+ColorPane.PromptForGradient(promptOptions: GradientPromptOptions?): Promise<Gradient | ColorSequence | PromptError>
 ```
 
 Prompts the user for a gradient. Returns a Promise that will resolve with either a [Gradient](https://blupo.github.io/Color/api/gradient/) or [ColorSequence](https://developer.roblox.com/en-us/api-reference/datatype/ColorSequence), or immediately reject if the prompt is already open. If the user closes the prompt without submitting a gradient, the Promise will be cancelled.

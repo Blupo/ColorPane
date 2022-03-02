@@ -73,6 +73,12 @@ return setmetatable({
 
         "Default",
     }),
+
+    PromptError = makeEnum("PluginEnums.PromptError", {
+        "InvalidPromptOptions",
+        "PromptAlreadyOpen",
+        "ReservationProblem",
+    }),
 }, {
     __index = function(_, key)
         error(tostring(key) .. " is not a valid enum")
