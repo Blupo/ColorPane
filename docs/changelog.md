@@ -5,6 +5,7 @@
 - Added `API.PromptForGradient` as a replacement for `API.PromptForColorSequence`, which can prompt for either [Gradients](https://blupo.github.io/Color/api/gradient/) or [ColorSequences](https://developer.roblox.com/api-reference/datatype/ColorSequence)
 - Added color interpolation controls and ColorSequence code exporting to the Gradient Editor
 - Added the Color Tools section where the Color Info page used to be
+- Added HWB, Lab, Luv, LCh(ab/uv), xyY, and XYZ to Color Info
 
 ### Changed
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)
