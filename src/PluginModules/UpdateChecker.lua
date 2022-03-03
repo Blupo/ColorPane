@@ -17,9 +17,18 @@ local UpdateChecker = {}
 
 UpdateChecker.Check = function()
     if (not RunService:IsEdit()) then return end
+    if (sessionNotificationShown) then return end
 
-    local objects = game:GetObjects("rbxassetid://" .. tostring(ASSET_ID))
-    local latestPlugin = objects[1]
+    local fetchSuccess, data = pcall(function()
+        return game:GetObjects("rbxassetid://" .. tostring(ASSET_ID))
+    end)
+
+    if (not fetchSuccess) then
+        warn("[ColorPane] Could not check for updates, got an error: " .. data)
+        return
+    end
+
+    local latestPlugin = data[1]
     if (not latestPlugin) then return end
 
     local latestPluginModules = latestPlugin:FindFirstChild("PluginModules")
@@ -33,14 +42,7 @@ UpdateChecker.Check = function()
     local releasePatch, latestReleasePatch = ReleaseVersion[3], latestReleaseVersion[3]
 
     if ((latestReleaseMajor > releaseMajor) or (latestReleaseMinor > releaseMinor) or (latestReleasePatch > releasePatch)) then
-        if (sessionNotificationShown) then return end
-
-        warn(string.format(
-            "[ColorPane] A new version of ColorPane is available: v%d.%d.%d; you're currently using v%d.%d.%d",
-            latestReleaseMajor, latestReleaseMinor, latestReleasePatch,
-            releaseMajor, releaseMinor, releasePatch
-        ))
-
+        warn("[ColorPane] A new version of ColorPane is available, please update at your earliest convenience.")
         sessionNotificationShown = true
     end
 end

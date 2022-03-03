@@ -12,6 +12,9 @@
 - Improved keypoint dragging behaviour in the Gradient Editor
 - Improved performance (probably)
 - `API.PromptForColor` and `API.PromptForGradient` now reject with PromptErrors instead of message strings
+- Checking for updates now gracefully handles errors
+- Checking for updates no longer does excess work if an update notice has already been shown
+- Changed the message when notifying the user that a new version is available
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)
