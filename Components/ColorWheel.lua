@@ -26,119 +26,42 @@ local harmonies = {
     {
         name = "None",
         image = Style.HarmonyNoneImage,
-        order = 1,
-
-        numAngles = 0,
-        getAngles = function() return {} end,
     },
 
     {
-        name = "Complement",
+        name = "Complementary",
         image = Style.HarmonyComplementImage,
-        order = 2,
-
-        numAngles = 1,
-        getAngles = function(angle)
-            return {
-                (angle + (360 / 2 * 1)) % 360
-            }
-        end
-    },
-
-    {
-        name = "Triad",
-        image = Style.HarmonyTriadImage,
-        order = 4,
-
-        numAngles = 2,
-        getAngles = function(angle)
-            return {
-                (angle + (360 / 3 * 1)) % 360,
-                (angle + (360 / 3 * 2)) % 360
-            }
-        end
-    },
-
-    {
-        name = "Square",
-        image = Style.HarmonySquareImage,
-        order = 6,
-
-        numAngles = 3,
-        getAngles = function(angle)
-            return {
-                (angle + (360 / 4 * 1)) % 360,
-                (angle + (360 / 4 * 2)) % 360,
-                (angle + (360 / 4 * 3)) % 360
-            }
-        end
-    },
-
-    {
-        name = "Hexagon",
-        image = Style.HarmonyHexagonImage,
-        order = 8,
-
-        numAngles = 5,
-        getAngles = function(angle)
-            return {
-                (angle + (360 / 6 * 1)) % 360,
-                (angle + (360 / 6 * 2)) % 360,
-                (angle + (360 / 6 * 3)) % 360,
-                (angle + (360 / 6 * 4)) % 360,
-                (angle + (360 / 6 * 5)) % 360,
-            }
-        end
     },
 
     {
         name = "Analogous",
         image = Style.HarmonyAnalogousImage,
-        order = 3,
-
-        numAngles = 2,
-        getAngles = function(angle)
-            return {
-                (angle + ANALOGY_ANGLE) % 360,
-                (angle - ANALOGY_ANGLE) % 360,
-            }
-        end
     },
 
     {
-        name = "Split Complement",
+        name = "Triadic",
+        image = Style.HarmonyTriadImage,
+    },
+
+    {
+        name = "SplitComplementary",
         image = Style.HarmonySplitComplementImage,
-        order = 5,
-            
-        numAngles = 2,
-        getAngles = function(angle)
-            local complementAngle = angle + 180
-
-            return {
-                (complementAngle + ANALOGY_ANGLE) % 360,
-                (complementAngle - ANALOGY_ANGLE) % 360
-            }
-        end
     },
 
     {
-        name = "Rectangle",
+        name = "Square",
+        image = Style.HarmonySquareImage,
+    },
+
+    {
+        name = "Tetradic",
         image = Style.HarmonyRectangleImage,
-        order = 7,
+    },
 
-        numAngles = 3,
-        getAngles = function(angle)
-            local analogy1 = angle + ANALOGY_ANGLE
-            local complement = angle + 180
-            local analogy2 = complement + ANALOGY_ANGLE
-
-            return {
-                analogy1 % 360,
-                complement % 360,
-                analogy2 % 360
-            }
-        end
-    }
+    {
+        name = "Hexagon",
+        image = Style.HarmonyHexagonImage,
+    },
 }
 
 ---
@@ -146,14 +69,11 @@ local harmonies = {
 --[[
     props
 
-        h: number
-        harmony: string
-        angleNum: number
+        angle: number
         ringWidth: number
-
         wheelRadius: Binding<number>
 
-        updateH: (number) -> nil
+        onActivated: () -> nil
 
     store props
         
@@ -165,23 +85,19 @@ local HueHarmonyMarker = Roact.PureComponent:extend("HueHarmonyMarker")
 HueHarmonyMarker.render = function(self)
     local theme = self.props.theme
 
-    local h = self.props.h
-    local harmony = self.props.harmony
-    local angleNum = self.props.angleNum
+    local angle = self.props.angle
     local ringWidth = self.props.ringWidth
-
-    local harmonyAngle = harmonies[harmony].getAngles(h)[angleNum]
 
     return Roact.createElement("TextButton", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
 
         Position = self.props.wheelRadius:map(function(wheelRadius)
-            local harmonyAngleRad = math.rad(harmonyAngle)
+            local rad = math.rad(angle)
 
             return UDim2.new(
-                0.5, math.cos(harmonyAngleRad) * (wheelRadius - (ringWidth / 2)),
-                0.5, -math.sin(harmonyAngleRad) * (wheelRadius - (ringWidth / 2))
+                0.5, math.cos(rad) * (wheelRadius - (ringWidth / 2)),
+                0.5, -math.sin(rad) * (wheelRadius - (ringWidth / 2))
             )
         end),
 
@@ -193,14 +109,12 @@ HueHarmonyMarker.render = function(self)
         Text = "",
         TextTransparency = 1,
 
-        BackgroundColor3 = Color.fromHSB(harmonyAngle, 1, 1):bestContrastingColor(
+        BackgroundColor3 = Color.fromHSB(angle, 1, 1):bestContrastingColor(
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
         ):toColor3(),
 
-        [Roact.Event.Activated] = function()
-            self.props.updateH(harmonyAngle)
-        end,
+        [Roact.Event.Activated] = self.props.onActivated,
     })
 end
 
@@ -328,9 +242,13 @@ end
 ColorWheel.render = function(self)
     local theme = self.props.theme
     local editor = self.props.editor
-    local harmony = self.props.harmony
+    local harmonyIndex = self.props.harmony
 
     local h, s, b = self.state.h, self.state.s, self.state.b
+
+    local color = Color.fromHSB(h, s, b)
+    local pureHueColor = Color.fromHSB(h, 1, 1)
+
     local hRad = math.rad(h)
 
     local hueMarkers = {
@@ -352,7 +270,7 @@ ColorWheel.render = function(self)
                 )
             end),
 
-            BackgroundColor3 = Color.fromHSB(h, 1, 1):bestContrastingColor(
+            BackgroundColor3 = pureHueColor:bestContrastingColor(
                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
             ):toColor3(),
@@ -365,7 +283,7 @@ ColorWheel.render = function(self)
                     Position = UDim2.new(0.5, 0, 0.5, 0),
                     Size = UDim2.new(1, -10, 1, -10),
                     
-                    BackgroundColor3 = Color.fromHSB(h, 1, 1):toColor3()
+                    BackgroundColor3 = pureHueColor:toColor3()
                 }, {
                     UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 })
@@ -373,26 +291,40 @@ ColorWheel.render = function(self)
         })
     }
 
-    if (harmonies[harmony]) then
-        local numHarmonyAngles = harmonies[harmony].numAngles
+    if (harmonies[harmonyIndex]) then
+        local harmony = harmonies[harmonyIndex]
+        local harmonicColors
 
-        for i = 1, numHarmonyAngles do
-            hueMarkers["HarmonyMarker" .. i] = Roact.createElement(HueHarmonyMarker, {
-                harmony = harmony,
-                angleNum = i,
+        if (harmony.name == "None") then
+            harmonicColors = {}
+        elseif (harmony.name == "Hexagon") then
+            harmonicColors = {}
 
-                h = h,
+            for i = 1, 5 do
+                table.insert(harmonicColors, Color.fromHSB((h + (360 / 6 * i) % 360), 1, 1))
+            end
+        else
+            harmonicColors = pureHueColor:harmonies(harmony.name, ANALOGY_ANGLE)
+        end
+
+        for i = 1, #harmonicColors do
+            local harmonicColor = harmonicColors[i]
+            local harmonicH = harmonicColor:toHSB()
+            harmonicH = (harmonicH ~= harmonicH) and 0 or harmonicH
+
+            hueMarkers[i] = Roact.createElement(HueHarmonyMarker, {
+                angle = harmonicH,
                 wheelRadius = self.wheelRadius,
                 ringWidth = self.props.ringWidth,
 
-                updateH = function(newH)
+                onActivated = function()
                     self:setState({
                         captureFocus = (editor ~= EDITOR_KEY) and true or nil,
-                        h = newH,
+                        h = harmonicH,
                     })
 
-                    self.props.setColor(Color.fromHSB(newH, s, b))
-                end
+                    self.props.setColor(Color.fromHSB(harmonicH, s, b))
+                end,
             })
         end
     end
@@ -404,9 +336,8 @@ ColorWheel.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
 
             displayType = "image",
-            selected = harmony,
+            selected = harmonyIndex,
             buttons = harmonies,
-            customLayout = true,
             onButtonActivated = self.props.setHarmony,
         }),
 
@@ -527,7 +458,7 @@ ColorWheel.render = function(self)
                     Image = Style.SBPlaneImage,
 
                     BackgroundColor3 = Color3.new(1, 1, 1),
-                    ImageColor3 = Color.fromHSB(h, 1, 1):toColor3(),
+                    ImageColor3 = pureHueColor:toColor3(),
 
                     [Roact.Event.InputBegan] = function(_, input)
                         if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
@@ -570,7 +501,7 @@ ColorWheel.render = function(self)
                         BackgroundTransparency = 0,
                         BorderSizePixel = 0,
 
-                        BackgroundColor3 = Color.fromHSB(h, s, b):bestContrastingColor(
+                        BackgroundColor3 = color:bestContrastingColor(
                             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
                             Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
                         ):toColor3(),
@@ -584,7 +515,7 @@ ColorWheel.render = function(self)
                             BackgroundTransparency = 0,
                             BorderSizePixel = 0,
                             
-                            BackgroundColor3 = Color.fromHSB(h, s, b):toColor3(),
+                            BackgroundColor3 = color:toColor3(),
                         }, {
                             UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                         })
