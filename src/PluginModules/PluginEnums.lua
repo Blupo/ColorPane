@@ -48,7 +48,6 @@ return setmetatable({
     PluginSettingKey = makeEnum("PluginEnums.PluginSettingKey", {
         "UserPalettes",
         "SnapValue",
-        "AutoLoadAPI",
         "AutoLoadColorProperties",
         "AskNameBeforePaletteCreation",
         "AutoCheckForUpdate",
@@ -57,6 +56,7 @@ return setmetatable({
         "CacheAPIData",
         "UserGradients",
         "ColorPropertiesLivePreview",
+        "FirstTimeSetup",
         
         -- DEPRECATED
         "UserColorSequences",

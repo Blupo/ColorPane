@@ -9,6 +9,7 @@ local APIScript = root:FindFirstChild("API")
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
@@ -25,6 +26,7 @@ local UpdateChecker = require(PluginModules:FindFirstChild("UpdateChecker"))
 
 local Components = root:FindFirstChild("Components")
 local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
+local FirstTimeSetup = require(Components:FindFirstChild("FirstTimeSetup"))
 local Settings = require(Components:FindFirstChild("Settings"))
 
 PluginSettings.init(plugin) -- priority
@@ -45,7 +47,6 @@ local toolbarComponents = MakeToolbar(plugin)
 local colorEditorButton = toolbarComponents.ColorEditorButton
 local csEditorButton = toolbarComponents.ColorSequenceEditorButton
 local colorPropertiesButton = toolbarComponents.ColorPropertiesButton
-local injectAPIButton = toolbarComponents.InjectAPIButton
 local settingsButton = toolbarComponents.SettingsButton
 
 local colorPropertiesTree
@@ -57,10 +58,6 @@ local injectAPI = function()
     local success = pcall(function()
         APIScript.Parent = CoreGui
     end)
-
-    if (success) then
-        injectAPIButton.Enabled = false
-    end
 
     return success
 end
@@ -107,22 +104,61 @@ end
 
 ---
 
+APIScript.Archivable = false
+APIScript.Name = "ColorPane"
+
+colorEditorButton.ClickableWhenViewportHidden = true
+csEditorButton.ClickableWhenViewportHidden = true
+
 ColorPane.init(plugin)
+
+if (CoreGui:FindFirstChild("ColorPane")) then
+    warn("[ColorPane] Another instance of ColorPane has already injected its API script!")
+end
+
+if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
+    local firstTimeSetupWidget = MakeWidget(plugin, "FirstTimeSetup")
+    local firstTimeSetupWidgetEnabledChanged
+    local firstTimeSetupTree
+    local confirmSignal = Signal.new()
+
+    firstTimeSetupWidgetEnabledChanged = firstTimeSetupWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
+        if (not firstTimeSetupWidget.Enabled) then
+            firstTimeSetupWidget.Enabled = true
+        end
+    end)
+
+    firstTimeSetupTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
+        store = colorPaneStore,
+    }, {
+        App = Roact.createElement(FirstTimeSetup, {
+            onConfirm = function()
+                firstTimeSetupWidgetEnabledChanged:Disconnect()
+                firstTimeSetupWidget.Enabled = false
+                Roact.unmount(firstTimeSetupTree)
+
+                PluginSettings.Set(PluginEnums.PluginSettingKey.FirstTimeSetup, true)
+                confirmSignal:Fire()
+            end,
+        })
+    }), firstTimeSetupWidget)
+
+    firstTimeSetupWidget.Title = "ColorPane - First Time Setup"
+    firstTimeSetupWidget.Enabled = true
+
+    confirmSignal:Wait()
+end
+
+do
+    local success = injectAPI()
+
+    if (not success) then
+        warn("[ColorPane] The API script could not be injected. Please make sure that you have allowed script injection and reload the plugin.")
+    end
+end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate)) then
     UpdateChecker.Check()
-end
-
-if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadAPI)) then
-    if (CoreGui:FindFirstChild("ColorPane")) then
-        warn("[ColorPane] Another instance of ColorPane has already injected its API script.")
-    else
-        local success = injectAPI()
-
-        if (not success) then
-            warn("[ColorPane] The API script could not be automatically injected. Please make sure that you have allowed script injection and try again.")
-        end
-    end
 end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) then
@@ -144,8 +180,6 @@ if (colorPropertiesWidget.Enabled) then
 end
 
 ---
-
-injectAPIButton.Click:Connect(injectAPI)
 
 colorEditorButton.Click:Connect(function()
     if (colorEditPromise) then
@@ -222,10 +256,3 @@ plugin.Unloading:Connect(function()
         unmountColorProperties()
     end
 end)
-
-APIScript.Archivable = false
-APIScript.Name = "ColorPane"
-
-colorEditorButton.ClickableWhenViewportHidden = true
-csEditorButton.ClickableWhenViewportHidden = true
-injectAPIButton.ClickableWhenViewportHidden = true

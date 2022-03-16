@@ -53,6 +53,12 @@ local widgetsInfo = {
 			Style.PagePadding + 230, (Style.PagePadding * 2) + (Style.StandardTextSize * 3) + (Style.StandardButtonSize * 5) + Style.StandardInputHeight + (Style.MinorElementPadding * 6) + (Style.SpaciousElementPadding * 2)
 		),
 	},
+
+	FirstTimeSetup = {
+		Id = "ColorPane_FirstTimeSetup",
+		Title = "ColorPane First Time Setup",
+	    Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 300, 150, 300, 150),
+	},
 }
 
 local widgets = {}

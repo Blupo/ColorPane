@@ -6,6 +6,7 @@
 - Added color interpolation controls and ColorSequence code exporting to the Gradient Editor
 - Added the Color Tools section where the Color Info page used to be
 - Added HWB, Lab, Luv, LCh(ab/uv), xyY, and XYZ to Color Info
+- A first-time use prompt will now appear informing the user that script injection is required for the API
 
 ### Changed
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)
@@ -16,6 +17,7 @@
 - Checking for updates no longer does excess work if an update notice has already been shown
 - Changed the message when notifying the user that a new version is available
 - Moved the Color Variations palette to the Color Tools section
+- API injection is now automatically done at startup
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)

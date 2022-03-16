@@ -23,7 +23,6 @@ local API_CACHE_REFRESH_TIME = 8 * 3600
 local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = true,
     [PluginEnums.PluginSettingKey.SnapValue] = 0.1/100,
-    [PluginEnums.PluginSettingKey.AutoLoadAPI] = false,
     [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = false,
     [PluginEnums.PluginSettingKey.AutoCheckForUpdate] = true,
     [PluginEnums.PluginSettingKey.UserPalettes] = {},

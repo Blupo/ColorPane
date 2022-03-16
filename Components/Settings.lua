@@ -27,7 +27,6 @@ local StandardUIPadding = StandardComponents.UIPadding
 ---
 
 local SETTINGS = {
-    [PluginEnums.PluginSettingKey.AutoLoadAPI] = true,
     [PluginEnums.PluginSettingKey.AutoLoadColorProperties] = true,
     [PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation] = true,
     [PluginEnums.PluginSettingKey.AutoCheckForUpdate] = true,
@@ -112,19 +111,6 @@ Settings.render = function(self)
             end,
 
             preset = 1,
-        }),
-
-        AutoLoadAPICheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-            LayoutOrder = 1,
-            
-            disabled = (not canSave),
-            value = self.state[PluginEnums.PluginSettingKey.AutoLoadAPI],
-            text = "Automatically inject the ColorPane API script on startup",
-
-            onChecked = function(newValue)
-                PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadAPI, newValue)
-            end,
         }),
 
         AutoLoadColorPropertiesCheckbox = Roact.createElement(Checkbox, {
