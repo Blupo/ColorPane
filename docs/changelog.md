@@ -15,6 +15,7 @@
 - Checking for updates now gracefully handles errors
 - Checking for updates no longer does excess work if an update notice has already been shown
 - Changed the message when notifying the user that a new version is available
+- Moved the Color Variations palette to the Color Tools section
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)

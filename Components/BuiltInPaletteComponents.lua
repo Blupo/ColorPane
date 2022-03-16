@@ -9,7 +9,6 @@ local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
 local ColorBrewerPalettes = require(Components:FindFirstChild("ColorBrewerPalettes"))
-local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
 local Palette = require(Components:FindFirstChild("Palette"))
 
 local BrickColors = BuiltInPalettes.BrickColors
@@ -46,14 +45,6 @@ return {
                 palette = Util.typeColorPalette(CopicColors, "Color3"),
                 readOnly = true
             })
-        end
-    },
-
-    {
-        name = "Variations",
-        
-        getContent = function()
-            return Roact.createElement(ColorVariations)
         end
     },
 

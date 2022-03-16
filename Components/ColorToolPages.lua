@@ -9,6 +9,7 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
 local Components = root:FindFirstChild("Components")
 local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
+local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
 local Pages = require(Components:FindFirstChild("Pages"))
 
 ---
@@ -35,7 +36,12 @@ ColorToolPages.render = function(self)
                     {
                         name = "Color Information",
                         content = Roact.createElement(ColorInfo)
-                    }
+                    },
+
+                    {
+                        name = "Color Variations",
+                        content = Roact.createElement(ColorVariations)
+                    },
                 }
             }
         }
