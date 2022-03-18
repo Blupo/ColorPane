@@ -25,42 +25,42 @@ local ANALOGY_ANGLE = math.deg(math.pi / 6)
 local harmonies = {
     {
         name = "None",
-        image = Style.HarmonyNoneImage,
+        image = Style.Images.NoHarmonyButtonIcon,
     },
 
     {
         name = "Complementary",
-        image = Style.HarmonyComplementImage,
+        image = Style.Images.ComplementaryHarmonyButtonIcon,
     },
 
     {
         name = "Analogous",
-        image = Style.HarmonyAnalogousImage,
+        image = Style.Images.AnalogousHarmonyButtonIcon,
     },
 
     {
         name = "Triadic",
-        image = Style.HarmonyTriadImage,
+        image = Style.Images.TriadicHarmonyButtonIcon,
     },
 
     {
         name = "SplitComplementary",
-        image = Style.HarmonySplitComplementImage,
+        image = Style.Images.SplitComplementaryButtonIcon,
     },
 
     {
         name = "Square",
-        image = Style.HarmonySquareImage,
+        image = Style.Images.SquareHarmonyButtonIcon,
     },
 
     {
         name = "Tetradic",
-        image = Style.HarmonyRectangleImage,
+        image = Style.Images.TetradicHarmonyButtonIcon,
     },
 
     {
         name = "Hexagon",
-        image = Style.HarmonyHexagonImage,
+        image = Style.Images.HexagonalHarmonyButtonIcon,
     },
 }
 
@@ -90,7 +90,7 @@ HueHarmonyMarker.render = function(self)
 
     return Roact.createElement("TextButton", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
+        Size = Style.UDim2.MarkerSize,
 
         Position = self.props.wheelRadius:map(function(wheelRadius)
             local rad = math.rad(angle)
@@ -333,7 +333,7 @@ ColorWheel.render = function(self)
         HarmonyOptions = Roact.createElement(ButtonBar, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            Size = Style.UDim2.ButtonBarSize,
 
             displayType = "image",
             selected = harmonyIndex,
@@ -343,7 +343,7 @@ ColorWheel.render = function(self)
 
         WheelContainer = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
-            Size = UDim2.new(1, 0, 1, -(Style.StandardButtonSize + Style.MajorElementPadding)),
+            Size = UDim2.new(1, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.MajorElementPadding)),
             Position = UDim2.new(0.5, 0, 0, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
@@ -358,7 +358,7 @@ ColorWheel.render = function(self)
                 BorderSizePixel = 0,
                 ClipsDescendants = false,
 
-                Image = Style.HueWheelImage,
+                Image = Style.Images.HueWheel,
 
                 [Roact.Event.InputBegan] = function(obj, input)
                     if (input.UserInputType ~= Enum.UserInputType.MouseButton1) then return end
@@ -455,7 +455,7 @@ ColorWheel.render = function(self)
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
                     ClipsDescendants = false,
-                    Image = Style.SBPlaneImage,
+                    Image = Style.Images.SBPlane,
 
                     BackgroundColor3 = Color3.new(1, 1, 1),
                     ImageColor3 = pureHueColor:toColor3(),

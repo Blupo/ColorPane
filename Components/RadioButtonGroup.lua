@@ -48,7 +48,7 @@ RadioButtonGroup.render = function(self)
 
     for i = 1, #options do
         optionsChildren[i] = Roact.createElement("TextButton", {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             AutoButtonColor = false,
@@ -67,7 +67,7 @@ RadioButtonGroup.render = function(self)
         }, {
             RadioButton = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0, 0.5),
-                Size = UDim2.new(0, Style.StandardInputHeight, 0, Style.StandardInputHeight),
+                Size = UDim2.new(0, Style.Constants.StandardInputHeight, 0, Style.Constants.StandardInputHeight),
                 Position = UDim2.new(0, 0, 0.5, 0),
                 BackgroundTransparency = 0,
                 BorderSizePixel = 1,
@@ -91,7 +91,7 @@ RadioButtonGroup.render = function(self)
                 Indicator = (self.state.selected == i) and
                     Roact.createElement("Frame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
-                        Size = UDim2.new(1, -Style.SpaciousElementPadding, 1, -Style.SpaciousElementPadding),
+                        Size = UDim2.new(1, -Style.Constants.SpaciousElementPadding, 1, -Style.Constants.SpaciousElementPadding),
                         Position = UDim2.new(0.5, 0, 0.5, 0),
                         BackgroundTransparency = 0,
                         BorderSizePixel = 0,
@@ -106,7 +106,7 @@ RadioButtonGroup.render = function(self)
 
             Label = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
-                Size = UDim2.new(1, -(Style.StandardInputHeight + Style.SpaciousElementPadding), 1, 0),
+                Size = UDim2.new(1, -(Style.Constants.StandardInputHeight + Style.Constants.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
                 BackgroundTransparency = 1,
                 Text = options[i],
@@ -115,7 +115,7 @@ RadioButtonGroup.render = function(self)
     end
 
     optionsChildren.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        Padding = UDim.new(0, Style.MinorElementPadding),
+        Padding = UDim.new(0, Style.Constants.MinorElementPadding),
 
         preset = 1,
     })

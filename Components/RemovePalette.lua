@@ -60,7 +60,7 @@ RemovePalette.render = function(self)
             self.updatePromptWidth(obj.AbsoluteSize.X)
         end
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {0, Style.MajorElementPadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.MajorElementPadding}),
 
         WarningText = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 1),
@@ -69,16 +69,16 @@ RemovePalette.render = function(self)
             Size = self.promptWidth:map(function(promptWidth)
                 local promptTextHeight = TextService:GetTextSize(
                     promptText,
-                    Style.LargeTextSize,
-                    Style.StandardFont,
-                    Vector2.new(promptWidth - (Style.MajorElementPadding * 2), math.huge)
+                    Style.Constants.LargeTextSize,
+                    Style.Fonts.Standard,
+                    Vector2.new(promptWidth - (Style.Constants.MajorElementPadding * 2), math.huge)
                 ).Y
 
                 return UDim2.new(1, 0, 0, promptTextHeight)
             end),
 
             Text = promptText,
-            TextSize = Style.LargeTextSize,
+            TextSize = Style.Constants.LargeTextSize,
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Bottom,
             TextWrapped = true,
@@ -87,14 +87,14 @@ RemovePalette.render = function(self)
         Buttons = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0.5, 4),
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            Size = Style.UDim2.ButtonBarSize,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             CancelButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(0.5, -4, 0.5, 0),
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
 
                 displayType = "text",
                 text = "Cancel",
@@ -112,7 +112,7 @@ RemovePalette.render = function(self)
             ConfirmButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0.5, 4, 0.5, 0),
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 BackgroundTransparency = 0,
 
                 displayType = "text",

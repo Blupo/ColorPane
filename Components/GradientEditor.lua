@@ -226,7 +226,13 @@ GradientEditor.render = function(self)
 
     if (showCode) then
         colorSequenceCode = getColorSequenceCode(displayKeypoints)
-        colorSequenceCodeTextSize = TextService:GetTextSize(colorSequenceCode, Style.StandardTextSize, Enum.Font.Code, Vector2.new(math.huge, math.huge))
+
+        colorSequenceCodeTextSize = TextService:GetTextSize(
+            colorSequenceCode,
+            Style.Constants.StandardTextSize,
+            Enum.Font.Code,
+            Vector2.new(math.huge, math.huge)
+        )
     end
 
     for i = 1, #keypoints do
@@ -236,7 +242,7 @@ GradientEditor.render = function(self)
         table.insert(gradientElements, Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Position = UDim2.new(keypoint.Time, 0, 0.5, 0),
-            Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
+            Size = Style.UDim2.MarkerSize,
             BorderSizePixel = 0,
             ZIndex = 2,
 
@@ -336,7 +342,7 @@ GradientEditor.render = function(self)
             end
         end,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         GradientEditor = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
@@ -453,22 +459,22 @@ GradientEditor.render = function(self)
                         BorderSizePixel = 0,
 
                         CanvasSize = UDim2.new(
-                            0, colorSequenceCodeTextSize.X + (Style.MinorElementPadding * 2),
-                            0, colorSequenceCodeTextSize.Y + (Style.MinorElementPadding * 2)
+                            0, colorSequenceCodeTextSize.X + (Style.Constants.MinorElementPadding * 2),
+                            0, colorSequenceCodeTextSize.Y + (Style.Constants.MinorElementPadding * 2)
                         ),
 
                         ClipsDescendants = true,
-                        TopImage = Style.ScrollbarImage,
-                        MidImage = Style.ScrollbarImage,
-                        BottomImage = Style.ScrollbarImage,
+                        TopImage = Style.Images.ScrollbarImage,
+                        MidImage = Style.Images.ScrollbarImage,
+                        BottomImage = Style.Images.ScrollbarImage,
                         HorizontalScrollBarInset = Enum.ScrollBarInset.Always,
                         VerticalScrollBarInset = Enum.ScrollBarInset.Always,
                         VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-                        ScrollBarThickness = Style.ScrollbarThickness / 4,
+                        ScrollBarThickness = Style.Constants.ScrollbarThickness / 4,
 
                         ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
                     }, {
-                        UIPadding = Roact.createElement(StandardUIPadding, { Style.MinorElementPadding }),
+                        UIPadding = Roact.createElement(StandardUIPadding, { Style.Constants.MinorElementPadding }),
 
                         TextBox = Roact.createElement("TextBox", {
                             AnchorPoint = Vector2.new(0, 0),
@@ -478,7 +484,7 @@ GradientEditor.render = function(self)
 
                             Text = colorSequenceCode,
                             Font = Enum.Font.Code,
-                            TextSize = Style.StandardTextSize,
+                            TextSize = Style.Constants.StandardTextSize,
                             TextXAlignment = Enum.TextXAlignment.Left,
                             TextYAlignment = Enum.TextYAlignment.Top,
                             ClearTextOnFocus = false,
@@ -499,8 +505,8 @@ GradientEditor.render = function(self)
         SelectedKeypointInfo = selectedKeypoint and
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0, 1),
-                Position = UDim2.new(0, 0, 1, -(Style.StandardButtonSize + Style.SpaciousElementPadding)),
-                Size = UDim2.new(0.5, 0, 0, Style.StandardButtonSize),
+                Position = UDim2.new(0, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding)),
+                Size = UDim2.new(0.5, 0, 0, Style.Constants.StandardButtonHeight),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
@@ -514,7 +520,7 @@ GradientEditor.render = function(self)
                 EditColor = Roact.createElement(Button, {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Size = UDim2.new(0, 50, 1, 0),
-                    Position = UDim2.new(0, 28 + Style.MinorElementPadding, 0.5, 0),
+                    Position = UDim2.new(0, 28 + Style.Constants.MinorElementPadding, 0.5, 0),
 
                     displayType = "color",
                     color = keypoints[selectedKeypoint].Color:toColor3(),
@@ -579,7 +585,7 @@ GradientEditor.render = function(self)
 
                 ProgressInput = Roact.createElement(TextInput, {
                     AnchorPoint = Vector2.new(0, 0.5),
-                    Position = UDim2.new(0, 28 + 50 + Style.MinorElementPadding + Style.SpaciousElementPadding, 0.5, 0),
+                    Position = UDim2.new(0, 28 + 50 + Style.Constants.MinorElementPadding + Style.Constants.SpaciousElementPadding, 0.5, 0),
                     Size = UDim2.new(0, 50, 1, 0),
                     Text = string.format("%.3f", keypoints[selectedKeypoint].Time * 100),
                     TextXAlignment = Enum.TextXAlignment.Center,
@@ -614,7 +620,7 @@ GradientEditor.render = function(self)
 
                 ProgressLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0.5),
-                    Position = UDim2.new(0, 28 + 50 + 50 + (Style.MinorElementPadding * 2) + Style.SpaciousElementPadding, 0.5, 0),
+                    Position = UDim2.new(0, 28 + 50 + 50 + (Style.Constants.MinorElementPadding * 2) + Style.Constants.SpaciousElementPadding, 0.5, 0),
                     Size = UDim2.new(0, 10, 1, 0),
                     Text = "%",
                 }),
@@ -623,20 +629,20 @@ GradientEditor.render = function(self)
 
         GradientInfo = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
-            Position = UDim2.new(1, 0, 1, -(Style.StandardButtonSize + Style.SpaciousElementPadding)),
-            Size = UDim2.new(0, 180 + Style.StandardButtonSize, 0, Style.StandardButtonSize),
+            Position = UDim2.new(1, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding)),
+            Size = UDim2.new(0, 180 + Style.Constants.StandardButtonHeight, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 
             InfoLabel = Roact.createElement(StandardTextLabel, {
-                Size = UDim2.new(0, 180, 0, Style.StandardTextSize),
+                Size = UDim2.new(0, 180, 0, Style.Constants.StandardTextSize),
                 LayoutOrder = 0,
 
                 Text = string.format("%d/%d Keypoints",  #keypoints, maxUserKeypoints),
@@ -647,11 +653,11 @@ GradientEditor.render = function(self)
             }),
 
             CodeButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.StandardButtonSize,
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = showCode and Style.GradientEditorHideCodeImage or Style.GradientEditorShowCodeImage,
+                image = showCode and Style.Images.HideCodeButtonIcon or Style.Images.ShowCodeButtonIcon,
 
                 onActivated = function()
                     local newShowCode = (not showCode)
@@ -673,11 +679,11 @@ GradientEditor.render = function(self)
             }),
 
             GradientInfoButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.StandardButtonSize,
                 LayoutOrder = 2,
 
                 displayType = "image",
-                image = Style.GradientInfoEditorImage,
+                image = Style.Images.GradientInfoButtonIcon,
 
                 onActivated = function()
                     if (GradientInfoWidget.IsOpen()) then
@@ -693,12 +699,12 @@ GradientEditor.render = function(self)
         EditorActions = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 1),
             Position = UDim2.new(0, 0, 1, 0),
-            Size = UDim2.new(0, 274, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, 274, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
@@ -709,7 +715,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = Style.DeleteImage,
+                image = Style.Images.DeleteButtonIcon,
                 disabled = (colorEditPromise or (not selectedKeypoint) or (selectedKeypoint == 1) or (selectedKeypoint == #keypoints)),
 
                 onActivated = function()
@@ -723,7 +729,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 2,
 
                 displayType = "image",
-                image = Style.GradientEditorSwapKeypointLeftImage,
+                image = Style.Images.MoveLeftButtonIcon,
                 disabled = (colorEditPromise or (not selectedKeypoint) or (selectedKeypoint == 1)),
 
                 onActivated = function()
@@ -743,7 +749,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 3,
 
                 displayType = "image",
-                image = Style.GradientEditorSwapKeypointRightImage,
+                image = Style.Images.MoveRightButtonIcon,
                 disabled = (colorEditPromise or (not selectedKeypoint) or (selectedKeypoint == #keypoints)),
 
                 onActivated = function()
@@ -761,7 +767,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 5,
 
                 displayType = "image",
-                image = Style.GradientEditorReverseSequenceImage,
+                image = Style.Images.ReverseGradientButtonIcon,
                 disabled = colorEditPromise and true or false,
 
                 onActivated = function()
@@ -841,12 +847,15 @@ GradientEditor.render = function(self)
         MainActions = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),
-            Size = UDim2.new(0, (Style.StandardButtonSize + (Style.DialogButtonWidth * 3) + (Style.SpaciousElementPadding * 3)), 0, Style.StandardButtonSize),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
+            
+            Size = UDim2.new(
+                0, (Style.Constants.StandardButtonHeight + (Style.Constants.DialogButtonWidth * 3) + (Style.Constants.SpaciousElementPadding * 3)),
+                0, Style.Constants.StandardButtonHeight),
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
                 VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -856,7 +865,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = Style.PaletteEditorImage,
+                image = Style.Images.PaletteEditorButtonIcon,
 
                 onActivated = function()
                     if (GradientPaletteWidget.IsOpen()) then
@@ -879,7 +888,7 @@ GradientEditor.render = function(self)
             }),
 
             ResetButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                 LayoutOrder = 2,
 
                 displayType = "text",
@@ -906,7 +915,7 @@ GradientEditor.render = function(self)
             }),
 
             CancelButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                 LayoutOrder = 3,
 
                 displayType = "text",
@@ -923,7 +932,7 @@ GradientEditor.render = function(self)
             }),
 
             ConfirmButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                 LayoutOrder = 4,
 
                 displayType = "text",

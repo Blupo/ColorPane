@@ -104,19 +104,26 @@ ExportPalette.render = function(self)
         Dialog = ((not dropdownExpanded) and paletteIndex) and
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0),
-                Size = UDim2.new(1, 0, 1, -(Style.LargeButtonSize + Style.StandardButtonSize + (Style.SpaciousElementPadding * 2))),
-                Position = UDim2.new(0.5, 0, 0, Style.LargeButtonSize + Style.SpaciousElementPadding),
+                Position = UDim2.new(0.5, 0, 0, Style.Constants.LargeButtonHeight + Style.Constants.SpaciousElementPadding),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
+                
+                Size = UDim2.new(
+                    1, 0, 1, -(
+                        Style.Constants.LargeButtonHeight +
+                        Style.Constants.StandardButtonHeight +
+                        Style.Constants.SpaciousElementPadding * 2
+                    )
+                ),
             }, {
                 UIListLayout = Roact.createElement(StandardUIListLayout, {
-                    Padding = UDim.new(0, Style.SpaciousElementPadding),
+                    Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
 
                     preset = 1,
                 }),
 
                 ExportType = Roact.createElement(RadioButtonGroup, {
-                    Size = UDim2.new(1, 0, 0, (Style.StandardInputHeight * 2) + Style.MinorElementPadding),
+                    Size = UDim2.new(1, 0, 0, (Style.Constants.StandardInputHeight * 2) + Style.Constants.MinorElementPadding),
                     LayoutOrder = 2,
 
                     options = { "ModuleScript", "StringValue" },
@@ -130,7 +137,7 @@ ExportPalette.render = function(self)
 
                 ExportLocation = paletteName and
                     Roact.createElement(StandardTextLabel, {
-                        Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+                        Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                         LayoutOrder = 4,
                         Text = "The palette will be exported to ServerStorage as:\n" .. paletteName .. ".palette",
                     })
@@ -142,18 +149,18 @@ ExportPalette.render = function(self)
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(1, 1),
                 Position = UDim2.new(1, 0, 1, 0),
-                Size = UDim2.new(0, Style.DialogButtonWidth * 2 + Style.SpaciousElementPadding, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, (Style.Constants.DialogButtonWidth * 2) + Style.Constants.SpaciousElementPadding, 0, Style.Constants.StandardButtonHeight),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
                 UIListLayout = Roact.createElement(StandardUIListLayout, {
-                    Padding = UDim.new(0, Style.SpaciousElementPadding),
+                    Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                     
                     preset = 2,
                 }),
 
                 CancelButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                    Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                     LayoutOrder = 0,
 
                     displayType = "text",
@@ -170,7 +177,7 @@ ExportPalette.render = function(self)
                 }),
 
                 ExportButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                    Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                     LayoutOrder = 1,
 
                     disabled = (not (paletteIndex and exportType)),

@@ -92,7 +92,7 @@ NoAPIAlert.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         Notice = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
@@ -111,8 +111,8 @@ NoAPIAlert.render = function(self)
 
         LoadButton = Roact.createElement(Button, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, Style.SpaciousElementPadding),
-            Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+            Position = UDim2.new(0.5, 0, 0.5, Style.Constants.SpaciousElementPadding),
+            Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
 
             disabled = requestRunning,
             displayType = "text",
@@ -135,8 +135,8 @@ NoAPIAlert.render = function(self)
 
         AutoLoadRobloxAPICheckbox = Roact.createElement(Checkbox, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 2)),
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            Position = UDim2.new(0.5, 0, 0.5, Style.Constants.StandardButtonHeight + (Style.Constants.SpaciousElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
@@ -149,8 +149,8 @@ NoAPIAlert.render = function(self)
 
         CacheAPIDataCheckbox = Roact.createElement(Checkbox, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, Style.StandardButtonSize + (Style.SpaciousElementPadding * 3) + (Style.StandardTextSize * 2)),
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            Position = UDim2.new(0.5, 0, 0.5, Style.Constants.StandardButtonHeight + (Style.Constants.SpaciousElementPadding * 3) + (Style.Constants.StandardTextSize * 2)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],

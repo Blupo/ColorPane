@@ -111,8 +111,8 @@ Slider.render = function(self)
 
         keypointsFrame = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 1),
-            Position = UDim2.new(0, Style.StandardButtonSize / 2, 1, 0),
-            Size = UDim2.new(1, -(60 + Style.StandardButtonSize + Style.MinorElementPadding), 0, Style.StandardButtonSize),
+            Position = UDim2.new(0, Style.Constants.StandardButtonHeight / 2, 1, 0),
+            Size = UDim2.new(1, -(60 + Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, keypointComponents)
@@ -136,7 +136,7 @@ Slider.render = function(self)
         SliderBorder = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 18),
-            Size = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, Style.StandardButtonSize),
+            Size = UDim2.new(1, -(60 + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
 
@@ -205,7 +205,7 @@ Slider.render = function(self)
                 Marker = Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     Position = UDim2.new(value, 0, 0.5, 0),
-                    Size = UDim2.new(0, Style.MarkerSize, 0, Style.MarkerSize),
+                    Size = Style.UDim2.MarkerSize,
                     BackgroundTransparency = 0,
                     BorderSizePixel = 1,
 
@@ -221,14 +221,14 @@ Slider.render = function(self)
         InputFrame = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 18),
-            Size = UDim2.new(0, 60, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, 60, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0
         }, {
             Input = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
-                Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.MinorElementPadding) or 0, 1, 0),
+                Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.Constants.MinorElementPadding) or 0, 1, 0),
                 TextXAlignment = Enum.TextXAlignment.Center,
                 Text = self.props.valueToText(value),
 

@@ -32,8 +32,8 @@ end
 
 local getTextButtonProps = function(text, textColor)
     return {
-        Font = Style.StandardFont,
-        TextSize = Style.StandardTextSize,
+        Font = Style.Fonts.Standard,
+        TextSize = Style.Constants.StandardTextSize,
         TextXAlignment = Enum.TextXAlignment.Center,
         TextYAlignment = Enum.TextYAlignment.Center,
         Text = text,
@@ -150,7 +150,7 @@ Button.render = function(self)
     return Roact.createElement("Frame", {
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
-        Size = self.props.Size or UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+        Size = self.props.Size or Style.UDim2.StandardButtonSize,
         LayoutOrder = self.props.LayoutOrder,
         BackgroundTransparency = 0,
         BorderSizePixel = 0,

@@ -23,24 +23,24 @@ local ColorBrewer = BuiltInPalettes.ColorBrewer
 ---
 
 local colorSchemes = Util.table.deepCopy(ColorBrewer)
-local buttonBarHeight = Style.StandardButtonSize + Style.StandardTextSize + Style.MinorElementPadding
+local buttonBarHeight = Style.Constants.StandardButtonHeight + Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding
 
 local dataClasses = {
     {
         name = "Sequential",
-        image = Style.CBDataTypeSequentialImage,
+        image = Style.Images.SequentialDataTypeButtonIcon,
         order = 1,
     },
 
     {
         name = "Diverging",
-        image = Style.CBDataTypeDivergingImage,
+        image = Style.Images.DivergingDataTypeButtonIcon,
         order = 2,
     },
 
     {
         name = "Qualitative",
-        image = Style.CBDataTypeQualitativeImage,
+        image = Style.Images.QualitativeDataTypeButtonIcon,
         order = 3,
     }
 }
@@ -112,7 +112,7 @@ ColorBrewerPalettes.render = function(self)
 
         NumDataClassesSelector = Roact.createElement(ButtonBar, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0, buttonBarHeight + Style.MinorElementPadding),
+            Position = UDim2.new(0.5, 0, 0, buttonBarHeight + Style.Constants.MinorElementPadding),
             Size = UDim2.new(1, 0, 0, buttonBarHeight),
 
             displayType = "text",
@@ -129,7 +129,7 @@ ColorBrewerPalettes.render = function(self)
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
-                Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.MajorElementPadding)),
+                Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.Constants.MajorElementPadding)),
 
                 Text = "There are no schemes that satisfy this criteria",
                 TextXAlignment = Enum.TextXAlignment.Center,
@@ -141,7 +141,7 @@ ColorBrewerPalettes.render = function(self)
         Schemes = Roact.createElement(ColorGrids, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.MajorElementPadding)),
+            Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.Constants.MajorElementPadding)),
 
             named = true,
             colorLists = includedColorSchemes,

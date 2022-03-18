@@ -63,7 +63,7 @@ PaletteColorGrid.render = function(self)
         Grid = Roact.createElement(ColorGrids, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
-            Size = UDim2.new(1, 0, 1, -(Style.StandardButtonSize * 2) - (Style.MinorElementPadding * 1) - Style.MajorElementPadding),
+            Size = UDim2.new(1, 0, 1, -(Style.Constants.StandardButtonHeight * 2) - (Style.Constants.MinorElementPadding * 1) - Style.Constants.MajorElementPadding),
     
             named = false,
             colorLists = {colorGridList},
@@ -81,14 +81,14 @@ PaletteColorGrid.render = function(self)
         ColorInfo = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, 0, 0, (Style.StandardButtonSize * 2) + Style.MinorElementPadding),
+            Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 2) + Style.Constants.MinorElementPadding),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             NameInput = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(0, 1),
                 Position = UDim2.new(0, 0, 1, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
                 
                 Text = colors[selected] and colors[selected].name or "",
                 PlaceholderText = "Select a color",
@@ -100,7 +100,7 @@ PaletteColorGrid.render = function(self)
             SetColorButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 
                 displayType = "text",
                 text = "Set Color",
@@ -114,12 +114,12 @@ PaletteColorGrid.render = function(self)
             ColorActions = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(1, 0),
                 Position = UDim2.new(1, 0, 0, 0),
-                Size = UDim2.new(0, (Style.StandardButtonSize * 3) + (Style.MinorElementPadding * 2), 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2), 0, Style.Constants.StandardButtonHeight),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
                 UIListLayout = Roact.createElement(StandardUIListLayout, {
-                    Padding = UDim.new(0, Style.MinorElementPadding),
+                    Padding = UDim.new(0, Style.Constants.MinorElementPadding),
                     
                     preset = 2,
                 }),
@@ -128,7 +128,7 @@ PaletteColorGrid.render = function(self)
                     LayoutOrder = 0,
     
                     displayType = "image",
-                    image = Style.DeleteImage,
+                    image = Style.Images.DeleteButtonIcon,
                     disabled = ((not selected) or isReadOnly),
 
                     onActivated = self.props.onColorRemoved,
@@ -138,7 +138,7 @@ PaletteColorGrid.render = function(self)
                     LayoutOrder = 1,
     
                     displayType = "image",
-                    image = Style.PaletteColorMoveLeftImage,
+                    image = Style.Images.MoveLeftButtonIcon,
                     disabled = ((not selected) or isReadOnly or (selected == 1)),
 
                     onActivated = self.props.onColorMovedUp,
@@ -148,7 +148,7 @@ PaletteColorGrid.render = function(self)
                     LayoutOrder = 2,
     
                     displayType = "image",
-                    image = Style.PaletteColorMoveRightImage,
+                    image = Style.Images.MoveRightButtonIcon,
                     disabled = ((not selected) or isReadOnly or (selected == #colors)),
 
                     onActivated = self.props.onColorMovedDown,

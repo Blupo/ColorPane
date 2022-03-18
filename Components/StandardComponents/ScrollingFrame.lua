@@ -48,13 +48,13 @@ StandardScrollingFrame.render = function(self)
 
         CanvasPosition = Vector2.new(0, 0),
         CanvasSize = props.CanvasSize,
-        TopImage = Style.ScrollbarImage,
-        MidImage = Style.ScrollbarImage,
-        BottomImage = Style.ScrollbarImage,
+        TopImage = Style.Images.ScrollbarImage,
+        MidImage = Style.Images.ScrollbarImage,
+        BottomImage = Style.Images.ScrollbarImage,
         HorizontalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
         VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
         VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right,
-        ScrollBarThickness = Style.ScrollbarThickness,
+        ScrollBarThickness = Style.Constants.ScrollbarThickness,
 
         ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
         BackgroundColor3 = props.useMainBackgroundColor and theme:GetColor(Enum.StudioStyleGuideColor.MainBackground) or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),

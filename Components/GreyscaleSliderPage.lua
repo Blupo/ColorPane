@@ -86,7 +86,7 @@ GreyscaleSliderPage.render = function(self)
 
     return Roact.createFragment({
         UIListLayout = Roact.createElement(StandardUIListLayout, {
-            Padding = UDim.new(0, Style.MajorElementPadding),
+            Padding = UDim.new(0, Style.Constants.MajorElementPadding),
             
             preset = 1,
         }),

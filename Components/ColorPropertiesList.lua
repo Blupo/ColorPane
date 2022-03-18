@@ -29,8 +29,21 @@ local StandardUIPadding = StandardComponents.UIPadding
 local LIST_ITEM_LEFT_PADDING = 24
 
 local getCellTextSizes = function(propName, displayClassName, showClassName)
-    local propNameTextSize = TextService:GetTextSize(propName, Style.StandardTextSize, Style.StandardFont, Vector2.new(math.huge, math.huge))
-    local classNameTextSize = showClassName and TextService:GetTextSize(displayClassName, Style.StandardTextSize, Style.StandardFont, Vector2.new(math.huge, math.huge)) or Vector2.new()
+    local propNameTextSize = TextService:GetTextSize(
+        propName,
+        Style.Constants.StandardTextSize,
+        Style.Fonts.Standard,
+        Vector2.new(math.huge, math.huge)
+    )
+
+    local classNameTextSize = showClassName and
+        TextService:GetTextSize(
+            displayClassName,
+            Style.Constants.StandardTextSize,
+            Style.Fonts.Standard,
+            Vector2.new(math.huge, math.huge)
+        )
+    or Vector2.new()
 
     return propNameTextSize, classNameTextSize
 end
@@ -139,7 +152,12 @@ PropertyListItem.render = function(self)
             self.props.promptEdit()
         end,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, { Style.MinorElementPadding, Style.MinorElementPadding, LIST_ITEM_LEFT_PADDING, Style.MinorElementPadding }),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            Style.Constants.MinorElementPadding,
+            Style.Constants.MinorElementPadding,
+            LIST_ITEM_LEFT_PADDING,
+            Style.Constants.MinorElementPadding
+        }),
 
         PropertyNameLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0, 0.5),
@@ -154,7 +172,7 @@ PropertyListItem.render = function(self)
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, classNameTextSize.X, 1, 0),
-                Position = UDim2.new(0, propNameTextSize.X + Style.MinorElementPadding, 0.5, 0),
+                Position = UDim2.new(0, propNameTextSize.X + Style.Constants.MinorElementPadding, 0.5, 0),
                 Text = displayClassName,
 
                 TextColor3 = theme:GetColor(
@@ -167,7 +185,7 @@ PropertyListItem.render = function(self)
         ColorButtonContainer = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0.5),
             Position = UDim2.new(1, 0, 0.5, 0),
-            Size = UDim2.new(0, Style.ColorSequencePreviewWidth, 1, 0),
+            Size = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth, 1, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
         
@@ -288,8 +306,14 @@ ColorPropertiesList.render = function(self)
     for propertyData, propertyClassName in pairs(properties) do
         local propertyName = propertyData.Name
         local propNameTextSize, classNameTextSize = getCellTextSizes(propertyName, "(" .. propertyClassName .. ")", propertyNameCounts[propertyName] > 1)
-        local cellWidth = LIST_ITEM_LEFT_PADDING + propNameTextSize.X + Style.MinorElementPadding +
-            classNameTextSize.X + Style.MajorElementPadding + Style.ColorSequencePreviewWidth + Style.MinorElementPadding
+
+        local cellWidth = LIST_ITEM_LEFT_PADDING +
+            propNameTextSize.X +
+            Style.Constants.MinorElementPadding +
+            classNameTextSize.X +
+            Style.Constants.MajorElementPadding +
+            Style.Constants.ColorSequencePreviewWidth +
+            Style.Constants.MinorElementPadding
 
         minCellWidth = (cellWidth > minCellWidth) and cellWidth or minCellWidth
     end
@@ -336,7 +360,7 @@ ColorPropertiesList.render = function(self)
         end
 
         listElements[compositeName] = Roact.createElement(PropertyListItem, {
-            Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
+            Size = UDim2.new(1, 0, 0, Style.Constants.LargeButtonHeight),
             LayoutOrder = i,
 
             propName = propertyName,
@@ -445,7 +469,7 @@ ColorPropertiesList.render = function(self)
             TextYAlignment = Enum.TextYAlignment.Center,
             TextWrapped = true,
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding})
+            UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding})
         })
 end
 

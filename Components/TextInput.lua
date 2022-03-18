@@ -59,7 +59,7 @@ TextInput.init = function(self)
         local textBounds = textBox.TextBounds
         local textBoxContainerSize = textBoxContainer.AbsoluteSize
 
-        if (textBounds.X <= (textBoxContainerSize.X - (Style.TextObjectPadding * 2))) then
+        if (textBounds.X <= (textBoxContainerSize.X - (Style.Constants.TextObjectPadding * 2))) then
             self.updateTextBoxOffset(0)
             return
         end
@@ -71,7 +71,8 @@ TextInput.init = function(self)
         local textBoxPositionStart, textBoxPositionEnd = textBoxPosition.X, textBoxPosition.X + textBox.AbsoluteSize.X
 
         local textBoxContainerPosition = textBoxContainer.AbsolutePosition
-        local textBoxContainerPositionStart, textBoxContainerPositionEnd = textBoxContainerPosition.X + Style.TextObjectPadding, textBoxContainerPosition.X + textBoxContainerSize.X - Style.TextObjectPadding
+        local textBoxContainerPositionStart = textBoxContainerPosition.X + Style.Constants.TextObjectPadding
+        local textBoxContainerPositionEnd = textBoxContainerPosition.X + textBoxContainerSize.X - Style.Constants.TextObjectPadding
 
         local startToCursorSubstring = string.sub(textBox.Text, 1, cursorPosition - 1)
         local startToCursorSubstringBounds = TextService:GetTextSize(startToCursorSubstring, textBox.TextSize, textBox.Font, Vector2.new(math.huge, math.huge))
@@ -194,7 +195,7 @@ TextInput.render = function(self)
             BackgroundColor3 = backgroundColor,
         }, {
             UICorner = Roact.createElement(StandardUICorner),
-            UIPadding = Roact.createElement(StandardUIPadding, {0, Style.TextObjectPadding}),
+            UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.TextObjectPadding}),
 
             Input = Roact.createElement("TextBox", {
                 AnchorPoint = Vector2.new(0, 0.5),
@@ -207,10 +208,10 @@ TextInput.render = function(self)
                     return UDim2.new(0, offset, 0.5, 0)
                 end),
     
-                Font = Style.StandardFont,
+                Font = Style.Fonts.Standard,
                 MultiLine = false,
                 ClearTextOnFocus = false,
-                TextSize = self.props.TextSize or Style.StandardTextSize,
+                TextSize = self.props.TextSize or Style.Constants.StandardTextSize,
                 TextXAlignment = self.props.TextXAlignment or Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Center,
                 PlaceholderText = self.props.PlaceholderText or "",
@@ -295,7 +296,7 @@ TextInput.render = function(self)
                     local textBounds = obj.TextBounds
                     local containerSize = textBoxContainer.AbsoluteSize
 
-                    local actualContainerSize = containerSize.X - (Style.TextObjectPadding * 2)
+                    local actualContainerSize = containerSize.X - (Style.Constants.TextObjectPadding * 2)
                     if (actualContainerSize <= 0) then return end
     
                     obj.Size = UDim2.new(

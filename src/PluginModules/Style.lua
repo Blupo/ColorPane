@@ -1,125 +1,168 @@
+--!strict
+
 local ContentProvider = game:GetService("ContentProvider")
 
 ---
 
-local Style = {
-    -- paddings
-    MajorElementPadding = 16,
-    MinorElementPadding = 4,
-    SpaciousElementPadding = 8,
-    PagePadding = 8,
+type dictionary<T> = {[string]: T}
 
-    -- text stuff
-    StandardFont = Enum.Font.SourceSans,
-    StandardTextSize = 14,
-    LargeTextSize = 18,
-    TextObjectPadding = 4,
-
-    -- scrollbar
-    ScrollbarThickness = 16,
-    ScrollbarImage = "rbxassetid://590077572",
-
-    -- harmony icons
-    HarmonyNoneImage = "rbxassetid://6237978084",
-    HarmonyComplementImage = "rbxassetid://6237986907",
-    HarmonyAnalogousImage = "rbxassetid://6237983501",
-    HarmonyTriadImage = "rbxassetid://6237989125",
-    HarmonySplitComplementImage = "rbxassetid://6237993440",
-    HarmonySquareImage = "rbxassetid://6237995215",
-    HarmonyRectangleImage = "rbxassetid://6237996947",
-    HarmonyHexagonImage = "rbxassetid://6238003104",
-
-    -- color wheel
-    ColorWheelRingWidth = 20,
-    HueWheelImage ="rbxassetid://5686040244",
-    SBPlaneImage = "rbxassetid://5685199701",
-    HarmonyMarkerImage = "rbxassetid://6208151356",
-
-    -- dropdown icons
-    DropdownCloseImage = "rbxassetid://2064489060",
-    DropdownOpenImage = "rbxassetid://367867055",
-
-    -- palette page
-    PaletteGridViewImage = "rbxassetid://6541631629",
-    PaletteListViewImage = "rbxassetid://6313201384",
-    PaletteColorMoveUpImage = "rbxassetid://965323360",
-    PaletteColorMoveDownImage = "rbxassetid://913309373",
-    PaletteColorMoveLeftImage = "rbxassetid://330699522",
-    PaletteColorMoveRightImage = "rbxassetid://330699633",
-
-    -- Pages
-    PageOptionsImage = "rbxassetid://6308568235",
-
-    -- ColorBrewer data type icons
-    CBDataTypeSequentialImage = "rbxassetid://6313201384",
-    CBDataTypeDivergingImage = "rbxassetid://6308594803",
-    CBDataTypeQualitativeImage = "rbxassetid://6308596898",
-
-    -- editor icons
-    ColorWheelEditorImage = "rbxassetid://6333198466",
-    SliderEditorImage = "rbxassetid://6333325727",
-    PaletteEditorImage = "rbxassetid://6333569516",
-    ColorToolsEditorImage = "rbxassetid://8988492544",
-
-    -- gradient editor icons
-    GradientEditorReverseSequenceImage = "rbxassetid://6409046433",
-    GradientEditorSwapKeypointLeftImage = "rbxassetid://330699522",
-    GradientEditorSwapKeypointRightImage = "rbxassetid://330699633",
-    GradientInfoEditorImage = "rbxassetid://6554131676",
-    GradientEditorShowCodeImage = "rbxassetid://8521488559",
-    GradientEditorHideCodeImage  = "rbxassetid://8521969115",
-    GradientEditorShowMarkersImage = "rbxassetid://8192654831",
-    GradientEditorHideMarkersImage = "rbxassetid://8522117240",
-
-    -- toolbar
-    ToolbarColorEditorButtonImage = "rbxassetid://7066707717",
-    ToolbarGradientEditorButtonImage = "rbxassetid://7066742393",
-    ToolbarInjectAPIButtonImage = "rbxassetid://6498542225",
-    ToolbarSettingsButtonImage = "rbxassetid://6528624327",
-    ToolbarColorPropertiesButtonImage = "rbxassetid://6531028502",
-
-    -- status
-    StatusGoodImage = "rbxassetid://1469818624",
-    StatusBadImage = "rbxassetid://367878870",
-    StatusWaitingImage = "rbxassetid://6973265105",
-
-    -- add/remove
-    AddImage = "rbxassetid://919844482",
-    SubtractImage = "rbxassetid://6213137847",
-    DeleteImage = "rbxassetid://919846965",
-
-    -- other
-    MarkerSize = 8,
-    StandardCornerRadius = 4,
-    StandardInputHeight = 22,
-    DialogButtonWidth = 70,
-    EditorPageWidth = 265,
-    ColorSequencePreviewWidth = 62,
+type Style = {
+    Fonts: dictionary<Enum.Font>,
+    Constants: dictionary<number>,
+    UDim2: dictionary<UDim2>,
+    Images: dictionary<string>,
 }
 
-Style.StandardButtonSize = Style.StandardTextSize + (Style.MinorElementPadding * 2)
-Style.LargeButtonSize = Style.StandardButtonSize + (Style.MinorElementPadding * 2)
+---
 
--- preload images
-do
-    local styleImages = {}
-
-    for key, value in pairs(Style) do
-        local start = string.find(key, "Image")
-
-        if (start) then
-            local newImageLabel = Instance.new("ImageLabel")
-            newImageLabel.Image = value
-
-            table.insert(styleImages, newImageLabel)
-        end
-    end
-
-    ContentProvider:PreloadAsync(styleImages)
-
-    for i = 1, #styleImages do
-        styleImages[i]:Destroy()
-    end
+local generateStyleMetatable = function(name: string)
+    return {
+        __index = function(_, k)
+            error(string.format("Style.%s.%s does not exist", name, k))
+        end,
+    }
 end
+
+local Style: Style = {
+    UDim2 = {},
+
+    Fonts = {
+        Standard = Enum.Font.SourceSans,
+    },
+
+    Constants = {
+        -- Paddings
+        MajorElementPadding = 16,
+        MinorElementPadding = 4,
+        SpaciousElementPadding = 8,
+        PagePadding = 8,
+        TextObjectPadding = 4,
+
+        -- Sizes
+        MarkerSize = 8,
+
+        StandardTextSize = 14,
+        LargeTextSize = 18,
+
+        DialogButtonWidth = 70,
+        EditorPageWidth = 265,
+        ColorWheelRingWidth = 20,
+        ColorSequencePreviewWidth = 62,
+        ScrollbarThickness = 16,
+
+        -- Misc.
+        StandardCornerRadius = 4,
+    },
+
+    Images = {
+        -- Color wheel images
+        HueWheel = "rbxassetid://5686040244",
+        SBPlane = "rbxassetid://5685199701",
+
+        -- Color harmony icons
+        HarmonyMarker = "rbxassetid://6208151356",
+        NoHarmonyButtonIcon = "rbxassetid://6237978084",
+        ComplementaryHarmonyButtonIcon = "rbxassetid://6237986907",
+        AnalogousHarmonyButtonIcon = "rbxassetid://6237983501",
+        TriadicHarmonyButtonIcon = "rbxassetid://6237989125",
+        SplitComplementaryButtonIcon = "rbxassetid://6237993440",
+        SquareHarmonyButtonIcon = "rbxassetid://6237995215",
+        TetradicHarmonyButtonIcon = "rbxassetid://6237996947",
+        HexagonalHarmonyButtonIcon = "rbxassetid://6238003104",
+
+        -- ColorBrewer palette
+        SequentialDataTypeButtonIcon = "rbxassetid://6313201384",
+        DivergingDataTypeButtonIcon = "rbxassetid://6308594803",
+        QualitativeDataTypeButtonIcon = "rbxassetid://6308596898",
+
+        -- Palette controls
+        GridViewButtonIcon = "rbxassetid://6541631629",
+        ListViewButtonIcon = "rbxassetid://6313201384",
+
+        -- Color Editor buttons
+        ColorWheelEditorButtonIcon = "rbxassetid://6333198466",
+        SlidersEditorButtonIcon = "rbxassetid://6333325727",
+        PaletteEditorButtonIcon = "rbxassetid://6333569516",
+        ColorToolsEditorButtonIcon = "rbxassetid://8988492544",
+
+        -- Gradient editor buttons
+        ReverseGradientButtonIcon = "rbxassetid://6409046433",
+        GradientInfoButtonIcon = "rbxassetid://6554131676",
+        ShowCodeButtonIcon = "rbxassetid://8521488559",
+        HideCodeButtonIcon  = "rbxassetid://8521969115",
+
+        -- TODO: find where these are used
+        ShowMarkersButtonIcon = "rbxassetid://8192654831",
+        HideMarkersButtonIcon = "rbxassetid://8522117240",
+
+        -- Dropdown buttons
+        CloseDropdownButtonIcon = "rbxassetid://2064489060",
+        OpenDropdownButtonIcon = "rbxassetid://367867055",
+
+        -- Toolbar buttons
+        ColorEditorToolbarButtonIcon = "rbxassetid://7066707717",
+        GradientEditorToolbarButtonIcon = "rbxassetid://7066742393",
+        SettingsToolbarButtonIcon = "rbxassetid://6528624327",
+        ColorPropertiesToolbarButtonIcon = "rbxassetid://6531028502",
+
+        -- Async status icons
+        ResultOkIcon = "rbxassetid://1469818624",
+        ResultNotOkIcon = "rbxassetid://367878870",
+        ResultWaitingIcon = "rbxassetid://6973265105",
+
+        -- Generic control buttons
+        MoveUpButtonIcon = "rbxassetid://965323360",
+        MoveDownButtonIcon = "rbxassetid://913309373",
+        MoveLeftButtonIcon = "rbxassetid://330699522",
+        MoveRightButtonIcon = "rbxassetid://330699633",
+
+        AddButtonIcon = "rbxassetid://919844482",
+        SubtractButtonIcon = "rbxassetid://6213137847",
+        DeleteButtonIcon = "rbxassetid://919846965",
+
+        -- Misc. UI
+        PageOptionsButtonIcon = "rbxassetid://6308568235",
+        ScrollbarImage = "rbxassetid://590077572",
+    }
+}
+
+-- Derived values
+
+Style.Constants.StandardButtonHeight = Style.Constants.StandardTextSize + (Style.Constants.MinorElementPadding * 2)
+Style.Constants.LargeButtonHeight = Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)
+Style.Constants.StandardInputHeight = Style.Constants.StandardButtonHeight
+
+Style.UDim2.StandardButtonSize = UDim2.new(0, Style.Constants.StandardButtonHeight, 0, Style.Constants.StandardButtonHeight)
+--Style.UDim2.LargeButtonSize = UDim2.new(0, Style.Constants.LargeButtonHeight, 0, Style.Constants.LargeButtonHeight)
+Style.UDim2.DialogButtonSize = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight)
+Style.UDim2.ButtonBarSize = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight)
+Style.UDim2.MarkerSize = UDim2.new(0, Style.Constants.MarkerSize, 0, Style.Constants.MarkerSize)
+Style.UDim2.MinorElementPaddingSize = UDim2.new(0, Style.Constants.MinorElementPadding, 0, Style.Constants.MinorElementPadding)
+
+--- METATABLE
+
+for k, t in pairs(Style) do
+    setmetatable(t, generateStyleMetatable(k))
+end
+
+--- DEEP FREEZE
+
+for _, t in pairs(Style) do
+    table.freeze(t)
+end
+
+table.freeze(Style)
+
+--- PRELOAD IMAGES
+
+local styleImages = {}
+
+for _, image in pairs(Style.Images) do
+    table.insert(styleImages, image)
+end
+
+ContentProvider:PreloadAsync(styleImages)
+
+---
 
 return Style

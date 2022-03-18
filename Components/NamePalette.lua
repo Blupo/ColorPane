@@ -66,17 +66,17 @@ RenamePalette.render = function(self)
         PromptLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
             Text = selectedPalette and "Rename " .. selectedPalette.name or "Name the Palette",
         }),
 
         NameInput = Roact.createElement(TextInput, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.MinorElementPadding),
-            Size = UDim2.new(1, 0, 0, Style.LargeButtonSize),
+            Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
+            Size = UDim2.new(1, 0, 0, Style.Constants.LargeButtonHeight),
 
             Text = newPaletteName,
-            TextSize = Style.LargeTextSize,
+            TextSize = Style.Constants.LargeTextSize,
 
             onSubmit = function(newText)
                 self:setState({
@@ -87,26 +87,26 @@ RenamePalette.render = function(self)
 
         NameIsOKLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0, Style.StandardTextSize + Style.LargeButtonSize + (Style.MinorElementPadding * 2)),
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+            Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardTextSize + Style.Constants.LargeButtonHeight + (Style.Constants.MinorElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
             Text = (newPaletteName ~= actualNewPaletteName) and ("The palette will be renamed to '" .. actualNewPaletteName .. "'") or "The palette name is OK",
         }),
 
         Buttons = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0, (Style.StandardTextSize * 2) + Style.LargeButtonSize + (Style.MinorElementPadding * 3)),
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            Position = UDim2.new(0.5, 0, 0, (Style.Constants.StandardTextSize * 2) + Style.Constants.LargeButtonHeight + (Style.Constants.MinorElementPadding * 3)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 
                 preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 LayoutOrder = 0,
 
                 displayType = "text",
@@ -123,7 +123,7 @@ RenamePalette.render = function(self)
             }),
 
             ConfirmButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 LayoutOrder = 0,
 
                 displayType = "text",

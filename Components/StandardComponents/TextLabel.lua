@@ -21,8 +21,8 @@ local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
         BackgroundTransparency? = 1
 
         Text
-        Font? = Style.StandardFont
-        TextSize? = Style.StandardTextSize
+        Font? = Style.Fonts.Standard
+        TextSize? = Style.Constants.StandardTextSize
         TextXAlignment? = Enum.TextXAlignment.Left
         TextYAlignment? = Enum.TextYAlignment.Center
         TextWrapped?
@@ -50,8 +50,8 @@ StandardTextLabel.render = function(self)
         BorderSizePixel = 0,
 
         Text = props.Text,
-        Font = props.Font or Style.StandardFont,
-        TextSize = props.TextSize or Style.StandardTextSize,
+        Font = props.Font or Style.Fonts.Standard,
+        TextSize = props.TextSize or Style.Constants.StandardTextSize,
         TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,
         TextYAlignment = props.TextYAlignment or Enum.TextYAlignment.Center,
         TextWrapped = props.TextWrapped,

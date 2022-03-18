@@ -136,8 +136,8 @@ ColorGrid.render = function(self)
         VerticalAlignment = Enum.VerticalAlignment.Top,
         StartCorner = Enum.StartCorner.TopLeft,
 
-        CellSize = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
-        CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
+        CellSize = Style.UDim2.StandardButtonSize,
+        CellPadding = Style.UDim2.MinorElementPaddingSize,
 
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateGridLength(obj.AbsoluteContentSize.Y)
@@ -153,7 +153,7 @@ ColorGrid.render = function(self)
         Position = self.props.Position,
 
         Size = self.gridLength:map(function(gridLength)
-            return UDim2.new(1, 0, 0, gridLength + (self.props.title and (Style.StandardTextSize + Style.MinorElementPadding) or 0))
+            return UDim2.new(1, 0, 0, gridLength + (self.props.title and (Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0))
         end),
 
         BackgroundTransparency = 1,
@@ -163,7 +163,7 @@ ColorGrid.render = function(self)
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Text = self.props.title,
             })
         or nil,
@@ -171,7 +171,7 @@ ColorGrid.render = function(self)
         Grid = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, 0, 1, self.props.title and -(Style.StandardTextSize + Style.MinorElementPadding) or 0),
+            Size = UDim2.new(1, 0, 1, self.props.title and -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, colorElements)
@@ -215,9 +215,9 @@ ColorGrids.render = function(self)
         })
     end
 
-    listElements.UIPadding = Roact.createElement(StandardUIPadding, {Style.MinorElementPadding})
+    listElements.UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.MinorElementPadding})
     listElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        Padding = UDim.new(0, Style.MinorElementPadding),
+        Padding = UDim.new(0, Style.Constants.MinorElementPadding),
         SortOrder = Enum.SortOrder.Name,
 
         [Roact.Change.AbsoluteContentSize] = function(obj)
@@ -233,7 +233,7 @@ ColorGrids.render = function(self)
         Size = self.props.Size,
 
         CanvasSize = self.listLength:map(function(listLength)
-            return UDim2.new(0, 0, 0, listLength + (Style.MinorElementPadding * 2))
+            return UDim2.new(0, 0, 0, listLength + (Style.Constants.MinorElementPadding * 2))
         end)
     }, listElements)
 end

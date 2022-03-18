@@ -40,9 +40,9 @@ local importTypeIndexKeys = {
 }
 
 local statusIcons = {
-    ok = Style.StatusGoodImage,
-    notOk = Style.StatusBadImage,
-    wait = Style.StatusWaitingImage,
+    ok = Style.Images.ResultOkIcon,
+    notOk = Style.Images.ResultNotOkIcon,
+    wait = Style.Images.ResultWaitingIcon,
 }
 
 local statusColorGenerators = {
@@ -151,22 +151,22 @@ ImportPalette.render = function(self)
 
     if (importType == "ModuleScript") then
         importPage = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, (Style.StandardTextSize * 3) + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, (Style.Constants.StandardTextSize * 3) + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             LayoutOrder = 3,
         }, {
             Instructions = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
                 Text = "Select a ModuleScript from the Explorer",
             }),
 
             ConfirmButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
-                Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.MinorElementPadding),
-                Size = UDim2.new(0, 80, 0, Style.StandardButtonSize),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
+                Size = UDim2.new(0, 80, 0, Style.Constants.StandardButtonHeight),
                 
                 displayType = "text",
                 text = "Use Selection",
@@ -216,8 +216,8 @@ ImportPalette.render = function(self)
 
             StatusIcon = Roact.createElement("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
-                Position = UDim2.new(0, 80 + Style.MinorElementPadding, 0, Style.StandardTextSize + Style.MinorElementPadding),
+                Size = Style.UDim2.StandardButtonSize,
+                Position = UDim2.new(0, 80 + Style.Constants.MinorElementPadding, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
@@ -229,8 +229,8 @@ ImportPalette.render = function(self)
 
             StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-                Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
                 Text = self.state.statusMessage or "Waiting for import...",
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -240,22 +240,22 @@ ImportPalette.render = function(self)
         })
     elseif (importType == "StringValue") then
         importPage = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, (Style.StandardTextSize * 3) + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, (Style.Constants.StandardTextSize * 3) + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             LayoutOrder = 3,
         }, {
             Instructions = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
                 Text = "Select a StringValue from the Explorer",
             }),
 
             ConfirmButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
-                Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.MinorElementPadding),
-                Size = UDim2.new(0, 80, 0, Style.StandardButtonSize),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
+                Size = UDim2.new(0, 80, 0, Style.Constants.StandardButtonHeight),
                 
                 displayType = "text",
                 text = "Use Selection",
@@ -300,8 +300,8 @@ ImportPalette.render = function(self)
 
             StatusIcon = Roact.createElement("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
-                Position = UDim2.new(0, 80 + Style.MinorElementPadding, 0, Style.StandardTextSize + Style.MinorElementPadding),
+                Size = Style.UDim2.StandardButtonSize,
+                Position = UDim2.new(0, 80 + Style.Constants.MinorElementPadding, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
@@ -313,8 +313,8 @@ ImportPalette.render = function(self)
 
             StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-                Position = UDim2.new(0, 0, 0, Style.StandardTextSize + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
                 Text = self.state.statusMessage or "Waiting for import...",
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -324,7 +324,7 @@ ImportPalette.render = function(self)
         })
     elseif (importType == "File") then
         importPage = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize + Style.MinorElementPadding + (Style.StandardTextSize * 2)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + (Style.Constants.StandardTextSize * 2)),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             LayoutOrder = 3,
@@ -332,7 +332,7 @@ ImportPalette.render = function(self)
             ImportButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 
                 disabled = (status == "wait"),
                 displayType = "text",
@@ -376,8 +376,8 @@ ImportPalette.render = function(self)
 
             StatusIcon = Roact.createElement("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
-                Position = UDim2.new(0, Style.DialogButtonWidth + Style.MinorElementPadding, 0, 0),
+                Size = Style.UDim2.StandardButtonSize,
+                Position = UDim2.new(0, Style.Constants.DialogButtonWidth + Style.Constants.MinorElementPadding, 0, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
@@ -389,8 +389,8 @@ ImportPalette.render = function(self)
 
             StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-                Position = UDim2.new(0, 0, 0, Style.StandardButtonSize + Style.MinorElementPadding),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding),
 
                 Text = self.state.statusMessage or "Waiting for import...",
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -400,15 +400,21 @@ ImportPalette.render = function(self)
         })
     elseif (importType == "URL") then
         importPage = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight + Style.StandardButtonSize + (Style.StandardTextSize * 2) + (Style.MinorElementPadding * 2)),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             LayoutOrder = 3,
+            
+            Size = UDim2.new(
+                1, 0, 0, Style.Constants.StandardInputHeight +
+                    Style.Constants.StandardButtonHeight +
+                    Style.Constants.StandardTextSize * 2 +
+                    Style.Constants.MinorElementPadding * 2
+            ),
         }, {
             URLInput = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
 
                 Text = self.state.importURL or "",
                 PlaceholderText = "Type or paste a URL here",
@@ -425,8 +431,8 @@ ImportPalette.render = function(self)
 
             RetrieveURLButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
-                Position = UDim2.new(0, 0, 0, Style.StandardInputHeight + Style.MinorElementPadding),
-                Size = UDim2.new(0, 80, 0, Style.StandardButtonSize),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
+                Size = UDim2.new(0, 80, 0, Style.Constants.StandardButtonHeight),
                 
                 disabled = (status == "wait"),
                 displayType = "text",
@@ -480,8 +486,8 @@ ImportPalette.render = function(self)
 
             StatusIcon = Roact.createElement("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
-                Position = UDim2.new(0, 80 + Style.MinorElementPadding, 0, Style.StandardInputHeight + Style.MinorElementPadding),
+                Size = Style.UDim2.StandardButtonSize,
+                Position = UDim2.new(0, 80 + Style.Constants.MinorElementPadding, 0, Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
@@ -493,8 +499,8 @@ ImportPalette.render = function(self)
 
             StatusText = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
-                Position = UDim2.new(0, 0, 0, Style.StandardInputHeight + Style.StandardButtonSize + (Style.MinorElementPadding * 2)),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
+                Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
                 Text = self.state.statusMessage or "Waiting for import...",
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -507,7 +513,7 @@ ImportPalette.render = function(self)
     return Roact.createFragment({
         Dialog = Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Size = UDim2.new(1, 0, 1, -(Style.StandardButtonSize + Style.SpaciousElementPadding)),
+            Size = UDim2.new(1, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding)),
             Position = UDim2.new(0.5, 0, 0, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
@@ -516,10 +522,10 @@ ImportPalette.render = function(self)
                 return UDim2.new(0, 0, 0, length)
             end),
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, { 0, 0, 0, Style.SpaciousElementPadding }),
+            UIPadding = Roact.createElement(StandardUIPadding, { 0, 0, 0, Style.Constants.SpaciousElementPadding }),
 
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
 
                 [Roact.Change.AbsoluteContentSize] = function(obj)
                     self.updateListLength(obj.AbsoluteContentSize.Y)
@@ -529,7 +535,7 @@ ImportPalette.render = function(self)
             }),
             
             ImportType = Roact.createElement(RadioButtonGroup, {
-                Size = UDim2.new(1, 0, 0, (Style.StandardButtonSize * 4) + (Style.MinorElementPadding * 3)),
+                Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 4) + (Style.Constants.MinorElementPadding * 3)),
                 LayoutOrder = 1,
     
                 options = { "ModuleScript", "StringValue", "JSON File", "URL" },
@@ -580,7 +586,7 @@ ImportPalette.render = function(self)
 
             Naming = self.state.palette and
                 Roact.createElement("Frame", {
-                    Size = UDim2.new(1, 0, 0, Style.StandardInputHeight + Style.StandardTextSize + Style.MinorElementPadding),
+                    Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
                     LayoutOrder = 5,
@@ -588,10 +594,10 @@ ImportPalette.render = function(self)
                     NameInput = Roact.createElement(TextInput, {
                         AnchorPoint = Vector2.new(0, 0),
                         Position = UDim2.new(0, 0, 0, 0),
-                        Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+                        Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             
                         Text = self.state.paletteName,
-                        TextSize = Style.StandardTextSize,
+                        TextSize = Style.Constants.StandardTextSize,
 
                         onSubmit = function(newText)
                             self:setState({
@@ -602,8 +608,8 @@ ImportPalette.render = function(self)
             
                     NameIsOKLabel = Roact.createElement(StandardTextLabel, {
                         AnchorPoint = Vector2.new(0, 0),
-                        Position = UDim2.new(0, 0, 0, Style.StandardInputHeight + Style.MinorElementPadding),
-                        Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                        Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
+                        Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                         Text = (paletteName ~= newPaletteName) and ("The palette will be renamed to '" .. newPaletteName .. "'") or "The palette name is OK",
                     }),
                 })
@@ -613,18 +619,18 @@ ImportPalette.render = function(self)
         Buttons = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),
-            Size = UDim2.new(0, Style.DialogButtonWidth * 2 + Style.SpaciousElementPadding, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, Style.Constants.DialogButtonWidth * 2 + Style.Constants.SpaciousElementPadding, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 
                 preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 LayoutOrder = 0,
 
                 displayType = "text",
@@ -641,7 +647,7 @@ ImportPalette.render = function(self)
             }),
 
             ImportButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = Style.UDim2.DialogButtonSize,
                 LayoutOrder = 1,
 
                 disabled = (not (palette and newPaletteName)),

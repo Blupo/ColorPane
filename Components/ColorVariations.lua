@@ -61,17 +61,21 @@ ColorVariations.render = function(self)
     return Roact.createFragment({
         ColorStepsPicker = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
-            Size = UDim2.new(0, (Style.StandardButtonSize * 2) + (Style.MinorElementPadding * 3) + 20 + 60, 0, Style.StandardButtonSize),
             Position = UDim2.new(1, 0, 0, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
+            
+            Size = UDim2.new(
+                0, (Style.Constants.StandardButtonHeight * 2) + (Style.Constants.MinorElementPadding * 3) + 20 + 60,
+                0, Style.Constants.StandardButtonHeight
+            ),
         }, {
             IncrementButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
 
                 displayType = "image",
-                image = Style.AddImage,
+                image = Style.Images.AddButtonIcon,
                 disabled = (variationSteps >= MAX_STEPS),
 
                 onActivated = function()
@@ -81,10 +85,10 @@ ColorVariations.render = function(self)
 
             DecrementButton = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0.5),
-                Position = UDim2.new(0, 60 + Style.MinorElementPadding, 0.5, 0),
+                Position = UDim2.new(0, 60 + Style.Constants.MinorElementPadding, 0.5, 0),
 
                 displayType = "image",
-                image = Style.SubtractImage,
+                image = Style.Images.SubtractButtonIcon,
                 disabled = (variationSteps <= MIN_STEPS),
 
                 onActivated = function()
@@ -103,7 +107,7 @@ ColorVariations.render = function(self)
             StepsCountLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Size = UDim2.new(0, 20, 1, 0),
-                Position = UDim2.new(1, -(Style.StandardButtonSize + Style.MinorElementPadding), 0.5, 0),
+                Position = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding), 0.5, 0),
 
                 Text = variationSteps,
                 TextXAlignment = Enum.TextXAlignment.Center,
@@ -114,7 +118,7 @@ ColorVariations.render = function(self)
         Colors = Roact.createElement(ColorGrids, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, -2, 1, -(Style.StandardButtonSize + Style.MinorElementPadding + 2)),
+            Size = UDim2.new(1, -2, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + 2)),
 
             named = true,
             colorLists = modifiedColors,

@@ -238,9 +238,9 @@ GradientPalette.render = function(self)
         local listItemHeight
 
         if (isSelected) then
-            listItemHeight = (Style.StandardButtonSize * (isReadOnly and 1 or 2)) + (Style.MinorElementPadding * (isReadOnly and 2 or 3))
+            listItemHeight = (Style.Constants.StandardButtonHeight * (isReadOnly and 1 or 2)) + (Style.Constants.MinorElementPadding * (isReadOnly and 2 or 3))
         else
-            listItemHeight = (Style.StandardButtonSize * 1) + (Style.MinorElementPadding * 2)
+            listItemHeight = Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)
         end
 
         table.insert(listElements, Roact.createElement("TextButton", {
@@ -276,12 +276,12 @@ GradientPalette.render = function(self)
                 })
             end
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, {Style.MinorElementPadding}),
+            UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.MinorElementPadding}),
 
             ColorIndicator = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
-                Size = UDim2.new(0, Style.ColorSequencePreviewWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth, 0, Style.Constants.StandardButtonHeight),
 
                 displayType = "colorSequence",
 
@@ -313,8 +313,8 @@ GradientPalette.render = function(self)
             ColorName = isSelected and
                 Roact.createElement(TextInput, {
                     AnchorPoint = Vector2.new(0, 0),
-                    Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.MinorElementPadding, 0, 0),
-                    Size = UDim2.new(1, -(Style.ColorSequencePreviewWidth + Style.MinorElementPadding), 0, Style.StandardButtonSize),
+                    Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding, 0, 0),
+                    Size = UDim2.new(1, -(Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardButtonHeight),
 
                     Text = gradient.name,
                     TextXAlignment = Enum.TextXAlignment.Left,
@@ -328,8 +328,8 @@ GradientPalette.render = function(self)
             or
                 Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0),
-                    Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1, 0, 0),
-                    Size = UDim2.new(1, -(Style.ColorSequencePreviewWidth + Style.SpaciousElementPadding + 1), 1, 0),
+                    Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.SpaciousElementPadding + 1, 0, 0),
+                    Size = UDim2.new(1, -(Style.Constants.ColorSequencePreviewWidth + Style.Constants.SpaciousElementPadding + 1), 1, 0),
                     Text = gradient.name,
 
                     TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
@@ -338,14 +338,14 @@ GradientPalette.render = function(self)
             ColorActions = (isSelected and (not isReadOnly)) and
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0, 1),
-                    Position = UDim2.new(0, Style.ColorSequencePreviewWidth + Style.MinorElementPadding, 1, 0),
-                    Size = UDim2.new(0, (Style.StandardButtonSize * 3) + (Style.MinorElementPadding * 2), 0, Style.StandardButtonSize),
+                    Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding, 1, 0),
+                    Size = UDim2.new(0, (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2), 0, Style.Constants.StandardButtonHeight),
 
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
                 }, {
                     UIListLayout = Roact.createElement(StandardUIListLayout, {
-                        Padding = UDim.new(0, Style.MinorElementPadding),
+                        Padding = UDim.new(0, Style.Constants.MinorElementPadding),
                         
                         preset = 2,
                     }),
@@ -355,7 +355,7 @@ GradientPalette.render = function(self)
                             LayoutOrder = 1,
             
                             displayType = "image",
-                            image = Style.DeleteImage,
+                            image = Style.Images.DeleteButtonIcon,
 
                             onActivated = function()
                                 self:setState({
@@ -372,7 +372,7 @@ GradientPalette.render = function(self)
                             LayoutOrder = 2,
             
                             displayType = "image",
-                            image = Style.PaletteColorMoveUpImage,
+                            image = Style.Images.MoveUpButtonIcon,
                             disabled = (selected == (numBuiltInGradients + 1)),
                                     
                             onActivated = function()
@@ -390,7 +390,7 @@ GradientPalette.render = function(self)
                             LayoutOrder = 3,
             
                             displayType = "image",
-                            image = Style.PaletteColorMoveDownImage,
+                            image = Style.Images.MoveDownButtonIcon,
                             disabled = (selected == #gradients),
 
                             onActivated = function()
@@ -424,12 +424,12 @@ GradientPalette.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         SearchBar = Roact.createElement(TextInput, {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(1, -(Style.StandardButtonSize + Style.MinorElementPadding), 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardInputHeight),
 
             PlaceholderText = "Search",
             Text = self.state.searchDisplayText,
@@ -464,7 +464,7 @@ GradientPalette.render = function(self)
             Position = UDim2.new(1, 0, 0, 0),
 
             displayType = "image",
-            image = Style.AddImage,
+            image = Style.Images.AddButtonIcon,
 
             onActivated = function()
                 self:setState({
@@ -481,7 +481,7 @@ GradientPalette.render = function(self)
         Sequences = Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, -2, 1, -(Style.StandardInputHeight + Style.MinorElementPadding + 2)),
+            Size = UDim2.new(1, -2, 1, -(Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding + 2)),
     
             CanvasSize = self.listLength:map(function(listLength)
                 return UDim2.new(0, 0, 0, listLength)

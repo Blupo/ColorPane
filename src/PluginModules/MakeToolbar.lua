@@ -9,10 +9,10 @@ return function(plugin)
     if (toolbarComponents) then return toolbarComponents end
 
     local toolbar = plugin:CreateToolbar("ColorPane")
-    local colorEditorButton = toolbar:CreateButton("ColorPane_ColorEditor", "Open the Color Editor", Style.ToolbarColorEditorButtonImage, "Color Editor")
-    local csEditorButton = toolbar:CreateButton("ColorPane_CSEditor", "Open the Gradient Editor", Style.ToolbarGradientEditorButtonImage, "Gradient Editor")
-    local propertiesButton = toolbar:CreateButton("ColorPane_Properties", "Open Color Properties", Style.ToolbarColorPropertiesButtonImage, "Color Properties")
-    local settingsButton = toolbar:CreateButton("ColorPane_Settings", "Open Settings", Style.ToolbarSettingsButtonImage, "Settings")
+    local colorEditorButton = toolbar:CreateButton("ColorPane_ColorEditor", "Open the Color Editor", Style.Images.ColorEditorToolbarButtonIcon, "Color Editor")
+    local csEditorButton = toolbar:CreateButton("ColorPane_CSEditor", "Open the Gradient Editor", Style.Images.GradientEditorToolbarButtonIcon, "Gradient Editor")
+    local propertiesButton = toolbar:CreateButton("ColorPane_Properties", "Open Color Properties", Style.Images.ColorPropertiesToolbarButtonIcon, "Color Properties")
+    local settingsButton = toolbar:CreateButton("ColorPane_Settings", "Open Settings", Style.Images.SettingsToolbarButtonIcon, "Settings")
 
     toolbarComponents = {
         Toolbar = toolbar,

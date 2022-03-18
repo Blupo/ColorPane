@@ -117,7 +117,7 @@ TemperatureSliderPage.render = function(self)
             end,
 
             [Roact.Children] = {
-                UIPadding = Roact.createElement(StandardUIPadding, {0, Style.SpaciousElementPadding}),
+                UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.SpaciousElementPadding}),
 
                 KelvinLabel = Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(1, 0.5),
@@ -168,14 +168,14 @@ TemperatureSliderPage.render = function(self)
         ScaleLowerLimitLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 40),
-            Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
+            Size = UDim2.new(0, 100, 0, Style.Constants.StandardTextSize),
             Text = Constants.KELVIN_LOWER_RANGE,
         }),
 
         ScaleUpperLimitLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(1, 0),
-            Position = UDim2.new(1, -(60 + Style.MinorElementPadding), 0, 40),
-            Size = UDim2.new(0, 100, 0, Style.StandardTextSize),
+            Position = UDim2.new(1, -(60 + Style.Constants.MinorElementPadding), 0, 40),
+            Size = UDim2.new(0, 100, 0, Style.Constants.StandardTextSize),
 
             Text = Constants.KELVIN_UPPER_RANGE,
             TextXAlignment = Enum.TextXAlignment.Right,
@@ -192,7 +192,7 @@ TemperatureSliderPage.render = function(self)
             PresetsLabel = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Text = "Presets",
             }),
 
@@ -200,9 +200,9 @@ TemperatureSliderPage.render = function(self)
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
                 Size = UDim2.new(1, -2, 1, -18),
-                TextSize = Style.StandardTextSize,
+                TextSize = Style.Constants.StandardTextSize,
 
-                itemHeight = Style.StandardButtonSize,
+                itemHeight = Style.Constants.StandardButtonHeight,
                 
                 sections = {
                     {

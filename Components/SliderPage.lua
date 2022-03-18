@@ -230,7 +230,7 @@ SliderPage.render = function(self)
     end
 
     elements.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        Padding = UDim.new(0, Style.MajorElementPadding),
+        Padding = UDim.new(0, Style.Constants.MajorElementPadding),
         
         preset = 1,
     })

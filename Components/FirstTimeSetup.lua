@@ -35,7 +35,7 @@ FirstTimeSetup.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         Notice = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
@@ -50,8 +50,8 @@ FirstTimeSetup.render = function(self)
 
         ConfirmButton = Roact.createElement(Button, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, Style.SpaciousElementPadding),
-            Size = UDim2.new(0, 90, 0, Style.StandardButtonSize),
+            Position = UDim2.new(0.5, 0, 0.5, Style.Constants.SpaciousElementPadding),
+            Size = UDim2.new(0, 90, 0, Style.Constants.StandardButtonHeight),
 
             displayType = "text",
             text = "I understand",

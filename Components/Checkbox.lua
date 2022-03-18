@@ -57,7 +57,7 @@ Checkbox.render = function(self)
         CheckboxBorder = Roact.createElement("TextButton", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+            Size = Style.UDim2.StandardButtonSize,
             AutoButtonColor = false,
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
@@ -107,7 +107,7 @@ Checkbox.render = function(self)
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     Position = UDim2.new(0.5, 0, 0.5, 0),
-                    Size = UDim2.new(1, -Style.SpaciousElementPadding, 1, -Style.SpaciousElementPadding),
+                    Size = UDim2.new(1, -Style.Constants.SpaciousElementPadding, 1, -Style.Constants.SpaciousElementPadding),
                     BackgroundTransparency = 0,
                     BorderSizePixel = 0,
 
@@ -126,7 +126,7 @@ Checkbox.render = function(self)
         Text = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 0),
-            Size = UDim2.new(1, -(Style.StandardButtonSize + Style.SpaciousElementPadding), 1, 0),
+            Size = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding), 1, 0),
 
             Text = self.props.text,
             TextXAlignment = Enum.TextXAlignment.Left,

@@ -156,15 +156,23 @@ GradientInfo.render = function(self)
     end
 
     colorSpaceListElements.UIGridLayout = Roact.createElement("UIGridLayout", {
-        CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
-        CellSize = UDim2.new(1 / COLOR_SPACE_BUTTONS_PER_ROW, -math.ceil(Style.MinorElementPadding + (Style.MinorElementPadding / COLOR_SPACE_BUTTONS_PER_ROW)), 0, Style.StandardButtonSize),
+        CellPadding = Style.UDim2.MinorElementPaddingSize,
         SortOrder = Enum.SortOrder.LayoutOrder,
+        
+        CellSize = UDim2.new(
+            1 / COLOR_SPACE_BUTTONS_PER_ROW, -math.ceil(Style.Constants.MinorElementPadding + (Style.Constants.MinorElementPadding / COLOR_SPACE_BUTTONS_PER_ROW)),
+            0, Style.Constants.StandardButtonHeight
+        ),
     })
 
     hueAdjustmentListElements.UIGridLayout = Roact.createElement("UIGridLayout", {
-        CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
-        CellSize = UDim2.new(1 / HUE_ADJUSTMENT_BUTTONS_PER_ROW, -math.ceil(Style.MinorElementPadding + (Style.MinorElementPadding / HUE_ADJUSTMENT_BUTTONS_PER_ROW)), 0, Style.StandardButtonSize),
+        CellPadding = Style.UDim2.MinorElementPaddingSize,
         SortOrder = Enum.SortOrder.LayoutOrder,
+        
+        CellSize = UDim2.new(
+            1 / HUE_ADJUSTMENT_BUTTONS_PER_ROW, -math.ceil(Style.Constants.MinorElementPadding + (Style.Constants.MinorElementPadding / HUE_ADJUSTMENT_BUTTONS_PER_ROW)),
+            0, Style.Constants.StandardButtonHeight
+        ),
     })
 
     return Roact.createElement(StandardScrollingFrame, {
@@ -177,25 +185,25 @@ GradientInfo.render = function(self)
             return UDim2.new(0, 0, 0, length)
         end),
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         UIListLayout = Roact.createElement(StandardUIListLayout, {
-            Padding = UDim.new(0, Style.SpaciousElementPadding),
+            Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
 
             [Roact.Change.AbsoluteContentSize] = function(obj)
-                self.updatePageLength(obj.AbsoluteContentSize.Y + (Style.PagePadding * 2))
+                self.updatePageLength(obj.AbsoluteContentSize.Y + (Style.Constants.PagePadding * 2))
             end,
         }),
 
         ColorSpaceSection = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize + (Style.StandardButtonSize * 3) + (Style.MinorElementPadding * 3)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize + (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 3)),
             BackgroundTransparency = 1,
             LayoutOrder = 0,
         }, {
             Header = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
                 Text = "Color Space",
             }),
@@ -203,20 +211,20 @@ GradientInfo.render = function(self)
             ColorSpaceList = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
-                Size = UDim2.new(1, 0, 0, (Style.StandardButtonSize * 3) + (Style.MinorElementPadding * 2)),
+                Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2)),
                 BackgroundTransparency = 1,
             }, colorSpaceListElements),
         }),
 
         HueAdjustmentSection = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize + (Style.StandardButtonSize * 2) + (Style.MinorElementPadding * 2)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize + (Style.Constants.StandardButtonHeight * 2) + (Style.Constants.MinorElementPadding * 2)),
             BackgroundTransparency = 1,
             LayoutOrder = 1,
         }, {
             Header = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
                 Text = "Hue Interpolation",
             }),
@@ -224,20 +232,20 @@ GradientInfo.render = function(self)
             HueAdjustmentList = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
-                Size = UDim2.new(1, 0, 0, (Style.StandardButtonSize * 2) + Style.MinorElementPadding),
+                Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 2) + Style.Constants.MinorElementPadding),
                 BackgroundTransparency = 1,
             }, hueAdjustmentListElements),
         }),
 
         PrecisionSection = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize + Style.StandardInputHeight + Style.MinorElementPadding),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize + Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
             BackgroundTransparency = 1,
             LayoutOrder = 2,
         }, {
             Header = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
                 Text = "Precision",
             }),
@@ -245,20 +253,20 @@ GradientInfo.render = function(self)
             PrecisionInputs = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
                 BackgroundTransparency = 1,
             }, {
                 UIListLayout = Roact.createElement(StandardUIListLayout, {
-                    Padding = UDim.new(0, Style.MinorElementPadding),
+                    Padding = UDim.new(0, Style.Constants.MinorElementPadding),
                     FillDirection = Enum.FillDirection.Horizontal,
                 }),
     
                 SubtractPrecisionButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+                    Size = Style.UDim2.StandardButtonSize,
                     LayoutOrder = 0,
     
                     displayType = "image",
-                    image = Style.SubtractImage,
+                    image = Style.Images.SubtractButtonIcon,
                     disabled = (precision <= MIN_PRECISION),
     
                     onActivated = function()
@@ -270,11 +278,11 @@ GradientInfo.render = function(self)
                 }),
     
                 AddPrecisionButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+                    Size = Style.UDim2.StandardButtonSize,
                     LayoutOrder = 2,
     
                     displayType = "image",
-                    image = Style.AddImage,
+                    image = Style.Images.AddButtonIcon,
                     disabled = (precision >= MAX_PRECISION) or (Util.getUtilisedKeypoints(numKeypoints, precision + 1) > Constants.MAX_COLORSEQUENCE_KEYPOINTS),
     
                     onActivated = function()
@@ -286,7 +294,7 @@ GradientInfo.render = function(self)
                 }),
 
                 MaxPrecisionButton = Roact.createElement(Button, {
-                    Size = UDim2.new(0, 40, 0, Style.StandardButtonSize),
+                    Size = UDim2.new(0, 40, 0, Style.Constants.StandardButtonHeight),
                     LayoutOrder = 3,
     
                     displayType = "text",
@@ -299,7 +307,7 @@ GradientInfo.render = function(self)
                 }),
     
                 PrecisionInput = Roact.createElement(TextInput, {
-                    Size = UDim2.new(0, 40, 0, Style.StandardInputHeight),
+                    Size = UDim2.new(0, 40, 0, Style.Constants.StandardInputHeight),
                     LayoutOrder = 1,
 
                     Text = precision,

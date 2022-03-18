@@ -316,7 +316,7 @@ ColorInfo.render = function(self)
         local name = component.name
 
         colorInfoElements[name] = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
             LayoutOrder = i,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
@@ -331,7 +331,7 @@ ColorInfo.render = function(self)
             ComponentInput = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
-                Size = UDim2.new(1, -(40 + Style.SpaciousElementPadding), 1, 0),
+                Size = UDim2.new(1, -(40 + Style.Constants.SpaciousElementPadding), 1, 0),
                 Text = component.getComponentString(color),
 
                 isTextAValidValue = function(text)
@@ -347,10 +347,10 @@ ColorInfo.render = function(self)
         })
     end
 
-    colorInfoElements.UIPadding = Roact.createElement(StandardUIPadding, {0, 0, 0, Style.SpaciousElementPadding})
+    colorInfoElements.UIPadding = Roact.createElement(StandardUIPadding, {0, 0, 0, Style.Constants.SpaciousElementPadding})
 
     colorInfoElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        Padding = UDim.new(0, Style.SpaciousElementPadding),
+        Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
 
         [Roact.Change.AbsoluteContentSize] = function(obj)
             self.updateListLength(obj.AbsoluteContentSize.Y)

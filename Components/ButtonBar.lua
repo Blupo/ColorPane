@@ -58,8 +58,8 @@ local buttonTypes = {
 
 local getTextButtonProps = function(text, textColor)
     return {
-        Font = Style.StandardFont,
-        TextSize = Style.StandardTextSize,
+        Font = Style.Fonts.Standard,
+        TextSize = Style.Constants.StandardTextSize,
         TextXAlignment = Enum.TextXAlignment.Center,
         TextYAlignment = Enum.TextYAlignment.Center,
         Text = text,
@@ -169,9 +169,9 @@ ButtonBar.render = function(self)
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
-                Size = UDim2.new(1, 0, 0, Style.StandardTextSize),
+                Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
 
-                Font = Style.StandardFont,
+                Font = Style.Fonts.Standard,
                 Text = self.props.title .. ": " .. self.props.buttons[selected].name,
             })
         or nil,
@@ -184,7 +184,7 @@ ButtonBar.render = function(self)
 
             Size = self.props.vertical and
                 UDim2.new(1, 0, 1, 0)
-            or UDim2.new(1, 0, 1, self.props.title and -(Style.StandardTextSize + Style.MinorElementPadding) or 0),
+            or UDim2.new(1, 0, 1, self.props.title and -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0),
 
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder)
         }, buttonElements)

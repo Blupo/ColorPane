@@ -104,19 +104,24 @@ Palette.render = function(self)
         Tools = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
-            Size = UDim2.new(1, 0, 0, Style.StandardButtonSize),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.MinorElementPadding),
+                Padding = UDim.new(0, Style.Constants.MinorElementPadding),
                 
                 preset = 2,
             }),
 
             SearchBar = Roact.createElement(TextInput, {
                 Size = UDim2.new(
-                    1, -((Style.StandardButtonSize * 2) + 2 + Style.MinorElementPadding + (isReadOnly and 0 or (Style.StandardButtonSize + Style.MinorElementPadding))),
+                    1, -(
+                        Style.Constants.StandardButtonHeight * 2 +
+                        2 +
+                        Style.Constants.MinorElementPadding +
+                        (isReadOnly and 0 or (Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding))
+                    ),
                     1, 0
                 ),
 
@@ -148,7 +153,7 @@ Palette.render = function(self)
             }),
 
             LayoutPicker = Roact.createElement(ButtonBar, {
-                Size = UDim2.new(0, (Style.StandardButtonSize * 2) + 2, 1, 0),
+                Size = UDim2.new(0, (Style.Constants.StandardButtonHeight * 2) + 2, 1, 0),
                 LayoutOrder = 1,
 
                 displayType = "image",
@@ -157,12 +162,12 @@ Palette.render = function(self)
                 buttons = {
                     {
                         name = "grid",
-                        image = Style.PaletteGridViewImage,
+                        image = Style.Images.GridViewButtonIcon,
                     },
 
                     {
                         name = "list",
-                        image = Style.PaletteListViewImage,
+                        image = Style.Images.ListViewButtonIcon,
                     }
                 },
 
@@ -176,7 +181,7 @@ Palette.render = function(self)
                     LayoutOrder = 2,
 
                     displayType = "image",
-                    image = Style.AddImage,
+                    image = Style.Images.AddButtonIcon,
 
                     onActivated = function()
                         self:setState({
@@ -194,8 +199,8 @@ Palette.render = function(self)
 
         Colors = Roact.createElement((paletteLayout == "grid") and PaletteColorGrid or PaletteColorList, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0, Style.StandardButtonSize + Style.MinorElementPadding + 1),
-            Size = UDim2.new(1, -2, 1, -(Style.StandardButtonSize + Style.MinorElementPadding + 2)),
+            Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + 1),
+            Size = UDim2.new(1, -2, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + 2)),
 
             readOnly = isReadOnly,
             colors = searchTerm and paletteColorsSliceArray or paletteColorsSlice,

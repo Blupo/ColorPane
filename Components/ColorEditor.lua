@@ -32,11 +32,11 @@ local EDITOR_ICON_DISPLAY_COLOR = Color3.new(1, 1, 1)
 local EDITOR_ICON_SELECTED_COLOR = Color3.new(1, 1, 1)
 local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
 
-local indicatorContainerSize = Style.StandardButtonSize * 2 + Style.MinorElementPadding
+local indicatorContainerSize = (Style.Constants.StandardButtonHeight * 2) + Style.Constants.MinorElementPadding
 
 local getMaxPages = function(width)
-    local maxPagesNoPadding = math.floor(width / Style.EditorPageWidth)
-    local maxPaddingSpaces = math.floor((width % Style.EditorPageWidth) / Style.MajorElementPadding)
+    local maxPagesNoPadding = math.floor(width / Style.Constants.EditorPageWidth)
+    local maxPaddingSpaces = math.floor((width % Style.Constants.EditorPageWidth) / Style.Constants.MajorElementPadding)
 
     return (maxPaddingSpaces >= (maxPagesNoPadding - 1)) and maxPagesNoPadding or (maxPagesNoPadding - 1)
 end
@@ -44,7 +44,7 @@ end
 local editorTabs = {
     {
         name = "ColorWheel",
-        image = Style.ColorWheelEditorImage,
+        image = Style.Images.ColorWheelEditorButtonIcon,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
@@ -52,14 +52,14 @@ local editorTabs = {
 
         getElement = function()
             return Roact.createElement(ColorWheel, {
-                ringWidth = Style.ColorWheelRingWidth,
+                ringWidth = Style.Constants.ColorWheelRingWidth,
             })
         end
     },
 
     {
         name = "Sliders",
-        image = Style.SliderEditorImage,
+        image = Style.Images.SlidersEditorButtonIcon,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
@@ -72,7 +72,7 @@ local editorTabs = {
 
     {
         name = "Palettes",
-        image = Style.PaletteEditorImage,
+        image = Style.Images.PaletteEditorButtonIcon,
 
         displayColor = EDITOR_ICON_DISPLAY_COLOR,
         selectedDisplayColor = EDITOR_ICON_SELECTED_COLOR,
@@ -85,7 +85,7 @@ local editorTabs = {
 
     {
         name = "ColorTools",
-        image = Style.ColorToolsEditorImage,
+        image = Style.Images.ColorToolsEditorButtonIcon,
 
         getElement = function()
             return Roact.createElement(ColorToolPages)
@@ -177,7 +177,7 @@ ColorEditor.render = function(self)
         local editorTab = editorTabs[page]
 
         editorPageElements[editorTab.name] = Roact.createElement("Frame", {
-            Size = UDim2.new(1 / maxPages, -Style.MajorElementPadding * (maxPages - 1) / maxPages, 1, 0),
+            Size = UDim2.new(1 / maxPages, -Style.Constants.MajorElementPadding * (maxPages - 1) / maxPages, 1, 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             LayoutOrder = i
@@ -216,15 +216,15 @@ ColorEditor.render = function(self)
     end
 
     editorPageElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        Padding = UDim.new(0, Style.MajorElementPadding),
+        Padding = UDim.new(0, Style.Constants.MajorElementPadding),
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Center,
         VerticalAlignment = Enum.VerticalAlignment.Center,
     })
 
     quickPaletteElements.UIGridLayout = Roact.createElement("UIGridLayout", {
-        CellPadding = UDim2.new(0, Style.MinorElementPadding, 0, Style.MinorElementPadding),
-        CellSize = UDim2.new(0, Style.StandardButtonSize, 0, Style.StandardButtonSize),
+        CellPadding = Style.UDim2.MinorElementPaddingSize,
+        CellSize = Style.UDim2.StandardButtonSize,
         FillDirection = Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Left,
         VerticalAlignment = Enum.VerticalAlignment.Top,
@@ -236,7 +236,7 @@ ColorEditor.render = function(self)
         LayoutOrder = 0,
         
         displayType = "image",
-        image = Style.AddImage,
+        image = Style.Images.AddButtonIcon,
 
         onActivated = function()
             self.props.addQuickPaletteColor(color)
@@ -264,12 +264,12 @@ ColorEditor.render = function(self)
             ColorEditorInputSignals.InputEnded:Fire(input, gameProcessedEvent)
         end,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         EditorPages = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(1, -(Style.LargeButtonSize + 2 + Style.MajorElementPadding), 1, -118),
+            Size = UDim2.new(1, -(Style.Constants.LargeButtonHeight + 2 + Style.Constants.MajorElementPadding), 1, -118),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
 
@@ -285,7 +285,7 @@ ColorEditor.render = function(self)
         EditorPagePicker = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 0),
-            Size = UDim2.new(0, Style.LargeButtonSize + 2, 0, ((Style.LargeButtonSize + Style.MinorElementPadding) * #editorTabs) + 2),
+            Size = UDim2.new(0, Style.Constants.LargeButtonHeight + 2, 0, ((Style.Constants.LargeButtonHeight + Style.Constants.MinorElementPadding) * #editorTabs) + 2),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             ClipsDescendants = true,
@@ -313,7 +313,7 @@ ColorEditor.render = function(self)
         }, {
             Separator = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0),
-                Position = UDim2.new(0.5, 0, 0, -Style.MajorElementPadding),
+                Position = UDim2.new(0.5, 0, 0, -Style.Constants.MajorElementPadding),
                 Size = UDim2.new(1, 0, 0, 1),
                 BackgroundTransparency = 0,
                 BorderSizePixel = 0,
@@ -364,7 +364,7 @@ ColorEditor.render = function(self)
             QuickPalette = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
-                Size = UDim2.new(1, -indicatorContainerSize - Style.MinorElementPadding, 1, 0),
+                Size = UDim2.new(1, -indicatorContainerSize - Style.Constants.MinorElementPadding, 1, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 ClipsDescendants = true,
@@ -374,7 +374,7 @@ ColorEditor.render = function(self)
         Hex = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 1),
             Position = UDim2.new(0, 0, 1, 0),
-            Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
@@ -391,7 +391,7 @@ ColorEditor.render = function(self)
             Input = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
-                Size = UDim2.new(1, -6 - Style.MinorElementPadding, 0, Style.StandardInputHeight),
+                Size = UDim2.new(1, -6 - Style.Constants.MinorElementPadding, 0, Style.Constants.StandardInputHeight),
                 
                 Text = string.upper(color:toHex()),
                 TextXAlignment = Enum.TextXAlignment.Center,
@@ -411,18 +411,18 @@ ColorEditor.render = function(self)
         Actions = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),
-            Size = UDim2.new(0, Style.DialogButtonWidth * 2 + Style.SpaciousElementPadding, 0, Style.StandardButtonSize),
+            Size = UDim2.new(0, Style.Constants.DialogButtonWidth * 2 + Style.Constants.SpaciousElementPadding, 0, Style.Constants.StandardButtonHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             UIListLayout = Roact.createElement(StandardUIListLayout, {
-                Padding = UDim.new(0, Style.SpaciousElementPadding),
+                Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
                 
                 preset = 2,
             }),
 
             CancelButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                 LayoutOrder = 0,
 
                 displayType = "text",
@@ -439,7 +439,7 @@ ColorEditor.render = function(self)
             }),
 
             ConfirmButton = Roact.createElement(Button, {
-                Size = UDim2.new(0, Style.DialogButtonWidth, 0, Style.StandardButtonSize),
+                Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
                 LayoutOrder = 1,
 
                 displayType = "text",

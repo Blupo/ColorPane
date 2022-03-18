@@ -100,21 +100,21 @@ Settings.render = function(self)
 
         useMainBackgroundColor = true,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
 
         UIListLayout = Roact.createElement(StandardUIListLayout, {
-            Padding = UDim.new(0, Style.SpaciousElementPadding),
+            Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
             HorizontalAlignment = Enum.HorizontalAlignment.Left,
 
             [Roact.Change.AbsoluteContentSize] = function(obj)
-                self.updateListLength(obj.AbsoluteContentSize.Y + (Style.PagePadding * 2))
+                self.updateListLength(obj.AbsoluteContentSize.Y + (Style.Constants.PagePadding * 2))
             end,
 
             preset = 1,
         }),
 
         AutoLoadColorPropertiesCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             LayoutOrder = 2,
             
             disabled = (not canSave),
@@ -127,7 +127,7 @@ Settings.render = function(self)
         }),
 
         AutoSaveCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 3,
             
             disabled = (not canSave),
@@ -140,14 +140,14 @@ Settings.render = function(self)
         }),
 
         AutoSaveInterval = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 4,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, {
             Label = Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(1, 0.5),
-                Size = UDim2.new(1, -(30 + Style.SpaciousElementPadding), 1, 0),
+                Size = UDim2.new(1, -(30 + Style.Constants.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
 
                 Text = "Auto-save interval (in minutes)",
@@ -187,7 +187,7 @@ Settings.render = function(self)
         }),
 
         CacheAPIDataCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             LayoutOrder = 5,
             
             disabled = (not canSave),
@@ -200,7 +200,7 @@ Settings.render = function(self)
         }),
 
         AutoCheckForUpdateCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 6,
             
             disabled = (not canSave),
@@ -213,7 +213,7 @@ Settings.render = function(self)
         }),
 
         AskNameBeforePaletteCreationCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardInputHeight),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 7,
             
             disabled = (not canSave),
@@ -226,7 +226,7 @@ Settings.render = function(self)
         }),
 
         ColorPropertiesLivePreviewCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.StandardTextSize * 2),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             LayoutOrder = 8,
             
             disabled = (not canSave),
@@ -239,7 +239,7 @@ Settings.render = function(self)
         }),
         
         ClaimSessionLockButton = Roact.createElement(Button, {
-            Size = UDim2.new(0, 120, 0, Style.StandardInputHeight),
+            Size = UDim2.new(0, 120, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 9,
 
             disabled = (not isEdit),
