@@ -81,26 +81,26 @@ end
 
 local getSafeSelection = function()
     local rawSelection = Selection:Get()
-	local safeSelection = {}
+    local safeSelection = {}
 
-	for i = 1, #rawSelection do
-		local obj = rawSelection[i]
+    for i = 1, #rawSelection do
+        local obj = rawSelection[i]
 
         --[[
             To check if an Instance is "safe", we query its ClassName to:
                 - Check if we pass security check
                 - Make sure it isn't blank, which is a thing that can happen apparently
         ]]
-		local passesSecurityCheck, hasValidClassName = pcall(function()
-			return (obj.ClassName ~= "")
-		end)
+        local passesSecurityCheck, hasValidClassName = pcall(function()
+            return (obj.ClassName ~= "")
+        end)
 
-		if (passesSecurityCheck and hasValidClassName) then
-			table.insert(safeSelection, obj)
-		end
-	end
+        if (passesSecurityCheck and hasValidClassName) then
+            table.insert(safeSelection, obj)
+        end
+    end
 
-	return safeSelection
+    return safeSelection
 end
 
 local updateSelectionProperties = function()

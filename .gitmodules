@@ -1,24 +1,24 @@
 [submodule "includes/roact"]
-	path = includes/Roact
-	url = https://github.com/Roblox/roact
+    path = includes/Roact
+    url = https://github.com/Roblox/roact
 [submodule "includes/roact-rodux"]
-	path = includes/RoactRodux
-	url = https://github.com/Roblox/roact-rodux
+    path = includes/RoactRodux
+    url = https://github.com/Roblox/roact-rodux
 [submodule "includes/rodux"]
-	path = includes/Rodux
-	url = https://github.com/Roblox/rodux
+    path = includes/Rodux
+    url = https://github.com/Roblox/rodux
 [submodule "includes/APIUtils"]
-	path = includes/APIUtils
-	url = https://github.com/Blupo/roblox-apiutils
+    path = includes/APIUtils
+    url = https://github.com/Blupo/roblox-apiutils
 [submodule "includes/t"]
-	path = includes/t
-	url = https://github.com/osyrisrblx/t
+    path = includes/t
+    url = https://github.com/osyrisrblx/t
 [submodule "includes/Promise"]
-	path = includes/Promise
-	url = https://github.com/evaera/roblox-lua-promise
+    path = includes/Promise
+    url = https://github.com/evaera/roblox-lua-promise
 [submodule "includes/Color"]
-	path = includes/Color
-	url = https://github.com/Blupo/Color
+    path = includes/Color
+    url = https://github.com/Blupo/Color
 [submodule "includes/state"]
-	path = includes/state
-	url = https://github.com/Blupo/state
+    path = includes/state
+    url = https://github.com/Blupo/state

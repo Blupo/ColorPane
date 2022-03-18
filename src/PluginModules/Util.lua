@@ -30,14 +30,14 @@ local paletteTypeCheck = t.strictInterface({
 
 local noYieldReturnHandler = function(routine: thread, success: boolean, ...: any)
     if (not success) then
-		error(debug.traceback(routine, (...)))
-	end
+        error(debug.traceback(routine, (...)))
+    end
 
-	if (coroutine.status(routine) ~= "dead") then
-		error(debug.traceback("callback must not yield"))
-	end
+    if (coroutine.status(routine) ~= "dead") then
+        error(debug.traceback("callback must not yield"))
+    end
 
-	return ...
+    return ...
 end
 
 ---

@@ -1,25 +1,25 @@
 local makeEnum = function(name, enumItems)
-	local enum = {}
-	
-	for i = 1, #enumItems do
-		local enumItem = enumItems[i]
-		
-		enum[enumItem] = enumItem
-	end
-	
-	return setmetatable(enum, {
-		__index = function(_, key)
-			error(tostring(key) .. " is not a valid member of enum " .. name)
-		end,
-		
-		__newindex = function()
-			error(name .. " cannot be modified")
-		end,
-	})
+    local enum = {}
+    
+    for i = 1, #enumItems do
+        local enumItem = enumItems[i]
+        
+        enum[enumItem] = enumItem
+    end
+    
+    return setmetatable(enum, {
+        __index = function(_, key)
+            error(tostring(key) .. " is not a valid member of enum " .. name)
+        end,
+        
+        __newindex = function()
+            error(name .. " cannot be modified")
+        end,
+    })
 end
 
 return setmetatable({
-	StoreActionType = makeEnum("PluginEnums.StoreActionType", {
+    StoreActionType = makeEnum("PluginEnums.StoreActionType", {
         "SetTheme",
         "UpdateSessionData",
 
