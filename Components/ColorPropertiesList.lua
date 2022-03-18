@@ -397,6 +397,7 @@ ColorPropertiesList.render = function(self)
                     editValuePromptOptions.InitialColor = initialValue and toColor3(initialValue, valueType) or nil
                 end
 
+                local rejected = false
                 local editColorPromise = isColorSequence and
                     ColorPane.PromptForGradient(editValuePromptOptions)
                 or
@@ -406,8 +407,9 @@ ColorPropertiesList.render = function(self)
                     SelectionManager.ApplyColorProperty(propertyClassName, propertyName, 
                         isColorSequence and newColor or fromColor3(newColor, valueType),
                     true)
-                end, function() end)
-                :finally(function(status)
+                end, function()
+                    rejected = true
+                end):finally(function(status)
                     if (status == ColorPane.PromiseStatus.Cancelled) then
                         for obj, originalValues in pairs(self.state.originalPropertyValuesSnapshot) do
                             if (obj:IsA(propertyClassName)) then
@@ -428,13 +430,16 @@ ColorPropertiesList.render = function(self)
                     })
                 end)
 
-                SelectionManager.SetListeningForPropertyChanges(false)
+                -- prevent conflict if the Promise is immediately rejected
+                if (not rejected) then
+                    SelectionManager.SetListeningForPropertyChanges(false)
 
-                self:setState({
-                    editColorPromise = editColorPromise,
-                    editingProperty = compositeName,
-                    originalPropertyValuesSnapshot = SelectionManager.GetColorPropertyValuesSnapshot(),
-                })
+                    self:setState({
+                        editColorPromise = editColorPromise,
+                        editingProperty = compositeName,
+                        originalPropertyValuesSnapshot = SelectionManager.GetColorPropertyValuesSnapshot(),
+                    })
+                end
             end,
         })
     end
