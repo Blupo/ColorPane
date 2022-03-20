@@ -36,6 +36,12 @@ local gradientInfoMinHeight = (Style.Constants.PagePadding * 2) +
     Style.Constants.StandardInputHeight +
     (Style.Constants.MinorElementPadding * 6) +
     (Style.Constants.SpaciousElementPadding * 2)
+
+local firstTimeSetupMinWidth = 84 +
+    (Style.Constants.PagePadding * 2) +
+    Style.Constants.SpaciousElementPadding +
+    Style.Constants.StandardButtonHeight
+
 ---
 
 local widgetsInfo = {
@@ -78,7 +84,7 @@ local widgetsInfo = {
     FirstTimeSetup = {
         Id = "ColorPane_FirstTimeSetup",
         Title = "ColorPane First Time Setup",
-        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 300, 150, 300, 150),
+        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 300, firstTimeSetupMinWidth, 300, firstTimeSetupMinWidth),
     },
 }
 

@@ -39,18 +39,18 @@ FirstTimeSetup.render = function(self)
 
         Notice = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
-            Size = UDim2.new(1, 0, 0.5, 0),
+            Size = UDim2.new(1, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding)),
             Position = UDim2.new(0.5, 0, 0, 0),
 
-            Text = "Before using ColorPane for the first time, you will be prompted to allow script injection. This permission is necessary for other plugins to use the ColorPane API.",
+            Text = "Before using ColorPane for the first time, you will be prompted to allow script injection.\n\nThis permission is necessary for exporting palettes to ModuleScripts and making the ColorPane API available for other plugins to use.",
             TextXAlignment = Enum.TextXAlignment.Center,
-            TextYAlignment = Enum.TextYAlignment.Bottom,
+            TextYAlignment = Enum.TextYAlignment.Top,
             TextWrapped = true,
         }),
 
         ConfirmButton = Roact.createElement(Button, {
-            AnchorPoint = Vector2.new(0.5, 0),
-            Position = UDim2.new(0.5, 0, 0.5, Style.Constants.SpaciousElementPadding),
+            AnchorPoint = Vector2.new(0.5, 1),
+            Position = UDim2.new(0.5, 0, 1, 0),
             Size = UDim2.new(0, 90, 0, Style.Constants.StandardButtonHeight),
 
             displayType = "text",
