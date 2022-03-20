@@ -21,7 +21,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Build
-        run: rojo build --output ColorPane.rbxmx
+        run: rojo build --output ColorPane.rbxm
       
       - name: Create
         uses: anton-yurchenko/git-release@v4.1.0
