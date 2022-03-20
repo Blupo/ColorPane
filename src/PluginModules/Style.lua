@@ -91,10 +91,6 @@ local Style: Style = {
         ShowCodeButtonIcon = "rbxassetid://8521488559",
         HideCodeButtonIcon  = "rbxassetid://8521969115",
 
-        -- TODO: find where these are used
-        ShowMarkersButtonIcon = "rbxassetid://8192654831",
-        HideMarkersButtonIcon = "rbxassetid://8522117240",
-
         -- Dropdown buttons
         CloseDropdownButtonIcon = "rbxassetid://2064489060",
         OpenDropdownButtonIcon = "rbxassetid://367867055",
