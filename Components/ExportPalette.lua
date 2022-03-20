@@ -135,6 +135,18 @@ ExportPalette.render = function(self)
                     end,
                 }),
 
+                ScriptInjectionWarning = (exportType == "ModuleScript") and
+                    Roact.createElement(StandardTextLabel, {
+                        Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
+                        LayoutOrder = 3,
+
+                        Text = "Make sure that you have allowed script injection in order to export ModuleScripts.",
+                        TextWrapped = true,
+
+                        TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.WarningText),
+                    })
+                or nil,
+
                 ExportLocation = paletteName and
                     Roact.createElement(StandardTextLabel, {
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
@@ -237,7 +249,7 @@ ExportPalette.render = function(self)
                         
                         if (not success) then
                             if (exportType == "ModuleScript") then
-                                warn("[ColorPane] The palette export ModuleScript for \"" .. paletteName .."\" could not be parented to ServerStorage, most likely because script injection was denied.")
+                                warn("[ColorPane] The palette export ModuleScript for \"" .. paletteName .."\" failed, most likely because script injection was denied.")
                             end
                         else
                             Selection:Set({instance})
