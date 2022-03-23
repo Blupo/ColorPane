@@ -61,11 +61,12 @@ return function(plugin)
             lastToolPage = {1, 1},
             lastHueHarmony = 1,
             paletteLayout = "grid",
-            
+
             cbDataClass = 1,
             cbNumDataClasses = 3,
 
             variationSteps = 10,
+            colorSorterColors = {},
         },
         
         colorEditor = {
