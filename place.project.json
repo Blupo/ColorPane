@@ -16,6 +16,10 @@
             
                 "Components": {
                     "$path": "Components"
+                },
+
+                "Translations": {
+                    "$path": "Translations.csv"
                 }
             }
         }

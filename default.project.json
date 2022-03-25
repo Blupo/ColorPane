@@ -1,16 +1,20 @@
 {
-  "name": "ColorPane",
+    "name": "ColorPane",
 
-  "tree": {
-    "$className": "Folder",
-    "$path": "src",
+    "tree": {
+        "$className": "Folder",
+        "$path": "src",
 
-    "includes": {
-      "$path": "includes"
-    },
+        "includes": {
+            "$path": "includes"
+        },
 
-    "Components": {
-      "$path": "Components"
+        "Components": {
+            "$path": "Components"
+        },
+
+        "Translations": {
+            "$path": "Translations.csv"
+        }
     }
-  }
 }
