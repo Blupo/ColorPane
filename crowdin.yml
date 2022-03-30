@@ -1,8 +1,14 @@
 files: [
   {
-    source: /Translations/*.csv,
-    translation: /Translations/*.csv,
+    source: /Translations/Common/*.csv,
+    translation: /Translations/Common/%original_file_name%,
     first_line_contains_header: true,
     scheme: "identifier,source_phrase,none,context,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES"
-  }
+  },
+  {
+    source: /Translations/Components/*.csv,
+    translation: /Translations/Components/%original_file_name%,
+    first_line_contains_header: true,
+    scheme: "identifier,source_phrase,none,context,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES"
+  },
 ]
