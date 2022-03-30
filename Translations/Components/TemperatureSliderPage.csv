@@ -1,0 +1,12 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+Temperature_LabelText,Temperature,,,,,,,,,,,,,
+Presets_LabelText,Presets,,,,,,,,,,,,,
+MatchFlame_Preset,Match Flame,,,,,,,,,,,,,
+Candlelight_Preset,Candlelight,,,,,,,,,,,,,
+Incandescent_Preset,Incandescent,,,,,,,,,,,,,
+SoftWhiteIncandescent_Preset,Soft White Incandescent,,,,,,,,,,,,,
+SoftWhite_Preset,Soft White,,,,,,,,,,,,,
+WarmWhite_Preset,Warm White,,,,,,,,,,,,,
+HorizonDaylight_Preset,Horizon Daylight,,,,,,,,,,,,,
+Daylight_Preset,Daylight,,,,,,,,,,,,,
+ClearSky_Preset,Clear Sky,,,,,,,,,,,,,

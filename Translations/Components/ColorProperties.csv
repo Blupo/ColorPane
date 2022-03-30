@@ -1,0 +1,7 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+NoAPIAlert_MainText,The Roblox API data has not been loaded. Please use the Load button to load the data.,,,,,,,,,,,,,
+NoAPIAlert_SecondaryText_NotEditMode,"Note: To use Color Properties during testing, you must have already loaded the data with the ""Cache Roblox API data"" option enabled before testing.",,,,,,,,,,,,,
+NoAPIAlert_SecondaryText_EditMode,This screen will change once the data has been loaded.,,,,,,,,,,,,,
+NoSelectionColorProperties_Message,The selected object(s) do not have any color properties,,,,,,,,,,,,,
+Load_ButtonText,Load,,,,,,,,,,,,,
+Loading_Message,Loading...,,,,,,,,,,,,,

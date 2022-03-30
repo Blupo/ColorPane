@@ -1,0 +1,5 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+Prompt,Name the Palette,,,,,,,,,,,,,
+Rename_Message,The palette will be renamed to ‘{1}’,,,,,,,,,,,,,
+Rename_Prompt,Rename {1},,,,,,,,,,,,,
+DefaultPaletteName,New Palette,,,,,,,,,,,,,

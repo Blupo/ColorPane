@@ -1,0 +1,9 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+BuiltInPalette_Category,Built-In Palettes,,,,,,,,,,,,,
+UserPalette_Category,User Palettes,,,,,,,,,,,,,
+CreatePalette_ButtonText,Create a New Palette,,,,,,,,,,,,,
+ImportPalette_ButtonText,Import a Palette,,,,,,,,,,,,,
+ExportPalette_ButtonText,Export this Palette,,,,,,,,,,,,,
+DuplicatePalette_ButtonText,Duplicate this Palette,,,,,,,,,,,,,
+RenamePalette_ButtonText,Rename this Palette,,,,,,,,,,,,,
+DeletePalette_ButtonText,Delete this Palette,,,,,,,,,,,,,

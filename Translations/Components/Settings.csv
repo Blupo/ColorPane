@@ -1,0 +1,9 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+AutoLoadColorProperties,Automatically load the Roblox API data for Color Properties on startup,,,,,,,,,,,,,
+AutoSave,Auto-save settings and palettes,,,,,,,,,,,,,
+AutoSaveInterval,Auto-save interval,,,,,,,,,,,,,
+CacheAPIData,Cache Roblox API data for use during testing sessions,,,,,,,,,,,,,
+AutoCheckForUpdate,Periodically check for updates,,,,,,,,,,,,,
+AskNameBeforePaletteCreation,Name palettes before creating them,,,,,,,,,,,,,
+ColorPropertiesLivePreview,Preview color changes before applying them when using Color Properties,,,,,,,,,,,,,
+ClaimSessionLock_ButtonText,Claim Session Lock,,,,,,,,,,,,,

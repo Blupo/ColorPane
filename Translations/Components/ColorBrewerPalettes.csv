@@ -1,0 +1,7 @@
+Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
+Sequential_DataClass,Sequential,,,,,,,,,,,,,
+Diverging_DataClass,Diverging,,,,,,,,,,,,,
+Qualitative_DataClass,Qualitative,,,,,,,,,,,,,
+DataClass_SelectorText,Data Type,,,,,,,,,,,,,
+NumDataClass_SelectorText,Number of Data Classes,,,,,,,,,,,,,
+NoMatchingSchemes_Message,There are no schemes that satisfy this criteria,,,,,,,,,,,,,
