@@ -14,7 +14,7 @@
         },
 
         "Translations": {
-            "$path": "Translations"
+            "$path": "Translations.csv"
         }
     }
 }

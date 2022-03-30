@@ -1,3 +1,0 @@
-Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
-Prompt,"Before using ColorPane for the first time, you will be prompted to allow script injection.\n\nThis permission is necessary for exporting palettes to ModuleScripts and making the ColorPane API available for other plugins to use.",,,,,,,,,,,,,
-Confirm_ButtonText,I understand,,,,,,,,,,,,,

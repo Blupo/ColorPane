@@ -1,4 +1,0 @@
-Key,Source,Context,Example,zh-CN,zh-TW,fr,de,id,it,ja,ko,pt-PT,ru,es-ES
-ScriptInjectionWarning_Message,Make sure that you have allowed script injection in order to export ModuleScripts.,,,,,,,,,,,,,
-Export_ButtonText,Export,,,,,,,,,,,,,
-ExportDestination_Message,The palette will be exported to ServerStorage as:\n{1}.palette,,,,,,,,,,,,,
