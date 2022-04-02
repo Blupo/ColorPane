@@ -25,6 +25,7 @@ return {
         getContent = function()
             return Roact.createElement(Palette, {
                 palette = Util.typeColorPalette(BrickColors, "Color3"),
+                paletteIndex = -1,
                 readOnly = true
             })
         end
@@ -44,6 +45,7 @@ return {
         getContent = function()
             return Roact.createElement(Palette, {
                 palette = Util.typeColorPalette(CopicColors, "Color3"),
+                paletteIndex = -2,
                 readOnly = true
             })
         end
@@ -55,6 +57,7 @@ return {
         getContent = function()
             return Roact.createElement(Palette, {
                 palette = Util.typeColorPalette(WebColors, "Color3"),
+                paletteIndex = -3,
                 readOnly = true
             })
         end

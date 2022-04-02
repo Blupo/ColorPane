@@ -23,6 +23,7 @@
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)
+- Changing palettes now deselects the selected color
 
 ### Deprecated
 - `API.PromptForColorSequence` has been deprecated, please use `API.PromptForGradient` for new work

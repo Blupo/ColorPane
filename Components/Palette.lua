@@ -59,6 +59,14 @@ Palette.init = function(self)
     })
 end
 
+Palette.didUpdate = function(self, prevProps)
+    if (self.props.paletteIndex ~= prevProps.paletteIndex) then
+        self:setState({
+            selectedColorIndex = Roact.None,
+        })
+    end
+end
+
 Palette.render = function(self)
     local palette = self.props.palette
     local paletteIndex = self.props.paletteIndex
