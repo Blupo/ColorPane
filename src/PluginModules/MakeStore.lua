@@ -67,6 +67,7 @@ return function(plugin)
 
             variationSteps = 10,
             colorSorterColors = {},
+            picularSearchHistory = {},
         },
         
         colorEditor = {

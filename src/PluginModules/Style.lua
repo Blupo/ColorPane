@@ -119,6 +119,7 @@ local Style: Style = {
         -- Misc. UI
         PageOptionsButtonIcon = "rbxassetid://6308568235",
         ScrollbarImage = "rbxassetid://590077572",
+        SearchHistoryButtonIcon = "rbxassetid://9126497911",
     }
 }
 

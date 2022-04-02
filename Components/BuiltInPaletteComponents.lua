@@ -10,6 +10,7 @@ local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
 local ColorBrewerPalettes = require(Components:FindFirstChild("ColorBrewerPalettes"))
+local PicularPalette = require(Components:FindFirstChild("PicularPalette"))
 local Palette = require(Components:FindFirstChild("Palette"))
 
 local BrickColors = BuiltInPalettes.BrickColors
@@ -49,6 +50,14 @@ return {
                 readOnly = true
             })
         end
+    },
+
+    {
+        name = "Picular",
+
+        getContent = function()
+            return Roact.createElement(PicularPalette)
+        end,
     },
 
     {
