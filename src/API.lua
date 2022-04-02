@@ -317,8 +317,6 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
 
     local editingFinished
     editingFinished = colorEditingFinishedEvent:Connect(function(didConfirm)
-        editingFinished:Disconnect()
-
         if (not didConfirm) then
             editPromise:cancel()
             return
@@ -338,6 +336,8 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
     end)
 
     editPromise:finally(function()
+        editingFinished:Disconnect()
+
         storeChanged.disconnect()
         Roact.unmount(colorEditorTree)
         colorEditorTree = nil
@@ -426,8 +426,6 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
 
     local editingFinished
     editingFinished = gradientEditingFinishedEvent:Connect(function(didConfirm)
-        editingFinished:Disconnect()
-
         if (not didConfirm) then
             editPromise:cancel()
             return
@@ -448,6 +446,8 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     end)
 
     editPromise:finally(function()
+        editingFinished:Disconnect()
+
         storeChanged.disconnect()
         Roact.unmount(gradientEditorTree)
         gradientEditorTree = nil
