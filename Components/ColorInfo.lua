@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -41,7 +42,7 @@ end
 
 local infoComponents = {
     {
-        name = "RGB",
+        name = Translator.FormatByKey("RGB_ColorType"),
 
         getComponentString = function(color)
             local r, g, b = color:toRGB()
@@ -59,7 +60,7 @@ local infoComponents = {
     },
 
     {
-        name = "CMYK",
+        name = Translator.FormatByKey("CMYK_ColorType"),
 
         getComponentString = function(color)
             local c, m, y, k = color:toCMYK()
@@ -78,7 +79,7 @@ local infoComponents = {
     },
 
     {
-        name = "HSB",
+        name = Translator.FormatByKey("HSB_ColorType"),
 
         getComponentString = function(color)
             local h, s, b = color:toHSB()
@@ -98,7 +99,7 @@ local infoComponents = {
     },
 
     {
-        name = "HSL",
+        name = Translator.FormatByKey("HSL_ColorType"),
 
         getComponentString = function(color)
             local h, s, l = color:toHSL()
@@ -118,7 +119,7 @@ local infoComponents = {
     },
 
     {
-        name = "HWB",
+        name = Translator.FormatByKey("HWB_ColorType"),
 
         getComponentString = function(color)
             local h, w, b = color:toHWB()
@@ -138,7 +139,7 @@ local infoComponents = {
     },
 
     {
-        name = "Lab",
+        name = Translator.FormatByKey("Lab_ColorType"),
 
         getComponentString = function(color)
             local l, a, b = color:toLab()
@@ -157,7 +158,7 @@ local infoComponents = {
     },
 
     {
-        name = "Luv",
+        name = Translator.FormatByKey("Luv_ColorType"),
 
         getComponentString = function(color)
             local l, u, v = color:toLuv()
@@ -176,7 +177,7 @@ local infoComponents = {
     },
 
     {
-        name = "LCh(ab)",
+        name = Translator.FormatByKey("LChab_ColorType"),
 
         getComponentString = function(color)
             local l, c, h = color:toLChab()
@@ -196,7 +197,7 @@ local infoComponents = {
     },
 
     {
-        name = "LCh(uv)",
+        name = Translator.FormatByKey("LChuv_ColorType"),
 
         getComponentString = function(color)
             local l, c, h = color:toLChuv()
@@ -216,7 +217,7 @@ local infoComponents = {
     },
 
     {
-        name = "xyY",
+        name = Translator.FormatByKey("xyY_ColorType"),
 
         getComponentString = function(color)
             local x, y, Y = color:to("xyY")
@@ -235,7 +236,7 @@ local infoComponents = {
     },
 
     {
-        name = "XYZ",
+        name = Translator.FormatByKey("XYZ_ColorType"),
 
         getComponentString = function(color)
             local x, y, z = color:toXYZ()
@@ -254,7 +255,8 @@ local infoComponents = {
     },
 
     {
-        name = "Hex",
+        name = Translator.FormatByKey("Hex_ColorLabel"),
+        selectTextOnFocus = true,
 
         getComponentString = function(color)
             return string.upper(color:toHex())
@@ -264,7 +266,7 @@ local infoComponents = {
     },
 
     {
-        name = "Web",
+        name = Translator.FormatByKey("Web_ColorLabel"),
 
         getComponentString = function(color)
             for i = 1, #webColors do
@@ -342,7 +344,7 @@ ColorInfo.render = function(self)
                     self.props.setColor(component.getColor(newText))
                 end,
 
-                selectTextOnFocus = (name == "Hex"),
+                selectTextOnFocus = component.selectTextOnFocus,
             })
         })
     end

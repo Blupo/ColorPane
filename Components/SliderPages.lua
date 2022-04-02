@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -13,6 +14,30 @@ local GreyscaleSliderPage = require(Components:FindFirstChild("GreyscaleSliderPa
 local Pages = require(Components:FindFirstChild("Pages"))
 local SliderPage = require(Components:FindFirstChild("SliderPage"))
 local TemperatureSliderPage = require(Components:FindFirstChild("TemperatureSliderPage"))
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "RGB_ColorType",
+    "CMYK_ColorType",
+    "HSB_ColorType",
+    "HSL_ColorType",
+    
+    "Hue_Component",
+    "Saturation_Component",
+
+    "HSB_Brightness_Component",
+    "HSL_Lightness_Component",
+
+    "RGB_Red_Component",
+    "RGB_Green_Component",
+    "RGB_Blue_Component",
+
+    "CMYK_Cyan_Component",
+    "CMYK_Magenta_Component",
+    "CMYK_Yellow_Component",
+    "CMYK_Key_Component",
+})
 
 ---
 
@@ -36,7 +61,7 @@ SliderPages.render = function(self)
 
                 items = {
                     {
-                        name = "RGB",
+                        name = uiTranslations["RGB_ColorType"],
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "RGB",
@@ -50,9 +75,9 @@ SliderPages.render = function(self)
                             },
 
                             componentLabels = {
-                                R = "Red",
-                                G = "Green",
-                                B = "Blue"
+                                R = uiTranslations["RGB_Red_Component"],
+                                G = uiTranslations["RGB_Green_Component"],
+                                B = uiTranslations["RGB_Blue_Component"]
                             },
 
                             componentUnitLabels = {
@@ -78,7 +103,7 @@ SliderPages.render = function(self)
                     },
 
                     {
-                        name = "CMYK",
+                        name = uiTranslations["CMYK_ColorType"],
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "CMYK",
@@ -100,10 +125,10 @@ SliderPages.render = function(self)
                             },
 
                             componentLabels = {
-                                C = "Cyan",
-                                M = "Magenta",
-                                Y = "Yellow",
-                                K = "Key",
+                                C = uiTranslations["CMYK_Cyan_Component"],
+                                M = uiTranslations["CMYK_Magenta_Component"],
+                                Y = uiTranslations["CMYK_Yellow_Component"],
+                                K = uiTranslations["CMYK_Key_Component"],
                             },
 
                             componentUnitLabels = {
@@ -146,7 +171,7 @@ SliderPages.render = function(self)
                     },
 
                     {
-                        name = "HSB",
+                        name = uiTranslations["HSB_ColorType"],
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "HSB",
@@ -165,9 +190,9 @@ SliderPages.render = function(self)
                             },
 
                             componentLabels = {
-                                H = "Hue",
-                                S = "Saturation",
-                                B = "Brightness"
+                                H = uiTranslations["Hue_Component"],
+                                S = uiTranslations["Saturation_Component"],
+                                B = uiTranslations["HSB_Brightness_Component"]
                             },
 
                             componentUnitLabels = {
@@ -216,7 +241,7 @@ SliderPages.render = function(self)
                     },
 
                     {
-                        name = "HSL",
+                        name = uiTranslations["HSL_ColorType"],
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "HSL",
@@ -235,9 +260,9 @@ SliderPages.render = function(self)
                             },
 
                             componentLabels = {
-                                H = "Hue",
-                                S = "Saturation",
-                                L = "Lightness"
+                                H = uiTranslations["Hue_Component"],
+                                S = uiTranslations["Saturation_Component"],
+                                L = uiTranslations["HSL_Lightness_Component"]
                             },
 
                             componentUnitLabels = {

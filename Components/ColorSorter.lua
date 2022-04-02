@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -17,6 +18,15 @@ local StandardComponents = require(Components:FindFirstChild("StandardComponents
 
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "CompareTo_Label",
+    "EmptySortAnchor_Indicator",
+    "Sort_ButtonText",
+    "Clear_ButtonText",
+})
 
 ---
 
@@ -44,7 +54,7 @@ ColorSorter.render = function(self)
                 Position = UDim2.new(0, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
 
-                Text = "Compare to",
+                Text = uiTranslations["CompareTo_Label"],
             }),
 
             Color = Roact.createElement(Button, {
@@ -53,7 +63,7 @@ ColorSorter.render = function(self)
                 Size = UDim2.new(0, 60, 0, Style.Constants.StandardButtonHeight),
 
                 displayType = sortAnchor and "color" or "text",
-                text = (not sortAnchor) and "(None)" or nil,
+                text = (not sortAnchor) and uiTranslations["EmptySortAnchor_Indicator"] or nil,
                 color = sortAnchor and sortAnchor:toColor3() or nil,
 
                 onActivated = function()
@@ -85,7 +95,7 @@ ColorSorter.render = function(self)
                 LayoutOrder = 2,
 
                 displayType = "text",
-                text = "Clear",
+                text = uiTranslations["Clear_ButtonText"],
                 disabled = (#colors <= 0),
 
                 onActivated = function()
@@ -98,7 +108,7 @@ ColorSorter.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "text",
-                text = "Sort",
+                text = uiTranslations["Sort_ButtonText"],
                 disabled = (#colors <= 1),
 
                 onActivated = function()

@@ -4,6 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -44,16 +45,21 @@ local temperatureGradient = ColorSequence.new({
     ColorSequenceKeypoint.new(1, Color.fromTemperature(10000):toColor3()),
 })
 
+local uiTranslations = Translator.GenerateTranslationTable({
+    "Temperature_Label",
+    "Presets_Label",
+})
+
 local temperaturePresets = {
-    { name = "Match Flame", temperature = 1700 },
-    { name = "Candlelight", temperature = 1850 },
-    { name = "Incandescent", temperature = 2400 },
-    { name = "Soft White Incandescent", temperature = 2550 },
-    { name = "Soft White", temperature = 2700 },
-    { name = "Warm White", temperature = 3000 },
-    { name = "Horizon Daylight", temperature = 5000 },
-    { name = "Daylight", temperature = 6500 },
-    { name = "Clear Sky", temperature = 10000 },
+    { name = Translator.FormatByKey("MatchFlame_Preset"), temperature = 1700 },
+    { name = Translator.FormatByKey("Candlelight_Preset"), temperature = 1850 },
+    { name = Translator.FormatByKey("Incandescent_Preset"), temperature = 2400 },
+    { name = Translator.FormatByKey("SoftWhiteIncandescent_Preset"), temperature = 2550 },
+    { name = Translator.FormatByKey("SoftWhite_Preset"), temperature = 2700 },
+    { name = Translator.FormatByKey("WarmWhite_Preset"), temperature = 3000 },
+    { name = Translator.FormatByKey("HorizonDaylight_Preset"), temperature = 5000 },
+    { name = Translator.FormatByKey("Daylight_Preset"), temperature = 6500 },
+    { name = Translator.FormatByKey("ClearSky_Preset"), temperature = 10000 },
 }
 
 ---
@@ -137,7 +143,7 @@ TemperatureSliderPage.render = function(self)
             value = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, temperature),
             layoutOrder = 0,
 
-            sliderLabel = "Temperature",
+            sliderLabel = uiTranslations["Temperature_Label"],
             sliderGradient = temperatureGradient,
             unitLabel = "K",
 
@@ -193,7 +199,7 @@ TemperatureSliderPage.render = function(self)
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-                Text = "Presets",
+                Text = uiTranslations["Presets_Label"],
             }),
 
             PresetsList = Roact.createElement(SimpleList, {

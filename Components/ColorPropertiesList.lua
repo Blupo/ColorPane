@@ -10,6 +10,7 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -27,6 +28,11 @@ local StandardUIPadding = StandardComponents.UIPadding
 ---
 
 local LIST_ITEM_LEFT_PADDING = 24
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "NoSelectionColorProperties_Message",
+    "SelectionColorMultipleValues_Indicator",
+})
 
 local getCellTextSizes = function(propName, displayClassName, showClassName)
     local propNameTextSize = TextService:GetTextSize(
@@ -203,7 +209,7 @@ PropertyListItem.render = function(self)
                 TextYAlignment = Enum.TextYAlignment.Center,
 
                 Text = color:map(function(value)
-                    return (not value) and "(Multiple)" or "" 
+                    return (not value) and uiTranslations["SelectionColorMultipleValues_Indicator"] or "" 
                 end),
 
                 BackgroundColor3 = color:map(function(value)
@@ -469,7 +475,7 @@ ColorPropertiesList.render = function(self)
             Position = UDim2.new(0.5, 0, 0.5, 0),
             BackgroundTransparency = 0,
 
-            Text = "The selected item(s) do not have any color properties",
+            Text = uiTranslations["NoSelectionColorProperties_Message"],
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Center,
             TextWrapped = true,

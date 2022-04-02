@@ -9,6 +9,7 @@ local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -16,12 +17,24 @@ local Roact = require(includes:FindFirstChild("Roact"))
 local Components = root:FindFirstChild("Components")
 local Button = require(Components:FindFirstChild("Button"))
 local Checkbox = require(Components:FindFirstChild("Checkbox"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 local ColorPropertiesList = require(Components:FindFirstChild("ColorPropertiesList"))
+local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
 
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIPadding = StandardComponents.UIPadding
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "NoAPIAlert_MainText",
+    "NoAPIAlert_SecondaryText_EditMode",
+    "NoAPIAlert_SecondaryText_NotEditMode",
+    "Loading_Message",
+    "Load_ButtonText",
+    "AutoLoadColorProperties_SettingDescription",
+    "CacheAPIData_SettingDescription",
+})
 
 ---
 
@@ -80,6 +93,7 @@ end
 
 NoAPIAlert.render = function(self)
     local theme = self.props.theme
+
     local requestRunning = self.state.requestRunning
     local canSave = self.state.canSave
 
@@ -99,11 +113,11 @@ NoAPIAlert.render = function(self)
             Size = UDim2.new(1, 0, 0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
 
-            Text = "The Roblox API data has not been loaded. Please use the Load button to load the data. " .. (RunService:IsEdit() and
-                "This screen will change once the data has been loaded." or
-                "\n\nNote: To use Color Properties during testing, you must have already loaded the data with the \"Cache Roblox API data\" option enabled before testing."
+            Text = uiTranslations["NoAPIAlert_MainText"] .. (RunService:IsEdit() and
+                (" " .. uiTranslations["NoAPIAlert_SecondaryText_EditMode"]) or
+                ("\n\n" .. uiTranslations["NoAPIAlert_SecondaryText_NotEditMode"])
             ),
-            
+
             TextXAlignment = Enum.TextXAlignment.Center,
             TextYAlignment = Enum.TextYAlignment.Bottom,
             TextWrapped = true,
@@ -116,7 +130,7 @@ NoAPIAlert.render = function(self)
 
             disabled = requestRunning,
             displayType = "text",
-            text = requestRunning and "Loading..." or "Load",
+            text = uiTranslations[requestRunning and "Loading_Message" or "Load_ButtonText"],
 
             backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
             borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -140,7 +154,7 @@ NoAPIAlert.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
-            text = "Automatically load the Roblox API data on startup",
+            text = uiTranslations["AutoLoadColorProperties_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadColorProperties, newValue)
@@ -154,7 +168,7 @@ NoAPIAlert.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
-            text = "Cache the Roblox API data for use during testing sessions",
+            text = uiTranslations["CacheAPIData_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.CacheAPIData, newValue)

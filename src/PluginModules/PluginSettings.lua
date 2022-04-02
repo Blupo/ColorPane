@@ -11,6 +11,7 @@ local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 ---
 
@@ -161,7 +162,7 @@ PluginSettings.init = function(initPlugin)
         end
         
         if (not canSave) then
-            warn("[ColorPane] Data saving is locked to another session. You will need to close the other session(s) to modify settings and save palettes.")
+            warn("[ColorPane] " .. Translator.FormatByKey("DataSavingLocked_Message"))
         end
     else
         canSave = false

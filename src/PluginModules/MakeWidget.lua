@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 ---
 
@@ -46,44 +47,44 @@ local firstTimeSetupMinWidth = 84 +
 
 local widgetsInfo = {
     ColorEditor = {
-        Id = "ColorPane_Editor",
-        Title = "ColorPane Color Editor",
+        Id = "ColorPane_ColorEditor",
+        Title = "",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, colorEditorDefaultWidth, 400, colorEditorMinWidth, 400),
     },
 
     GradientEditor = {
-        Id = "ColorPane_Gradient_Editor",
-        Title = "ColorPane ColorSequence Editor",
+        Id = "ColorPane_GradientEditor",
+        Title = "",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, gradientEditorMinWidth, 130, gradientEditorMinWidth, 130),
     },
 
     ColorProperties = {
-        Id = "ColorPane_Properties",
-        Title = "ColorPane Color Properties",
+        Id = "ColorPane_ColorProperties",
+        Title = Translator.FormatByKey("ColorProperties_WindowTitle"),
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, Style.Constants.EditorPageWidth, 400, Style.Constants.EditorPageWidth, 200)
     },
 
     Settings = {
         Id = "ColorPane_Settings",
-        Title = "ColorPane Settings",
+        Title = Translator.FormatByKey("Settings_WindowTitle"),
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.Constants.EditorPageWidth, 200, Style.Constants.EditorPageWidth, 200),
     },
 
     GradientPalette = {
-        Id = "ColorPane_Gradient_Palette",
-        Title = "ColorPane Gradient Palette",
+        Id = "ColorPane_GradientPalette",
+        Title = "",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.Constants.PagePadding + 230, gradientPaletteMinHeight, Style.Constants.PagePadding + 230, gradientPaletteMinHeight),
     },
 
     GradientInfo = {
-        Id = "ColorPane_Gradient_Info",
-        Title = "ColorPane Gradient Info",
+        Id = "ColorPane_GradientInfo",
+        Title = "",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.Constants.PagePadding + 230, gradientInfoMinHeight, Style.Constants.PagePadding + 230, gradientInfoMinHeight),
     },
 
     FirstTimeSetup = {
         Id = "ColorPane_FirstTimeSetup",
-        Title = "ColorPane First Time Setup",
+        Title = "",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 300, firstTimeSetupMinWidth, 300, firstTimeSetupMinWidth),
     },
 }

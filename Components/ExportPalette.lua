@@ -8,6 +8,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -29,6 +30,14 @@ local exportTypeKeys = {
     [1] = "ModuleScript",
     [2] = "StringValue",
 }
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "ExportScriptInjection_Warning",
+    "ModuleScriptExport_Label",
+
+    "Export_ButtonText",
+    "Cancel_ButtonText",
+})
 
 ---
 
@@ -83,7 +92,7 @@ ExportPalette.render = function(self)
 
             itemSections = {
                 {
-                    name = "Palettes",
+                    name = "",
                     items = nameItems,
                 }
             },
@@ -140,7 +149,7 @@ ExportPalette.render = function(self)
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                         LayoutOrder = 3,
 
-                        Text = "Make sure that you have allowed script injection in order to export ModuleScripts.",
+                        Text = uiTranslations["ExportScriptInjection_Warning"],
                         TextWrapped = true,
 
                         TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.WarningText),
@@ -151,7 +160,7 @@ ExportPalette.render = function(self)
                     Roact.createElement(StandardTextLabel, {
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                         LayoutOrder = 4,
-                        Text = "The palette will be exported to ServerStorage as:\n" .. paletteName .. ".palette",
+                        Text = Translator.FormatByKey("ExportDestination_Message", { paletteName }),
                     })
                 or nil,
             })
@@ -176,7 +185,7 @@ ExportPalette.render = function(self)
                     LayoutOrder = 0,
 
                     displayType = "text",
-                    text = "Cancel",
+                    text = uiTranslations["Cancel_ButtonText"],
 
                     backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                     borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -194,7 +203,7 @@ ExportPalette.render = function(self)
 
                     disabled = (not (paletteIndex and exportType)),
                     displayType = "text",
-                    text = "Export",
+                    text = uiTranslations["Export_ButtonText"],
 
                     backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
                     borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -229,9 +238,9 @@ ExportPalette.render = function(self)
                             end
                             
                             instance = Instance.new("ModuleScript")
-                            instance.Source = "-- ColorPane Palette Export\n" ..
+                            instance.Source = "-- " .. uiTranslations["ModuleScriptExport_Label"] .. "\n" ..
                                 "-- " .. paletteName .. "\n" ..
-                                "-- " .. os.date("%x, %H:%M:%S") .. "\n" ..
+                                "-- " .. os.date("%Y-%m-%dT%H:%M:%S%z") .. "\n" .. -- 
                                 "\n" ..
                                 "return [" .. string.rep("=", highestLevelStringBrackets + 1) .. "[" ..
                                 jsonPalette ..
@@ -249,7 +258,7 @@ ExportPalette.render = function(self)
                         
                         if (not success) then
                             if (exportType == "ModuleScript") then
-                                warn("[ColorPane] The palette export ModuleScript for \"" .. paletteName .."\" failed, most likely because script injection was denied.")
+                                warn("[ColorPane] " .. Translator.FormatByKey("ModuleScriptExportFailure_Message", { paletteName }))
                             end
                         else
                             Selection:Set({instance})

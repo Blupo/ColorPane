@@ -4,6 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -18,6 +19,19 @@ local NamePalette = require(Components:FindFirstChild("NamePalette"))
 local Pages = require(Components:FindFirstChild("Pages"))
 local Palette = require(Components:FindFirstChild("Palette"))
 local RemovePalette = require(Components:FindFirstChild("RemovePalette"))
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "BuiltInPalette_Category",
+    "UserPalette_Category",
+    "CreatePalette_ButtonText",
+    "ImportPalette_ButtonText",
+    "ExportPalette_ButtonText",
+    "DuplicatePalette_ButtonText",
+    "RenamePalette_ButtonText",
+    "DeletePalette_ButtonText",
+})
 
 ---
 
@@ -185,19 +199,19 @@ PalettePages.render = function(self)
 
             pageSections = {
                 {
-                    name = "Built-In Palettes",
+                    name = uiTranslations["BuiltInPalette_Category"],
                     items = builtInPalettePages,
                 },
 
                 {
-                    name = "User Palettes",
+                    name = uiTranslations["UserPalette_Category"],
                     items = userPalettePages,
                 }
             },
 
             options = {
                 {
-                    name = "Create a New Palette",
+                    name = uiTranslations["CreatePalette_ButtonText"],
 
                     onActivated = function()
                         if (self.state.askNameBeforeCreation) then
@@ -213,7 +227,7 @@ PalettePages.render = function(self)
                 },
 
                 {
-                    name = "Import a Palette",
+                    name = uiTranslations["ImportPalette_ButtonText"],
 
                     onActivated = function()
                         self:setState({
@@ -223,7 +237,7 @@ PalettePages.render = function(self)
                 },
 
                 (selectedPageSection == 2) and {
-                    name = "Export this Palette",
+                    name = uiTranslations["ExportPalette_ButtonText"],
 
                     onActivated = function()
                         self:setState({
@@ -234,7 +248,7 @@ PalettePages.render = function(self)
                 } or nil,
 
                 (selectedPageSection == 2) and {
-                    name = "Duplicate this Palette",
+                    name = uiTranslations["DuplicatePalette_ButtonText"],
 
                     onActivated = function()
                         self.props.duplicatePalette(selectedPageNum)
@@ -243,7 +257,7 @@ PalettePages.render = function(self)
                 } or nil,
 
                 (selectedPageSection == 2) and {
-                    name = "Rename this Palette",
+                    name = uiTranslations["RenamePalette_ButtonText"],
 
                     onActivated = function()
                         self:setState({
@@ -254,7 +268,7 @@ PalettePages.render = function(self)
                 } or nil,
 
                 (selectedPageSection == 2) and {
-                    name = "Delete this Palette",
+                    name = uiTranslations["DeletePalette_ButtonText"],
 
                     onActivated = function()
                         if (self.state.leftShiftDown or self.state.rightShiftDown) then

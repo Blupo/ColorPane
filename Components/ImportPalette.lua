@@ -10,6 +10,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -39,6 +40,30 @@ local importTypeIndexKeys = {
     [4] = "URL",
 }
 
+local uiTranslations = Translator.GenerateTranslationTable({
+    "JSONFile_ImportType",
+    "URL_ImportType",
+    "URL_InputText",
+
+    "RetrieveURL_ButtonText",
+    "UseSelection_ButtonText",
+    "SelectAFile_ButtonText",
+    "Import_ButtonText",
+    "Cancel_ButtonText",
+
+    "WaitingForImport_Message",
+    "EmptySelection_Message",
+    "MultipleSelections_Message",
+    "PaletteNameOK_Message",
+})
+
+local importOptions = {
+    "ModuleScript",
+    "StringValue",
+    Translator.FormatByKey("JSONFile_ImportType"),
+    Translator.FormatByKey("URL_ImportType"),
+}
+
 local statusIcons = {
     ok = Style.Images.ResultOkIcon,
     notOk = Style.Images.ResultNotOkIcon,
@@ -55,6 +80,7 @@ local statusColorGenerators = {
     end,
 }
 
+--[[
 local importStatusMessages = {
     NoObjectSelected = "At least one object should be selected",
     MultipleObjectsSelected = "Only one object should be selected",
@@ -62,6 +88,7 @@ local importStatusMessages = {
     ValidPalette = "The %s contains a valid palette",
     NonConformantPalette = "Palette format check failed: %s",
 }
+]]
 
 ---
 
@@ -160,7 +187,7 @@ ImportPalette.render = function(self)
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
-                Text = "Select a ModuleScript from the Explorer",
+                Text = Translator.FormatByKey("SelectObject_Prompt", { "ModuleScript" }),
             }),
 
             ConfirmButton = Roact.createElement(Button, {
@@ -169,7 +196,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(0, 80, 0, Style.Constants.StandardButtonHeight),
                 
                 displayType = "text",
-                text = "Use Selection",
+                text = uiTranslations["UseSelection_ButtonText"],
 
                 onActivated = function()
                     self:setState({
@@ -180,17 +207,17 @@ ImportPalette.render = function(self)
                         local selection = Selection:Get()
 
                         if (#selection > 1) then
-                            reject(importStatusMessages.MultipleObjectsSelected)
+                            reject(uiTranslations["MultipleSelections_Message"])
                             return
                         elseif (#selection < 1) then
-                            reject(importStatusMessages.NoObjectSelected)
+                            reject(uiTranslations["EmptySelection_Message"])
                             return
                         end
 
                         local object = selection[1]
 
                         if (not object:IsA("ModuleScript")) then
-                            reject(string.format(importStatusMessages.NotAnX, "ModuleScript"))
+                            reject(Translator.FormatByKey("InvalidSelection_Message", { "ModuleScript" }))
                             return
                         end
 
@@ -205,10 +232,10 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(string.format(importStatusMessages.NonConformantPalette, message))
+                            reject(Translator.FormatByKey("NonConformantPalette_Message", { message }))
                         end
                     end):andThen(
-                        self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "ModuleScript")),
+                        self.importSuccessHandler(Translator.FormatByKey("ValidImport_Message", { "ModuleScript" })),
                         self.importErrorHandler
                     )
                 end,
@@ -232,7 +259,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
-                Text = self.state.statusMessage or "Waiting for import...",
+                Text = self.state.statusMessage or uiTranslations["WaitingForImport_Message"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -249,7 +276,7 @@ ImportPalette.render = function(self)
                 AnchorPoint = Vector2.new(0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Position = UDim2.new(0, 0, 0, 0),
-                Text = "Select a StringValue from the Explorer",
+                Text = Translator.FormatByKey("SelectObject_Prompt", { "StringValue" }),
             }),
 
             ConfirmButton = Roact.createElement(Button, {
@@ -258,7 +285,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(0, 80, 0, Style.Constants.StandardButtonHeight),
                 
                 displayType = "text",
-                text = "Use Selection",
+                text = uiTranslations["UseSelection_ButtonText"],
 
                 onActivated = function()
                     self:setState({
@@ -269,17 +296,17 @@ ImportPalette.render = function(self)
                         local selection = Selection:Get()
 
                         if (#selection > 1) then
-                            reject(importStatusMessages.MultipleObjectsSelected)
+                            reject(uiTranslations["MultipleSelections_Message"])
                             return
                         elseif (#selection < 1) then
-                            reject(importStatusMessages.NoObjectSelected)
+                            reject(uiTranslations["EmptySelection_Message"])
                             return
                         end
 
                         local object = selection[1]
 
                         if (not object:IsA("StringValue")) then
-                            reject(string.format(importStatusMessages.NotAnX, "StringValue"))
+                            reject(Translator.FormatByKey("InvalidSelection_Message", { "StringValue" }))
                             return
                         end
 
@@ -289,10 +316,10 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(string.format(importStatusMessages.NonConformantPalette, message))
+                            reject(Translator.FormatByKey("NonConformantPalette_Message", { message }))
                         end
                     end):andThen(
-                        self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "StringValue")),
+                        self.importSuccessHandler(Translator.FormatByKey("ValidImport_Message", { "StringValue" })),
                         self.importErrorHandler
                     )
                 end,
@@ -316,7 +343,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
-                Text = self.state.statusMessage or "Waiting for import...",
+                Text = self.state.statusMessage or uiTranslations["WaitingForImport_Message"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -336,7 +363,7 @@ ImportPalette.render = function(self)
                 
                 disabled = (status == "wait"),
                 displayType = "text",
-                text = "Select a File",
+                text = uiTranslations["SelectAFile_ButtonText"],
 
                 onActivated = function()
                     self:setState({
@@ -360,10 +387,10 @@ ImportPalette.render = function(self)
                         if (isValid) then
                             resolve(newPalette)
                         else
-                            reject(string.format(importStatusMessages.NonConformantPalette, message))
+                            reject(Translator.FormatByKey("NonConformantPalette_Message", { message }))
                         end
                     end):andThen(
-                        self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "file")),
+                        self.importSuccessHandler(Translator.FormatByKey("ValidImport_Message", { "file" })),
                         self.importErrorHandler
                     ):finally(function()
                         if (file) then
@@ -392,7 +419,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding),
 
-                Text = self.state.statusMessage or "Waiting for import...",
+                Text = self.state.statusMessage or uiTranslations["WaitingForImport_Message"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -417,7 +444,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
 
                 Text = self.state.importURL or "",
-                PlaceholderText = "Type or paste a URL here",
+                PlaceholderText = uiTranslations["URL_InputText"],
 
                 onSubmit = function(newText)
                     self:setState({
@@ -436,7 +463,7 @@ ImportPalette.render = function(self)
                 
                 disabled = (status == "wait"),
                 displayType = "text",
-                text = "Retrieve URL",
+                text = uiTranslations["RetrieveURL_ButtonText"],
 
                 onActivated = function()
                     local url = self.state.importURL
@@ -468,13 +495,13 @@ ImportPalette.render = function(self)
                             if (isValid) then
                                 resolve(newPalette)
                             else
-                                reject(string.format(importStatusMessages.NonConformantPalette, message))
+                                reject(Translator.FormatByKey("NonConformantPalette_Message", { message }))
                             end
                         end
                     end):timeout(HTTP_TIMEOUT)
                     
                     promise:andThen(
-                        self.importSuccessHandler(string.format(importStatusMessages.ValidPalette, "URL")),
+                        self.importSuccessHandler(Translator.FormatByKey("ValidImport_Message", { "URL" })),
                         self.importErrorHandler
                     ):finally(function()
                         self.webImportPromise = nil
@@ -502,7 +529,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                 Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)),
 
-                Text = self.state.statusMessage or "Waiting for import...",
+                Text = self.state.statusMessage or uiTranslations["WaitingForImport_Message"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -538,7 +565,7 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 4) + (Style.Constants.MinorElementPadding * 3)),
                 LayoutOrder = 1,
     
-                options = { "ModuleScript", "StringValue", "JSON File", "URL" },
+                options = importOptions,
 
                 onSelected = function(i)
                     self:setState({
@@ -610,7 +637,7 @@ ImportPalette.render = function(self)
                         AnchorPoint = Vector2.new(0, 0),
                         Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-                        Text = (paletteName ~= newPaletteName) and ("The palette will be renamed to '" .. newPaletteName .. "'") or "The palette name is OK",
+                        Text = (paletteName ~= newPaletteName) and Translator.FormatByKey("PaletteRename_Message", { newPaletteName }) or uiTranslations["PaletteNameOK_Message"],
                     }),
                 })
             or nil,
@@ -634,7 +661,7 @@ ImportPalette.render = function(self)
                 LayoutOrder = 0,
 
                 displayType = "text",
-                text = "Cancel",
+                uiTranslations["Cancel_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -652,7 +679,7 @@ ImportPalette.render = function(self)
 
                 disabled = (not (palette and newPaletteName)),
                 displayType = "text",
-                text = "Import",
+                text = uiTranslations["Import_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

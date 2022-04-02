@@ -1,6 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -38,7 +39,7 @@ return {
     },
 
     {
-        name = "Copic Colors",
+        name = Translator.FormatByKey("Copic_BuiltInPaletteName"),
         
         getContent = function()
             return Roact.createElement(Palette, {
@@ -49,7 +50,7 @@ return {
     },
 
     {
-        name = "Web Colors",
+        name = Translator.FormatByKey("Web_BuiltInPaletteName"),
 
         getContent = function()
             return Roact.createElement(Palette, {

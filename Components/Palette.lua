@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -19,6 +20,10 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
 local StandardUIListLayout = StandardComponents.UIListLayout
+
+---
+
+local searchPrompt = Translator.FormatByKey("Searchbar_Prompt")
 
 ---
 
@@ -126,7 +131,7 @@ Palette.render = function(self)
                 ),
 
                 LayoutOrder = 0,
-                PlaceholderText = "Search",
+                PlaceholderText = searchPrompt,
                 Text = self.state.searchDisplayText,
 
                 onTextChanged = function(newText)

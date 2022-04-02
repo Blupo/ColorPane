@@ -7,6 +7,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -18,6 +19,13 @@ local Button = require(Components:FindFirstChild("Button"))
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIPadding = StandardComponents.UIPadding
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "DeletePalette_Confirm_ButtonText",
+    "Cancel_ButtonText",
+})
 
 ---
 
@@ -47,7 +55,7 @@ RemovePalette.render = function(self)
     local palettes = self.props.palettes
 
     local paletteIndex = self.props.paletteIndex
-    local promptText = string.format("Are your sure you want to delete %s?", palettes[paletteIndex].name)
+    local promptText = Translator.FormatByKey("DeletePalette_Prompt", { palettes[paletteIndex].name })
 
     return Roact.createElement("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -97,7 +105,7 @@ RemovePalette.render = function(self)
                 Size = Style.UDim2.DialogButtonSize,
 
                 displayType = "text",
-                text = "Cancel",
+                text = uiTranslations["Cancel_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -116,7 +124,7 @@ RemovePalette.render = function(self)
                 BackgroundTransparency = 0,
 
                 displayType = "text",
-                text = "Confirm",
+                text = uiTranslations["DeletePalette_Confirm_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.ErrorText),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

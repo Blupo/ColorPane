@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -16,6 +17,17 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "NamePalette_Prompt",
+    "PaletteNameOK_Message",
+    "DefaultPaletteName",
+
+    "Cancel_ButtonText",
+    "OK_ButtonText",
+})
 
 ---
 
@@ -42,7 +54,7 @@ RenamePalette.init = function(self, initProps)
     local paletteIndex = initProps.paletteIndex
 
     self:setState({
-        newPaletteName = paletteIndex and palettes[paletteIndex].name or "New Palette"
+        newPaletteName = paletteIndex and palettes[paletteIndex].name or uiTranslations["DefaultPaletteName"]
     })
 end
 
@@ -67,7 +79,7 @@ RenamePalette.render = function(self)
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-            Text = selectedPalette and "Rename " .. selectedPalette.name or "Name the Palette",
+            Text = selectedPalette and Translator.FormatByKey("RenamePalette_Prompt", { selectedPalette.name }) or uiTranslations["NamePalette_Prompt"],
         }),
 
         NameInput = Roact.createElement(TextInput, {
@@ -89,7 +101,7 @@ RenamePalette.render = function(self)
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardTextSize + Style.Constants.LargeButtonHeight + (Style.Constants.MinorElementPadding * 2)),
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-            Text = (newPaletteName ~= actualNewPaletteName) and ("The palette will be renamed to '" .. actualNewPaletteName .. "'") or "The palette name is OK",
+            Text = (newPaletteName ~= actualNewPaletteName) and Translator.FormatByKey("PaletteRename_Message", { actualNewPaletteName }) or uiTranslations["PaletteNameOK_Message"],
         }),
 
         Buttons = Roact.createElement("Frame", {
@@ -110,7 +122,7 @@ RenamePalette.render = function(self)
                 LayoutOrder = 0,
 
                 displayType = "text",
-                text = "Cancel",
+                text = uiTranslations["Cancel_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -127,7 +139,7 @@ RenamePalette.render = function(self)
                 LayoutOrder = 0,
 
                 displayType = "text",
-                text = "OK",
+                text = uiTranslations["OK_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

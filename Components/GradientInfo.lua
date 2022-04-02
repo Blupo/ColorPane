@@ -4,6 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -30,20 +31,36 @@ local HUE_COLOR_SPACES = {
     LChuv = true,
 }
 
-local COLOR_SPACE_NAMES = {
-    LChab = "LCh(ab)",
-    LChuv = "LCh(uv)", 
-}
-
-local HUE_ADJUSTMENT_NAMES = {
-    Raw = "Specified"
-}
-
 local COLOR_SPACE_BUTTONS_PER_ROW = 4
 local HUE_ADJUSTMENT_BUTTONS_PER_ROW = 3
 
 local MIN_PRECISION = 0
 local MAX_PRECISION = 18
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "RGB_ColorType",
+    "CMYK_ColorType",
+    "HSB_ColorType",
+    "HSL_ColorType",
+    "HWB_ColorType",
+    "Lab_ColorType",
+    "Luv_ColorType",
+    "LChab_ColorType",
+    "LChuv_ColorType",
+    "xyY_ColorType",
+    "XYZ_ColorType",
+    
+    "Shorter_HueInterpolation",
+    "Longer_HueInterpolation",
+    "Increasing_HueInterpolation",
+    "Decreasing_HueInterpolation",
+    "Specified_HueInterpolation",
+
+    "ColorSpace_Label",
+    "HueInterpolation_Label",
+    "Precision_Label",
+    "MaxKeypoints_ButtonText",
+})
 
 local getMaxKeypointPrecision = function(numKeypoints): number
     if (numKeypoints == 2) then
@@ -98,7 +115,7 @@ GradientInfo.render = function(self)
             LayoutOrder = i,
 
             displayType = "text",
-            text = COLOR_SPACE_NAMES[listColorSpace] or listColorSpace,
+            text = uiTranslations[listColorSpace .. "_ColorType"],
 
             hoverColor = selected and
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
@@ -131,7 +148,7 @@ GradientInfo.render = function(self)
 
             disabled = (not HUE_COLOR_SPACES[colorSpace]),
             displayType = "text",
-            text = HUE_ADJUSTMENT_NAMES[listHueAdjustment] or listHueAdjustment,
+            text = uiTranslations[((listHueAdjustment == "Raw") and "Specified" or listHueAdjustment) .. "_HueInterpolation"],
 
             hoverColor = selected and
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
@@ -205,7 +222,7 @@ GradientInfo.render = function(self)
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
-                Text = "Color Space",
+                Text = uiTranslations["ColorSpace_Label"],
             }),
     
             ColorSpaceList = Roact.createElement("Frame", {
@@ -226,7 +243,7 @@ GradientInfo.render = function(self)
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
-                Text = "Hue Interpolation",
+                Text = uiTranslations["HueInterpolation_Label"],
             }),
 
             HueAdjustmentList = Roact.createElement("Frame", {
@@ -247,7 +264,7 @@ GradientInfo.render = function(self)
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
     
-                Text = "Precision",
+                Text = uiTranslations["Precision_Label"],
             }),
     
             PrecisionInputs = Roact.createElement("Frame", {
@@ -298,7 +315,7 @@ GradientInfo.render = function(self)
                     LayoutOrder = 3,
     
                     displayType = "text",
-                    text = "Max",
+                    text = uiTranslations["MaxKeypoints_ButtonText"],
                     disabled = (precision >= MAX_PRECISION) or (precision >= maxPrecision),
     
                     onActivated = function()

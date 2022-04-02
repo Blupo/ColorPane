@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -20,6 +21,14 @@ local StandardTextLabel = StandardComponents.TextLabel
 
 local MIN_STEPS = 4
 local MAX_STEPS = 14
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "Hues_Label",
+    "Shades_Label",
+    "Tints_Label",
+    "Tones_Label",
+    "ColorSteps_Label"
+})
 
 ---
 
@@ -40,22 +49,22 @@ ColorVariations.render = function(self)
     local color = self.props.color
 
     local modifiedColors = {
-        Hues = {},
-        Shades = {},
-        Tints = {},
-        Tones = {},
+        [uiTranslations["Hues_Label"]] = {},
+        [uiTranslations["Shades_Label"]] = {},
+        [uiTranslations["Tints_Label"]] = {},
+        [uiTranslations["Tones_Label"]] = {},
     }
 
     for i = 1, variationSteps do
-        modifiedColors.Shades[i] = color:darken(i/2):toColor3()
-        modifiedColors.Tints[i] = color:brighten(i/2):toColor3()
-        modifiedColors.Tones[i] = color:desaturate(i/2):toColor3()
+        modifiedColors[uiTranslations["Shades_Label"]][i] = color:darken(i/2):toColor3()
+        modifiedColors[uiTranslations["Tints_Label"]][i] = color:brighten(i/2):toColor3()
+        modifiedColors[uiTranslations["Tones_Label"]][i] = color:desaturate(i/2):toColor3()
 
         local h, s, b = color:toHSB()
         h = (h ~= h) and 0 or h
         h = (h + (360 / (MAX_STEPS + 1) * i)) % 360
 
-        modifiedColors.Hues[i] = Color.fromHSB(h, s, b):toColor3()
+        modifiedColors[uiTranslations["Hues_Label"]][i] = Color.fromHSB(h, s, b):toColor3()
     end
 
     return Roact.createFragment({
@@ -100,7 +109,7 @@ ColorVariations.render = function(self)
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, 60, 1, 0),
                 Position = UDim2.new(0, 0, 0.5, 0),
-                Text = "Color Steps",
+                Text = uiTranslations["ColorSteps_Label"],
 
             }),
 

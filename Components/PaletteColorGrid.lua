@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -13,6 +14,13 @@ local TextInput = require(Components:FindFirstChild("TextInput"))
 
 local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
 local StandardUIListLayout = StandardComponents.UIListLayout
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "SelectAColor_Prompt",
+    "SetColor_ButtonText",
+})
 
 ---
 
@@ -91,7 +99,7 @@ PaletteColorGrid.render = function(self)
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
                 
                 Text = colors[selected] and colors[selected].name or "",
-                PlaceholderText = "Select a color",
+                PlaceholderText = uiTranslations["SelectAColor_Prompt"],
 
                 disabled = ((not selected) or isReadOnly),
                 onSubmit = self.props.onColorNameChanged,
@@ -103,7 +111,7 @@ PaletteColorGrid.render = function(self)
                 Size = Style.UDim2.DialogButtonSize,
                 
                 displayType = "text",
-                text = "Set Color",
+                text = uiTranslations["SetColor_ButtonText"],
                 disabled = (not selected),
 
                 onActivated = function()

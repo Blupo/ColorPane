@@ -5,6 +5,7 @@ local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -31,9 +32,11 @@ local KEY_CODE_DELTAS = {
     [Enum.KeyCode.Down] = 1,
 }
 
+local searchPrompt = Translator.FormatByKey("Searchbar_Prompt")
+
 local builtInGradients = {
     {
-        name = "Black to White",
+        name = Translator.FormatByKey("BlackToWhite_BuiltInGradientName"),
 
         keypoints = {
             { Time = 0, Color = Color.new(0, 0, 0) },
@@ -42,7 +45,7 @@ local builtInGradients = {
     },
 
     {
-        name = "Hue",
+        name = Translator.FormatByKey("Hue_BuiltInGradientName"),
         colorSpace = "HSB",
 
         keypoints = {
@@ -57,7 +60,7 @@ local builtInGradients = {
     },
 
     {
-        name = "Temperature",
+        name = Translator.FormatByKey("Temperature_BuiltInGradientName"),
 
         keypoints = {
             { Time = 0, Color = Color.fromTemperature(1000) },
@@ -431,7 +434,7 @@ GradientPalette.render = function(self)
             Position = UDim2.new(0, 0, 0, 0),
             Size = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardInputHeight),
 
-            PlaceholderText = "Search",
+            PlaceholderText = searchPrompt,
             Text = self.state.searchDisplayText,
 
             onTextChanged = function(newText)

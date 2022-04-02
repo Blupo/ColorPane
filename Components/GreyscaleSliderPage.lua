@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
@@ -18,6 +19,8 @@ local StandardUIListLayout = StandardComponents.UIListLayout
 ---
 
 local EDITOR_KEY = PluginEnums.EditorKey.GreyscaleSlider
+
+local sliderLabel = Translator.FormatByKey("GreyscaleSlider_Brightness_Label")
 
 local valueToTextFactory = function(size)
     return function(value)
@@ -93,7 +96,7 @@ GreyscaleSliderPage.render = function(self)
 
         Slider = Roact.createElement(Slider, {
             value = brightness,
-            sliderLabel = "Brightness",
+            sliderLabel = sliderLabel,
             sliderGradient = ColorSequence.new(Color3.new(0, 0, 0), Color3.new(1, 1, 1)),
 
             markerColor = Color.gray(brightness):bestContrastingColor(

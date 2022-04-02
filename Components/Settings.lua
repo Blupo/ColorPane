@@ -8,6 +8,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -35,6 +36,19 @@ local SETTINGS = {
     [PluginEnums.PluginSettingKey.CacheAPIData] = true,
     [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "AutoLoadColorProperties_SettingDescription",
+    "AutoSave_SettingDescription",
+    "AutoSaveInterval_SettingDescription",
+    "CacheAPIData_SettingDescription",
+    "AutoCheckForUpdate_SettingDescription",
+    "AskNameBeforePaletteCreation_SettingDescription",
+    "ColorPropertiesLivePreview_SettingDescription",
+
+    "ClaimSessionLock_ButtonText",
+    "SessionLockClaimed_Message",
+})
 
 ---
 
@@ -119,7 +133,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoLoadColorProperties],
-            text = "Automatically load the Roblox API data for Color Properties on startup",
+            text = uiTranslations["AutoLoadColorProperties_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoLoadColorProperties, newValue)
@@ -132,7 +146,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoSave],
-            text = "Auto-save settings and palettes",
+            text = uiTranslations["AutoSave_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoSave, newValue)
@@ -150,7 +164,7 @@ Settings.render = function(self)
                 Size = UDim2.new(1, -(30 + Style.Constants.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
 
-                Text = "Auto-save interval (in minutes)",
+                Text = uiTranslations["AutoSaveInterval_SettingDescription"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
 
@@ -192,7 +206,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.CacheAPIData],
-            text = "Cache Roblox API data for use during testing sessions",
+            text = uiTranslations["CacheAPIData_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.CacheAPIData, newValue)
@@ -205,7 +219,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AutoCheckForUpdate],
-            text = "Check for updates on startup",
+            text = uiTranslations["AutoCheckForUpdate_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AutoCheckForUpdate, newValue)
@@ -218,7 +232,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation],
-            text = "Name palettes before creating them",
+            text = uiTranslations["AskNameBeforePaletteCreation_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
@@ -231,7 +245,7 @@ Settings.render = function(self)
             
             disabled = (not canSave),
             value = self.state[PluginEnums.PluginSettingKey.ColorPropertiesLivePreview],
-            text = "Preview color changes before applying them when using Color Properties",
+            text = uiTranslations["ColorPropertiesLivePreview_SettingDescription"],
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.ColorPropertiesLivePreview, newValue)
@@ -244,11 +258,11 @@ Settings.render = function(self)
 
             disabled = (not isEdit),
             displayType = "text",
-            text = "Claim Session Lock",
+            text = uiTranslations["ClaimSessionLock_ButtonText"],
 
             onActivated = function()
                 PluginSettings.UpdateSavingAbility(true)
-                warn("[ColorPane] Session lock has been claimed")
+                warn("[ColorPane] " .. uiTranslations["SessionLockClaimed_Message"])
             end,
         }),
     })

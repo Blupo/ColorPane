@@ -2,6 +2,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -12,6 +13,14 @@ local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
 local ColorSorter = require(Components:FindFirstChild("ColorSorter"))
 local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
 local Pages = require(Components:FindFirstChild("Pages"))
+
+---
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "ColorInformation_Page",
+    "ColorSorter_Page",
+    "ColorVariations_Page",
+})
 
 ---
 
@@ -35,17 +44,17 @@ ColorToolPages.render = function(self)
 
                 items = {
                     {
-                        name = "Color Information",
+                        name = uiTranslations["ColorInformation_Page"],
                         content = Roact.createElement(ColorInfo)
                     },
 
                     {
-                        name = "Color Sorter",
+                        name = uiTranslations["ColorSorter_Page"],
                         content = Roact.createElement(ColorSorter)
                     },
 
                     {
-                        name = "Color Variations",
+                        name = uiTranslations["ColorVariations_Page"],
                         content = Roact.createElement(ColorVariations)
                     },
                 }

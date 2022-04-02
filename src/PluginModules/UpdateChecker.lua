@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 
 local PluginModules = script.Parent
 local ReleaseVersion = require(PluginModules:FindFirstChild("ReleaseVersion"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 ---
 
@@ -24,7 +25,7 @@ UpdateChecker.Check = function()
     end)
 
     if (not fetchSuccess) then
-        warn("[ColorPane] Could not check for updates, got an error: " .. data)
+        warn("[ColorPane] " .. Translator.FormatByKey("UpdateCheckFailure_Message", { data }))
         return
     end
 
@@ -42,7 +43,7 @@ UpdateChecker.Check = function()
     local releasePatch, latestReleasePatch = ReleaseVersion[3], latestReleaseVersion[3]
 
     if ((latestReleaseMajor > releaseMajor) or (latestReleaseMinor > releaseMinor) or (latestReleasePatch > releasePatch)) then
-        warn("[ColorPane] A new version of ColorPane is available, please update at your earliest convenience.")
+        warn("[ColorPane] " .. Translator.FormatByKey("NewVersionAvailable_Message"))
         sessionNotificationShown = true
     end
 end

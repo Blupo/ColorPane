@@ -10,6 +10,7 @@ local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWid
 local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -34,6 +35,11 @@ local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 local CURSOR_KEYPOINT_SNAP_VALUE = 1/100
 local MIN_SNAP_VALUE = 0.001/100
 local MAX_SNAP_VALUE = 25/100
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "SnapInput_Label",
+    "Reset_ButtonText",
+})
 
 local getNearestKeypointIndex = function(keypoints, time: number): (number?, number?)
     if (time == 0) then
@@ -645,7 +651,7 @@ GradientEditor.render = function(self)
                 Size = UDim2.new(0, 180, 0, Style.Constants.StandardTextSize),
                 LayoutOrder = 0,
 
-                Text = string.format("%d/%d Keypoints",  #keypoints, maxUserKeypoints),
+                Text = Translator.FormatByKey("KeypointReadout_Label", { #keypoints, maxUserKeypoints }),
                 TextXAlignment = Enum.TextXAlignment.Right,
                 TextYAlignment = Enum.TextYAlignment.Center,
                 
@@ -802,7 +808,7 @@ GradientEditor.render = function(self)
                     Position = UDim2.new(0, 0, 0.5, 0),
                     Size = UDim2.new(0, 26, 1, 0),
     
-                    Text = "Snap",
+                    Text = uiTranslations["SnapInput_Label"],
                     TextXAlignment = Enum.TextXAlignment.Right,
                     TextYAlignment = Enum.TextYAlignment.Center,
                 }),
@@ -892,7 +898,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 2,
 
                 displayType = "text",
-                text = "Reset",
+                text = uiTranslations["Reset_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

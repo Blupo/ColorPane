@@ -4,6 +4,7 @@ local PluginModules = root:FindFirstChild("PluginModules")
 local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -31,6 +32,11 @@ local StandardUIPadding = StandardComponents.UIPadding
 local EDITOR_ICON_DISPLAY_COLOR = Color3.new(1, 1, 1)
 local EDITOR_ICON_SELECTED_COLOR = Color3.new(1, 1, 1)
 local EDITOR_ICON_DISABLED_COLOR = Color3.new(1/2, 1/2, 1/2)
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "Cancel_ButtonText",
+    "OK_ButtonText"
+})
 
 local indicatorContainerSize = (Style.Constants.StandardButtonHeight * 2) + Style.Constants.MinorElementPadding
 
@@ -426,7 +432,7 @@ ColorEditor.render = function(self)
                 LayoutOrder = 0,
 
                 displayType = "text",
-                text = "Cancel",
+                text = uiTranslations["Cancel_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),
@@ -443,7 +449,7 @@ ColorEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "text",
-                text = "OK",
+                text = uiTranslations["OK_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

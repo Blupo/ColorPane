@@ -22,6 +22,7 @@ local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local UpdateChecker = require(PluginModules:FindFirstChild("UpdateChecker"))
 
 local Components = root:FindFirstChild("Components")
@@ -53,6 +54,14 @@ local colorPropertiesTree
 local settingsTree
 local colorEditPromise
 local csEditPromise
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "ColorProperties_WindowTitle",
+    "FirstTimeSetup_WindowTitle",
+
+    "APIInjectionConflict_Message",
+    "AutoLoadColorPropertiesFailure_Message",
+})
 
 local injectAPI = function()
     local success = pcall(function()
@@ -88,7 +97,6 @@ local mountColorProperties = function()
         App = Roact.createElement(ColorProperties)
     }), colorPropertiesWidget)
 
-    colorPropertiesWidget.Title = "Color Properties"
     colorPropertiesWidget.Enabled = true
     colorPropertiesButton:SetActive(true)
 end
@@ -98,7 +106,6 @@ local unmountColorProperties = function()
     colorPropertiesTree = nil
 
     colorPropertiesWidget.Enabled = false
-    colorPropertiesWidget.Title = "ColorPane Color Properties"
     colorPropertiesButton:SetActive(false)
 end
 
@@ -113,7 +120,7 @@ csEditorButton.ClickableWhenViewportHidden = true
 ColorPane.init(plugin)
 
 if (CoreGui:FindFirstChild("ColorPane")) then
-    warn("[ColorPane] Another instance of ColorPane has already injected its API script!")
+    warn("[ColorPane] " .. uiTranslations["APIInjectionConflict_Message"])
 end
 
 if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
@@ -143,7 +150,7 @@ if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
         })
     }), firstTimeSetupWidget)
 
-    firstTimeSetupWidget.Title = "ColorPane - First Time Setup"
+    firstTimeSetupWidget.Title = uiTranslations["FirstTimeSetup_WindowTitle"]
     firstTimeSetupWidget.Enabled = true
 
     confirmSignal:Wait()
@@ -153,7 +160,7 @@ do
     local success = injectAPI()
 
     if (not success) then
-        warn("[ColorPane] The API script could not be injected. Please make sure that you have allowed script injection and reload the plugin.")
+        warn("[ColorPane] " .. uiTranslations["APIInjectionFailure_Message"])
     end
 end
 
@@ -168,7 +175,7 @@ if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) th
         startupRequestFinished = nil
 
         if ((not success) and RunService:IsEdit()) then
-            warn("[ColorPane] Color Properties could not be automatically loaded. Please make sure that you have allowed HTTP requests for setup.rbxcdn.com and try again.")
+            warn("[ColorPane] " .. uiTranslations["AutoLoadColorPropertiesFailure_Message"])
         end
     end)
 

@@ -22,6 +22,7 @@ local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local ReleaseVersion = require(PluginModules:FindFirstChild("ReleaseVersion"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -90,6 +91,14 @@ local gradientEditorWidgetEnabledChanged
 local unloadingEvent = Signal.new()
 local colorEditingFinishedEvent = Signal.new()
 local gradientEditingFinishedEvent = Signal.new()
+
+local uiTranslations = Translator.GenerateTranslationTable({
+    "ColorEditor_DefaultWindowTitle",
+    "GradientEditor_DefaultWindowTitle",
+
+    "APIScriptReparent_Message",
+    "APIScriptModification_Message",
+})
 
 local oneIn = function(items)
     local checks = {}
@@ -333,7 +342,7 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         Roact.unmount(colorEditorTree)
         colorEditorTree = nil
         colorEditorWidget.Enabled = false
-        colorEditorWidget.Title = "ColorPane Color Editor"
+        colorEditorWidget.Title = ""
 
         colorPaneStore:dispatch({
             type = PluginEnums.StoreActionType.ColorEditor_SetColor,
@@ -356,7 +365,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
     local promptOptions = {
-        PromptTitle = "Create a gradient",
+        PromptTitle = uiTranslations["GradientEditor_DefaultWindowTitle"],
         InitialColorSpace = "RGB",
         InitialHueAdjustment = "Shorter",
         InitialPrecision = 0,
@@ -443,7 +452,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         Roact.unmount(gradientEditorTree)
         gradientEditorTree = nil
         gradientEditorWidget.Enabled = false
-        gradientEditorWidget.Title = "ColorPane Gradient Editor"
+        gradientEditorWidget.Title = ""
 
         colorPaneStore:dispatch({
             type = PluginEnums.StoreActionType.GradientEditor_ResetState,
@@ -546,12 +555,12 @@ table.freeze(ColorPane)
 scriptReparentedEvent = script:GetPropertyChangedSignal("Parent"):Connect(function()
     if (script.Parent == CoreGui) then return end
 
-    warn("[ColorPane] The API script was unexpectedly reparented")
+    warn("[ColorPane] " .. uiTranslations["APIScriptReparent_Message"])
     onUnloading(true)
 end)
 
 script:GetPropertyChangedSignal("Source"):Connect(function()
-    warn("[ColorPane] The API script was unexpectedly modified")
+    warn("[ColorPane] " .. uiTranslations["APIScriptModification_Message"])
     onUnloading()
 end)
 

@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
@@ -25,21 +26,27 @@ local ColorBrewer = BuiltInPalettes.ColorBrewer
 local colorSchemes = Util.table.deepCopy(ColorBrewer)
 local buttonBarHeight = Style.Constants.StandardButtonHeight + Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding
 
+local uiTranslations = Translator.GenerateTranslationTable({
+    "DataClass_SelectorText",
+    "NumDataClass_SelectorText",
+    "NoMatchingSchemes_Message",
+})
+
 local dataClasses = {
     {
-        name = "Sequential",
+        name = Translator.FormatByKey("Sequential_CBDataClass"),
         image = Style.Images.SequentialDataTypeButtonIcon,
         order = 1,
     },
 
     {
-        name = "Diverging",
+        name = Translator.FormatByKey("Diverging_CBDataClass"),
         image = Style.Images.DivergingDataTypeButtonIcon,
         order = 2,
     },
 
     {
-        name = "Qualitative",
+        name = Translator.FormatByKey("Qualitative_CBDataClass"),
         image = Style.Images.QualitativeDataTypeButtonIcon,
         order = 3,
     }
@@ -103,7 +110,7 @@ ColorBrewerPalettes.render = function(self)
             Size = UDim2.new(1, 0, 0, buttonBarHeight),
 
             displayType = "image",
-            title = "Data Type",
+            title = uiTranslations["DataClass_SelectorText"],
             selected = self.props.dataClass,
             buttons = dataClasses,
 
@@ -116,7 +123,7 @@ ColorBrewerPalettes.render = function(self)
             Size = UDim2.new(1, 0, 0, buttonBarHeight),
 
             displayType = "text",
-            title = "Number of Data Classes",
+            title = uiTranslations["NumDataClass_SelectorText"],
             selected = self.props.numDataClasses - 2,
             buttons = numDataClassesButtons,
 
@@ -131,7 +138,7 @@ ColorBrewerPalettes.render = function(self)
                 Position = UDim2.new(0.5, 0, 1, 0),
                 Size = UDim2.new(1, -2, 1, -((buttonBarHeight * 2) + Style.Constants.MajorElementPadding)),
 
-                Text = "There are no schemes that satisfy this criteria",
+                Text = uiTranslations["NoMatchingSchemes_Message"],
                 TextXAlignment = Enum.TextXAlignment.Center,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,

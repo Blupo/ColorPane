@@ -3,6 +3,7 @@ local root = script.Parent.Parent
 local PluginModules = root:FindFirstChild("PluginModules")
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
+local Translator = require(PluginModules:FindFirstChild("Translator"))
 
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
@@ -36,7 +37,7 @@ GradientInfoWidget.Open = function()
         App = Roact.createElement(GradientInfo)
     }), widget)
 
-    widget.Title = "Gradient Info"
+    widget.Title = Translator.FormatByKey("GradientInfo_WindowTitle")
     widget.Enabled = true
 end
 
@@ -46,7 +47,7 @@ GradientInfoWidget.Close = function()
     Roact.unmount(tree)
     tree = nil
     widget.Enabled = false
-    widget.Title = "ColorPane Gradient Info"
+    widget.Title = ""
 end
 
 GradientInfoWidget.init = function(plugin)
