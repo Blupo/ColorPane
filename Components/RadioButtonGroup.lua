@@ -23,9 +23,9 @@ local StandardUIListLayout = StandardComponents.UIListLayout
         Size?
         Position?
 
-        selected: number?,
-        options: array<string>,
-        onSelected: (number)
+        selected: number?
+        options: array<string>
+        onSelected: (number) -> nil
 
     store props
 
@@ -33,12 +33,6 @@ local StandardUIListLayout = StandardComponents.UIListLayout
 ]]
 
 local RadioButtonGroup = Roact.PureComponent:extend("RadioButtonGroup")
-
-RadioButtonGroup.init = function(self, initProps)
-    self:setState({
-        selected = initProps.selected,
-    })
-end
 
 RadioButtonGroup.render = function(self)
     local theme = self.props.theme
@@ -58,11 +52,7 @@ RadioButtonGroup.render = function(self)
             TextTransparency = 1,
 
             [Roact.Event.Activated] = function()
-                self:setState({
-                    selected = i,
-                })
-
-                self.props.onSelected(i, options[i])
+                self.props.onSelected(i)
             end,
         }, {
             RadioButton = Roact.createElement("Frame", {
@@ -88,7 +78,7 @@ RadioButtonGroup.render = function(self)
                     UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 }),
 
-                Indicator = (self.state.selected == i) and
+                Indicator = (self.props.selected == i) and
                     Roact.createElement("Frame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Size = UDim2.new(1, -Style.Constants.SpaciousElementPadding, 1, -Style.Constants.SpaciousElementPadding),

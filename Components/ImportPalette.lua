@@ -33,11 +33,13 @@ local StandardUIPadding = StandardComponents.UIPadding
 
 local HTTP_TIMEOUT = 10
 
-local importTypeIndexKeys = {
-    [1] = "ModuleScript",
-    [2] = "StringValue",
-    [3] = "File",
-    [4] = "URL",
+local importTypes = { "ModuleScript", "StringValue", "File", "URL" }
+
+local importOptions = {
+    "ModuleScript",
+    "StringValue",
+    Translator.FormatByKey("JSONFile_ImportType"),
+    Translator.FormatByKey("URL_ImportType"),
 }
 
 local uiTranslations = Translator.GenerateTranslationTable({
@@ -56,13 +58,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "MultipleSelections_Message",
     "PaletteNameOK_Message",
 })
-
-local importOptions = {
-    "ModuleScript",
-    "StringValue",
-    Translator.FormatByKey("JSONFile_ImportType"),
-    Translator.FormatByKey("URL_ImportType"),
-}
 
 local statusIcons = {
     ok = Style.Images.ResultOkIcon,
@@ -565,11 +560,12 @@ ImportPalette.render = function(self)
                 Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 4) + (Style.Constants.MinorElementPadding * 3)),
                 LayoutOrder = 1,
     
+                selected = table.find(importTypes, importType),
                 options = importOptions,
 
                 onSelected = function(i)
                     self:setState({
-                        importType = importTypeIndexKeys[i],
+                        importType = importTypes[i],
 
                         importURL = Roact.None,
                         palette = Roact.None,
@@ -661,7 +657,7 @@ ImportPalette.render = function(self)
                 LayoutOrder = 0,
 
                 displayType = "text",
-                uiTranslations["Cancel_ButtonText"],
+                text = uiTranslations["Cancel_ButtonText"],
 
                 backgroundColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButton),
                 borderColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder),

@@ -26,10 +26,7 @@ local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 
-local exportTypeKeys = {
-    [1] = "ModuleScript",
-    [2] = "StringValue",
-}
+local exportTypes = { "ModuleScript", "StringValue" }
 
 local uiTranslations = Translator.GenerateTranslationTable({
     "ExportScriptInjection_Warning",
@@ -135,11 +132,12 @@ ExportPalette.render = function(self)
                     Size = UDim2.new(1, 0, 0, (Style.Constants.StandardInputHeight * 2) + Style.Constants.MinorElementPadding),
                     LayoutOrder = 2,
 
-                    options = { "ModuleScript", "StringValue" },
+                    selected = table.find(exportTypes, exportType),
+                    options = exportTypes,
 
                     onSelected = function(i)
                         self:setState({
-                            exportType = exportTypeKeys[i]
+                            exportType = exportTypes[i]
                         })
                     end,
                 }),
