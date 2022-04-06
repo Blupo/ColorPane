@@ -37,6 +37,9 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "CMYK_Magenta_Component",
     "CMYK_Yellow_Component",
     "CMYK_Key_Component",
+
+    "Monochrome_Slider",
+    "Temperature_Label",
 })
 
 ---
@@ -317,12 +320,12 @@ SliderPages.render = function(self)
                     },
 
                     {
-                        name = "Monochrome",
+                        name = uiTranslations["Monochrome_Slider"],
                         content = Roact.createElement(GreyscaleSliderPage)
                     },
 
                     {
-                        name = "Temperature",
+                        name = uiTranslations["Temperature_Label"],
                         content = Roact.createElement(TemperatureSliderPage)
                     },
                 }

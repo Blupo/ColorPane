@@ -36,7 +36,7 @@ return {
     },
 
     {
-        name = Translator.FormatByKey("Temperature_BuiltInGradientName"),
+        name = Translator.FormatByKey("Temperature_Label"),
 
         keypoints = {
             { Time = 0, Color = Color.fromTemperature(1000) },
