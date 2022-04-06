@@ -12,6 +12,7 @@ local Components = root:FindFirstChild("Components")
 local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
 local ColorSorter = require(Components:FindFirstChild("ColorSorter"))
 local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
+local GradientPickers = require(Components:FindFirstChild("GradientPickers"))
 local Pages = require(Components:FindFirstChild("Pages"))
 
 ---
@@ -20,6 +21,7 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "ColorInformation_Page",
     "ColorSorter_Page",
     "ColorVariations_Page",
+    "GradientPickers_Page"
 })
 
 ---
@@ -56,6 +58,11 @@ ColorToolPages.render = function(self)
                     {
                         name = uiTranslations["ColorVariations_Page"],
                         content = Roact.createElement(ColorVariations)
+                    },
+
+                    {
+                        name = uiTranslations["GradientPickers_Page"],
+                        content = Roact.createElement(GradientPickers)
                     },
                 }
             }

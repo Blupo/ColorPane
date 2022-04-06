@@ -10,6 +10,7 @@
 - Added a warning in the export dialog that script injection is required for exporting palettes to ModuleScripts
 - Added a color sorter that uses CIEDE2000 in the Color Tools section
 - Added a Picular palette (idea from csqrl's [Picular plugin](https://devforum.roblox.com/t/914148))
+- Added a Gradient picker tool which allows users to pick colors from their gradients
 
 ### Changed
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)

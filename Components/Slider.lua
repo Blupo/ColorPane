@@ -49,12 +49,12 @@ local StandardUICorner = StandardComponents.UICorner
 local Slider = Roact.PureComponent:extend("Slider")
 
 Slider.init = function(self)
-    self.sliderCenter, self.updateSliderCenter = Roact.createBinding(Vector2.new(0, 0))
-    self.sliderSize, self.updateSliderSize = Roact.createBinding(0)
+    self.center, self.updateCenter = Roact.createBinding(Vector2.new(0, 0))
+    self.size, self.updateSize = Roact.createBinding(0)
 
     self.updateValue = function(cursorPosition)
-        local distanceFromCenter = cursorPosition - self.sliderCenter:getValue()
-        local value = math.clamp((distanceFromCenter.X / self.sliderSize:getValue()) + 0.5, 0, 1)
+        local distanceFromCenter = cursorPosition - self.center:getValue()
+        local value = math.clamp((distanceFromCenter.X / self.size:getValue()) + 0.5, 0, 1)
 
         self.props.valueChanged(value)
     end
@@ -66,7 +66,7 @@ end
 
 Slider.didMount = function(self)
     self.inputChanged = ColorEditorInputSignals.InputChanged:Connect(function(input, gameProcessedEvent)
-        if gameProcessedEvent then return end
+        if (gameProcessedEvent) then return end
         if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
         if (not self.state.tracking) then return end
         
@@ -129,14 +129,14 @@ Slider.render = function(self)
         NameLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
-            Size = UDim2.new(1, 0, 0, 14),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
             Text = self.props.sliderLabel,
         }),
 
         SliderBorder = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),
-            Position = UDim2.new(0, 0, 0, 18),
-            Size = UDim2.new(1, -(60 + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardButtonHeight),
+            Position = UDim2.new(0, 0, 0, Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
+            Size = UDim2.new(1, -(60 + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardInputHeight),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
 
@@ -184,16 +184,16 @@ Slider.render = function(self)
                     local sliderPosition = obj.AbsolutePosition
                     local sliderSize = obj.AbsoluteSize
 
-                    self.updateSliderCenter(sliderPosition + (sliderSize / 2))
-                    self.updateSliderSize(sliderSize.X)
+                    self.updateCenter(sliderPosition + (sliderSize / 2))
+                    self.updateSize(sliderSize.X)
                 end,
     
                 [Roact.Change.AbsoluteSize] = function(obj)
                     local sliderPosition = obj.AbsolutePosition
                     local sliderSize = obj.AbsoluteSize
 
-                    self.updateSliderCenter(sliderPosition + (sliderSize / 2))
-                    self.updateSliderSize(sliderSize.X)
+                    self.updateCenter(sliderPosition + (sliderSize / 2))
+                    self.updateSize(sliderSize.X)
                 end,
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
@@ -221,7 +221,7 @@ Slider.render = function(self)
         InputFrame = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0),
             Position = UDim2.new(1, 0, 0, 18),
-            Size = UDim2.new(0, 60, 0, Style.Constants.StandardButtonHeight),
+            Size = UDim2.new(0, 60, 0, Style.Constants.StandardInputHeight),
             BackgroundTransparency = 1,
             BorderSizePixel = 0
         }, {

@@ -1,7 +1,6 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local Constants = require(PluginModules:FindFirstChild("Constants"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
 local Style = require(PluginModules:FindFirstChild("Style"))
@@ -9,7 +8,8 @@ local Translator = require(PluginModules:FindFirstChild("Translator"))
 local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
-local ColorLib = require(includes:FindFirstChild("Color"))
+local BuiltInGradients = require(includes:FindFirstChild("BuiltInPalettes")).Gradients
+local Gradient = require(includes:FindFirstChild("Color")).Gradient
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 
@@ -23,8 +23,6 @@ local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout
 local StandardUIPadding = StandardComponents.UIPadding
 
-local Color, Gradient = ColorLib.Color, ColorLib.Gradient
-
 ---
 
 local KEY_CODE_DELTAS = {
@@ -33,47 +31,7 @@ local KEY_CODE_DELTAS = {
 }
 
 local searchPrompt = Translator.FormatByKey("Searchbar_Prompt")
-
-local builtInGradients = {
-    {
-        name = Translator.FormatByKey("BlackToWhite_BuiltInGradientName"),
-
-        keypoints = {
-            { Time = 0, Color = Color.new(0, 0, 0) },
-            { Time = 1, Color = Color.new(1, 1, 1) }
-        }
-    },
-
-    {
-        name = Translator.FormatByKey("Hue_BuiltInGradientName"),
-        colorSpace = "HSB",
-
-        keypoints = {
-            { Time = 0, Color = Color.fromHSB(0, 1, 1) },
-            { Time = 1/6, Color = Color.fromHSB(60, 1, 1) },
-            { Time = 2/6, Color = Color.fromHSB(120, 1, 1) },
-            { Time = 3/6, Color = Color.fromHSB(180, 1, 1) },
-            { Time = 4/6, Color = Color.fromHSB(240, 1, 1) },
-            { Time = 5/6, Color = Color.fromHSB(300, 1, 1) },
-            { Time = 1, Color = Color.fromHSB(360, 1, 1) }
-        }
-    },
-
-    {
-        name = Translator.FormatByKey("Temperature_BuiltInGradientName"),
-
-        keypoints = {
-            { Time = 0, Color = Color.fromTemperature(1000) },
-            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 2000), Color = Color.fromTemperature(2000) },
-            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6000), Color = Color.fromTemperature(6000) },
-            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 6500), Color = Color.fromTemperature(6500) },
-            { Time = Util.inverseLerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, 7000), Color = Color.fromTemperature(7000) },
-            { Time = 1, Color = Color.fromTemperature(10000) },
-        }
-    }
-}
-
-local numBuiltInGradients = #builtInGradients
+local numBuiltInGradients = #BuiltInGradients
 
 ---
 
@@ -112,7 +70,7 @@ GradientPalette.init = function(self)
         local userGradients = self.props.gradients
 
         for i = 1, numBuiltInGradients do
-            table.insert(combinedPalette, builtInGradients[i])
+            table.insert(combinedPalette, BuiltInGradients[i])
         end
 
         for i = 1, #userGradients do
