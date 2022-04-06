@@ -50,6 +50,16 @@ local contentSize = UDim2.new(
 
 ---
 
+--[[
+    store props
+
+        theme: StudioTheme
+        searchHistory: array<string>
+
+        setColor: (Color) -> nil
+        setSearchHistory: (array<string>) -> nil
+]]
+
 local PicularPalette = Roact.PureComponent:extend("PicularPalette")
 
 PicularPalette.init = function(self)

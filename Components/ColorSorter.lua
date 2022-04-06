@@ -30,6 +30,18 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 ---
 
+--[[
+    store props
+
+        currentColor: Color
+        sortAnchor: Color
+        colors: array<Color>
+
+        setColor: (Color) -> nil
+        setSortAnchor: (Color) -> nil
+        setSortColors: (array<Color>) -> nil
+]]
+
 local ColorSorter = Roact.PureComponent:extend("ColorSorter")
 
 ColorSorter.render = function(self)

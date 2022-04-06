@@ -73,9 +73,6 @@ end
 ---
 
 --[[
-
-    props
-
     store props
 
         theme: StudioTheme

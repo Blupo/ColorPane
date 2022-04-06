@@ -199,7 +199,7 @@ colorEditorButton.Click:Connect(function()
     colorEditPromise = ColorPane.PromptForColor()
     colorEditorButton:SetActive(true)
 
-    colorEditPromise:finally(function()
+    colorEditPromise:catch(function() end):finally(function()
         colorEditPromise = nil
         colorEditorButton:SetActive(false)
     end)
@@ -216,7 +216,7 @@ csEditorButton.Click:Connect(function()
     csEditPromise = ColorPane.PromptForGradient()
     csEditorButton:SetActive(true)
 
-    csEditPromise:finally(function()
+    csEditPromise:catch(function() end):finally(function()
         csEditPromise = nil
         csEditorButton:SetActive(false)
     end)

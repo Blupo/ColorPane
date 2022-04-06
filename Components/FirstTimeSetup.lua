@@ -28,6 +28,10 @@ local uiTranslations = Translator.GenerateTranslationTable({
     props
 
         onConfirm: () -> nil
+    
+    store props
+
+        theme: StudioTheme
 ]]
 
 local FirstTimeSetup = Roact.PureComponent:extend("FirstTimeSetup")

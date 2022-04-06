@@ -194,6 +194,8 @@ GradientEditor.init = function(self)
 end
 
 GradientEditor.willUnmount = function(self)
+    self.unmounting = true
+
     if (self.state.colorEditPromise) then
         self.state.colorEditPromise:cancel()
     end
@@ -561,26 +563,23 @@ GradientEditor.render = function(self)
                             newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = newColor }
 
                             self.props.setKeypoints(newKeypoints)
-                        end)
-                        
-                        editPromise:finally(function(status)
+                        end):finally(function(status)
                             local isCancelled = (tostring(status) == "Cancelled")
-                            local newKeypoints
 
                             if (isCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
 
-                                newKeypoints = Util.table.deepCopy(self.props.keypoints)
+                                local newKeypoints = Util.table.deepCopy(self.props.keypoints)
                                 newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = originalColor }
-                            end
 
-                            if (isCancelled) then
                                 self.props.setKeypoints(newKeypoints)
                             end
                             
-                            self:setState({
-                                colorEditPromise = Roact.None,
-                            })
+                            if (not self.unmounting) then
+                                self:setState({
+                                    colorEditPromise = Roact.None,
+                                })
+                            end
                         end)
 
                         self:setState({
