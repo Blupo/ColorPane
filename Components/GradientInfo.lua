@@ -148,7 +148,7 @@ GradientInfo.render = function(self)
 
             disabled = (not HUE_COLOR_SPACES[colorSpace]),
             displayType = "text",
-            text = uiTranslations[((listHueAdjustment == "Raw") and "Specified" or listHueAdjustment) .. "_HueInterpolation"],
+            text = uiTranslations[listHueAdjustment .. "_HueInterpolation"],
 
             hoverColor = selected and
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)

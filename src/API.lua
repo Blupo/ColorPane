@@ -241,6 +241,7 @@ end
 
 local ColorPane = {}
 ColorPane.PromiseStatus = Promise.Status
+ColorPane.PromptError = PluginEnums.PromptError
 ColorPane.Unloading = unloadingEvent
 
 ColorPane.GetVersion = function(): (number, number, number)
@@ -261,6 +262,7 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
     }
 
     if (type(optionalPromptOptions) == "table") then
+        -- check if InitialColor and ColorType correspond with each other
         promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
 
         local colorType = optionalPromptOptions.ColorType
@@ -290,9 +292,11 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 
+    -- type check
     local result = checkColorPromptOptions(promptOptions)
     if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end 
 
+    -- prompt stuff
     local resolveEvent = Signal.new()
 
     local editPromise = Promise.new(function(resolve)
@@ -372,6 +376,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     }
 
     if (type(optionalPromptOptions) == "table") then
+        -- check if InitialGradient and GradientType correspond
         promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
 
         local gradientType = optionalPromptOptions.GradientType
@@ -401,9 +406,16 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 
+    -- check if the given precision is possible
+    if (Util.getUtilisedKeypoints(#promptOptions.InitialGradient.Keypoints, promptOptions.InitialPrecision) > Constants.MAX_COLORSEQUENCE_KEYPOINTS) then
+        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
+    end
+
+    -- type check
     local result = checkGradientPromptOptions(promptOptions)
     if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
 
+    -- prompt stuff
     local resolveEvent = Signal.new()
 
     local editPromise = Promise.new(function(resolve)
