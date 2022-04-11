@@ -9,298 +9,163 @@ local includes = root:FindFirstChild("includes")
 local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local ColorAPIData = require(PluginModules:FindFirstChild("ColorAPIData"))
 local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
-
-local APIData
-local APIInterface
 
 ---
 
-local debounce = false
-local isAPIReady = false
-local shouldListenForPropertyChanges = true
+local apiIsReady = false
 
-local selection
-local selectionClassMap = {}
-local selectionPropertiesMap = {}
-local selectionCommonPropertyValuesMap = {}
-local selectionPropertyValuesChangedConnections = {}
+local currentSelection: {Instance} = {}
+local currentSelectionProperties = {}
+local currentSelectionCommonPropertyValues = {}
+local currentSelectionPropertyValuesChangedConnections = {}
 
-local selectionChanged
-local selectionChangedEvent = Signal.new()
-local selectionColorsChangedEvent = Signal.new()
+local internalSelectionChanged
+local selectionChanged = Signal.new()
+local selectionColorsChanged = Signal.new()
 
-local getClassPropertiesFilterParams = {
-    IncludeInheritedMembers = false,
+local getSafeSelection = function(): {Instance}
+    local selection: {Instance} = Selection:Get()
 
-    FilterCallback = function(propertyClass, propertyInfo)
-        local propertyName = propertyInfo.Name
-        local tags = propertyInfo.Tags
-        local security = propertyInfo.Security
-
-        if (tags) then
-            if (
-                table.find(tags, "Deprecated") or
-                table.find(tags, "ReadOnly") or
-                table.find(tags, "Hidden") or
-                table.find(tags, "NotScriptable")
-            ) then return false end
-        end
-
-        if (
-            (security.Write == "NotAccessibleSecurity") or
-            (security.Write == "RobloxSecurity") or
-            (security.Write == "RobloxScriptSecurity") or
-            (security.Read == "RobloxSecurity") or
-            (security.Read == "RobloxScriptSecurity")
-        ) then return false end
-
-        -- DataModelMesh.VertexColor is a Vector3 for some reason
-        if ((propertyClass == "DataModelMesh") and (propertyName == "VertexColor")) then return true end
-
-        local valueType = propertyInfo.ValueType.Name
-        return (valueType == "Color3") or (valueType == "BrickColor") or (valueType == "ColorSequence")
-    end,
-}
-
-local mapsHaveSameKeys = function(map1, map2)
-    for key in pairs(map1) do
-        if (not map2[key]) then
-            return false
-        end
-    end
-
-    for key in pairs(map2) do
-        if (not map1[key]) then
-            return false
-        end
-    end
-
-    return true
-end
-
-local getSafeSelection = function()
-    local rawSelection = Selection:Get()
-    local safeSelection = {}
-
-    for i = 1, #rawSelection do
-        local obj = rawSelection[i]
+    for i = #selection, 1, -1 do
+        local obj = selection[i]
 
         --[[
-            To check if an Instance is "safe", we query its ClassName to:
-                - Check if we pass security check
-                - Make sure it isn't blank, which is a thing that can happen apparently
+            Make sure we pass the security check and ClassName isn't blank
+            (because apparently that's a thing)
         ]]
-        local passesSecurityCheck, hasValidClassName = pcall(function()
+        local passesSecurityCheck, validClassName = pcall(function()
             return (obj.ClassName ~= "")
         end)
 
-        if (passesSecurityCheck and hasValidClassName) then
-            table.insert(safeSelection, obj)
+        if (not (passesSecurityCheck and validClassName)) then
+            table.remove(selection, i)
         end
     end
 
-    return safeSelection
+    return selection
 end
 
-local updateSelectionProperties = function()
-    local newClassMap = {}
-    local newPropertiesMap = {}
+local getSelectionColorProperties = function(selection)
+    local classes = {}
 
     for i = 1, #selection do
-        local filteredHierarchy = APIData:GetClassHierarchy(selection[i].ClassName, newClassMap)
+        local className = selection[i].ClassName
 
-        for j = 1, #filteredHierarchy do
-            newClassMap[filteredHierarchy[j]] = true
+        if (not table.find(classes, className)) then
+            table.insert(classes, className)
         end
     end
 
-    if (mapsHaveSameKeys(newClassMap, selectionClassMap)) then return end
-
-    for className in pairs(newClassMap) do
-        local properties = APIData:GetClassProperties(className, getClassPropertiesFilterParams)
-
-        for propertyClassName, classProperties in pairs(properties) do
-            for j = 1, #classProperties do
-                newPropertiesMap[classProperties[j]] = propertyClassName
-            end
-        end
-    end
-
-    selectionClassMap = newClassMap
-    selectionPropertiesMap = newPropertiesMap
+    return ColorAPIData.GetProperties(classes)
 end
 
-local updateSelectionCommonPropertyValues
-updateSelectionCommonPropertyValues = function()
-    if (debounce) then return end
-    debounce = true
+local generateSelectionCommonColorPropertyValue = function(className: string, propertyName: string)
+    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
+    if (not propertyInfo) then return end
 
-    for i = #selectionPropertyValuesChangedConnections, 1, -1 do
-        selectionPropertyValuesChangedConnections[i]:Disconnect()
-    end
+    local anchorValue
 
-    local newCommonPropertyValues = {}
-    table.clear(selectionPropertyValuesChangedConnections)
+    for i = 1, #currentSelection do
+        local object = currentSelection[i]
 
-    for propertyData, propertyClassName in pairs(selectionPropertiesMap) do
-        local propertyName = propertyData.Name
-        local isNative = APIData:IsClassMemberNative(propertyClassName, "Property", propertyName)
-        local classCommonPropertyValues = newCommonPropertyValues[propertyClassName]
-        local commonPropertyValues
+        if (object:IsA(className)) then
+            local objectValue = propertyInfo.Custom and propertyInfo.Get(object) or object[propertyName]
 
-        if (not classCommonPropertyValues) then
-            newCommonPropertyValues[propertyClassName] = {}
-            classCommonPropertyValues = newCommonPropertyValues[propertyClassName]
-        end
-
-        classCommonPropertyValues[propertyName] = {}
-        commonPropertyValues = classCommonPropertyValues[propertyName]
-
-        for i = 1, #selection do
-            local obj = selection[i]
-
-            if (obj:IsA(propertyClassName)) then
-                local success, value = APIInterface:GetProperty(obj, propertyName, propertyClassName, true, true)
-                
-                if (success) then
-                    table.insert(commonPropertyValues, value)
-
-                    if (isNative and shouldListenForPropertyChanges) then
-                        table.insert(selectionPropertyValuesChangedConnections, obj:GetPropertyChangedSignal(propertyName):Connect(updateSelectionCommonPropertyValues))
-                    end
-                end
+            if (anchorValue == nil) then
+                anchorValue = objectValue
+            elseif (anchorValue ~= objectValue) then
+                anchorValue = false
+                break
             end
         end
     end
 
-    for _, propertyValues in pairs(newCommonPropertyValues) do
-        for propertyName, values in pairs(propertyValues) do
-            if (#values == 1) then
-                propertyValues[propertyName] = values[1]
-            elseif (#values < 1) then
-                propertyValues[propertyName] = nil
-            else
-                local controlValue = values[1]
-                local controlValueIsCommon = true
+    if (anchorValue) then
+        return ColorAPIData.TransformPropertyValue(className, propertyName, anchorValue)
+    end
+end
 
-                for i = 2, #values do
-                    if (values[i] ~= controlValue) then
-                        controlValueIsCommon = false
+local generateSelectionCommonColorPropertyValues = function(properties)
+    local values = {}
+
+    for className, classProperties in pairs(properties) do
+        for propertyName, propertyInfo in pairs(classProperties) do
+            local anchorValue
+
+            for i = 1, #currentSelection do
+                local object = currentSelection[i]
+
+                if (object:IsA(className)) then
+                    local objectValue = propertyInfo.Custom and propertyInfo.Get(object) or object[propertyName]
+
+                    if (anchorValue == nil) then
+                        anchorValue = objectValue
+                    elseif (anchorValue ~= objectValue) then
+                        anchorValue = false
                         break
                     end
                 end
+            end
 
-                propertyValues[propertyName] = controlValueIsCommon and controlValue or nil
+            if (anchorValue) then
+                if (not values[className]) then
+                    values[className] = {}
+                end
+
+                values[className][propertyName] = ColorAPIData.TransformPropertyValue(className, propertyName, anchorValue)
             end
         end
     end
 
-    selectionCommonPropertyValuesMap = newCommonPropertyValues
-    selectionColorsChangedEvent:Fire()
-    debounce = false
-end
-
-local onSelectionChanged = function()
-    if (not isAPIReady) then return end
-
-    selection = getSafeSelection()
-    updateSelectionProperties()
-    updateSelectionCommonPropertyValues()
-
-    selectionChangedEvent:Fire()
+    return values
 end
 
 ---
 
 local SelectionManager = {}
-SelectionManager.SelectionChanged = selectionChangedEvent
-SelectionManager.SelectionColorsChanged = selectionColorsChangedEvent
 
-SelectionManager.GetColorProperties = function()
-    return selectionPropertiesMap
-end
+local onSelectionChanged = function()
+    currentSelection = getSafeSelection()
+    currentSelectionProperties = getSelectionColorProperties(currentSelection)
+    currentSelectionCommonPropertyValues = generateSelectionCommonColorPropertyValues(currentSelectionProperties)
 
-SelectionManager.GetCommonColorPropertyValues = function()
-    return selectionCommonPropertyValuesMap
-end
+    for i = 1, #currentSelectionPropertyValuesChangedConnections do
+        currentSelectionPropertyValuesChangedConnections[i]:Disconnect()
+    end
 
-SelectionManager.RegenerateCommonColorPropertyValues = function()
-    if (not isAPIReady) then return end
+    table.clear(currentSelectionPropertyValuesChangedConnections)
 
-    updateSelectionCommonPropertyValues()
-end
+    for className, classProperties in pairs(currentSelectionProperties) do
+        for propertyName, propertyInfo in pairs(classProperties) do
+            for i = 1, #currentSelection do
+                local object: Instance = currentSelection[i]
 
-SelectionManager.SetListeningForPropertyChanges = function(shouldListen)
-    shouldListenForPropertyChanges = shouldListen
-end
+                if (object:IsA(className) and (not propertyInfo.Custom)) then
+                    -- update common properties table
+                    table.insert(currentSelectionPropertyValuesChangedConnections, object:GetPropertyChangedSignal(propertyName):Connect(function()
+                        local newCommonValue = generateSelectionCommonColorPropertyValue(className, propertyName)
 
-SelectionManager.GetColorPropertyValuesSnapshot = function()
-    if (not isAPIReady) then return {} end
+                        if (newCommonValue and (not currentSelectionCommonPropertyValues[className])) then
+                            currentSelectionCommonPropertyValues[className] = {}
+                        elseif ((not newCommonValue) and (not currentSelectionCommonPropertyValues[className])) then
+                            return
+                        end
 
-    local snapshot = {}
-
-    for propertyData, propertyClassName in pairs(selectionPropertiesMap) do
-        local propertyName = propertyData.Name
-
-        for i = 1, #selection do
-            local obj = selection[i]
-
-            if (obj:IsA(propertyClassName)) then
-                if (not snapshot[obj]) then
-                    snapshot[obj] = {}
-                end
-
-                local success, value = APIInterface:GetProperty(obj, propertyName, propertyClassName, true, true)
-                
-                if (success) then
-                    snapshot[obj][propertyName] = value
+                        currentSelectionCommonPropertyValues[className][propertyName] = newCommonValue
+                        selectionColorsChanged:Fire()
+                    end))
                 end
             end
         end
     end
 
-    return snapshot
+    selectionChanged:Fire()
 end
 
-SelectionManager.ApplyColorProperty = function(className, propertyName, newColor, setHistoryWaypoint)
-    if (not isAPIReady) then return end
-
-    if (setHistoryWaypoint) then
-        ChangeHistoryService:SetWaypoint(propertyName)
-    end
-
-    for i = 1, #selection do
-        local obj = selection[i]
-
-        if (obj:IsA(className)) then
-            APIInterface:SetProperty(obj, propertyName, newColor, className, true, true)
-        end
-    end
-
-    if (setHistoryWaypoint) then
-        ChangeHistoryService:SetWaypoint(propertyName)
-    end
-end
-
-SelectionManager.ApplyObjectColorProperty = function(obj, className, propertyName, newValue)
-    if (not isAPIReady) then return end
-
-    APIInterface:SetProperty(obj, propertyName, newValue, className, true, true)
-end
-
-SelectionManager.Connect = function()
-    if (selectionChanged) then return end
-
-    selectionChanged = Selection.SelectionChanged:Connect(onSelectionChanged)
-end
-
-SelectionManager.Disconnect = function()
-    if (not selectionChanged) then return end
-
-    selectionChanged:Disconnect()
-    selectionChanged = nil
-end
+SelectionManager.SelectionChanged = selectionChanged
+SelectionManager.SelectionColorsChanged = selectionColorsChanged
 
 SelectionManager.init = function(plugin)
     SelectionManager.init = nil
@@ -308,20 +173,146 @@ SelectionManager.init = function(plugin)
     RobloxAPI.DataRequestFinished:Connect(function(didLoad)
         if (not didLoad) then return end
 
-        APIData = RobloxAPI.APIData
-        APIInterface = RobloxAPI.APIInterface
-        isAPIReady = true
-
-        SelectionManager.Connect()
-        onSelectionChanged()
+        apiIsReady = true
     end)
 
-    plugin.Unloading:Connect(function()
-        if (selectionChanged) then
-            selectionChanged:Disconnect()
-            selectionChanged = nil
+    plugin.Unloading:Connect(SelectionManager.Disconnect)
+end
+
+SelectionManager.Connect = function()
+    if (internalSelectionChanged) then return end
+
+    internalSelectionChanged = Selection.SelectionChanged:Connect(onSelectionChanged)
+end
+
+SelectionManager.Disconnect = function()
+    if (not internalSelectionChanged) then return end
+
+    for i = 1, #currentSelectionPropertyValuesChangedConnections do
+        currentSelectionPropertyValuesChangedConnections[i]:Disconnect()
+    end
+
+    table.clear(currentSelectionPropertyValuesChangedConnections)
+
+    internalSelectionChanged:Disconnect()
+    internalSelectionChanged = nil
+end
+
+SelectionManager.GetSelectionCommonColorPropertyValues = function(): {[string]: {[string]: any}}
+    return currentSelectionCommonPropertyValues
+end
+
+SelectionManager.GetSelectionColorPropertyData = function()
+    if (not apiIsReady) then
+        return {
+            Properties = {},
+            Duplicated = {},
+            Sorted = {},
+        }
+    end
+
+    local duplicateProperties = {}
+    local sortedProperties = {}
+
+    for className, classProperties in pairs(currentSelectionProperties) do
+        for propertyName in pairs(classProperties) do
+            if (duplicateProperties[propertyName] == nil) then
+                for otherClassName, otherClassProperties in pairs(currentSelectionProperties) do
+                    if (otherClassName == className) then continue end
+
+                    if otherClassProperties[propertyName] then
+                        duplicateProperties[propertyName] = true
+                        break
+                    end
+                end
+
+                if (duplicateProperties[propertyName] == nil) then
+                    duplicateProperties[propertyName] = false
+                end
+            end
+
+            table.insert(sortedProperties, {className, propertyName})
+        end
+    end
+
+    table.sort(sortedProperties, function(a, b)
+        if (a[2] ~= b[2]) then
+            return a[2] < b[2]
+        else
+            return a[1] < b[1]
         end
     end)
+
+    return {
+        Properties = currentSelectionProperties,
+        Duplicated = duplicateProperties,
+        Sorted = sortedProperties,
+    }
 end
+
+SelectionManager.GenerateSelectionColorPropertyValueSnapshot = function(className: string, propertyName: string): {[Instance]: any}
+    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
+    if (not propertyInfo) then return {} end
+
+    local snapshot = {}
+
+    for i = 1, #currentSelection do
+        local object = currentSelection[i]
+
+        if (object:IsA(className)) then
+            snapshot[object] = propertyInfo.Custom and propertyInfo.Get(object) or object[propertyName]
+        end
+    end
+
+    return snapshot
+end
+
+SelectionManager.RestoreSelectionColorPropertyFromSnapshot = function(className: string, propertyName: string, snapshot: {[Instance]: any})
+    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
+    if (not propertyInfo) then return end
+
+    for i = 1, #currentSelection do
+        local object: Instance = currentSelection[i]
+
+        if (object:IsA(className)) then
+            local color = snapshot[object]
+
+            if (propertyInfo.Custom) then
+                propertyInfo.Set(object, color)
+            else
+                object[propertyName] = color
+            end
+        end
+    end
+end
+
+SelectionManager.SetSelectionProperty = function(className: string, propertyName: string, newColor: any, setHistoryWaypoint: boolean)
+    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
+    if (not propertyInfo) then return end
+
+    if (setHistoryWaypoint) then
+        ChangeHistoryService:SetWaypoint(propertyName)
+    end
+
+    for i = 1, #currentSelection do
+        local object: Instance = currentSelection[i]
+
+        if (object:IsA(className)) then
+            local transformedColor = ColorAPIData.TransformColorValue(className, propertyName, newColor)
+
+            if (propertyInfo.Custom) then
+                propertyInfo.Set(object, transformedColor)
+            else
+                object[propertyName] = transformedColor
+            end
+        end
+    end
+
+    if (setHistoryWaypoint) then
+        ChangeHistoryService:SetWaypoint(propertyName)
+    end
+end
+
+---
 
 return SelectionManager

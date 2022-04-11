@@ -6,12 +6,11 @@ local RunService = game:GetService("RunService")
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local ColorAPIData = require(PluginModules:FindFirstChild("ColorAPIData"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local TerrainMaterialColors = require(PluginModules:FindFirstChild("TerrainMaterialColors"))
 
 local includes = root:FindFirstChild("includes")
-local APIUtils = require(includes:FindFirstChild("APIUtils"))
 local Promise = require(includes:FindFirstChild("Promise"))
 local Signal = require(includes:FindFirstChild("GoodSignal"))
 
@@ -82,22 +81,13 @@ RobloxAPI.GetData = function()
         end
     end):andThen(function(api, usedCache)
         api = usedCache and api or HttpService:JSONDecode(api)
-        
+
         if (not usedCache) then
             PluginSettings.CacheRobloxAPIData(api)
         end
 
-        RobloxAPI.APIData = APIUtils.createAPIData(api)
-        RobloxAPI.APIInterface = APIUtils.createAPIInterface(RobloxAPI.APIData)
+        ColorAPIData.init(api)
 
-        for i = 1, #TerrainMaterialColors.Properties do
-            local property = TerrainMaterialColors.Properties[i]
-            local behaviour = TerrainMaterialColors.Behaviours[i]
-        
-            RobloxAPI.APIData:AddClassMember("Terrain", property)
-            RobloxAPI.APIInterface:AddClassMemberBehavior("Terrain", "Property", property.Name, behaviour)
-        end
-        
         apiData = api
         RobloxAPI.DataRequestFinished:Fire(true)
     end, function()

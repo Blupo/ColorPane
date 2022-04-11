@@ -1,3 +1,4 @@
+local StudioService = game:GetService("StudioService")
 local TextService = game:GetService("TextService")
 
 ---
@@ -6,8 +7,6 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorPane = require(PluginModules:FindFirstChild("APIBroker"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Translator = require(PluginModules:FindFirstChild("Translator"))
@@ -28,6 +27,9 @@ local StandardUIPadding = StandardComponents.UIPadding
 ---
 
 local LIST_ITEM_LEFT_PADDING = 24
+local COLOR_TYPE_ICON_SIZE = 12
+
+local partClassIconData = StudioService:GetClassIcon("Part")
 
 local uiTranslations = Translator.GenerateTranslationTable({
     "NoSelectionColorProperties_Message",
@@ -54,26 +56,6 @@ local getCellTextSizes = function(propName, displayClassName, showClassName)
     return propNameTextSize, classNameTextSize
 end
 
-local toColor3 = function(color, colorType)
-    if (colorType == "BrickColor") then
-        return color.Color
-    elseif (colorType == "Vector3") then
-        return Color3.new(color.X, color.Y, color.Z)
-    else
-        return color
-    end
-end
-
-local fromColor3 = function(color, colorType)
-    if (colorType == "BrickColor") then
-        return BrickColor.new(color)
-    elseif (colorType == "Vector3") then
-        return Vector3.new(color.R, color.G, color.B)
-    else
-        return color
-    end
-end
-
 ---
 
 --[[
@@ -82,43 +64,54 @@ end
         AnchorPoint?
         Size?
         Position?
+        LayoutOrder?
 
-        propName: string
         className: string
-        showClassName: boolean?
+        propertyName: string
 
+        colorType: "BrickColor" | "Color3" | "ColorSequence"
+        color: Binding<Color | Gradient>
+        
+        showClassName: boolean?
         selected: boolean?
         disabled: boolean?
 
-        colorType: "Color3" | "ColorSequence"
-        color: Binding(Color3 | ColorSequence | nil)
-
-        promptEdit: () -> nil
+        promptForEdit: () -> nil
 
     store props
 
         theme: StudioTheme
 ]]
 
-local PropertyListItem = Roact.PureComponent:extend("PropertyListItem")
+local ColorPropertyListItem = Roact.PureComponent:extend("ColorPropertyListItem")
 
-PropertyListItem.render = function(self)
+ColorPropertyListItem.render = function(self)
     local theme = self.props.theme
     local color = self.props.color
+    local colorType = self.props.colorType
 
-    local isColorSequence = (self.props.colorType == "ColorSequence")
-    local isSelected, isDisabled = self.props.selected, self.props.disabled
+    local isColorSequence = (colorType == "ColorSequence")
+    local selected, disabled = self.props.selected, self.props.disabled
     local displayClassName = "(" .. self.props.className .. ")"
-    local propNameTextSize, classNameTextSize = getCellTextSizes(self.props.propName, displayClassName, self.props.showClassName)
-
+    local propertyNameTextSize, classNameTextSize = getCellTextSizes(self.props.propertyName, displayClassName, self.props.showClassName)
+    
+    local colorTypeImage
     local propertyLabelTextColor
+    
+    if (colorType == "BrickColor") then
+        colorTypeImage = partClassIconData.Image
+    elseif (colorType == "Color3") then
+        colorTypeImage = Style.Images.HueWheel
+    elseif (colorType == "ColorSequence") then
+        colorTypeImage = Style.Images.ColorSequenceTypeIcon
+    end
 
-    if (isSelected) then
+    if (selected) then
         propertyLabelTextColor = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Selected)
     else
         propertyLabelTextColor = theme:GetColor(
             Enum.StudioStyleGuideColor.MainText,
-            isDisabled and Enum.StudioStyleGuideModifier.Disabled or nil
+            disabled and Enum.StudioStyleGuideModifier.Disabled or nil
         )
     end
 
@@ -134,28 +127,28 @@ PropertyListItem.render = function(self)
         Text = "",
         TextTransparency = 1,
 
-        BackgroundColor3 = isSelected and
+        BackgroundColor3 = selected and
             theme:GetColor(Enum.StudioStyleGuideColor.TableItem, Enum.StudioStyleGuideModifier.Selected)
         or theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
 
         BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
 
         [Roact.Event.MouseEnter] = function(obj)
-            if (isSelected or isDisabled) then return end
+            if (selected or disabled) then return end
 
             obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.TableItem, Enum.StudioStyleGuideModifier.Hover)
         end,
 
         [Roact.Event.MouseLeave] = function(obj)
-            if (isSelected or isDisabled) then return end
+            if (selected or disabled) then return end
 
             obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
         end,
 
         [Roact.Event.Activated] = function()
-            if (isSelected or isDisabled) then return end
+            if (selected or disabled) then return end
 
-            self.props.promptEdit()
+            self.props.promptForEdit()
         end,
     }, {
         UIPadding = Roact.createElement(StandardUIPadding, {
@@ -167,9 +160,9 @@ PropertyListItem.render = function(self)
 
         PropertyNameLabel = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0, 0.5),
-            Size = UDim2.new(0, propNameTextSize.X, 1, 0),
+            Size = UDim2.new(0, propertyNameTextSize.X, 1, 0),
             Position = UDim2.new(0, 0, 0.5, 0),
-            Text = self.props.propName,
+            Text = self.props.propertyName,
 
             TextColor3 = propertyLabelTextColor,
         }),
@@ -178,15 +171,33 @@ PropertyListItem.render = function(self)
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Size = UDim2.new(0, classNameTextSize.X, 1, 0),
-                Position = UDim2.new(0, propNameTextSize.X + Style.Constants.MinorElementPadding, 0.5, 0),
+                Position = UDim2.new(0, propertyNameTextSize.X + Style.Constants.MinorElementPadding, 0.5, 0),
                 Text = displayClassName,
 
                 TextColor3 = theme:GetColor(
                     Enum.StudioStyleGuideColor.MainText,
-                    (not isSelected) and Enum.StudioStyleGuideModifier.Disabled or Enum.StudioStyleGuideModifier.Selected
+                    (not selected) and Enum.StudioStyleGuideModifier.Disabled or Enum.StudioStyleGuideModifier.Selected
                 ),
             })
         or nil,
+
+        ColorTypeIndicator = Roact.createElement("ImageLabel", {
+            AnchorPoint = Vector2.new(1, 0.5),
+            Position = UDim2.new(1, -(Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding), 0.5, 0),
+            Size = UDim2.new(0, COLOR_TYPE_ICON_SIZE, 0, COLOR_TYPE_ICON_SIZE),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+
+            Image = colorTypeImage,
+            ImageRectOffset = (colorType == "BrickColor") and partClassIconData.ImageRectOffset or nil,
+            ImageRectSize =  (colorType == "BrickColor") and partClassIconData.ImageRectSize or nil,
+
+            ImageColor3 = disabled and Color3.new(1/2, 1/2, 1/2) or nil,
+        }, {
+            UICorner = (colorType ~= "BrickColor") and
+                Roact.createElement(StandardUICorner, { circular = true, })
+            or nil,
+        }),
 
         ColorButtonContainer = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 0.5),
@@ -209,13 +220,19 @@ PropertyListItem.render = function(self)
                 TextYAlignment = Enum.TextYAlignment.Center,
 
                 Text = color:map(function(value)
-                    return (not value) and uiTranslations["SelectionColorMultipleValues_Indicator"] or "" 
+                    return value and "" or uiTranslations["SelectionColorMultipleValues_Indicator"]
                 end),
 
                 BackgroundColor3 = color:map(function(value)
-                    local colorValue = isColorSequence and Color3.new(1, 1, 1) or value
+                    local bkgColor
 
-                    return colorValue or theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
+                    if (not isColorSequence) then
+                        bkgColor = value and value:toColor3() or nil
+                    else
+                        bkgColor = Color3.new(1, 1, 1)
+                    end
+
+                    return bkgColor or theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
                 end),
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
@@ -223,8 +240,8 @@ PropertyListItem.render = function(self)
                 UIGradient = isColorSequence and
                     Roact.createElement("UIGradient", {
                         Color = color:map(function(value)
-                            return value or ColorSequence.new(Color3.new(1, 1, 1))
-                        end)
+                            return value and value:colorSequence(nil, "RGB") or ColorSequence.new(Color3.new(1, 1, 1))
+                        end),
                     })
                 or nil,
             })
@@ -245,41 +262,38 @@ end
 local ColorPropertiesList = Roact.PureComponent:extend("ColorPropertiesList")
 
 ColorPropertiesList.init = function(self)
-    self.selectionPropertyValues, self.updateSelectionPropertyValues = Roact.createBinding({})
+    self.commonPropertyValues, self.updateCommonPropertyValues = Roact.createBinding({})
     self.listLength, self.updateListLength = Roact.createBinding(0)
 
     self.selectionChanged = SelectionManager.SelectionChanged:Connect(function()
         if (self.state.editColorPromise) then
             self.state.editColorPromise:cancel()
-        end        
+        end
+
+        local propertyData = SelectionManager.GetSelectionColorPropertyData()
 
         self:setState({
-            properties = SelectionManager.GetColorProperties()
+            propertyData = propertyData,
         })
+
+        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(propertyData.Properties))
     end)
 
     self.selectionColorsChanged = SelectionManager.SelectionColorsChanged:Connect(function()
-        if (self.state.editColorPromise) then return end
-
-        self.updateSelectionPropertyValues(SelectionManager.GetCommonColorPropertyValues())
+        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(self.state.propertyData.Properties))
     end)
 
-    self.settingChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
-        if (key ~= PluginEnums.PluginSettingKey.ColorPropertiesLivePreview) then return end
-
-        self:setState({
-            livePreview = newValue
-        })
-    end)
-
-    SelectionManager.Connect()
-    SelectionManager.RegenerateCommonColorPropertyValues()
-    self.updateSelectionPropertyValues(SelectionManager.GetCommonColorPropertyValues())
+    local propertyData = SelectionManager.GetSelectionColorPropertyData()
 
     self:setState({
-        properties = SelectionManager.GetColorProperties(),
-        livePreview = PluginSettings.Get(PluginEnums.PluginSettingKey.ColorPropertiesLivePreview)
+        propertyData = propertyData,
     })
+
+    self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(propertyData.Properties))
+end
+
+ColorPropertiesList.didMount = function()
+    SelectionManager.Connect()
 end
 
 ColorPropertiesList.willUnmount = function(self)
@@ -287,163 +301,119 @@ ColorPropertiesList.willUnmount = function(self)
         self.state.editColorPromise:cancel()
     end
 
+    SelectionManager.Disconnect()
     self.selectionChanged:Disconnect()
     self.selectionColorsChanged:Disconnect()
-    self.settingChanged:Disconnect()
-
-    SelectionManager.Disconnect()
 end
 
 ColorPropertiesList.render = function(self)
     local listElements = {}
     local minCellWidth = 0
 
-    local properties = self.state.properties
-    local propertiesArray = {}
-    local propertyNameCounts = {}
+    local properties = self.state.propertyData.Properties
+    local duplicateProperties = self.state.propertyData.Duplicated
+    local sortedProperties = self.state.propertyData.Sorted
 
-    for propertyData in pairs(properties) do
-        local propertyName = propertyData.Name
-        
-        propertyNameCounts[propertyName] = (propertyNameCounts[propertyName] or 0) + 1
-        table.insert(propertiesArray, propertyData)
-    end
-
-    for propertyData, propertyClassName in pairs(properties) do
-        local propertyName = propertyData.Name
-        local propNameTextSize, classNameTextSize = getCellTextSizes(propertyName, "(" .. propertyClassName .. ")", propertyNameCounts[propertyName] > 1)
+    for i = 1, #sortedProperties do
+        local className, propertyName = sortedProperties[i][1], sortedProperties[i][2]
+        local propNameTextSize, classNameTextSize = getCellTextSizes(propertyName, "(" .. className .. ")", duplicateProperties[propertyName])
 
         local cellWidth = LIST_ITEM_LEFT_PADDING +
             propNameTextSize.X +
             Style.Constants.MinorElementPadding +
             classNameTextSize.X +
             Style.Constants.MajorElementPadding +
+            COLOR_TYPE_ICON_SIZE +
+            Style.Constants.MinorElementPadding +
             Style.Constants.ColorSequencePreviewWidth +
             Style.Constants.MinorElementPadding
 
         minCellWidth = (cellWidth > minCellWidth) and cellWidth or minCellWidth
     end
 
-    table.sort(propertiesArray, function(a, b)
-        return a.Name < b.Name
-    end)
+    for i = 1, #sortedProperties do
+        local className, propertyName = sortedProperties[i][1], sortedProperties[i][2]
+        local propertyInfo = properties[className][propertyName]
 
-    for i = 1, #propertiesArray do
-        local propertyData = propertiesArray[i]
-        local propertyName = propertyData.Name
-        local propertyClassName = properties[propertyData]
+        local compositeName = className .. "/" .. propertyName
+        local promptTitle = className .. "." .. propertyName
 
-        local compositeName = propertyClassName .. "/" .. propertyName
-        local valueType = propertyData.ValueType.Name
+        local valueType = propertyInfo.ValueType.Name
         local isColorSequence = (valueType == "ColorSequence")
 
-        local editValuePromptOptions
-        local promptTitle = propertyClassName .. "." .. propertyName
-
-        local onValueChanged = function(intermediateColor)
-            if (not self.state.livePreview) then return end
-
-            local transformedColor = isColorSequence and intermediateColor or fromColor3(intermediateColor, valueType)
-            local newCommonColorValues = self.selectionPropertyValues:getValue()
-
-            newCommonColorValues[propertyClassName][propertyName] = transformedColor
-            self.updateSelectionPropertyValues(newCommonColorValues)
-            SelectionManager.ApplyColorProperty(propertyClassName, propertyName, transformedColor, false)
-        end
-
-        if (isColorSequence) then
-            editValuePromptOptions = {
-                PromptTitle = promptTitle,
-                OnGradientChanged = onValueChanged,
-                GradientType = "ColorSequence",
-            }
-        else
-            editValuePromptOptions = {
-                PromptTitle = promptTitle,
-                OnColorChanged = onValueChanged,
-                ColorType = "Color3",
-            }
-        end
-
-        listElements[compositeName] = Roact.createElement(PropertyListItem, {
+        listElements[compositeName] = Roact.createElement(ColorPropertyListItem, {
             Size = UDim2.new(1, 0, 0, Style.Constants.LargeButtonHeight),
             LayoutOrder = i,
 
-            propName = propertyName,
-            className = propertyClassName,
-            showClassName = propertyNameCounts[propertyName] > 1,
+            className = className,
+            propertyName = propertyName,
+            colorType = ((className == "DataModelMesh") and (propertyName == "VertexColor")) and "Color3" or valueType,
 
+            showClassName = duplicateProperties[propertyName],
             selected = (self.state.editingProperty == compositeName),
             disabled = self.state.editColorPromise and (self.state.editingProperty ~= compositeName),
-
-            colorType = isColorSequence and "ColorSequence" or "Color3",
-            color = self.selectionPropertyValues:map(function(values)
-                local color = values[propertyClassName] and values[propertyClassName][propertyName] or nil
-
-                if (isColorSequence) then
-                    return color
-                else
-                    return color and toColor3(color, valueType) or nil
-                end
+            
+            color = self.commonPropertyValues:map(function(values)
+                return values[className] and values[className][propertyName] or nil
             end),
 
-            promptEdit = function()
+            promptForEdit = function()
                 if (ColorPane.IsColorEditorOpen()) then return end
 
                 if (self.state.editColorPromise) then
                     self.state.editColorPromise:cancel()
                 end
 
-                local propertyValues = self.selectionPropertyValues:getValue()
-                local initialValue = propertyValues[propertyClassName] and propertyValues[propertyClassName][propertyName] or nil
+                local rejected = false
+                local commonPropertyValues = self.commonPropertyValues:getValue()
 
+                local editValuePromptOptions = {
+                    PromptTitle = promptTitle,
+                }
+        
                 if (isColorSequence) then
-                    editValuePromptOptions.InitialGradient = initialValue
+                    editValuePromptOptions.GradientType = "Gradient"
+                    editValuePromptOptions.InitialGradient = commonPropertyValues[className] and commonPropertyValues[className][propertyName] or nil
+        
+                    editValuePromptOptions.OnGradientChanged = function(intermediate)
+                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate, false)
+                    end
                 else
-                    editValuePromptOptions.InitialColor = initialValue and toColor3(initialValue, valueType) or nil
+                    editValuePromptOptions.ColorType = "Color"
+                    editValuePromptOptions.InitialColor = commonPropertyValues[className] and commonPropertyValues[className][propertyName] or nil
+        
+                    editValuePromptOptions.OnColorChanged = function(intermediate)
+                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate, false)
+                    end
                 end
 
-                local rejected = false
                 local editColorPromise = isColorSequence and
                     ColorPane.PromptForGradient(editValuePromptOptions)
                 or
                     ColorPane.PromptForColor(editValuePromptOptions)
                 
                 editColorPromise:andThen(function(newColor)
-                    SelectionManager.ApplyColorProperty(propertyClassName, propertyName, 
-                        isColorSequence and newColor or fromColor3(newColor, valueType),
-                    true)
+                    SelectionManager.SetSelectionProperty(className, propertyName, newColor, true)
                 end, function()
                     rejected = true
                 end):finally(function(status)
                     if (status == ColorPane.PromiseStatus.Cancelled) then
-                        for obj, originalValues in pairs(self.state.originalPropertyValuesSnapshot) do
-                            if (obj:IsA(propertyClassName)) then
-                                SelectionManager.ApplyObjectColorProperty(obj, propertyClassName, propertyName, originalValues[propertyName])
-                            end
-                        end
-
-                        SelectionManager.RegenerateCommonColorPropertyValues()
-                        self.updateSelectionPropertyValues(SelectionManager.GetCommonColorPropertyValues())
+                        SelectionManager.RestoreSelectionColorPropertyFromSnapshot(className, propertyName, self.state.originalPropertyValues)
                     end
-
-                    SelectionManager.SetListeningForPropertyChanges(true)
 
                     self:setState({
                         editColorPromise = Roact.None,
                         editingProperty = Roact.None,
-                        originalPropertyValuesSnapshot = Roact.None,
+                        originalPropertyValues = Roact.None,
                     })
                 end)
 
                 -- prevent conflict if the Promise is immediately rejected
                 if (not rejected) then
-                    SelectionManager.SetListeningForPropertyChanges(false)
-
                     self:setState({
                         editColorPromise = editColorPromise,
                         editingProperty = compositeName,
-                        originalPropertyValuesSnapshot = SelectionManager.GetColorPropertyValuesSnapshot(),
+                        originalPropertyValues = SelectionManager.GenerateSelectionColorPropertyValueSnapshot(className, propertyName)
                     })
                 end
             end,
@@ -458,7 +428,7 @@ ColorPropertiesList.render = function(self)
         preset = 1,
     })
 
-    return (#propertiesArray > 0) and
+    return (#sortedProperties > 0) and
         Roact.createElement(StandardScrollingFrame, {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Size = UDim2.new(1, 0, 1, 0),
@@ -480,9 +450,11 @@ ColorPropertiesList.render = function(self)
             TextYAlignment = Enum.TextYAlignment.Center,
             TextWrapped = true,
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding})
+            UIPadding = Roact.createElement(StandardUIPadding, { Style.Constants.PagePadding })
         })
 end
 
-PropertyListItem = ConnectTheme(PropertyListItem)
+---
+
+ColorPropertyListItem = ConnectTheme(ColorPropertyListItem)
 return ColorPropertiesList

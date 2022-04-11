@@ -120,6 +120,7 @@ local Style: Style = {
         PageOptionsButtonIcon = "rbxassetid://6308568235",
         ScrollbarImage = "rbxassetid://590077572",
         SearchHistoryButtonIcon = "rbxassetid://9126497911",
+        ColorSequenceTypeIcon = "rbxassetid://1097454788",
     }
 }
 
