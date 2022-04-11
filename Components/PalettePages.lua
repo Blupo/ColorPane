@@ -1,7 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 local Translator = require(PluginModules:FindFirstChild("Translator"))

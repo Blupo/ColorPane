@@ -16,6 +16,7 @@ local RunService = game:GetService("RunService")
 local root = script.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local EditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals"))
 local Constants = require(PluginModules:FindFirstChild("Constants"))
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
 local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
@@ -482,6 +483,9 @@ ColorPane.init = function(pluginObj)
     colorPaneStore = MakeStore(plugin)
     colorEditorWidget = MakeWidget(plugin, "ColorEditor")
     gradientEditorWidget = MakeWidget(plugin, "GradientEditor")
+
+    EditorInputSignals.initEditorCursorPositionChanged(plugin, colorEditorWidget, "ColorEditor")
+    EditorInputSignals.initEditorCursorPositionChanged(plugin, gradientEditorWidget, "GradientEditor")
 
     colorEditorWidgetEnabledChanged = colorEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
         if (colorEditorWidget.Enabled and (not colorEditorTree)) then

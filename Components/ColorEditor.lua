@@ -1,7 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Translator = require(PluginModules:FindFirstChild("Translator"))
@@ -260,10 +260,6 @@ ColorEditor.render = function(self)
 
         [Roact.Event.InputBegan] = function(_, input, gameProcessedEvent)
             ColorEditorInputSignals.InputBegan:Fire(input, gameProcessedEvent)
-        end,
-
-        [Roact.Event.InputChanged] = function(_, input, gameProcessedEvent)
-            ColorEditorInputSignals.InputChanged:Fire(input, gameProcessedEvent)
         end,
 
         [Roact.Event.InputEnded] = function(_, input, gameProcessedEvent)

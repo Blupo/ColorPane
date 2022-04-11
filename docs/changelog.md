@@ -13,6 +13,7 @@
 - Added a Gradient picker tool which allows users to pick colors from their gradients
 - Color Properties now shows the color type of the each property
 - Right-clicking on a property in Color Properties now shows a menu to view the property documentation
+- Mouse drag inputs now work outside of editor windows
 
 ### Changed
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)
@@ -29,6 +30,7 @@
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)
 - Changing palettes now deselects the selected color
 - Changing palettes in the export dialog now correctly persists the export type
+- Scrollbars no longer interfere with mouse drag inputs
 
 ### Deprecated
 - `API.PromptForColorSequence` has been deprecated, please use `API.PromptForGradient` for new work

@@ -6,6 +6,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Constants = require(PluginModules:FindFirstChild("Constants"))
+local GradientEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).GradientEditor
 local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
 local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
@@ -193,6 +194,17 @@ GradientEditor.init = function(self)
     })
 end
 
+GradientEditor.didMount = function(self)
+    self.cursorPositionChanged = GradientEditorInputSignals.CursorPositionChanged:Connect(function(cursorPosition)
+        local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
+        self.updateTimelineProgress(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
+
+        if (self.state.tracking and self.props.selectedKeypoint) then
+            self.updateSelectedKeypointTime(cursorPosition)
+        end
+    end)
+end
+
 GradientEditor.willUnmount = function(self)
     self.unmounting = true
 
@@ -206,6 +218,11 @@ GradientEditor.willUnmount = function(self)
 
     if (GradientPaletteWidget.IsOpen()) then
         GradientPaletteWidget.Close()
+    end
+    
+    if (self.cursorPositionChanged) then
+        self.cursorPositionChanged:Disconnect()
+        self.cursorPositionChanged = nil
     end
 end
 
@@ -334,20 +351,6 @@ GradientEditor.render = function(self)
             self:setState({
                 tracking = false,
             })
-        end,
-
-        [Roact.Event.InputChanged] = function(_, input)
-            if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
-            
-            local inputPosition = input.Position
-            local cursorPosition = Vector2.new(inputPosition.X, inputPosition.Y)
-
-            local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
-            self.updateTimelineProgress(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
-
-            if (self.state.tracking and self.props.selectedKeypoint) then
-                self.updateSelectedKeypointTime(cursorPosition)
-            end
         end,
     }, {
         UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),

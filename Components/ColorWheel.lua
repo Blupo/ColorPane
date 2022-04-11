@@ -1,7 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
@@ -215,13 +215,7 @@ ColorWheel.getDerivedStateFromProps = function(props, state)
 end
 
 ColorWheel.didMount = function(self)
-    self.inputChanged = ColorEditorInputSignals.InputChanged:Connect(function(input, gameProcessedEvent)
-        if gameProcessedEvent then return end
-        if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
-        
-        local inputPosition = input.Position
-        local cursorPosition = Vector2.new(inputPosition.X, inputPosition.Y)
-        
+    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:Connect(function(cursorPosition)
         if (self.state.trackingH) then
             self.updateH(cursorPosition)
         end
@@ -233,9 +227,9 @@ ColorWheel.didMount = function(self)
 end
 
 ColorWheel.willUnmount = function(self)
-    if (self.inputChanged) then
-        self.inputChanged:Disconnect()
-        self.inputChanged = nil
+    if (self.cursorPositionChanged) then
+        self.cursorPositionChanged:Disconnect()
+        self.cursorPositionChanged = nil
     end
 end
 

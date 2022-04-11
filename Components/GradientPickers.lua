@@ -1,7 +1,7 @@
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("ColorEditorInputSignals"))
+local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 
@@ -57,21 +57,17 @@ GradientPicker.init = function(self)
 end
 
 GradientPicker.didMount = function(self)
-    self.inputChanged = ColorEditorInputSignals.InputChanged:Connect(function(input, gameProcessedEvent)
-        if (gameProcessedEvent) then return end
-        if (input.UserInputType ~= Enum.UserInputType.MouseMovement) then return end
+    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:Connect(function(cursorPosition)
         if (not self.state.tracking) then return end
-        
-        local inputPosition = input.Position
 
-        self.pickValue(Vector2.new(inputPosition.X, inputPosition.Y))
+        self.pickValue(cursorPosition)
     end)
 end
 
 GradientPicker.willUnmount = function(self)
-    if (self.inputChanged) then
-        self.inputChanged:Disconnect()
-        self.inputChanged = nil
+    if (self.cursorPositionChanged) then
+        self.cursorPositionChanged:Disconnect()
+        self.cursorPositionChanged = nil
     end
 end
 
