@@ -12,6 +12,7 @@
 - Added a Picular palette (idea from csqrl's [Picular plugin](https://devforum.roblox.com/t/914148))
 - Added a Gradient picker tool which allows users to pick colors from their gradients
 - Color Properties now shows the color type of the each property
+- Right-clicking on a property in Color Properties now shows a menu to view the property documentation
 
 ### Changed
 - `API.PromptForColor` now allows for prompting either [Colors](https://blupo.github.io/Color/api/color/) or [Color3s](https://developer.roblox.com/api-reference/datatype/Color3)

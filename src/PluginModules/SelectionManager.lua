@@ -174,6 +174,7 @@ SelectionManager.init = function(plugin)
         if (not didLoad) then return end
 
         apiIsReady = true
+        onSelectionChanged()
     end)
 
     plugin.Unloading:Connect(SelectionManager.Disconnect)
@@ -183,6 +184,7 @@ SelectionManager.Connect = function()
     if (internalSelectionChanged) then return end
 
     internalSelectionChanged = Selection.SelectionChanged:Connect(onSelectionChanged)
+    onSelectionChanged()
 end
 
 SelectionManager.Disconnect = function()

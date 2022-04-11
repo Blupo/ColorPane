@@ -7,6 +7,7 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorPane = require(PluginModules:FindFirstChild("APIBroker"))
+local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Translator = require(PluginModules:FindFirstChild("Translator"))
@@ -68,6 +69,7 @@ end
 
         className: string
         propertyName: string
+        custom: boolean?
 
         colorType: "BrickColor" | "Color3" | "ColorSequence"
         color: Binding<Color | Gradient>
@@ -90,10 +92,13 @@ ColorPropertyListItem.render = function(self)
     local color = self.props.color
     local colorType = self.props.colorType
 
+    local className = self.props.className
+    local propertyName = self.props.propertyName
+
     local isColorSequence = (colorType == "ColorSequence")
     local selected, disabled = self.props.selected, self.props.disabled
-    local displayClassName = "(" .. self.props.className .. ")"
-    local propertyNameTextSize, classNameTextSize = getCellTextSizes(self.props.propertyName, displayClassName, self.props.showClassName)
+    local displayClassName = "(" .. className .. ")"
+    local propertyNameTextSize, classNameTextSize = getCellTextSizes(propertyName, displayClassName, self.props.showClassName)
     
     local colorTypeImage
     local propertyLabelTextColor
@@ -143,6 +148,17 @@ ColorPropertyListItem.render = function(self)
             if (selected or disabled) then return end
 
             obj.BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
+        end,
+
+        [Roact.Event.MouseButton2Click] = function()
+            if (self.props.custom) then return end
+
+            local triggerConnection = DocumentationPluginMenu.Action.Triggered:Connect(function()
+                DocumentationPluginMenu.ShowPropertyDocumentation(className, propertyName)
+            end)
+
+            DocumentationPluginMenu.Menu:ShowAsync()
+            triggerConnection:Disconnect()
         end,
 
         [Roact.Event.Activated] = function()
@@ -270,26 +286,22 @@ ColorPropertiesList.init = function(self)
             self.state.editColorPromise:cancel()
         end
 
-        local propertyData = SelectionManager.GetSelectionColorPropertyData()
-
         self:setState({
-            propertyData = propertyData,
+            propertyData = SelectionManager.GetSelectionColorPropertyData(),
         })
 
-        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(propertyData.Properties))
+        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues())
     end)
 
     self.selectionColorsChanged = SelectionManager.SelectionColorsChanged:Connect(function()
-        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(self.state.propertyData.Properties))
+        self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues())
     end)
 
-    local propertyData = SelectionManager.GetSelectionColorPropertyData()
-
     self:setState({
-        propertyData = propertyData,
+        propertyData = SelectionManager.GetSelectionColorPropertyData(),
     })
 
-    self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues(propertyData.Properties))
+    self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues())
 end
 
 ColorPropertiesList.didMount = function()
@@ -297,6 +309,8 @@ ColorPropertiesList.didMount = function()
 end
 
 ColorPropertiesList.willUnmount = function(self)
+    self.unmounting = true
+
     if (self.state.editColorPromise) then
         self.state.editColorPromise:cancel()
     end
@@ -347,6 +361,7 @@ ColorPropertiesList.render = function(self)
 
             className = className,
             propertyName = propertyName,
+            custom = propertyInfo.Custom,
             colorType = ((className == "DataModelMesh") and (propertyName == "VertexColor")) and "Color3" or valueType,
 
             showClassName = duplicateProperties[propertyName],
@@ -401,11 +416,13 @@ ColorPropertiesList.render = function(self)
                         SelectionManager.RestoreSelectionColorPropertyFromSnapshot(className, propertyName, self.state.originalPropertyValues)
                     end
 
-                    self:setState({
-                        editColorPromise = Roact.None,
-                        editingProperty = Roact.None,
-                        originalPropertyValues = Roact.None,
-                    })
+                    if (not self.unmounting) then
+                        self:setState({
+                            editColorPromise = Roact.None,
+                            editingProperty = Roact.None,
+                            originalPropertyValues = Roact.None,
+                        })
+                    end
                 end)
 
                 -- prevent conflict if the Promise is immediately rejected

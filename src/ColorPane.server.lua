@@ -12,6 +12,7 @@ local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
 local Signal = require(includes:FindFirstChild("GoodSignal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
+local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
 local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
 local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
 local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
@@ -31,6 +32,7 @@ local FirstTimeSetup = require(Components:FindFirstChild("FirstTimeSetup"))
 local Settings = require(Components:FindFirstChild("Settings"))
 
 PluginSettings.init(plugin) -- priority
+DocumentationPluginMenu.init(plugin)
 GradientInfoWidget.init(plugin)
 GradientPaletteWidget.init(plugin)
 RepeatingCallback.init(plugin)
