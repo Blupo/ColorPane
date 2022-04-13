@@ -1,6 +1,8 @@
 # ColorPane
 
-![Color Editor](images/color-editor.png)
+![Color editor](images/color-editor.png)
+
+![Gradient editor](images/gradient-editor.png)
 
 ColorPane is a suite of color tools for designing Roblox projects. Included in this plugin are:
 
@@ -15,5 +17,3 @@ ColorPane also has [an API](developer-guide/api-integration/) that allows you to
 ColorPane is available in the plugin library [here](https://roblox.com/library/6474565567/ColorPane). You can also grab a [release](https://github.com/Blupo/ColorPane/releases) from GitHub and install it manually.
 
 If you know how to use [Rojo](https://rojo.space), you can build the latest code from the [`develop` branch](https://github.com/Blupo/ColorPane/tree/develop) to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
-
-The release build of the plugin in the library does not share palettes or preferences with any locally-installed builds. All locally-installed builds will have the same palettes and preferences.
