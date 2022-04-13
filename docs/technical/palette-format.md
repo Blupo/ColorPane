@@ -1,4 +1,4 @@
-When [importing](../color-editor/#import) palettes, they must follow this JSON format:
+When [importing](../../user-guide/color-editor/#import) palettes, they must follow this JSON format:
 
 ```json
 {

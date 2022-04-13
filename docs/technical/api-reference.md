@@ -1,6 +1,67 @@
 !!! info
     The ColorPane API makes use of [Promises](https://eryn.io/roblox-lua-promise), and you should review their documentation if necessary.
 
+## Types
+
+### ColorPromptOptions
+
+```
+{
+    PromptTitle: string?,
+    ColorType: ("Color3" | "Color")?,
+    InitialColor: (Color | Color3)?,
+    OnColorChanged: ((Color | Color3) -> nil)?
+}
+```
+
+Currently, the type of `InitialColor` and the value of `ColorType` must match. This will be changed in a future update.
+
+- `OnColorChanged` must **not** yield.
+
+### ColorSequencePromptOptions
+
+```
+{
+    PromptTitle: string?,
+    InitialColor: ColorSequence?,
+    OnColorChanged: ((ColorSequence) -> nil)?
+}
+```
+
+- `OnColorChanged` must **not** yield.
+
+### GradientPromptOptions
+
+```
+{
+    PromptTitle: string?,
+    GradientType: ("ColorSequence" | "Gradient")?,
+    InitialGradient: (Gradient | ColorSequence)?,
+    InitialColorSpace: string?,
+    InitialHueAdjustment: string?,
+    InitialPrecision: number?,
+    OnGradientChanged: ((Gradient | ColorSequence) -> nil)?
+}
+```
+
+Currently, the type of `InitialGradient` and the value of `GradientType` must match. This will be changed in a future update.
+
+- `OnGradientChanged` must **not** yield.
+- `InitialColorSpace` refers to the one of the color spaces used by [Color.mix](https://blupo.github.io/Color/api/color/#colormix).
+- `InitialHueAdjustment` refers to the one of the hue adjustments used by [Color.mix](https://blupo.github.io/Color/api/color/#colormix).
+- `InitialPrecision` refers to the "precision" of the gradient, or how closely it resembles what the gradient should actually look like. This can range from 0-18, but the maximum precision depends on the number of keypoints in the gradient.
+    - Specifically, the maximum precision for `k` keypoints, with maximum `km` keypoints (currently 20) is `math.floor((km - 1) / (k - 1)) - 1`
+
+### PromptError
+
+```
+{
+    InvalidPromptOptions: "InvalidPrompt",
+    PromptAlreadyOpen: "PromptAlreadyOpen",
+    ReservationProblem: "ReservationProblem"
+}
+```
+
 ## Properties
 
 ### ColorPane.PromptError
@@ -21,7 +82,7 @@ If a prompt cannot be opened, a PromptError will be the value passed through the
 ColorPane.PromiseStatus: Status
 ```
 
-Refers to the [Status](https://eryn.io/roblox-lua-promise/lib/#status) enum of the Promise library.
+Refers to the [Status](https://eryn.io/roblox-lua-promise/api/Promise#Status) enum of the Promise library.
 
 ## Functions
 
@@ -39,7 +100,7 @@ Returns the version of ColorPane release, following [semantic versioning](https:
 ColorPane.IsColorEditorOpen(): boolean
 ```
 
-Returns whether the color editor is open or not. This will also return `true` if the ColorSequence editor is open.
+Returns whether the color editor is open or not.
 
 ### ColorPane.IsGradientEditorOpen
 
@@ -76,10 +137,19 @@ Prompts the user for a gradient. Returns a Promise that will resolve with either
 <img src="https://img.shields.io/badge/-deprecated-orange" alt="Deprecated function" />
 
 ```
-ColorPane.PromptForGradient(promptOptions: ColorSequencePromptOptions?): Promise<ColorSequence>
+ColorPane.PromptForColorSequence(promptOptions: ColorSequencePromptOptions?): Promise<ColorSequence | PromptError>
 ```
 
-Legacy alternative for [`ColorPane.PromptForGradient`](#colorpanepromptforgradient).
+Legacy alternative for [`ColorPane.PromptForGradient`](#colorpanepromptforgradient). Equivalent to:
+
+```lua
+ColorPane.PromptForGradient({
+    PromptTitle = promptOptions.PromptTitle,
+    GradientType = "ColorSequence",
+    InitialGradient = promptOptions.InitialColor,
+    OnGradientChanged = promptOptions.OnColorChanged,
+})
+```
 
 ## Events
 
@@ -90,40 +160,3 @@ ColorPane.Unloading: Signal
 ```
 
 Fires when the API is unloading. You should use this event to clean up any scripts that use ColorPane.
-
-## PromptOption Types
-
-### ColorPromptOptions
-
-```
-{
-    PromptTitle: string?,
-    ColorType: string?,
-    InitialColor: (Color | Color3)?,
-    OnColorChanged: ((Color | Color3) -> nil)?
-}
-```
-
-### GradientPromptOptions
-
-```
-{
-    PromptTitle: string?,
-    GradientType: string?,
-    InitialGradient: (Gradient | ColorSequence)?,
-    InitialColorSpace: string?,
-    InitialHueAdjustment: string?,
-    InitialPrecision: number?,
-    OnGradientChanged: ((Gradient | ColorSequence) -> nil)?
-}
-```
-
-### ColorSequencePromptOptions
-
-```
-{
-    PromptTitle: string?,
-    InitialColor: ColorSequence?,
-    OnColorChanged: ((ColorSequence) -> nil)?
-}
-```

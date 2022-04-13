@@ -16,8 +16,10 @@ nav:
     - Color Editor: user-guide/color-editor.md
     - Gradient Editor: user-guide/gradient-editor.md
     - Color Properties: user-guide/color-properties.md
-    - API: user-guide/api.md
     - Tips and Tricks: user-guide/tips.md
+  - Developer Guide:
+    - API Integration: developer-guide/api-integration.md
+    - Integration Examples: developer-guide/integration-examples.md
   - Technical:
     - Palette Format: technical/palette-format.md
     - API Reference: technical/api-reference.md 

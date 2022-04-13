@@ -23,8 +23,8 @@ ColorPane also has an API that allows you to use these tools in your own plugins
 
 ColorPane is available in the plugin library [here](https://roblox.com/library/6474565567). You can also grab a [release](https://github.com/Blupo/ColorPane/releases) from GitHub and install it manually.
 
-If you know how to use [Rojo](https://rojo.space), you can build the latest code from the development branch to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
+If you know how to use [Rojo](https://rojo.space), you can build the latest code from the [`develop` branch](https://github.com/Blupo/ColorPane/tree/develop) to get the newest features. Keep in mind that this is **development code**, and things can break or change quickly.
 
 ## Support
 
-If you would like to support ColorPane, either through reporting bugs, contributing code, or donating, please read the [Support ColorPane](https://blupo.github.io/ColorPane/support/) page in the documentation.
+If you would like to support ColorPane, either through reporting bugs, contributing code, translating, or donating, please read the [Support ColorPane](https://blupo.github.io/ColorPane/support/) page in the documentation.
