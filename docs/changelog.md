@@ -26,6 +26,7 @@
 - Moved the Color Variations palette to the Color Tools section
 - API injection is now automatically done at startup
 - Releases now contain binary (rbxm) files, so file size is reduced
+- Terrain material color properties were renamed to "\[Material\] Material" (e.g. "Asphalt Material") from "\[Material\] Color" (e.g. "Asphalt Color")
 
 ### Fixed
 - Exporting palettes now lists color components correctly (components were listed in the order R*BG* instead of R*GB*)
