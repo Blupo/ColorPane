@@ -245,7 +245,7 @@ return function(plugin)
             newName: string
         ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(oldState, action)
-            state.produce(oldState, function(draftState)
+            return state.produce(oldState, function(draftState)
                 local palettes = draftState.colorEditor.palettes
                 local paletteIndex = action.paletteIndex
                 
