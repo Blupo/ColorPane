@@ -36,6 +36,9 @@
 - `API.PromptForColorSequence` has been deprecated, please use `API.PromptForGradient` for new work
 - `API.IsColorSequenceEditorOpen` has been deprecated, please use `API.IsGradientEditorOpen` for new work
 
+### Removed
+- The "*Preview color changes before applying them when using Color Properties*" setting was removed
+
 ## [0.3.1] - 2021-12-09
 
 ### Fixed

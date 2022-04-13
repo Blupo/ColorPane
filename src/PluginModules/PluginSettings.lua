@@ -31,7 +31,6 @@ local DEFAULTS = {
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = 5,
     [PluginEnums.PluginSettingKey.CacheAPIData] = false,
     [PluginEnums.PluginSettingKey.UserGradients] = {},
-    [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
 
 ---

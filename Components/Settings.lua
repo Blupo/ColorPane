@@ -34,7 +34,6 @@ local SETTINGS = {
     [PluginEnums.PluginSettingKey.AutoSave] = true,
     [PluginEnums.PluginSettingKey.AutoSaveInterval] = true,
     [PluginEnums.PluginSettingKey.CacheAPIData] = true,
-    [PluginEnums.PluginSettingKey.ColorPropertiesLivePreview] = true,
 }
 
 local uiTranslations = Translator.GenerateTranslationTable({
@@ -44,7 +43,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "CacheAPIData_SettingDescription",
     "AutoCheckForUpdate_SettingDescription",
     "AskNameBeforePaletteCreation_SettingDescription",
-    "ColorPropertiesLivePreview_SettingDescription",
 
     "ClaimSessionLock_ButtonText",
     "SessionLockClaimed_Message",
@@ -236,19 +234,6 @@ Settings.render = function(self)
 
             onChecked = function(newValue)
                 PluginSettings.Set(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation, newValue)
-            end,
-        }),
-
-        ColorPropertiesLivePreviewCheckbox = Roact.createElement(Checkbox, {
-            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
-            LayoutOrder = 8,
-            
-            disabled = (not canSave),
-            value = self.state[PluginEnums.PluginSettingKey.ColorPropertiesLivePreview],
-            text = uiTranslations["ColorPropertiesLivePreview_SettingDescription"],
-
-            onChecked = function(newValue)
-                PluginSettings.Set(PluginEnums.PluginSettingKey.ColorPropertiesLivePreview, newValue)
             end,
         }),
         

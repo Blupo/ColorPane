@@ -55,7 +55,6 @@ return setmetatable({
         "AutoSaveInterval",
         "CacheAPIData",
         "UserGradients",
-        "ColorPropertiesLivePreview",
         "FirstTimeSetup",
         
         -- DEPRECATED
