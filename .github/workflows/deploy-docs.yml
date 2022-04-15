@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3.0.1
 
       - name: Deploy MkDocs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@1.21
+        uses: mhausenblas/mkdocs-deploy-gh-pages@1.24
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
