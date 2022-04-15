@@ -28,5 +28,4 @@ You can access gradient info with the ![gradient information](../images/gradient
 
 Increasing precision allows you to get a more visually-accurate gradient for the specified color space, but at the cost of the number of keypoints that you're allowed to insert.
 
-!!! info
-    For non-RGB color spaces, precision should be at least 1, otherwise the gradient will be the same as the RGB gradient. For RGB, setting the precision above 0 is not necessary, since ColorSequences already use RGB interpolation.
+For non-RGB color spaces, the precision should be at least 1, otherwise the gradient will not look any different from itself in RGB space. For RGB space, the precision should always be 0, since ColorSequences already use RGB interpolation.

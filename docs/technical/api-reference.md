@@ -49,7 +49,7 @@ Currently, the type of `InitialGradient` and the value of `GradientType` must ma
 - `OnGradientChanged` must **not** yield.
 - `InitialColorSpace` refers to the one of the color spaces used by [Color.mix](https://blupo.github.io/Color/api/color/#colormix).
 - `InitialHueAdjustment` refers to the one of the hue adjustments used by [Color.mix](https://blupo.github.io/Color/api/color/#colormix).
-- `InitialPrecision` refers to the "precision" of the gradient, or how closely it resembles what the gradient should actually look like. This can range from 0-18, but the maximum precision depends on the number of keypoints in the gradient.
+- `InitialPrecision` refers to the "precision" of the gradient, or how visually-accurate you want it to be. This currently ranges from 0-18, but the maximum precision depends on the number of keypoints in the gradient.
     - Specifically, the maximum precision for `k` keypoints, with maximum `km` keypoints (currently 20) is `math.floor((km - 1) / (k - 1)) - 1`
 
 ### PromptError
