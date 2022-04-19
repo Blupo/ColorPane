@@ -1,4 +1,4 @@
-## [v0.4.0] - 2022-04-19
+## [0.4.0] - 2022-04-19
 
 ### Added
 - Added `API.GetVersion` which allows external applications to check which version of the plugin is installed
