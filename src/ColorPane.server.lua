@@ -57,6 +57,8 @@ local settingsTree
 local colorEditPromise
 local csEditPromise
 
+local noOp = function() end
+
 local uiTranslations = Translator.GenerateTranslationTable({
     "ColorProperties_WindowTitle",
     "FirstTimeSetup_WindowTitle",
@@ -198,10 +200,10 @@ colorEditorButton.Click:Connect(function()
         return
     end
 
-    colorEditPromise = ColorPane.PromptForColor()
     colorEditorButton:SetActive(true)
+    colorEditPromise = ColorPane.PromptForColor()
 
-    colorEditPromise:catch(function() end):finally(function()
+    colorEditPromise:catch(noOp):finally(function()
         colorEditPromise = nil
         colorEditorButton:SetActive(false)
     end)
@@ -215,10 +217,10 @@ csEditorButton.Click:Connect(function()
         return
     end
 
-    csEditPromise = ColorPane.PromptForGradient()
     csEditorButton:SetActive(true)
+    csEditPromise = ColorPane.PromptForGradient()
 
-    csEditPromise:catch(function() end):finally(function()
+    csEditPromise:catch(noOp):finally(function()
         csEditPromise = nil
         csEditorButton:SetActive(false)
     end)

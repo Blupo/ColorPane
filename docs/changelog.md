@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Changed
+- Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`.
+
 ## [0.4.0] - 2022-04-19
 
 ### Added

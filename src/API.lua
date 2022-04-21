@@ -90,8 +90,10 @@ local gradientEditorWidget
 local gradientEditorWidgetEnabledChanged
 
 local unloadingEvent = Signal.new()
-local colorEditingFinishedEvent = Signal.new()
-local gradientEditingFinishedEvent = Signal.new()
+local currentColorEditorClosedEvent
+local currentGradientEditorClosedEvent
+
+local noOp = function() end
 
 local uiTranslations = Translator.GenerateTranslationTable({
     "ColorEditor_DefaultWindowTitle",
@@ -158,12 +160,12 @@ local onUnloading = function(waitToDestroy)
         colorEditorWidgetEnabledChanged:Disconnect()
         gradientEditorWidgetEnabledChanged:Disconnect()
 
-        if (colorEditorTree) then
-            colorEditingFinishedEvent:Fire(false)
+        if (currentColorEditorClosedEvent) then
+            currentColorEditorClosedEvent:Fire(false)
         end
 
-        if (gradientEditorTree) then
-            gradientEditingFinishedEvent:Fire(false)
+        if (currentGradientEditorClosedEvent) then
+            currentGradientEditorClosedEvent:Fire(false)
         end
     end
     
@@ -295,13 +297,29 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
 
     -- type check
     local result = checkColorPromptOptions(promptOptions)
-    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end 
+    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
 
     -- prompt stuff
-    local resolveEvent = Signal.new()
+    local editorClosedEvent = Signal.new()
 
-    local editPromise = Promise.new(function(resolve)
-        resolve(resolveEvent:Wait())
+    local editPromise = Promise.new(function(resolve, reject)
+        local confirmed = editorClosedEvent:Wait()
+
+        if (not confirmed) then
+            reject(PluginEnums.PromptError.PromptCancelled)
+        else
+            local newColor = colorPaneStore:getState().colorEditor.color
+
+            if (promptOptions.ColorType == "Color3") then
+                newColor = newColor:toColor3()
+            end
+            
+            if (newColor == promptOptions.InitialColor) then
+                reject(PluginEnums.PromptError.PromptCancelled)
+            else
+                resolve(newColor)
+            end
+        end
     end)
 
     local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
@@ -320,28 +338,8 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         Util.noYield(promptOptions.OnColorChanged, color)
     end)
 
-    local editingFinished
-    editingFinished = colorEditingFinishedEvent:Connect(function(didConfirm)
-        if (not didConfirm) then
-            editPromise:cancel()
-            return
-        end
-
-        local newColor = colorPaneStore:getState().colorEditor.color
-
-        if (promptOptions.ColorType == "Color3") then
-            newColor = newColor:toColor3()
-        end
-        
-        if (newColor == promptOptions.InitialColor) then
-            editPromise:cancel()
-        else
-            resolveEvent:Fire(newColor)
-        end
-    end)
-
-    editPromise:finally(function()
-        editingFinished:Disconnect()
+    editPromise:catch(noOp):finally(function()
+        currentColorEditorClosedEvent = nil
 
         storeChanged.disconnect()
         Roact.unmount(colorEditorTree)
@@ -354,7 +352,8 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         })
     end)
 
-    mountColorEditor(promptOptions, colorEditingFinishedEvent)
+    currentColorEditorClosedEvent = editorClosedEvent
+    mountColorEditor(promptOptions, editorClosedEvent)
     return editPromise
 end
 
@@ -417,10 +416,27 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
 
     -- prompt stuff
-    local resolveEvent = Signal.new()
+    local editorClosedEvent = Signal.new()
 
-    local editPromise = Promise.new(function(resolve)
-        resolve(resolveEvent:Wait())
+    local editPromise = Promise.new(function(resolve, reject)
+        local confirmed = editorClosedEvent:Wait()
+
+        if (not confirmed) then
+            reject(PluginEnums.PromptError.PromptCancelled)
+        else
+            local gradient = promptOptions.InitialGradient
+            local newGradient = Gradient.new(colorPaneStore:getState().gradientEditor.displayKeypoints)
+
+            if (promptOptions.GradientType == "ColorSequence") then
+                newGradient = newGradient:colorSequence()
+            end
+            
+            if (newGradient == gradient) then
+                reject(PluginEnums.PromptError.PromptCancelled)
+            else
+                resolve(newGradient)
+            end
+        end
     end)
 
     local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
@@ -437,29 +453,8 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         Util.noYield(promptOptions.OnGradientChanged, (promptOptions.GradientType == "Gradient") and gradient or gradient:colorSequence())
     end)
 
-    local editingFinished
-    editingFinished = gradientEditingFinishedEvent:Connect(function(didConfirm)
-        if (not didConfirm) then
-            editPromise:cancel()
-            return
-        end
-        
-        local gradient = promptOptions.InitialGradient
-        local newGradient = Gradient.new(colorPaneStore:getState().gradientEditor.displayKeypoints)
-
-        if (promptOptions.GradientType == "ColorSequence") then
-            newGradient = newGradient:colorSequence()
-        end
-        
-        if (newGradient == gradient) then
-            editPromise:cancel()
-        else
-            resolveEvent:Fire(newGradient)
-        end
-    end)
-
-    editPromise:finally(function()
-        editingFinished:Disconnect()
+    editPromise:catch(noOp):finally(function()
+        currentGradientEditorClosedEvent = nil
 
         storeChanged.disconnect()
         Roact.unmount(gradientEditorTree)
@@ -472,7 +467,8 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         })
     end)
 
-    mountGradientEditor(promptOptions, internalPromptForColor, gradientEditingFinishedEvent)
+    currentGradientEditorClosedEvent = editorClosedEvent
+    mountGradientEditor(promptOptions, internalPromptForColor, editorClosedEvent)
     return editPromise
 end
 
@@ -490,16 +486,16 @@ ColorPane.init = function(pluginObj)
     colorEditorWidgetEnabledChanged = colorEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
         if (colorEditorWidget.Enabled and (not colorEditorTree)) then
             colorEditorWidget.Enabled = false
-        elseif ((not colorEditorWidget.Enabled) and colorEditorTree) then
-            colorEditingFinishedEvent:Fire(false)
+        elseif ((not colorEditorWidget.Enabled) and currentColorEditorClosedEvent) then
+            currentColorEditorClosedEvent:Fire(false)
         end
     end)
 
     gradientEditorWidgetEnabledChanged = gradientEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
         if (gradientEditorWidget.Enabled and (not gradientEditorTree)) then
             gradientEditorWidget.Enabled = false
-        elseif ((not gradientEditorWidget.Enabled) and gradientEditorTree) then
-            gradientEditingFinishedEvent:Fire(false)
+        elseif ((not gradientEditorWidget.Enabled) and currentGradientEditorClosedEvent) then
+            currentGradientEditorClosedEvent:Fire(false)
         end
     end)
 

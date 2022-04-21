@@ -6,8 +6,9 @@ local TextService = game:GetService("TextService")
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
-local ColorPane = require(PluginModules:FindFirstChild("APIBroker"))
+local API = require(PluginModules:FindFirstChild("APIBroker"))
 local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
+local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
 local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
 local Style = require(PluginModules:FindFirstChild("Style"))
 local Translator = require(PluginModules:FindFirstChild("Translator"))
@@ -373,7 +374,7 @@ ColorPropertiesList.render = function(self)
             end),
 
             promptForEdit = function()
-                if (ColorPane.IsColorEditorOpen()) then return end
+                if (API.IsColorEditorOpen()) then return end
 
                 if (self.state.editColorPromise) then
                     self.state.editColorPromise:cancel()
@@ -403,19 +404,19 @@ ColorPropertiesList.render = function(self)
                 end
 
                 local editColorPromise = isColorSequence and
-                    ColorPane.PromptForGradient(editValuePromptOptions)
+                    API.PromptForGradient(editValuePromptOptions)
                 or
-                    ColorPane.PromptForColor(editValuePromptOptions)
+                    API.PromptForColor(editValuePromptOptions)
                 
                 editColorPromise:andThen(function(newColor)
                     SelectionManager.SetSelectionProperty(className, propertyName, newColor, true)
-                end, function()
+                end, function(err)
                     rejected = true
-                end):finally(function(status)
-                    if (status == ColorPane.PromiseStatus.Cancelled) then
+
+                    if (err == PluginEnums.PromptError.PromptCancelled) then
                         SelectionManager.RestoreSelectionColorPropertyFromSnapshot(className, propertyName, self.state.originalPropertyValues)
                     end
-
+                end):finally(function()
                     if (not self.unmounting) then
                         self:setState({
                             editColorPromise = Roact.None,

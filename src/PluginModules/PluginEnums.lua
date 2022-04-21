@@ -77,6 +77,7 @@ return setmetatable({
         "InvalidPromptOptions",
         "PromptAlreadyOpen",
         "ReservationProblem",
+        "PromptCancelled"
     }),
 }, {
     __index = function(_, key)

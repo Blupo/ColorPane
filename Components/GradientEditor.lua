@@ -566,10 +566,8 @@ GradientEditor.render = function(self)
                             newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = newColor }
 
                             self.props.setKeypoints(newKeypoints)
-                        end):finally(function(status)
-                            local isCancelled = (tostring(status) == "Cancelled")
-
-                            if (isCancelled) then
+                        end, function(err)
+                            if (err == PluginEnums.PromptError.PromptCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
 
                                 local newKeypoints = Util.table.deepCopy(self.props.keypoints)
@@ -577,7 +575,7 @@ GradientEditor.render = function(self)
 
                                 self.props.setKeypoints(newKeypoints)
                             end
-                            
+                        end):finally(function()
                             if (not self.unmounting) then
                                 self:setState({
                                     colorEditPromise = Roact.None,
