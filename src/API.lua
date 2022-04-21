@@ -68,11 +68,8 @@ type ColorSequencePromptOptions = {
     OnColorChanged: ((ColorSequence) -> nil)?
 }
 
-local DEFAULT_COLOR3 = Color3.new(1, 1, 1)
-local DEFAULT_COLORSEQUENCE = ColorSequence.new(DEFAULT_COLOR3)
-
-local DEFAULT_COLOR = Color.fromColor3(DEFAULT_COLOR3)
-local DEFAULT_GRADIENT = Gradient.fromColorSequence(DEFAULT_COLORSEQUENCE)
+local DEFAULT_COLOR = Color.new(1, 1, 1)
+local DEFAULT_GRADIENT = Gradient.fromColors(DEFAULT_COLOR)
 
 local plugin
 local pluginUnloadingEvent
@@ -179,7 +176,7 @@ end
 local mountColorEditor = function(promptOptions, finishedEvent)
     local originalColor = promptOptions.InitialColor
 
-    if (promptOptions.ColorType == "Color3") then
+    if (typeof(originalColor) == "Color3") then
         originalColor = Color.fromColor3(originalColor)
     end
 
@@ -202,13 +199,11 @@ local mountColorEditor = function(promptOptions, finishedEvent)
 end
 
 local mountGradientEditor = function(promptOptions, promptForColorEdit, finishedEvent)
-    local gradient
+    local gradient = promptOptions.InitialGradient
     local keypoints
 
-    if (promptOptions.GradientType == "ColorSequence") then
+    if (typeof(gradient) == "ColorSequence") then
         gradient = Gradient.fromColorSequence(promptOptions.InitialGradient)
-    elseif (promptOptions.GradientType == "Gradient") then
-        gradient = promptOptions.InitialGradient
     end
 
     keypoints = Util.table.deepCopy(gradient.Keypoints)
@@ -261,37 +256,14 @@ end
 
 local internalPromptForColor = function(optionalPromptOptions: ColorPromptOptions)
     local promptOptions = {
-        PromptTitle = "Select a color"
+        PromptTitle = "Select a color",
+        ColorType = "Color3",
+        InitialColor = DEFAULT_COLOR,
     }
 
     if (type(optionalPromptOptions) == "table") then
-        -- check if InitialColor and ColorType correspond with each other
         promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
-
-        local colorType = optionalPromptOptions.ColorType
-        local initialColor = optionalPromptOptions.InitialColor
-
-        if (colorType and (not initialColor)) then
-            promptOptions.ColorType = colorType
-            promptOptions.InitialColor = (colorType == "Color3") and DEFAULT_COLOR3 or DEFAULT_COLOR
-        elseif ((not colorType) and initialColor) then
-            promptOptions.InitialColor = initialColor
-            promptOptions.ColorType = (typeof(initialColor) == "Color3") and "Color3" or "Color"
-        elseif ((not colorType) and (not initialColor)) then
-            promptOptions.ColorType = "Color3"
-            promptOptions.InitialColor = DEFAULT_COLOR3
-        else
-            if (
-                ((colorType == "Color3") and (typeof(initialColor) ~= "Color3")) or
-                ((colorType == "Color") and (not Color.isAColor(initialColor)))
-            ) then
-                return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
-            end
-        end
-    elseif (type(optionalPromptOptions) == "nil") then
-        promptOptions.ColorType = "Color3"
-        promptOptions.InitialColor = DEFAULT_COLOR3
-    else
+    elseif (type(optionalPromptOptions) ~= "nil") then
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 
@@ -370,39 +342,16 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
 
     local promptOptions = {
         PromptTitle = uiTranslations["GradientEditor_DefaultWindowTitle"],
+        GradientType = "ColorSequence",
+        InitialGradient = DEFAULT_GRADIENT,
         InitialColorSpace = "RGB",
         InitialHueAdjustment = "Shorter",
         InitialPrecision = 0,
     }
 
     if (type(optionalPromptOptions) == "table") then
-        -- check if InitialGradient and GradientType correspond
         promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
-
-        local gradientType = optionalPromptOptions.GradientType
-        local initialGradient = optionalPromptOptions.InitialGradient
-
-        if (gradientType and (not initialGradient)) then
-            promptOptions.GradientType = gradientType
-            promptOptions.InitialGradient = (gradientType == "ColorSequence") and DEFAULT_COLORSEQUENCE or DEFAULT_GRADIENT
-        elseif ((not gradientType) and initialGradient) then
-            promptOptions.InitialGradient = initialGradient
-            promptOptions.GradientType = (typeof(initialGradient) == "ColorSequence") and "ColorSequence" or "Gradient"
-        elseif ((not gradientType) and (not initialGradient)) then
-            promptOptions.GradientType = "ColorSequence"
-            promptOptions.InitialGradient = DEFAULT_COLORSEQUENCE
-        else
-            if (
-                ((gradientType == "ColorSequence") and (typeof(initialGradient) ~= "ColorSequence")) or
-                ((gradientType == "Gradient") and (not checkGradient(initialGradient)))
-            ) then
-                return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
-            end
-        end
-    elseif (type(optionalPromptOptions) == "nil") then
-        promptOptions.GradientType = "ColorSequence"
-        promptOptions.InitialGradient = DEFAULT_COLORSEQUENCE
-    else
+    elseif (type(optionalPromptOptions) ~= "nil") then
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
 

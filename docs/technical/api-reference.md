@@ -14,8 +14,6 @@
 }
 ```
 
-Currently, the type of `InitialColor` and the value of `ColorType` must match. This will be changed in a future update.
-
 - `OnColorChanged` must **not** yield.
 
 ### ColorSequencePromptOptions
@@ -43,8 +41,6 @@ Currently, the type of `InitialColor` and the value of `ColorType` must match. T
     OnGradientChanged: ((Gradient | ColorSequence) -> nil)?
 }
 ```
-
-Currently, the type of `InitialGradient` and the value of `GradientType` must match. This will be changed in a future update.
 
 - `OnGradientChanged` must **not** yield.
 - `InitialColorSpace` refers to the one of the color spaces used by [Color.mix](https://blupo.github.io/Color/api/color/#colormix).

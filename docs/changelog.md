@@ -1,7 +1,9 @@
 ## [Unreleased]
 
 ### Changed
-- Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`.
+- Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
+- For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
+- For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
 
 ## [0.4.0] - 2022-04-19
 
