@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Added
+- Added a dedicated "Set Color" button for colors in the palette list layout
+
 ### Changed
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match

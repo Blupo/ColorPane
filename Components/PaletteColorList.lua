@@ -125,7 +125,7 @@ PaletteColorList.render = function(self)
         local listItemHeight
 
         if (isSelected) then
-            listItemHeight = (Style.Constants.StandardButtonHeight * (isReadOnly and 1 or 2)) + (Style.Constants.MinorElementPadding * (isReadOnly and 2 or 3))
+            listItemHeight = (Style.Constants.StandardButtonHeight * 2) + (Style.Constants.MinorElementPadding * 3)
         else
             listItemHeight = (Style.Constants.StandardButtonHeight * 1) + (Style.Constants.MinorElementPadding * 2)
         end
@@ -176,7 +176,7 @@ PaletteColorList.render = function(self)
                 end,
             }),
 
-            ColorName = isSelected and
+            ColorName = (isSelected) and
                 Roact.createElement(TextInput, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding, 0, 0),
@@ -198,22 +198,23 @@ PaletteColorList.render = function(self)
                     TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
                 }),
 
-            ColorActions = (isSelected and (not isReadOnly)) and
+            ColorActions = (isSelected) and
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0, 1),
                     Position = UDim2.new(0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding, 1, 0),
-                    Size = UDim2.new(0, (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2), 0, Style.Constants.StandardButtonHeight),
+                    Size = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding), 0, Style.Constants.StandardButtonHeight),
 
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
                 }, {
                     UIListLayout = Roact.createElement(StandardUIListLayout, {
                         Padding = UDim.new(0, Style.Constants.MinorElementPadding),
-                        
-                        preset = 2,
+                        FillDirection = Enum.FillDirection.Horizontal,
+                        HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                        VerticalAlignment = Enum.VerticalAlignment.Center,
                     }),
 
-                    RemoveColorButton = (isSelected and (not isReadOnly)) and
+                    RemoveColorButton = (not isReadOnly) and
                         Roact.createElement(Button, {
                             LayoutOrder = 1,
             
@@ -224,7 +225,7 @@ PaletteColorList.render = function(self)
                         })
                     or nil,
         
-                    MoveUpButton = (isSelected and (not isReadOnly)) and
+                    MoveUpButton = (not isReadOnly) and
                         Roact.createElement(Button, {
                             LayoutOrder = 2,
             
@@ -236,7 +237,7 @@ PaletteColorList.render = function(self)
                         })
                     or nil,
         
-                    MoveDownButton = (isSelected and (not isReadOnly)) and
+                    MoveDownButton = (not isReadOnly) and
                         Roact.createElement(Button, {
                             LayoutOrder = 3,
             
@@ -247,6 +248,18 @@ PaletteColorList.render = function(self)
                             onActivated = self.props.onColorMovedDown,
                         })
                     or nil,
+
+                    SetColorButton = Roact.createElement(Button, {
+                        LayoutOrder = 4,
+                        Size = Style.UDim2.DialogButtonSize,
+        
+                        displayType = "text",
+                        text = "Set Color",
+
+                        onActivated = function()
+                            self.props.onColorSet(i)
+                        end,
+                    })
                 })
             or nil,
         }))

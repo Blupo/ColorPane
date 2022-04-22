@@ -38,7 +38,7 @@ The overflow menu (the ![overflow menu](../images/overflow-menu.png) button) has
 
 The grid layout (pictured above) is the default layout, and allows for quick access to colors. Clicking on a color will select it, which then allows you to set the current color, remove the color, change its position in the palette, or rename it.
 
-The list layout (pictured below) is useful for palettes where color names are important. In this layout, clicking on a color (meaning the box that shows the color) will set the current color, and clicking anywhere else inside the cell will select it.
+The list layout (pictured below) is useful for palettes where color names are important.
 
 ![The list layout for palettes](../images/palettes-list.png)
 
