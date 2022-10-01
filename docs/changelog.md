@@ -8,6 +8,11 @@
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
 - For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
 
+## [0.4.1] - 2022-09-30
+
+### Fixed
+- Fixed a bug where the HSL saturation and lightness sliders would only show a red hue (this is *purely* a visual bug and did not affect color selection)
+
 ## [0.4.0] - 2022-04-19
 
 ### Added
