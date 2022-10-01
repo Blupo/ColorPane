@@ -1,3 +1,8 @@
+## [0.4.1] - 2022-09-30
+
+### Fixed
+- Fixed a bug where the HSL saturation and lightness sliders would only show a red hue (this is *purely* a visual bug and did not affect color selection)
+
 ## [0.4.0] - 2022-04-19
 
 ### Added

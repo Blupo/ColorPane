@@ -288,22 +288,18 @@ SliderPages.render = function(self)
                                 end,
 
                                 S = function(components)
-                                    local h = components.H / 360
-
                                     return ColorSequence.new({
-                                        ColorSequenceKeypoint.new(0, Color.fromHSL(h, 0, components.L):toColor3()),
-                                        ColorSequenceKeypoint.new(0.5, Color.fromHSL(h, 0.5, components.L):toColor3()),
-                                        ColorSequenceKeypoint.new(1, Color.fromHSL(h, 1, components.L):toColor3())
+                                        ColorSequenceKeypoint.new(0, Color.fromHSL(components.H, 0, components.L):toColor3()),
+                                        ColorSequenceKeypoint.new(0.5, Color.fromHSL(components.H, 0.5, components.L):toColor3()),
+                                        ColorSequenceKeypoint.new(1, Color.fromHSL(components.H, 1, components.L):toColor3())
                                     })
                                 end,
 
                                 L = function(components)
-                                    local h = components.H / 360
-
                                     return ColorSequence.new({
-                                        ColorSequenceKeypoint.new(0, Color.fromHSL(h, components.S, 0):toColor3()),
-                                        ColorSequenceKeypoint.new(0.5, Color.fromHSL(h, components.S, 0.5):toColor3()),
-                                        ColorSequenceKeypoint.new(1, Color.fromHSL(h, components.S, 1):toColor3())
+                                        ColorSequenceKeypoint.new(0, Color.fromHSL(components.H, components.S, 0):toColor3()),
+                                        ColorSequenceKeypoint.new(0.5, Color.fromHSL(components.H, components.S, 0.5):toColor3()),
+                                        ColorSequenceKeypoint.new(1, Color.fromHSL(components.H, components.S, 1):toColor3())
                                     })
                                 end,
                             },
