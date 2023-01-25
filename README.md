@@ -1,8 +1,8 @@
 # ColorPane
 
+<a href="https://crowdin.com/project/colorpane"><img src="https://badges.crowdin.net/colorpane/localized.svg" alt="Localisation"></a>
 <a href="https://roblox.com/library/6474565567"><img src="https://img.shields.io/badge/roblox-install-green.svg" alt="Install" /></a>
 <a href="https://blupo.github.io/ColorPane"><img src="https://img.shields.io/badge/docs-website-green.svg" alt="Documentation" /></a>
-<a href="https://patreon.com/Blupo"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon" /></a>
 <a href="https://ko-fi.com/Blupo"><img src="https://img.shields.io/badge/ko--fi-donate-yellow.svg" alt="Ko-fi" /></a>
 
 ColorPane is a suite of color tools for designing Roblox games. Included in this plugin are:
