@@ -24,7 +24,7 @@ jobs:
         run: rojo build --output ColorPane.rbxm
       
       - name: Create
-        uses: anton-yurchenko/git-release@v5.0.1
+        uses: anton-yurchenko/git-release@v5.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CHANGELOG_FILE: "docs/changelog.md"
