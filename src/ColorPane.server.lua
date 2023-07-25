@@ -1,4 +1,4 @@
-local CoreGui = game:GetService("CoreGui")
+local StudioService = game:GetService("StudioService")
 local RunService = game:GetService("RunService")
 
 ---
@@ -69,7 +69,7 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 local injectAPI = function()
     local success = pcall(function()
-        APIScript.Parent = CoreGui
+        APIScript.Parent = StudioService
     end)
 
     return success
@@ -123,7 +123,7 @@ csEditorButton.ClickableWhenViewportHidden = true
 
 ColorPane.init(plugin)
 
-if (CoreGui:FindFirstChild("ColorPane")) then
+if (StudioService:FindFirstChild("ColorPane")) then
     warn("[ColorPane] " .. uiTranslations["APIInjectionConflict_Message"])
 end
 

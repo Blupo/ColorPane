@@ -8,7 +8,6 @@
         https://github.com/Blupo/ColorPane
 ]]
 
-local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
 
 ---
@@ -49,7 +48,7 @@ type ColorPromptOptions = {
     PromptTitle: string?,
     ColorType: string?,
     InitialColor: (Color | Color3)?,
-    OnColorChanged: ((Color | Color3) -> nil)?
+    OnColorChanged: ((Color | Color3) -> any)?
 }
 
 type GradientPromptOptions = {
@@ -59,17 +58,17 @@ type GradientPromptOptions = {
     InitialColorSpace: string?,
     InitialHueAdjustment: string?,
     InitialPrecision: number?,
-    OnGradientChanged: ((Gradient | ColorSequence) -> nil)?
+    OnGradientChanged: ((Gradient | ColorSequence) -> any)?
 }
 
 type ColorSequencePromptOptions = {
     PromptTitle: string?,
     InitialColor: ColorSequence?,
-    OnColorChanged: ((ColorSequence) -> nil)?
+    OnColorChanged: ((ColorSequence) -> any)?
 }
 
-local DEFAULT_COLOR = Color.new(1, 1, 1)
-local DEFAULT_GRADIENT = Gradient.fromColors(DEFAULT_COLOR)
+local DEFAULT_COLOR: Color = Color.new(1, 1, 1)
+local DEFAULT_GRADIENT: Gradient = Gradient.fromColors(DEFAULT_COLOR)
 
 local plugin
 local pluginUnloadingEvent
@@ -511,30 +510,4 @@ end
 
 ---
 
-table.freeze(ColorPane)
-
-scriptReparentedEvent = script:GetPropertyChangedSignal("Parent"):Connect(function()
-    if (script.Parent == CoreGui) then return end
-
-    warn("[ColorPane] " .. uiTranslations["APIScriptReparent_Message"])
-    onUnloading(true)
-end)
-
-script:GetPropertyChangedSignal("Source"):Connect(function()
-    warn("[ColorPane] " .. uiTranslations["APIScriptModification_Message"])
-    onUnloading()
-end)
-
-script:GetPropertyChangedSignal("Archivable"):Connect(function()
-    if (not script.Archivable) then return end
-
-    script.Archivable = false
-end)
-
-script:GetPropertyChangedSignal("Name"):Connect(function()
-    if (script.Name == "ColorPane") then return end
-
-    script.Name = "ColorPane"
-end)
-
-return ColorPane
+return table.freeze(ColorPane)

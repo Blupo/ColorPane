@@ -7,6 +7,7 @@
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
 - For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
+- The API script is now injected into StudioService instead of CoreGui
 
 ## [0.4.1] - 2022-09-30
 
