@@ -46,7 +46,7 @@ local Util = {}
 Util.table = {}
 Util.palette = {}
 
---- TABLE UTIL
+-- TABLE UTIL
 
 Util.table.deepCopy = function(tbl: {[any]: any}): {[any]: any}
     local copy: {[any]: any} = {}
@@ -112,7 +112,7 @@ Util.table.shallowCompare = function(tbl: {[any]: any}, u: {[any]: any}): {strin
     return diff
 end
 
---- PALETTE UTIL
+-- PALETTE UTIL
 
 Util.palette.getNewItemName = function(items, originalName: string, selfIndex: number?): (string, number)
     local found: boolean = false
@@ -165,7 +165,7 @@ Util.palette.validate = function(palette: any)
     return true, nil
 end
 
---- GENERAL UTIL
+-- GENERAL UTIL
 
 Util.lerp = function(a: number, b: number, time: number): number
     return ((1 - time) * a) + (time * b)

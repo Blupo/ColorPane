@@ -44,6 +44,28 @@ local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 type Color = ColorLib.Color
 type Gradient = ColorLib.Gradient
 
+--[=[
+    @interface ReturnColorType
+    @within ColorPane
+    @field Color "Color"
+    @field Color3 "Color3"
+]=]
+
+--[=[
+    @interface ReturnGradientType
+    @within ColorPane
+    @field ColorSequence "ColorSequence"
+    @field Gradient "Gradient"
+]=]
+
+--[=[
+    @interface ColorPromptOptions
+    @within ColorPane
+    @field PromptTitle string?
+    @field ColorType: ReturnColorType?
+    @field InitialColor (Color | Color3)?
+    @field OnColorChanged ((Color | Color3) -> any)?
+]=]
 type ColorPromptOptions = {
     PromptTitle: string?,
     ColorType: string?,
@@ -51,6 +73,17 @@ type ColorPromptOptions = {
     OnColorChanged: ((Color | Color3) -> any)?
 }
 
+--[=[
+    @interface GradientPromptOptions
+    @within ColorPane
+    @field PromptTitle string?
+    @field GradientType ReturnGradientType?
+    @field InitialGradient (Gradient | ColorSequence)?
+    @field InitialColorSpace ColorType? -- See [the available color spaces](https://blupo.github.io/Color/api/Enums#ColorType)
+    @field InitialHueAdjustment HueAdjustment? -- See [the available adjustments](https://blupo.github.io/Color/api/Enums#HueAdjustment)
+    @field InitialPrecision number?
+    @field OnGradientChanged ((Gradient | ColorSequence) -> any)?
+]=]
 type GradientPromptOptions = {
     PromptTitle: string?,
     GradientType: string?,
@@ -61,6 +94,13 @@ type GradientPromptOptions = {
     OnGradientChanged: ((Gradient | ColorSequence) -> any)?
 }
 
+--[=[
+    @interface ColorSequencePromptOptions
+    @within ColorPane
+    @field PromptTitle string?
+    @field InitialColor ColorSequence?
+    @field OnColorChanged ((ColorSequence) -> any)?
+]=]
 type ColorSequencePromptOptions = {
     PromptTitle: string?,
     InitialColor: ColorSequence?,
@@ -236,19 +276,39 @@ end
 
 ---
 
+--[=[
+    @class ColorPane
+]=]
 local ColorPane = {}
 ColorPane.PromiseStatus = Promise.Status
 ColorPane.PromptError = PluginEnums.PromptError
 ColorPane.Unloading = unloadingEvent
 
+--[=[
+    @function GetVersion
+    @within ColorPane
+    @return number
+    @return number
+    @return number
+]=]
 ColorPane.GetVersion = function(): (number, number, number)
     return table.unpack(ReleaseVersion)
 end
 
+--[=[
+    @function IsColorEditorOpen
+    @within ColorPane
+    @return boolean
+]=]
 ColorPane.IsColorEditorOpen = function(): boolean
     return (colorEditorTree and true or false)
 end
 
+--[=[
+    @function IsGradientEditorOpen
+    @within ColorPane
+    @return boolean
+]=]
 ColorPane.IsGradientEditorOpen = function(): boolean
     return (gradientEditorTree and true or false)
 end
@@ -328,6 +388,12 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
     return editPromise
 end
 
+--[=[
+    @function PromptForColor
+    @within ColorPane
+    @param options ColorPromptOptions
+    @return Promise
+]=]
 ColorPane.PromptForColor = function(promptOptions: ColorPromptOptions?)
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
     if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
@@ -335,6 +401,12 @@ ColorPane.PromptForColor = function(promptOptions: ColorPromptOptions?)
     return internalPromptForColor(promptOptions)
 end
 
+--[=[
+    @function PromptForGradient
+    @within ColorPane
+    @param options GradientPromptOptions
+    @return Promise
+]=]
 ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOptions?)
     if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
@@ -493,10 +565,21 @@ ColorPane.init = function(pluginObj)
     pluginUnloadingEvent = plugin.Unloading:Connect(onUnloading)
 end
 
---- DEPRECATED
-
+--[=[
+    @function IsColorSequenceEditorOpen
+    @within ColorPane
+    @return boolean
+    @deprecated 0.4.0
+]=]
 ColorPane.IsColorSequenceEditorOpen = ColorPane.IsGradientEditorOpen
 
+--[=[
+    @function PromptForColorSequence
+    @within ColorPane
+    @param options ColorSequencePromptOptions?
+    @return Promise
+    @deprecated 0.4.0
+]=]
 ColorPane.PromptForColorSequence = function(optionalPromptOptions: ColorSequencePromptOptions?)
     local promptOptions: ColorSequencePromptOptions = optionalPromptOptions or {}
 

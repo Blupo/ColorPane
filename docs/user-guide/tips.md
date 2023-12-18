@@ -1,3 +1,9 @@
+---
+sidebar_position: 4
+---
+
+# Tips and Tricks
+
 ## Color Editor
 
 ### Page Pickers

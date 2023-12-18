@@ -3,11 +3,27 @@ local StudioService: StudioService = game:GetService("StudioService")
 
 ---
 
-export type APIError = "NoError" | "NoAPIConnection" | "APIError" | "UnknownError"
+--[=[
+    @interface APIStatus
+    @within Proxy
+    @field NoError "NoError"
+    @field NoAPIConnection "NoAPIConnection" -- The API is not available
+    @field APIError "APIError" -- There was a problem communicating with the API
+    @field UnknownError "UnknownError"
+]=]
+export type APIStatus = "NoError" | "NoAPIConnection" | "APIError" | "UnknownError"
 
-export type APIResponse = {
+--[=[
+    @interface ProxyResponse
+    @within Proxy
+    @field Success boolean -- Did the call succeed?
+    @field Status APIStatus -- The status of the API call
+    @field StatusMessage string -- An explanation of the status
+    @field Body any -- The value the API returned
+]=]
+export type ProxyResponse = {
     Success: boolean,
-    Status: APIError,
+    Status: APIStatus,
     StatusMessage: string,
     Body: any,
 }
@@ -20,7 +36,7 @@ local API_CHECK_FREQUENCY: number = 5
 local currentAPI = nil
 local unloadingEvent = Instance.new("BindableEvent")
 
-local generateResponse = function(success: boolean, status: APIError?, statusMessage: string?, body: any): APIResponse
+local generateResponse = function(success: boolean, status: APIStatus?, statusMessage: string?, body: any): ProxyResponse
     return {
         Success = success,
         Status = if success then "NoError" else (status or "UnknownError"),
@@ -30,7 +46,7 @@ local generateResponse = function(success: boolean, status: APIError?, statusMes
 end
 
 local wrapAPIFunction = function(callback: (...any) -> ...any)
-    return function(...: any): APIResponse
+    return function(...: any): ProxyResponse
         if (not currentAPI) then
             return generateResponse(false, "NoAPIConnection", "Could not connect to the API")
         else
@@ -90,14 +106,45 @@ end
 
 ---
 
-local API = {}
-API.Unloading = unloadingEvent.Event
+--[=[
+    @class Proxy
+]=]
 
-API.PromptForColor = wrapAPIFunction(function(promptOptions)
+local Proxy = {}
+
+--[=[
+    @prop Unloading RBXScriptSignal
+    @within Proxy
+    @readonly
+]=]
+Proxy.Unloading = unloadingEvent.Event
+
+--[=[
+    @function IsAPIConnected
+    @within Proxy
+    @return boolean
+]=]
+Proxy.IsAPIConnected = function()
+    return (if currentAPI then true else false)
+end
+
+--[=[
+    @function PromptForColor
+    @within Proxy
+    @param options ColorPromptOptions
+    @return ProxyResponse
+]=]
+Proxy.PromptForColor = wrapAPIFunction(function(promptOptions)
     return currentAPI.PromptForColor(promptOptions)
 end)
 
-API.PromptForGradient = wrapAPIFunction(function(promptOptions)
+--[=[
+    @function PromptForGradient
+    @within Proxy
+    @param options GradientPromptOptions
+    @return ProxyResponse
+]=]
+Proxy.PromptForGradient = wrapAPIFunction(function(promptOptions)
     return currentAPI.PromptForGradient(promptOptions)
 end)
 
@@ -110,4 +157,4 @@ if (not currentAPI) then
     onUnload()
 end
 
-return API
+return Proxy

@@ -137,13 +137,13 @@ Style.UDim2.ButtonBarSize = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHei
 Style.UDim2.MarkerSize = UDim2.new(0, Style.Constants.MarkerSize, 0, Style.Constants.MarkerSize)
 Style.UDim2.MinorElementPaddingSize = UDim2.new(0, Style.Constants.MinorElementPadding, 0, Style.Constants.MinorElementPadding)
 
---- METATABLE
+-- METATABLE
 
 for k, t in pairs(Style) do
     setmetatable(t, generateStyleMetatable(k))
 end
 
---- DEEP FREEZE
+-- DEEP FREEZE
 
 for _, t in pairs(Style) do
     table.freeze(t)
@@ -151,7 +151,7 @@ end
 
 table.freeze(Style)
 
---- PRELOAD IMAGES
+-- PRELOAD IMAGES
 
 local styleImages = {}
 

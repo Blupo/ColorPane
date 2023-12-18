@@ -1,3 +1,9 @@
+---
+sidebar_position: 10
+---
+
+# Attribution
+
 ## ColorBrewer
 
 This product includes color specifications and designs developed by Cynthia Brewer ([http://colorbrewer.org/](http://colorbrewer.org/)).
