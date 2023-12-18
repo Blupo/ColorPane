@@ -62,7 +62,7 @@ type Gradient = ColorLib.Gradient
     @interface ColorPromptOptions
     @within ColorPane
     @field PromptTitle string?
-    @field ColorType: ReturnColorType?
+    @field ColorType ReturnColorType?
     @field InitialColor (Color | Color3)?
     @field OnColorChanged ((Color | Color3) -> any)?
 ]=]
