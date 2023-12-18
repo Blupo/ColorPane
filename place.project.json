@@ -21,6 +21,10 @@
                 "Translations": {
                     "$path": "Translations.csv"
                 }
+            },
+
+            "Proxy": {
+                "$path": "extern/ColorPane.lua"
             }
         }
     }

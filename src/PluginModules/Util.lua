@@ -248,6 +248,16 @@ Util.typeColorPalette = function(palette, colorType: string)
     return paletteCopy
 end
 
+-- DEEP FREEZE
+
+for _, tab in pairs(Util) do
+    if (type(tab) == "table") then
+        table.freeze(tab)
+    end
+end
+
+table.freeze(Util)
+
 ---
 
 return Util

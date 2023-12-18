@@ -206,4 +206,4 @@ if (not currentAPI) then
     onUnload()
 end
 
-return Proxy
+return table.freeze(Proxy)
