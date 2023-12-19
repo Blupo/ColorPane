@@ -61,7 +61,7 @@ PalettePages.init = function(self)
 end
 
 PalettePages.didMount = function(self)
-    self.keyDown = ColorEditorInputSignals.InputBegan:Connect(function(input)
+    self.keyDown = ColorEditorInputSignals.InputBegan.Event:subscribe(function(input: InputObject)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         if (input.KeyCode == Enum.KeyCode.LeftShift) then
@@ -75,7 +75,7 @@ PalettePages.didMount = function(self)
         end
     end)
 
-    self.keyUp = ColorEditorInputSignals.InputEnded:Connect(function(input)
+    self.keyUp = ColorEditorInputSignals.InputEnded.Event:subscribe(function(input: InputObject)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         if (input.KeyCode == Enum.KeyCode.LeftShift) then
@@ -89,7 +89,8 @@ PalettePages.didMount = function(self)
         end
     end)
 
-    self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
+    self.settingsChanged = PluginSettings.SettingChanged:subscribe(function(setting)
+        local key, newValue = setting.Key, setting.Value
         if (key ~= PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
 
         self:setState({
@@ -99,9 +100,9 @@ PalettePages.didMount = function(self)
 end
 
 PalettePages.willUnmount = function(self)
-    self.keyDown:Disconnect()
-    self.keyUp:Disconnect()
-    self.settingsChanged:Disconnect()
+    self.keyDown:unsubscribe()
+    self.keyUp:unsubscribe()
+    self.settingsChanged:unsubscribe()
 end
 
 PalettePages.render = function(self)

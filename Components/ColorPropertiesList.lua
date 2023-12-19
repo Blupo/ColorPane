@@ -282,7 +282,7 @@ ColorPropertiesList.init = function(self)
     self.commonPropertyValues, self.updateCommonPropertyValues = Roact.createBinding({})
     self.listLength, self.updateListLength = Roact.createBinding(0)
 
-    self.selectionChanged = SelectionManager.SelectionChanged:Connect(function()
+    self.selectionChanged = SelectionManager.SelectionChanged:subscribe(function()
         if (self.state.editColorPromise) then
             self.state.editColorPromise:cancel()
         end
@@ -294,7 +294,7 @@ ColorPropertiesList.init = function(self)
         self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues())
     end)
 
-    self.selectionColorsChanged = SelectionManager.SelectionColorsChanged:Connect(function()
+    self.selectionColorsChanged = SelectionManager.SelectionColorsChanged:subscribe(function()
         self.updateCommonPropertyValues(SelectionManager.GetSelectionCommonColorPropertyValues())
     end)
 
@@ -317,8 +317,8 @@ ColorPropertiesList.willUnmount = function(self)
     end
 
     SelectionManager.Disconnect()
-    self.selectionChanged:Disconnect()
-    self.selectionColorsChanged:Disconnect()
+    self.selectionChanged:unsubscribe()
+    self.selectionColorsChanged:unsubscribe()
 end
 
 ColorPropertiesList.render = function(self)

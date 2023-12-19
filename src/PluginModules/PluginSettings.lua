@@ -7,7 +7,7 @@ local root = script.Parent.Parent
 
 local includes = root:FindFirstChild("includes")
 local Promise = require(includes:FindFirstChild("Promise"))
-local Signal = require(includes:FindFirstChild("GoodSignal"))
+local Signal = require(includes:FindFirstChild("Signal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
@@ -48,9 +48,12 @@ local scheduleAutoSave
 
 ---
 
+local settingChangedSignal: Signal.Signal<any>, fireSettingChanged: Signal.FireSignal<any> = Signal.createSignal()
+local savingAbilityChangedSignal: Signal.Signal<boolean>, fireSavingAbilityChanged: Signal.FireSignal<boolean> = Signal.createSignal()
+
 local PluginSettings = {}
-PluginSettings.SettingChanged = Signal.new()
-PluginSettings.SavingAbilityChanged = Signal.new()
+PluginSettings.SettingChanged = settingChangedSignal
+PluginSettings.SavingAbilityChanged = savingAbilityChangedSignal
 
 PluginSettings.GetSavingAbility = function(): boolean
     return canSave
@@ -75,7 +78,7 @@ PluginSettings.UpdateSavingAbility = function(force: boolean?)
     if (newCanSave == canSave) then return end
 
     canSave = newCanSave
-    PluginSettings.SavingAbilityChanged:Fire(newCanSave)
+    fireSavingAbilityChanged(newCanSave)
 end
 
 PluginSettings.Flush = function()
@@ -120,7 +123,10 @@ PluginSettings.Set = function(key, newValue)
         end
     end
 
-    PluginSettings.SettingChanged:Fire(key, newValue)
+    fireSettingChanged({
+        Key = key,
+        Value = newValue,
+    })
 end
 
 PluginSettings.GetCachedRobloxAPIData = function()

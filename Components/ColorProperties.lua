@@ -47,19 +47,20 @@ local uiTranslations = Translator.GenerateTranslationTable({
 local NoAPIAlert = Roact.PureComponent:extend("NoAPIAlert")
 
 NoAPIAlert.init = function(self)
-    self.apiDataRequestStarted = RobloxAPI.DataRequestStarted:Connect(function()
+    self.apiDataRequestStarted = RobloxAPI.DataRequestStarted:subscribe(function()
         self:setState({
             requestRunning = true,
         })
     end)
 
-    self.apiDataRequestFinished = RobloxAPI.DataRequestFinished:Connect(function()
+    self.apiDataRequestFinished = RobloxAPI.DataRequestFinished:subscribe(function()
         self:setState({
             requestRunning = false,
         })
     end)
 
-    self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
+    self.settingsChanged = PluginSettings.SettingChanged:subscribe(function(setting)
+        local key, newValue = setting.Key, setting.Value
         if ((key ~= PluginEnums.PluginSettingKey.AutoLoadColorProperties) and (key ~= PluginEnums.PluginSettingKey.CacheAPIData)) then return end
 
         self:setState({
@@ -67,7 +68,7 @@ NoAPIAlert.init = function(self)
         })
     end)
 
-    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:Connect(function(canSave)
+    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:subscribe(function(canSave: boolean)
         self:setState({
             canSave = canSave
         })
@@ -83,10 +84,10 @@ NoAPIAlert.init = function(self)
 end
 
 NoAPIAlert.willUnmount = function(self)
-    self.apiDataRequestStarted:Disconnect()
-    self.apiDataRequestFinished:Disconnect()
-    self.settingsChanged:Disconnect()
-    self.savingAbilityChanged:Disconnect()
+    self.apiDataRequestStarted:unsubscribe()
+    self.apiDataRequestFinished:unsubscribe()
+    self.settingsChanged:unsubscribe()
+    self.savingAbilityChanged:unsubscribe()
 
     PluginSettings.Flush()
 end
@@ -185,10 +186,10 @@ ColorProperties.init = function(self)
     local apiLoaded = RobloxAPI.IsAvailable()
 
     self.apiDataLoaded = (not apiLoaded) and
-        RobloxAPI.DataRequestFinished:Connect(function(didLoad)
+        RobloxAPI.DataRequestFinished:subscribe(function(didLoad)
             if (not didLoad) then return end
 
-            self.apiDataLoaded:Disconnect()
+            self.apiDataLoaded:unsubscribe()
             self.apiDataLoaded = nil
 
             self:setState({
@@ -204,7 +205,7 @@ end
 
 ColorProperties.willUnmount = function(self)
     if (self.apiDataLoaded) then
-        self.apiDataLoaded:Disconnect()
+        self.apiDataLoaded:unsubscribe()
         self.apiDataLoaded = nil
     end
 end

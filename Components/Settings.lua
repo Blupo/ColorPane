@@ -74,7 +74,8 @@ Settings.init = function(self)
 end
 
 Settings.didMount = function(self)
-    self.settingsChanged = PluginSettings.SettingChanged:Connect(function(key, newValue)
+    self.settingsChanged = PluginSettings.SettingChanged:subscribe(function(setting)
+        local key, newValue = setting.Key, setting.Value
         if (not SETTINGS[key]) then return end
         
         self:setState({
@@ -82,7 +83,7 @@ Settings.didMount = function(self)
         })
     end)
 
-    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:Connect(function(canSave)
+    self.savingAbilityChanged = PluginSettings.SavingAbilityChanged:subscribe(function(canSave: boolean)
         self:setState({
             canSave = canSave
         })
@@ -90,8 +91,8 @@ Settings.didMount = function(self)
 end
 
 Settings.willUnmount = function(self)
-    self.settingsChanged:Disconnect()
-    self.savingAbilityChanged:Disconnect()
+    self.settingsChanged:unsubscribe()
+    self.savingAbilityChanged:unsubscribe()
     PluginSettings.Flush()
 end
 

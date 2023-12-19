@@ -6,7 +6,7 @@ local Selection = game:GetService("Selection")
 local root = script.Parent.Parent
 
 local includes = root:FindFirstChild("includes")
-local Signal = require(includes:FindFirstChild("GoodSignal"))
+local Signal = require(includes:FindFirstChild("Signal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local ColorAPIData = require(PluginModules:FindFirstChild("ColorAPIData"))
@@ -22,8 +22,8 @@ local currentSelectionCommonPropertyValues = {}
 local currentSelectionPropertyValuesChangedConnections = {}
 
 local internalSelectionChanged
-local selectionChanged = Signal.new()
-local selectionColorsChanged = Signal.new()
+local selectionChangedSignal: Signal.Signal<nil>, fireSelectionChanged: Signal.FireSignal<nil> = Signal.createSignal()
+local selectionColorsChangedSignal: Signal.Signal<nil>, fireSelectionColorsChanged: Signal.FireSignal<nil> = Signal.createSignal()
 
 local getSafeSelection = function(): {Instance}
     local selection: {Instance} = Selection:Get()
@@ -154,31 +154,18 @@ local onSelectionChanged = function()
                         end
 
                         currentSelectionCommonPropertyValues[className][propertyName] = newCommonValue
-                        selectionColorsChanged:Fire()
+                        fireSelectionColorsChanged()
                     end))
                 end
             end
         end
     end
 
-    selectionChanged:Fire()
+    fireSelectionChanged()
 end
 
-SelectionManager.SelectionChanged = selectionChanged
-SelectionManager.SelectionColorsChanged = selectionColorsChanged
-
-SelectionManager.init = function(plugin)
-    SelectionManager.init = nil
-
-    RobloxAPI.DataRequestFinished:Connect(function(didLoad)
-        if (not didLoad) then return end
-
-        apiIsReady = true
-        onSelectionChanged()
-    end)
-
-    plugin.Unloading:Connect(SelectionManager.Disconnect)
-end
+SelectionManager.SelectionChanged = selectionChangedSignal
+SelectionManager.SelectionColorsChanged = selectionColorsChangedSignal
 
 SelectionManager.Connect = function()
     if (internalSelectionChanged) then return end
@@ -313,6 +300,19 @@ SelectionManager.SetSelectionProperty = function(className: string, propertyName
     if (setHistoryWaypoint) then
         ChangeHistoryService:SetWaypoint(propertyName)
     end
+end
+
+SelectionManager.init = function(plugin)
+    SelectionManager.init = nil
+
+    RobloxAPI.DataRequestFinished:subscribe(function(didLoad: boolean)
+        if (not didLoad) then return end
+
+        apiIsReady = true
+        onSelectionChanged()
+    end)
+
+    plugin.Unloading:Connect(SelectionManager.Disconnect)
 end
 
 ---

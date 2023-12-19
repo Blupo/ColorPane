@@ -105,7 +105,7 @@ local editorTabs = {
     props
 
         originalColor: Color
-        finishedEvent: Signal
+        fireFinished: FireSignal<boolean>
 
     store props
 
@@ -258,12 +258,12 @@ ColorEditor.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
-        [Roact.Event.InputBegan] = function(_, input, gameProcessedEvent)
-            ColorEditorInputSignals.InputBegan:Fire(input, gameProcessedEvent)
+        [Roact.Event.InputBegan] = function(_, input: InputObject)
+            ColorEditorInputSignals.InputBegan.Fire(input)
         end,
 
-        [Roact.Event.InputEnded] = function(_, input, gameProcessedEvent)
-            ColorEditorInputSignals.InputEnded:Fire(input, gameProcessedEvent)
+        [Roact.Event.InputEnded] = function(_, input: InputObject)
+            ColorEditorInputSignals.InputEnded.Fire(input)
         end,
     }, {
         UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
@@ -436,7 +436,7 @@ ColorEditor.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText),
 
                 onActivated = function()
-                    self.props.finishedEvent:Fire(false)
+                    self.props.fireFinished(false)
                 end
             }),
 
@@ -453,7 +453,7 @@ ColorEditor.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                 onActivated = function()
-                    self.props.finishedEvent:Fire(true)
+                    self.props.fireFinished(true)
                 end
             }),
         })

@@ -57,7 +57,7 @@ GradientPicker.init = function(self)
 end
 
 GradientPicker.didMount = function(self)
-    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:Connect(function(cursorPosition)
+    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:subscribe(function(cursorPosition: Vector2)
         if (not self.state.tracking) then return end
 
         self.pickValue(cursorPosition)
@@ -66,7 +66,7 @@ end
 
 GradientPicker.willUnmount = function(self)
     if (self.cursorPositionChanged) then
-        self.cursorPositionChanged:Disconnect()
+        self.cursorPositionChanged:unsubscribe()
         self.cursorPositionChanged = nil
     end
 end

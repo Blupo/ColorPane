@@ -68,7 +68,7 @@ ColorGrid.init = function(self)
 end
 
 ColorGrid.didMount = function(self)
-    self.keyDown = ColorEditorInputSignals.InputBegan:Connect(function(input)
+    self.keyDown = ColorEditorInputSignals.InputBegan.Event:subscribe(function(input: InputObject)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         local inputRepeater = self.keyInputRepeaters[input.KeyCode]
@@ -81,7 +81,7 @@ ColorGrid.didMount = function(self)
         inputRepeater:start()
     end)
 
-    self.keyUp = ColorEditorInputSignals.InputEnded:Connect(function(input)
+    self.keyUp = ColorEditorInputSignals.InputEnded.Event:subscribe(function(input: InputObject)
         if (input.UserInputType ~= Enum.UserInputType.Keyboard) then return end
 
         local inputRepeater = self.keyInputRepeaters[input.KeyCode]
@@ -97,8 +97,8 @@ ColorGrid.willUnmount = function(self)
     end
 
     self.keyInputRepeaters = nil
-    self.keyDown:Disconnect()
-    self.keyUp:Disconnect()
+    self.keyDown:unsubscribe()
+    self.keyUp:unsubscribe()
 end
 
 ColorGrid.render = function(self)

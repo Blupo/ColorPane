@@ -19,3 +19,6 @@
 [submodule "includes/Cryo"]
 	path = includes/Cryo
 	url = https://github.com/Roblox/cryo
+[submodule "includes/Signal"]
+	path = includes/Signal
+	url = https://github.com/Roblox/signal-lua

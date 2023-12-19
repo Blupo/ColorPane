@@ -9,7 +9,7 @@ local APIScript = root:FindFirstChild("API")
 local includes = root:FindFirstChild("includes")
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
-local Signal = require(includes:FindFirstChild("GoodSignal"))
+local Signal = require(includes:FindFirstChild("Signal"))
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
@@ -131,7 +131,7 @@ if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
     local firstTimeSetupWidget = MakeWidget(plugin, "FirstTimeSetup")
     local firstTimeSetupWidgetEnabledChanged
     local firstTimeSetupTree
-    local confirmSignal = Signal.new()
+    local confirmSignal: Signal.Signal<nil>, fireConfirm: Signal.FireSignal<nil> = Signal.createSignal()
 
     firstTimeSetupWidgetEnabledChanged = firstTimeSetupWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
         if (not firstTimeSetupWidget.Enabled) then
@@ -149,7 +149,7 @@ if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
                 Roact.unmount(firstTimeSetupTree)
 
                 PluginSettings.Set(PluginEnums.PluginSettingKey.FirstTimeSetup, true)
-                confirmSignal:Fire()
+                fireConfirm()
             end,
         })
     }), firstTimeSetupWidget)
@@ -157,7 +157,16 @@ if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
     firstTimeSetupWidget.Title = uiTranslations["FirstTimeSetup_WindowTitle"]
     firstTimeSetupWidget.Enabled = true
 
-    confirmSignal:Wait()
+    local confirmed: boolean = false
+    local subscription: Signal.Subscription
+    subscription = confirmSignal:subscribe(function()
+        subscription:unsubscribe()
+        confirmed = true
+    end)
+
+    repeat
+        RunService.Heartbeat:Wait()
+    until (confirmed)
 end
 
 do
@@ -174,7 +183,7 @@ end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) then
     local startupRequestFinished
-    startupRequestFinished = RobloxAPI.DataRequestFinished:Connect(function(success)
+    startupRequestFinished = RobloxAPI.DataRequestFinished:subscribe(function(success: boolean)
         startupRequestFinished:Disconnect()
         startupRequestFinished = nil
 

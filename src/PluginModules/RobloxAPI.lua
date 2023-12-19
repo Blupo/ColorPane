@@ -12,7 +12,7 @@ local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
 
 local includes = root:FindFirstChild("includes")
 local Promise = require(includes:FindFirstChild("Promise"))
-local Signal = require(includes:FindFirstChild("GoodSignal"))
+local Signal = require(includes:FindFirstChild("Signal"))
 
 ---
 
@@ -23,11 +23,14 @@ local API_DATA_ENDPOINT = "%s-API-Dump.json"
 local apiData
 local requestInProgress = false
 
+local dataRequestStartedSignal: Signal.Signal<nil>, fireDataRequestStarted: Signal.FireSignal<nil> = Signal.createSignal()
+local dataRequestFinishedSignal: Signal.Signal<boolean>, fireDataRequestFinished: Signal.FireSignal<boolean> = Signal.createSignal()
+
 ---
 
 local RobloxAPI = {}
-RobloxAPI.DataRequestStarted = Signal.new()
-RobloxAPI.DataRequestFinished = Signal.new()
+RobloxAPI.DataRequestStarted = dataRequestStartedSignal
+RobloxAPI.DataRequestFinished = dataRequestFinishedSignal
 
 RobloxAPI.IsAvailable = function()
     return (apiData and true or false)
@@ -41,7 +44,7 @@ RobloxAPI.GetData = function()
     if (apiData or requestInProgress) then return end
 
     requestInProgress = true
-    RobloxAPI.DataRequestStarted:Fire()
+    fireDataRequestStarted()
 
     Promise.new(function(resolve, reject)
         local cachedAPIData = PluginSettings.GetCachedRobloxAPIData()
@@ -89,9 +92,9 @@ RobloxAPI.GetData = function()
         ColorAPIData.init(api)
 
         apiData = api
-        RobloxAPI.DataRequestFinished:Fire(true)
+        fireDataRequestFinished(true)
     end, function()
-        RobloxAPI.DataRequestFinished:Fire(false)
+        fireDataRequestFinished(false)
     end):finally(function()
         requestInProgress = false
     end)
@@ -99,7 +102,8 @@ end
 
 ---
 
-PluginSettings.SettingChanged:Connect(function(key, newValue)
+PluginSettings.SettingChanged:subscribe(function(setting)
+    local key, newValue = setting.Key, setting.Value
     if (key ~= PluginEnums.PluginSettingKey.CacheAPIData) then return end
 
     if (newValue) then

@@ -90,7 +90,7 @@ end
         originalColorSpace: string
         originalHueAdjustment: string
         originalPrecision: number
-        finishedEvent: Signal
+        fireFinished: FireSignal<boolean>
 
         promptForColorEdit: (ColorPromptOptions) -> Promise<Color>
 
@@ -195,7 +195,7 @@ GradientEditor.init = function(self)
 end
 
 GradientEditor.didMount = function(self)
-    self.cursorPositionChanged = GradientEditorInputSignals.CursorPositionChanged:Connect(function(cursorPosition)
+    self.cursorPositionChanged = GradientEditorInputSignals.CursorPositionChanged:subscribe(function(cursorPosition: Vector2)
         local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
         self.updateTimelineProgress(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
 
@@ -221,7 +221,7 @@ GradientEditor.willUnmount = function(self)
     end
     
     if (self.cursorPositionChanged) then
-        self.cursorPositionChanged:Disconnect()
+        self.cursorPositionChanged:unsubscribe()
         self.cursorPositionChanged = nil
     end
 end
@@ -933,7 +933,7 @@ GradientEditor.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText),
 
                 onActivated = function()
-                    self.props.finishedEvent:Fire(false)
+                    self.props.fireFinished(false)
                 end
             }),
 
@@ -950,7 +950,7 @@ GradientEditor.render = function(self)
                 displayColor = theme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText),
 
                 onActivated = function()
-                    self.props.finishedEvent:Fire(true)
+                    self.props.fireFinished(true)
                 end
             }),
         })
