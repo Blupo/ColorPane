@@ -2,6 +2,7 @@
 
 ### Added
 - Added a dedicated "Set Color" button for colors in the palette list layout
+- The "Periodically check for updates" setting now does what it says it does
 
 ### Changed
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`

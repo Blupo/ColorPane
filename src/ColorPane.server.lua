@@ -178,7 +178,7 @@ do
 end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoCheckForUpdate)) then
-    UpdateChecker.Check()
+    UpdateChecker.SetupAutoCheck()
 end
 
 if (PluginSettings.Get(PluginEnums.PluginSettingKey.AutoLoadColorProperties)) then
@@ -198,6 +198,8 @@ end
 if (colorPropertiesWidget.Enabled) then
     mountColorProperties()
 end
+
+UpdateChecker.Check()
 
 ---
 
