@@ -16,9 +16,6 @@
 [submodule "includes/Color"]
     path = includes/Color
     url = https://github.com/Blupo/Color
-[submodule "includes/state"]
-    path = includes/state
-    url = https://github.com/Blupo/state
 [submodule "includes/Cryo"]
 	path = includes/Cryo
 	url = https://github.com/Roblox/cryo
