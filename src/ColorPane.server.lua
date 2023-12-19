@@ -48,14 +48,14 @@ local settingsWidget = MakeWidget(plugin, "Settings")
 
 local toolbarComponents = MakeToolbar(plugin)
 local colorEditorButton = toolbarComponents.ColorEditorButton
-local csEditorButton = toolbarComponents.ColorSequenceEditorButton
+local gradientEditorButton = toolbarComponents.ColorSequenceEditorButton
 local colorPropertiesButton = toolbarComponents.ColorPropertiesButton
 local settingsButton = toolbarComponents.SettingsButton
 
 local colorPropertiesTree
 local settingsTree
 local colorEditPromise
-local csEditPromise
+local gradientEditPromise
 
 local noOp = function() end
 
@@ -119,7 +119,7 @@ APIScript.Archivable = false
 APIScript.Name = "ColorPane"
 
 colorEditorButton.ClickableWhenViewportHidden = true
-csEditorButton.ClickableWhenViewportHidden = true
+gradientEditorButton.ClickableWhenViewportHidden = true
 
 ColorPane.init(plugin)
 
@@ -207,7 +207,6 @@ colorEditorButton.Click:Connect(function()
     if (colorEditPromise) then
         colorEditPromise:cancel()
         colorEditPromise = nil
-
         return
     end
 
@@ -220,20 +219,19 @@ colorEditorButton.Click:Connect(function()
     end)
 end)
 
-csEditorButton.Click:Connect(function()
-    if (csEditPromise) then
-        csEditPromise:cancel()
-        csEditPromise = nil
-
+gradientEditorButton.Click:Connect(function()
+    if (gradientEditPromise) then
+        gradientEditPromise:cancel()
+        gradientEditPromise = nil
         return
     end
 
-    csEditorButton:SetActive(true)
-    csEditPromise = ColorPane.PromptForGradient()
+    gradientEditorButton:SetActive(true)
+    gradientEditPromise = ColorPane.PromptForGradient()
 
-    csEditPromise:catch(noOp):finally(function()
-        csEditPromise = nil
-        csEditorButton:SetActive(false)
+    gradientEditPromise:catch(noOp):finally(function()
+        gradientEditPromise = nil
+        gradientEditorButton:SetActive(false)
     end)
 end)
 

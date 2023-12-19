@@ -2,7 +2,7 @@
 
 ### Added
 - Added a dedicated "Set Color" button for colors in the palette list layout
-- The "Periodically check for updates" setting now does what it says it does
+- Added a "Reset" button for gradient precision
 
 ### Changed
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
@@ -10,6 +10,12 @@
 - For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
 - The API script is now injected into StudioService instead of CoreGui
 - Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
+- The type of `API.Unloading` is now a [`Signal<nil>`](https://roblox.github.io/signal-lua-internal/api-reference/#types)
+
+### Fixed
+- The "*Periodically check for updates*" setting now does what it says it does
+- Fixed the initial size of the color editor only showing one page (it should have 2)
+- `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
 
 ## [0.4.1] - 2022-09-30
 

@@ -9,7 +9,7 @@ local Translator = require(PluginModules:FindFirstChild("Translator"))
 local colorEditorDefaultWidth = Style.Constants.PagePadding +
     (Style.Constants.EditorPageWidth + Style.Constants.MajorElementPadding) * 2 +
     Style.Constants.LargeButtonHeight +
-    2 +
+    4 +
     Style.Constants.PagePadding
 
 local colorEditorMinWidth = Style.Constants.PagePadding +

@@ -60,6 +60,7 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "HueInterpolation_Label",
     "Precision_Label",
     "MaxKeypoints_ButtonText",
+    "Reset_ButtonText",
 })
 
 local getMaxKeypointPrecision = function(numKeypoints): number
@@ -317,6 +318,19 @@ GradientInfo.render = function(self)
     
                     onActivated = function()
                         self.props.setPrecision(maxPrecision)
+                    end
+                }),
+
+                ResetPrecisionButton = Roact.createElement(Button, {
+                    Size = UDim2.new(0, 40, 0, Style.Constants.StandardButtonHeight),
+                    LayoutOrder = 4,
+    
+                    displayType = "text",
+                    text = uiTranslations["Reset_ButtonText"],
+                    disabled = (precision == 0),
+    
+                    onActivated = function()
+                        self.props.setPrecision(0)
                     end
                 }),
     

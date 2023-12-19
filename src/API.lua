@@ -8,8 +8,6 @@
         https://github.com/Blupo/ColorPane
 ]]
 
-local RunService = game:GetService("RunService")
-
 ---
 
 local root = script.Parent
@@ -177,7 +175,7 @@ local checkGradientPromptOptions = t.interface({
 
 ---
 
-local onUnloading = function(waitToDestroy)
+local onUnloading = function()
     if (scriptReparentedEvent) then
         scriptReparentedEvent:Disconnect()
         scriptReparentedEvent = nil
@@ -188,7 +186,7 @@ local onUnloading = function(waitToDestroy)
         pluginUnloadingEvent = nil
     end
 
-    if (unloadingEvent and fireUnloading) then
+    if (fireUnloading) then
         fireUnloading()
     end
 
@@ -204,10 +202,6 @@ local onUnloading = function(waitToDestroy)
         if (fireGradientEditorClosed) then
             fireGradientEditorClosed(false)
         end
-    end
-    
-    if (waitToDestroy) then
-        RunService.Heartbeat:Wait()
     end
 
     script:Destroy()
@@ -314,8 +308,8 @@ ColorPane.IsGradientEditorOpen = function(): boolean
     return (gradientEditorTree and true or false)
 end
 
-local internalPromptForColor = function(optionalPromptOptions: ColorPromptOptions)
-    local promptOptions = {
+local internalPromptForColor = function(optionalPromptOptions: ColorPromptOptions?)
+    local promptOptions: ColorPromptOptions = {
         PromptTitle = "Select a color",
         ColorType = "Color3",
         InitialColor = DEFAULT_COLOR,
@@ -334,7 +328,7 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
     -- prompt stuff
     local editorClosedEvent: Signal.Signal<boolean>, fireEditorClosed: Signal.FireSignal<boolean> = Signal.createSignal()
 
-    local editPromise = Promise.new(function(resolve, reject)
+    local editPromise = Promise.new(function(resolve, reject, onCancel)
         local subscription: Signal.Subscription
         subscription = editorClosedEvent:subscribe(function(confirmed)
             subscription:unsubscribe()
@@ -354,6 +348,10 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
                     resolve(newColor)
                 end
             end
+        end)
+
+        onCancel(function()
+            subscription:unsubscribe()
         end)
     end)
 
@@ -415,7 +413,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
-    local promptOptions = {
+    local promptOptions: GradientPromptOptions = {
         PromptTitle = uiTranslations["GradientEditor_DefaultWindowTitle"],
         GradientType = "ColorSequence",
         InitialGradient = DEFAULT_GRADIENT,
@@ -442,7 +440,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     -- prompt stuff
     local editorClosedEvent: Signal.Signal<boolean>, fireEditorClosed: Signal.FireSignal<boolean> = Signal.createSignal()
 
-    local editPromise = Promise.new(function(resolve, reject)
+    local editPromise = Promise.new(function(resolve, reject, onCancel)
         local subscription: Signal.Subscription
         subscription = editorClosedEvent:subscribe(function(confirmed: boolean)
             subscription:unsubscribe()
@@ -463,6 +461,10 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
                     resolve(newGradient)
                 end
             end
+        end)
+
+        onCancel(function()
+            subscription:unsubscribe()
         end)
     end)
 
@@ -494,7 +496,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         })
     end)
 
-    fireGradientEditorClosed = fireColorEditorClosed
+    fireGradientEditorClosed = fireEditorClosed
     mountGradientEditor(promptOptions, internalPromptForColor, fireEditorClosed)
     return editPromise
 end
@@ -590,7 +592,7 @@ ColorPane.IsColorSequenceEditorOpen = ColorPane.IsGradientEditorOpen
 ColorPane.PromptForColorSequence = function(optionalPromptOptions: ColorSequencePromptOptions?)
     local promptOptions: ColorSequencePromptOptions = optionalPromptOptions or {}
 
-    ColorPane.PromptForGradient({
+    return ColorPane.PromptForGradient({
         PromptTitle = promptOptions.PromptTitle,
         GradientType = "ColorSequence",
         InitialGradient = promptOptions.InitialColor,
