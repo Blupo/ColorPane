@@ -11,8 +11,8 @@ local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local Color = require(includes:FindFirstChild("Color")).Color
+local Cryo = require(includes:FindFirstChild("Cryo"))
 local Rodux = require(includes:FindFirstChild("Rodux"))
-local state = require(includes:FindFirstChild("state"))
 
 ---
 
@@ -51,7 +51,7 @@ return function(plugin)
         end
     end
 
-    local colorPaneStoreInitialState = {
+    local colorPaneStoreInitialState = Util.table.deepFreeze({
         theme = Studio.Theme,
 
         sessionData = {
@@ -81,25 +81,25 @@ return function(plugin)
             snap = PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
             palette = userGradients,
         }
-    }
+    })
 
     local colorPaneStore = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         --[[
             theme: StudioTheme
         ]]
         [PluginEnums.StoreActionType.SetTheme] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                draftState.theme = action.theme
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                theme = action.theme
+            }))
         end,
 
         --[[
             slice: dictionary<any, any>
         ]]
         [PluginEnums.StoreActionType.UpdateSessionData] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                Util.table.merge(draftState.sessionData, action.slice)
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                sessionData = Cryo.Dictionary.join(oldState.sessionData, action.slice)
+            }))
         end,
         
         --[[
@@ -107,20 +107,23 @@ return function(plugin)
             editor: PluginEnums.EditorKey?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                draftState.colorEditor.color = action.color
-                draftState.colorEditor.authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    color = action.color,
+                    authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
+                })
+            }))
         end,
 
         --[[
             color: Color
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local quickPalette = draftState.colorEditor.quickPalette
-                state.table.insert(quickPalette, 1, action.color)
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    quickPalette = Cryo.List.join({action.color}, oldState.colorEditor.quickPalette)
+                })
+            }))
         end,
 
         --[[
@@ -128,52 +131,65 @@ return function(plugin)
             name: string?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
+            local newPalette
+            local palettes = oldState.colorEditor.palettes
 
-                if (action.palette) then
-                    state.table.append(palettes, action.palette)
-                else
-                    local paletteName = Util.palette.getNewItemName(palettes, action.name or "New Palette")
+            if (action.palette) then
+                newPalette = action.palette
+            else
+                local desiredPaletteName = action.name or "New Palette"
+                local actualPaletteName = Util.palette.getNewItemName(palettes, desiredPaletteName)
 
-                    state.table.append(palettes, {
-                        name = paletteName,
-                        colors = {}
-                    })
-                end
-            end)
+                newPalette = {
+                    name = actualPaletteName,
+                    colors = {}
+                }
+            end
+
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.join(palettes, {newPalette})
+                })
+            }))
         end,
 
         --[[
             index: number
         ]]
         [PluginEnums.StoreActionType.ColorEditor_RemovePalette] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local index = action.index
-                if (not palettes[index]) then return end
+            local palettes = oldState.colorEditor.palettes
+            local index = action.index
+            if (not palettes[index]) then return oldState end
 
-                state.table.remove(palettes, index)
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.removeIndex(palettes, index)
+                })
+            }))
         end,
 
         --[[
             index: number
         ]]
         [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local index = action.index
+            local palettes = oldState.colorEditor.palettes
+            local index = action.index
 
-                local palette = palettes[index]
-                if (not palette) then return end
+            local palette = palettes[index]
+            if (not palette) then return oldState end
 
-                local newPaletteName = Util.palette.getNewItemName(palettes, palette.name)
-                local newPalette = Util.table.deepCopy(oldState.colorEditor.palettes[index])
-                newPalette.name = newPaletteName
-                
-                state.table.append(palettes, newPalette)
-            end)
+            local matchStart = string.find(palette.name, "%s*%(%d+%)$")
+            local nameWithoutCounter = if (matchStart) then string.sub(palette.name, 1, matchStart - 1) else palette.name
+
+            local newPaletteName = Util.palette.getNewItemName(palettes, nameWithoutCounter)
+            local newPalette = Util.table.deepCopy(palette)
+            newPalette.name = newPaletteName
+
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.join(palettes, {newPalette})
+                })
+            }))
         end,
 
         --[[
@@ -181,18 +197,22 @@ return function(plugin)
             newName: string
         ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteName] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local index = action.index
+            local palettes = oldState.colorEditor.palettes
+            local index = action.index
 
-                local palette = palettes[index]
-                if (not palette) then return end
+            local palette = palettes[index]
+            if (not palette) then return oldState end
 
-                local newPaletteName = Util.palette.getNewItemName(palettes, action.newName, index)
-                if (newPaletteName == palette.name) then return end
+            local newPaletteName = Util.palette.getNewItemName(palettes, action.newName, index)
+            if (newPaletteName == palette.name) then return oldState end
 
-                palettes[index].name = newPaletteName
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.replaceIndex(palettes, index, Cryo.Dictionary.join(palette, {
+                        name = newPaletteName
+                    }))
+                })
+            }))
         end,
 
         --[[
@@ -200,21 +220,27 @@ return function(plugin)
             newName: string?
         ]]
         [PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local paletteIndex = action.paletteIndex
-                
-                local palette = palettes[paletteIndex]
-                if (not palette) then return end
+            local palettes = oldState.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
+            if (not palette) then return oldState end
 
-                local paletteColors = palette.colors
-                local newColorName = Util.palette.getNewItemName(paletteColors, action.newName or "New Color")
+            local paletteColors = palette.colors
+            local newColorName = Util.palette.getNewItemName(paletteColors, action.newName or "New Color")
 
-                state.table.append(paletteColors, {
-                    name = newColorName,
-                    color = draftState.colorEditor.color:toColor3(),
+            local newColor = {
+                name = newColorName,
+                color = oldState.colorEditor.color:toColor3(),
+            }
+
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
+                        colors = Cryo.List.join(paletteColors, {newColor})
+                    }))
                 })
-            end)
+            }))
         end,
 
         --[[
@@ -222,21 +248,25 @@ return function(plugin)
             colorIndex: number
         ]]
         [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local paletteIndex = action.paletteIndex
-                
-                local palette = palettes[paletteIndex]
-                if (not palette) then return end
+            local palettes = oldState.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
+            if (not palette) then return oldState end
 
-                local paletteColors = palette.colors
-                local colorIndex = action.colorIndex
+            local paletteColors = palette.colors
+            local colorIndex = action.colorIndex
 
-                local color = paletteColors[colorIndex]
-                if (not color) then return end
+            local color = paletteColors[colorIndex]
+            if (not color) then return oldState end
 
-                state.table.remove(palette.colors, colorIndex)
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
+                        colors = Cryo.List.removeIndex(paletteColors, colorIndex)
+                    }))
+                })
+            }))
         end,
 
         --[[
@@ -245,24 +275,30 @@ return function(plugin)
             newName: string
         ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local paletteIndex = action.paletteIndex
-                
-                local palette = palettes[paletteIndex]
-                if (not palette) then return end
+            local palettes = oldState.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
+            if (not palette) then return oldState end
 
-                local paletteColors = palette.colors
-                local colorIndex = action.colorIndex
+            local paletteColors = palette.colors
+            local colorIndex = action.colorIndex
 
-                local color = paletteColors[colorIndex]
-                if (not color) then return end
+            local color = paletteColors[colorIndex]
+            if (not color) then return oldState end
 
-                local newColorName = Util.palette.getNewItemName(paletteColors, action.newName, colorIndex)
-                if (newColorName == color.name) then return end
+            local newColorName = Util.palette.getNewItemName(paletteColors, action.newName, colorIndex)
+            if (newColorName == color.name) then return oldState end
 
-                paletteColors[colorIndex].name = newColorName
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
+                        colors = Cryo.List.replaceIndex(paletteColors, colorIndex, Cryo.Dictionary.join(color, {
+                            name = newColorName
+                        }))
+                    }))
+                })
+            }))
         end,
 
         --[[
@@ -271,36 +307,36 @@ return function(plugin)
             offset: number,
         ]]
         [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local palettes = draftState.colorEditor.palettes
-                local paletteIndex = action.paletteIndex
-                
-                local palette = palettes[paletteIndex]
-                if (not palette) then return end
+            local palettes = oldState.colorEditor.palettes
+            local paletteIndex = action.paletteIndex
+            
+            local palette = palettes[paletteIndex]
+            if (not palette) then return oldState end
 
-                local paletteColors = palette.colors
-                local colorIndex = action.colorIndex
-                local otherColorIndex = colorIndex + action.offset
-                if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return end
+            local paletteColors = palette.colors
+            local colorIndex = action.colorIndex
+            local otherColorIndex = colorIndex + action.offset
+            if (not (paletteColors[colorIndex] and paletteColors[otherColorIndex])) then return oldState end
 
-                paletteColors[colorIndex], paletteColors[otherColorIndex] = paletteColors[otherColorIndex], paletteColors[colorIndex]
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                    palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
+                        colors = Cryo.Dictionary.join(paletteColors, {
+                            [colorIndex] = paletteColors[otherColorIndex],
+                            [otherColorIndex] = paletteColors[colorIndex]
+                        })
+                    }))
+                })
+            }))
         end,
 
         [PluginEnums.StoreActionType.GradientEditor_ResetState] = function(oldState)
-            return state.produce(oldState, function(draftState)
-
-                for k in state.iter.pairs(draftState.gradientEditor) do
-                    if (
-                        (k == "snap") or
-                        (k == "palette")
-                    ) then
-                        continue
-                    else
-                        draftState.gradientEditor[k] = nil
-                    end
-                end
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = {
+                    snap = oldState.gradientEditor.snap,
+                    palette = oldState.gradientEditor.palette,
+                }
+            }))
         end,
 
         --[[
@@ -308,23 +344,21 @@ return function(plugin)
             selectedKeypoint: number?
         ]]
         [PluginEnums.StoreActionType.GradientEditor_SetKeypoints] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local gradientEditorState = draftState.gradientEditor
+            local gradientEditorState = oldState.gradientEditor
 
-                gradientEditorState.keypoints = action.keypoints or gradientEditorState.keypoints
-                gradientEditorState.selectedKeypoint = action.selectedKeypoint or gradientEditorState.selectedKeypoint
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(gradientEditorState, {
+                    keypoints = action.keypoints,
+                    selectedKeypoint = if (action.selectedKeypoint ~= -1) then action.selectedKeypoint else Cryo.None,
 
-                if (gradientEditorState.selectedKeypoint == -1) then
-                    gradientEditorState.selectedKeypoint = nil
-                end
-
-                gradientEditorState.displayKeypoints = Util.generateFullKeypointList(
-                    state.draft.getRef(gradientEditorState.keypoints),
-                    gradientEditorState.colorSpace,
-                    gradientEditorState.hueAdjustment,
-                    gradientEditorState.precision
-                )
-            end)
+                    displayKeypoints = Util.generateFullKeypointList(
+                        action.keypoints or gradientEditorState.keypoints,
+                        gradientEditorState.colorSpace,
+                        gradientEditorState.hueAdjustment,
+                        gradientEditorState.precision or 0
+                    )
+                })
+            }))
         end,
 
         --[[
@@ -334,30 +368,36 @@ return function(plugin)
             precision: number?
         ]]
         [PluginEnums.StoreActionType.GradientEditor_SetGradient] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                Util.table.merge(draftState.gradientEditor, {
-                    keypoints = action.keypoints,
-                    colorSpace = action.colorSpace,
-                    hueAdjustment = action.hueAdjustment,
-                    precision = action.precision,
-                })
+            local newKeypointInfo = Cryo.Dictionary.join(oldState.gradientEditor, {
+                keypoints = action.keypoints,
+                colorSpace = action.colorSpace,
+                hueAdjustment = action.hueAdjustment,
+                precision = action.precision,
+            })
 
-                draftState.gradientEditor.displayKeypoints = Util.generateFullKeypointList(
-                    state.draft.getRef(draftState.gradientEditor.keypoints),
-                    draftState.gradientEditor.colorSpace,
-                    draftState.gradientEditor.hueAdjustment,
-                    draftState.gradientEditor.precision or 0
-                )
-            end)
+            local newDisplayKeypoints = Util.generateFullKeypointList(
+                newKeypointInfo.keypoints,
+                newKeypointInfo.colorSpace,
+                newKeypointInfo.hueAdjustment,
+                newKeypointInfo.precision or 0
+            )
+
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, newKeypointInfo, {
+                    displayKeypoints = newDisplayKeypoints
+                }),
+            }))
         end,
 
         --[[
             snap: number
         ]]
         [PluginEnums.StoreActionType.GradientEditor_SetSnapValue] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                draftState.gradientEditor.snap = action.snap
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                    snap = action.snap
+                })
+            }))
         end,
 
         --[[
@@ -369,32 +409,38 @@ return function(plugin)
             precision: number?
         ]]
         [PluginEnums.StoreActionType.GradientEditor_AddPaletteColor] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local gradientPalette = draftState.gradientEditor.palette
-                local newColorName = Util.palette.getNewItemName(gradientPalette, action.name or "New Gradient")
+            local gradientPalette = oldState.gradientEditor.palette
+            local newColorName = Util.palette.getNewItemName(gradientPalette, action.name or "New Gradient")
 
-                state.table.append(gradientPalette, {
-                    name = newColorName,
+            local newColor = {
+                name = newColorName,
 
-                    keypoints = action.keypoints,
-                    colorSpace = action.colorSpace,
-                    hueAdjustment = action.hueAdjustment,
-                    precision = action.precision,
+                keypoints = action.keypoints,
+                colorSpace = action.colorSpace,
+                hueAdjustment = action.hueAdjustment,
+                precision = action.precision,
+            }
+
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                    palette = Cryo.List.join(gradientPalette, {newColor}),
                 })
-            end)
+            }))
         end,
 
         --[[
             index: number
         ]]
         [PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local gradientPalette = draftState.gradientEditor.palette
-                local index = action.index
-                if (not gradientPalette[index]) then return end
+            local gradientPalette = oldState.gradientEditor.palette
+            local index = action.index
+            if (not gradientPalette[index]) then return oldState end
 
-                state.table.remove(gradientPalette, action.index)
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                    palette = Cryo.List.removeIndex(gradientPalette, index)
+                })
+            }))
         end,
 
         --[[
@@ -402,18 +448,22 @@ return function(plugin)
             newName: string
         ]]
         [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local gradientPalette = draftState.gradientEditor.palette
-                local index = action.index
+            local gradientPalette = oldState.gradientEditor.palette
+            local index = action.index
 
-                local color = gradientPalette[index]
-                if (not color) then return end
+            local color = gradientPalette[index]
+            if (not color) then return oldState end
 
-                local newColorName = Util.palette.getNewItemName(gradientPalette, action.newName, index)
-                if (newColorName == color.name) then return end
+            local newColorName = Util.palette.getNewItemName(gradientPalette, action.newName, index)
+            if (newColorName == color.name) then return oldState end
 
-                gradientPalette[index].name = newColorName
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                    palette = Cryo.List.replaceIndex(gradientPalette, index, Cryo.Dictionary.join(color, {
+                        name = newColorName
+                    })),
+                })
+            }))
         end,
 
         --[[
@@ -421,16 +471,21 @@ return function(plugin)
             offset: number,
         ]]
         [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(oldState, action)
-            return state.produce(oldState, function(draftState)
-                local gradientPalette = draftState.gradientEditor.palette
-                local index = action.index
-                if (not gradientPalette[index]) then return end
+            local gradientPalette = oldState.gradientEditor.palette
+            local index = action.index
+            if (not gradientPalette[index]) then return oldState end
 
-                local newColorIndex = index + action.offset
-                if (not gradientPalette[newColorIndex]) then return end
+            local newColorIndex = index + action.offset
+            if (not gradientPalette[newColorIndex]) then return oldState end
 
-                gradientPalette[newColorIndex], gradientPalette[index] = gradientPalette[index], gradientPalette[newColorIndex]
-            end)
+            return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+                gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                    palette = Cryo.Dictionary.join(gradientPalette, {
+                        [index] = gradientPalette[newColorIndex],
+                        [newColorIndex] = gradientPalette[index],
+                    })
+                })
+            }))
         end,
     }))
 

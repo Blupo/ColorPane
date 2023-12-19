@@ -2,9 +2,9 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
-local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Cryo = require(includes:FindFirstChild("Cryo"))
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
@@ -142,9 +142,9 @@ ButtonBar.render = function(self)
         end
 
         if (displayType == "image") then
-            buttonProps = Util.table.merge(buttonProps, getImageButtonProps(buttonInfo.image, displayColor))
+            buttonProps = Cryo.Dictionary.join(buttonProps, getImageButtonProps(buttonInfo.image, displayColor))
         elseif (displayType == "text") then
-            buttonProps = Util.table.merge(buttonProps, getTextButtonProps(buttonInfo.name, displayColor))
+            buttonProps = Cryo.Dictionary.join(buttonProps, getTextButtonProps(buttonInfo.name, displayColor))
         end
 
         buttonElements[buttonInfo.name] = Roact.createElement(buttonTypes[displayType], buttonProps)

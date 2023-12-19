@@ -27,6 +27,7 @@ local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
 local ColorLib = require(includes:FindFirstChild("Color"))
+local Cryo = require(includes:FindFirstChild("Cryo"))
 local Promise = require(includes:FindFirstChild("Promise"))
 local Roact = require(includes:FindFirstChild("Roact"))
 local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
@@ -321,7 +322,7 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
     }
 
     if (type(optionalPromptOptions) == "table") then
-        promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
+        promptOptions = Cryo.Dictionary.join(promptOptions, optionalPromptOptions)
     elseif (type(optionalPromptOptions) ~= "nil") then
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end
@@ -421,7 +422,7 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     }
 
     if (type(optionalPromptOptions) == "table") then
-        promptOptions = Util.table.merge(promptOptions, optionalPromptOptions)
+        promptOptions = Cryo.Dictionary.join(promptOptions, optionalPromptOptions)
     elseif (type(optionalPromptOptions) ~= "nil") then
         return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
     end

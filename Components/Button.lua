@@ -2,9 +2,9 @@ local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
 local Style = require(PluginModules:FindFirstChild("Style"))
-local Util = require(PluginModules:FindFirstChild("Util"))
 
 local includes = root:FindFirstChild("includes")
+local Cryo = require(includes:FindFirstChild("Cryo"))
 local Roact = require(includes:FindFirstChild("Roact"))
 
 local Components = root:FindFirstChild("Components")
@@ -128,13 +128,13 @@ Button.render = function(self)
     }
 
     if (displayType == "image") then
-        buttonProps = Util.table.merge(buttonProps, getImageButtonProps(self.props.image, displayColor))
+        buttonProps = Cryo.Dictionary.join(buttonProps, getImageButtonProps(self.props.image, displayColor))
     elseif (displayType == "text") then
-        buttonProps = Util.table.merge(buttonProps, getTextButtonProps(self.props.text, displayColor))
+        buttonProps = Cryo.Dictionary.join(buttonProps, getTextButtonProps(self.props.text, displayColor))
     elseif (displayType == "color") then
-        buttonProps = Util.table.merge(buttonProps, getColorButtonProps(self.props.color))
+        buttonProps = Cryo.Dictionary.join(buttonProps, getColorButtonProps(self.props.color))
     elseif (displayType == "colorSequence") then
-        buttonProps = Util.table.merge(buttonProps, colorSequenceButtonProps)
+        buttonProps = Cryo.Dictionary.join(buttonProps, colorSequenceButtonProps)
     end
 
     if ((not self.props.disabled) and ((displayType == "image") or (displayType == "text"))) then

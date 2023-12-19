@@ -4,7 +4,6 @@ local root = script.Parent.Parent
 
 local includes = root:FindFirstChild("includes")
 local ColorLib = require(includes:FindFirstChild("Color"))
-local state = require(includes:FindFirstChild("state"))
 local t = require(includes:FindFirstChild("t"))
 
 local Color = ColorLib.Color
@@ -48,6 +47,17 @@ Util.palette = {}
 
 -- TABLE UTIL
 
+Util.table.deepFreeze = function(tbl: {[any]: any}): {[any]: any}
+    for _, v in pairs(tbl) do
+        if ((type(v) == "table") and (not table.isfrozen(v))) then
+            Util.table.deepFreeze(v)
+        end
+    end
+
+    table.freeze(tbl)
+    return tbl
+end
+
 Util.table.deepCopy = function(tbl: {[any]: any}): {[any]: any}
     local copy: {[any]: any} = {}
 
@@ -64,34 +74,6 @@ Util.table.deepCopy = function(tbl: {[any]: any}): {[any]: any}
     end
 
     return copy
-end
-
-Util.table.numKeys = function(tbl: {[any]: any}): number
-    local n: number = 0
-
-    for _ in state.iter.pairs(tbl) do
-        n = n + 1
-    end
-
-    return n
-end
-
-Util.table.merge = function(tbl: {[any]: any}, slice: {[any]: any}): {[any]: any}
-    if (Util.table.numKeys(slice) < 1) then return tbl end
-
-    for key, newValue in state.iter.pairs(slice) do
-        local value: any
-
-        if (newValue ~= nil) then
-            value = newValue
-        else
-            value = tbl[key]
-        end
-
-        tbl[key] = value
-    end
-
-    return tbl
 end
 
 Util.table.shallowCompare = function(tbl: {[any]: any}, u: {[any]: any}): {string}
@@ -122,7 +104,7 @@ Util.palette.getNewItemName = function(items, originalName: string, selfIndex: n
     repeat
         found = false
 
-        for i, item in state.iter.ipairs(items) do
+        for i, item in ipairs(items) do
             if ((item.name == itemName) and (i ~= selfIndex)) then
                 found = true
                 numDuplicates = numDuplicates + 1
