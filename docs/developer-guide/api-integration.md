@@ -1,3 +1,5 @@
+TODO
+
 The ColorPane API allows plugin developers to use ColorPane in their projects in place of creating their own pickers.
 
 ## Acquiring the API

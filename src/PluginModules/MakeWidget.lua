@@ -1,3 +1,5 @@
+local RunService = game:GetService("RunService")
+
 local root = script.Parent.Parent
 
 local PluginModules = root:FindFirstChild("PluginModules")
@@ -101,6 +103,16 @@ return function(plugin, widgetInfoName)
     widget.Title = widgetInfo.Title
     widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     widget.Archivable = false
+
+    -- fix a bug where PluginGuis don't show up when you enable them
+    -- in my testing this only happens with the gradient editor
+    if (widgetInfoName == "GradientEditor") then
+        RunService.Heartbeat:Wait()
+        widget.Enabled = true
+        RunService.Heartbeat:Wait()
+        RunService.Heartbeat:Wait()
+        widget.Enabled = false
+    end
 
     widgets[widgetInfoName] = widget
     return widget

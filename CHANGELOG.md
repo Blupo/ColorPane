@@ -16,6 +16,7 @@
 - The "*Periodically check for updates*" setting now does what it says it does
 - Fixed the initial size of the color editor only showing one page (it should have 2)
 - `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
+- Added a workaround for a Studio bug where the Gradient Editor doesn't show up when it should 
 
 ## [0.4.1] - 2022-09-30
 
