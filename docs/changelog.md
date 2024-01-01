@@ -11,7 +11,7 @@
 - For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
 - The API script is now injected into StudioService instead of CoreGui
 - Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
-- The type of `API.Unloading` is now a [`Signal<nil>`](https://roblox.github.io/signal-lua-internal/api-reference/#types)
+- The type of `API.Unloading` is now an `RBXScriptSignal<nil>`
 
 ### Fixed
 - The "*Periodically check for updates*" setting now does what it says it does

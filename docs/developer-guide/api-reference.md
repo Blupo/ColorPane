@@ -119,7 +119,7 @@ Prompts for a gradient. Will return a Promise that resolves with a Gradient or C
 ### Unloading
 
 ```
-ColorPane.Unloading: Signal<nil>
+ColorPane.Unloading: RBXScriptSignal<nil>
 ```
 
 Fires when the API is about to be unloaded.
