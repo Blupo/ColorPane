@@ -1,24 +1,24 @@
-local RunService = game:GetService("RunService")
+local RunService: RunService = game:GetService("RunService")
 
 ---
 
 local root = script.Parent.Parent
 
-local includes = root:FindFirstChild("includes")
-local Promise = require(includes:FindFirstChild("Promise"))
+local includes = root.includes
+local Promise = require(includes.Promise)
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local ReleaseVersion = require(PluginModules:FindFirstChild("ReleaseVersion"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
+local ReleaseVersion = require(PluginModules.ReleaseVersion)
+local Translator = require(PluginModules.Translator)
 
 ---
 
-local ASSET_ID = 6474565567
-local AUTO_CHECK_INTERVAL = 5 * 60 -- in seconds
+local ASSET_ID: number = 6474565567
+local AUTO_CHECK_INTERVAL: number = 5 * 60 -- in seconds
 
-local sessionNotificationShown = false
+local sessionNotificationShown: boolean = false
 local autoCheckPromise
 
 ---
@@ -41,8 +41,8 @@ UpdateChecker.Check = function()
     local latestPlugin = data[1]
     if (not latestPlugin) then return end
 
-    local latestPluginModules = latestPlugin:FindFirstChild("PluginModules")
-    local latestReleaseVersionScript = latestPluginModules:FindFirstChild("ReleaseVersion")
+    local latestPluginModules = latestPlugin.PluginModules
+    local latestReleaseVersionScript = latestPluginModules.ReleaseVersion
 
     -- default to v0.0.0 for versions before v0.3
     local latestReleaseVersion = latestReleaseVersionScript and require(latestReleaseVersionScript) or {0, 0, 0}

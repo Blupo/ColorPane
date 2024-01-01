@@ -5,21 +5,21 @@ local TextService = game:GetService("TextService")
 
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local API = require(PluginModules:FindFirstChild("APIBroker"))
-local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local API = require(PluginModules.APIProvider)
+local DocumentationPluginMenu = require(PluginModules.DocumentationPluginMenu)
+local PluginEnums = require(PluginModules.PluginEnums)
+local SelectionManager = require(PluginModules.SelectionManager)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
+local includes = root.includes
+local Roact = require(includes.Roact)
 
-local Components = root:FindFirstChild("Components")
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
+local Components = root.Components
+local ConnectTheme = require(Components.ConnectTheme)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardScrollingFrame = StandardComponents.ScrollingFrame
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUICorner = StandardComponents.UICorner

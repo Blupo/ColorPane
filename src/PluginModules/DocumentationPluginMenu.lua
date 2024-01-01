@@ -1,34 +1,26 @@
-local savedPlugin
+--!strict
+
+local PluginModules = script.Parent
+local PluginProvider = require(PluginModules.PluginProvider)
+local Util = require(PluginModules.Util)
+
+---
+
+local plugin: Plugin? = PluginProvider()
+assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+
+local pluginMenu: PluginMenu = plugin:CreatePluginMenu("ColorPane", "ColorPane")
+local action: PluginAction = pluginMenu:AddNewAction("ColorProperties_ShowDocumentation", "Show Documentation")
 
 ---
 
 local DocumentationPluginMenu = {}
 
-DocumentationPluginMenu.init = function(plugin)
-    DocumentationPluginMenu.init = nil
-
-    local pluginMenu = plugin:CreatePluginMenu("ColorPane", "ColorPane")
-    local action = pluginMenu:AddNewAction("ColorProperties_ShowDocumentation", "Show Documentation")
-
-    DocumentationPluginMenu.Menu = pluginMenu
-    DocumentationPluginMenu.Action = action
-
-    plugin.Unloading:Connect(function()
-        DocumentationPluginMenu.Menu = nil
-        DocumentationPluginMenu.Action = nil
-
-        savedPlugin = nil
-    end)
-
-    savedPlugin = plugin
-end
+DocumentationPluginMenu.Menu = pluginMenu
+DocumentationPluginMenu.Action = action
 
 DocumentationPluginMenu.ShowPropertyDocumentation = function(className: string, propertyName: string)
-    if (not savedPlugin) then return end
-
-    savedPlugin:OpenWikiPage("api-reference/property/" .. className .. "/" .. propertyName)
+    plugin:OpenWikiPage("api-reference/property/" .. className .. "/" .. propertyName)
 end
-
----
 
 return DocumentationPluginMenu

@@ -4,23 +4,23 @@ local RunService = game:GetService("RunService")
 
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
+local RobloxAPI = require(PluginModules.RobloxAPI)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
+local includes = root.includes
+local Roact = require(includes.Roact)
 
-local Components = root:FindFirstChild("Components")
-local Button = require(Components:FindFirstChild("Button"))
-local Checkbox = require(Components:FindFirstChild("Checkbox"))
-local ColorPropertiesList = require(Components:FindFirstChild("ColorPropertiesList"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
+local Components = root.Components
+local Button = require(Components.Button)
+local Checkbox = require(Components.Checkbox)
+local ColorPropertiesList = require(Components.ColorPropertiesList)
+local ConnectTheme = require(Components.ConnectTheme)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIPadding = StandardComponents.UIPadding
 

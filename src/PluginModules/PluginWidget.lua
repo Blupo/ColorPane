@@ -1,12 +1,21 @@
-local RunService = game:GetService("RunService")
+--!strict
 
-local root = script.Parent.Parent
-
-local PluginModules = root:FindFirstChild("PluginModules")
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local RunService: RunService = game:GetService("RunService")
 
 ---
+
+local PluginModules = script.Parent
+local PluginProvider = require(PluginModules.PluginProvider)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
+
+---
+
+local plugin: Plugin? = PluginProvider()
+assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+
+local widgets: {[string]: DockWidgetPluginGui} = {}
 
 local colorEditorDefaultWidth = Style.Constants.PagePadding +
     (Style.Constants.EditorPageWidth + Style.Constants.MajorElementPadding) * 2 +
@@ -44,8 +53,6 @@ local firstTimeSetupMinWidth = 84 +
     (Style.Constants.PagePadding * 2) +
     Style.Constants.SpaciousElementPadding +
     Style.Constants.StandardButtonHeight
-
----
 
 local widgetsInfo = {
     ColorEditor = {
@@ -91,13 +98,13 @@ local widgetsInfo = {
     },
 }
 
-local widgets = {}
+---
 
-return function(plugin, widgetInfoName)
+return function(widgetInfoName: string): DockWidgetPluginGui
     if (widgets[widgetInfoName]) then return widgets[widgetInfoName] end
 
     local widgetInfo = widgetsInfo[widgetInfoName]
-    local widget = plugin:CreateDockWidgetPluginGui(widgetInfo.Id, widgetInfo.Info)
+    local widget: DockWidgetPluginGui = plugin:CreateDockWidgetPluginGui(widgetInfo.Id, widgetInfo.Info)
 
     widget.Name = widgetInfo.Id
     widget.Title = widgetInfo.Title
@@ -105,8 +112,7 @@ return function(plugin, widgetInfoName)
     widget.Archivable = false
 
     -- fix a bug where PluginGuis don't show up when you enable them
-    -- in my testing this only happens with the gradient editor
-    if (widgetInfoName == "GradientEditor") then
+    if (widgetInfoName ~= "ColorProperties") then
         RunService.Heartbeat:Wait()
         widget.Enabled = true
         RunService.Heartbeat:Wait()

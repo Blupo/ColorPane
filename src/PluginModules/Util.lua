@@ -1,10 +1,8 @@
 --!strict
 
-local root = script.Parent.Parent
-
-local includes = root:FindFirstChild("includes")
-local ColorLib = require(includes:FindFirstChild("Color"))
-local t = require(includes:FindFirstChild("t"))
+local includes = script.Parent.Parent.includes
+local ColorLib = require(includes.Color)
+local t = require(includes.t)
 
 local Color = ColorLib.Color
 
@@ -178,6 +176,12 @@ Util.escapeText = function(s: string): string
     return (string.gsub(s, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%0"))
 end
 
+Util.makeBugMessage = function(msg: string): string
+    return "[ColorPane] Error: " .. msg .. "\nThis is a bug. If you're seeing this, please submit a bug report."
+end
+
+-- GRADIENT UTIL
+
 Util.getMaxUserKeypoints = function(maxKeypoints: number, precision: number): number
     return math.floor(((maxKeypoints - 1) / (precision + 1)) + 1)
 end
@@ -212,6 +216,7 @@ Util.generateFullKeypointList = function(keypoints: {GradientKeypoint}, colorSpa
     return fullKeypoints
 end
 
+-- converts a palette's colors into the specified type
 Util.typeColorPalette = function(palette, colorType: string)
     local paletteCopy = Util.table.deepCopy(palette)
     local colors = paletteCopy.colors

@@ -1,22 +1,22 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Constants = require(PluginModules:FindFirstChild("Constants"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local Constants = require(PluginModules.Constants)
+local PluginEnums = require(PluginModules.PluginEnums)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Color = require(includes.Color).Color
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local SimpleList = require(Components:FindFirstChild("SimpleList"))
-local Slider = require(Components:FindFirstChild("Slider"))
+local Components = root.Components
+local SimpleList = require(Components.SimpleList)
+local Slider = require(Components.Slider)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIPadding = StandardComponents.UIPadding
 

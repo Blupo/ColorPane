@@ -12,25 +12,8 @@ local StudioService: StudioService = game:GetService("StudioService")
 
 ---
 
---[=[
-    @interface APIStatus
-    @within Proxy
-    @field NoError "NoError"
-    @field NoAPIConnection "NoAPIConnection" -- The API is not available
-    @field APIError "APIError" -- There was a problem communicating with the API
-    @field IncompatiblityError "IncompatibilityError" -- The Proxy and ColorPane APIs are incompatible
-    @field UnknownError "UnknownError"
-]=]
 export type APIStatus = "NoError" | "NoAPIConnection" | "APIError" | "IncompatibilityError" | "UnknownError"
 
---[=[
-    @interface ProxyResponse
-    @within Proxy
-    @field Success boolean -- Did the call succeed?
-    @field Status APIStatus -- The status of the API call
-    @field StatusMessage string -- An explanation of the status
-    @field Body any -- The value the API returned
-]=]
 export type ProxyResponse = {
     Success: boolean,
     Status: APIStatus,
@@ -126,73 +109,35 @@ end
 
 ---
 
---[=[
-    @class Proxy
-]=]
-
 local Proxy = {}
-
---[=[
-    @prop Unloading RBXScriptSignal
-    @within Proxy
-    @readonly
-]=]
 Proxy.Unloading = unloadingEvent.Event
 
---[=[
-    @function IsAPIConnected
-    @within Proxy
-    @return boolean
-]=]
+-- Returns if the proxy is connected to ColorPane
 Proxy.IsAPIConnected = function()
     return (if currentAPI then true else false)
 end
 
---[=[
-    @function GetVersion
-    @within Proxy
-    @return number
-    @return number
-    @return number
-]=]
+-- Returns the proxy version
 Proxy.GetVersion = function()
     return table.unpack(PROXY_VERSION)
 end
 
---[=[
-    @function IsColorEditorOpen
-    @within Proxy
-    @return ProxyResponse<boolean>
-]=]
+-- Returns if ColorPane's color editor is open
 Proxy.IsColorEditorOpen = wrapAPIFunction(function()
     return currentAPI.IsColorEditorOpen()
 end)
 
---[=[
-    @function IsGradientEditorOpen
-    @within Proxy
-    @return ProxyResponse<boolean>
-]=]
+-- Returns if ColorPane's gradient editor is open
 Proxy.IsGradientEditorOpen = wrapAPIFunction(function()
     return currentAPI.IsGradientEditorOpen()
 end)
 
---[=[
-    @function PromptForColor
-    @within Proxy
-    @param options ColorPromptOptions
-    @return ProxyResponse<Promise>
-]=]
+-- Prompts the user for a color
 Proxy.PromptForColor = wrapAPIFunction(function(promptOptions)
     return currentAPI.PromptForColor(promptOptions)
 end)
 
---[=[
-    @function PromptForGradient
-    @within Proxy
-    @param options GradientPromptOptions
-    @return ProxyResponse<Promise>
-]=]
+-- Prompts the user for a gradient
 Proxy.PromptForGradient = wrapAPIFunction(function(promptOptions)
     return currentAPI.PromptForGradient(promptOptions)
 end)

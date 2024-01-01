@@ -1,24 +1,30 @@
+--!strict
+
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
-local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local PluginProvider = require(PluginModules.PluginProvider)
+local PluginWidget = require(PluginModules.PluginWidget)
+local Store = require(PluginModules.Store)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local GradientPalette = require(Components:FindFirstChild("GradientPalette"))
+local Components = root.Components
+local GradientPalette = require(Components.GradientPalette)
 
 ---
 
-local colorPaneStore
+local plugin: Plugin? = PluginProvider()
+assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+
+---
 
 local tree
-local widget
-local widgetEnabledChanged
+local widget = PluginWidget("GradientPalette")
 
 ---
 
@@ -32,7 +38,7 @@ GradientPaletteWidget.Open = function(beforeSetGradient)
     if (tree) then return end
 
     tree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(GradientPalette, {
             beforeSetGradient = beforeSetGradient,
@@ -52,23 +58,15 @@ GradientPaletteWidget.Close = function()
     widget.Title = ""
 end
 
-GradientPaletteWidget.init = function(plugin)
-    GradientPaletteWidget.init = nil
+---
 
-    colorPaneStore = MakeStore(plugin)
-    widget = MakeWidget(plugin, "GradientPalette")
+widget:GetPropertyChangedSignal("Enabled"):Connect(function()
+    if (widget.Enabled and (not tree)) then
+        widget.Enabled = false
+    elseif ((not widget.Enabled) and tree) then
+        GradientPaletteWidget.Close()
+    end
+end)
 
-    widgetEnabledChanged = widget:GetPropertyChangedSignal("Enabled"):Connect(function()
-        if (widget.Enabled and (not tree)) then
-            widget.Enabled = false
-        elseif ((not widget.Enabled) and tree) then
-            GradientPaletteWidget.Close()
-        end
-    end)
-
-    plugin.Unloading:Connect(function()
-        widgetEnabledChanged:Disconnect()
-    end)
-end
 
 return GradientPaletteWidget

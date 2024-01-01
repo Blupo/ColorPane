@@ -1,7 +1,4 @@
-local root = script.Parent.Parent
-local includes = root:FindFirstChild("includes")
-
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local RoactRodux = require(script.Parent.Parent.includes.RoactRodux)
 
 ---
 

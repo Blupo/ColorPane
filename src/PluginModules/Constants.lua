@@ -6,6 +6,7 @@ local CONSTANTS = {
     KELVIN_UPPER_RANGE = 10000,
 }
 
+-- Calculate the maximum number of keypoints that can be in a ColorSequence, up to 100
 do
     local n: number = 2
     local csConstructionOk: boolean = true

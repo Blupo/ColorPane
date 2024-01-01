@@ -1,21 +1,21 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
-local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Color = require(includes.Color).Color
+local BuiltInPalettes = require(includes.BuiltInPalettes)
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local TextInput = require(Components:FindFirstChild("TextInput"))
+local Components = root.Components
+local TextInput = require(Components.TextInput)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardScrollingFrame = StandardComponents.ScrollingFrame
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout

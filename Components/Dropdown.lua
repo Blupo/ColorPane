@@ -1,17 +1,17 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Style = require(PluginModules:FindFirstChild("Style"))
+local PluginModules = root.PluginModules
+local Style = require(PluginModules.Style)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
+local includes = root.includes
+local Roact = require(includes.Roact)
 
-local Components = root:FindFirstChild("Components")
-local Button = require(Components:FindFirstChild("Button"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
-local SimpleList = require(Components:FindFirstChild("SimpleList"))
+local Components = root.Components
+local Button = require(Components.Button)
+local ConnectTheme = require(Components.ConnectTheme)
+local SimpleList = require(Components.SimpleList)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardUICorner = StandardComponents.UICorner
 local StandardUIPadding = StandardComponents.UIPadding
 

@@ -5,8 +5,8 @@ local RunService: RunService = game:GetService("RunService")
 ---
 
 local root = script.Parent.Parent
-local includes = root:FindFirstChild("includes")
-local Signal = require(includes:FindFirstChild("Signal"))
+local includes = root.includes
+local Signal = require(includes.Signal)
 
 ---
 

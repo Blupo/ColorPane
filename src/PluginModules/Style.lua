@@ -1,6 +1,6 @@
 --!strict
 
-local ContentProvider = game:GetService("ContentProvider")
+local ContentProvider: ContentProvider = game:GetService("ContentProvider")
 
 ---
 

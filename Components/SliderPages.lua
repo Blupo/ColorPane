@@ -1,19 +1,19 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local Translator = require(PluginModules.Translator)
 
-local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Color = require(includes.Color).Color
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local GreyscaleSliderPage = require(Components:FindFirstChild("GreyscaleSliderPage"))
-local Pages = require(Components:FindFirstChild("Pages"))
-local SliderPage = require(Components:FindFirstChild("SliderPage"))
-local TemperatureSliderPage = require(Components:FindFirstChild("TemperatureSliderPage"))
+local Components = root.Components
+local GreyscaleSliderPage = require(Components.GreyscaleSliderPage)
+local Pages = require(Components.Pages)
+local SliderPage = require(Components.SliderPage)
+local TemperatureSliderPage = require(Components.TemperatureSliderPage)
 
 ---
 

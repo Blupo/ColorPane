@@ -6,21 +6,21 @@ local ServerStorage = game:GetService("ServerStorage")
 
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local Button = require(Components:FindFirstChild("Button"))
-local Dropdown = require(Components:FindFirstChild("Dropdown"))
-local RadioButtonGroup = require(Components:FindFirstChild("RadioButtonGroup"))
+local Components = root.Components
+local Button = require(Components.Button)
+local Dropdown = require(Components.Dropdown)
+local RadioButtonGroup = require(Components.RadioButtonGroup)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardTextLabel = StandardComponents.TextLabel
 local StandardUIListLayout = StandardComponents.UIListLayout
 

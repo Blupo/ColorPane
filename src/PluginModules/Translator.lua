@@ -1,15 +1,13 @@
-local StudioService = game:GetService("StudioService")
+--!strict
+
+local StudioService: StudioService = game:GetService("StudioService")
 
 ---
 
-local root = script.Parent.Parent
-local Translations = root:FindFirstChild("Translations")
+local Translations: LocalizationTable = script.Parent.Parent.Translations
 
----
-
-local FALLBACK_TRANSLATOR = Translations:GetTranslator("en-us")
-
-local translator = Translations:GetTranslator(StudioService.StudioLocaleId)
+local FALLBACK_TRANSLATOR: Translator = Translations:GetTranslator("en-us")
+local LocaleTranslator: Translator = Translations:GetTranslator(StudioService.StudioLocaleId)
 
 ---
 
@@ -17,7 +15,7 @@ local Translator = {}
 
 Translator.FormatByKey = function(key: string, args: {[any]: any}?): string
     local success, data = pcall(function()
-        return translator:FormatByKey(key, args)
+        return LocaleTranslator:FormatByKey(key, args)
     end)
 
     if (not success) then

@@ -1,17 +1,17 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local BuiltInPalettes = require(includes:FindFirstChild("BuiltInPalettes"))
-local Roact = require(includes:FindFirstChild("Roact"))
+local includes = root.includes
+local BuiltInPalettes = require(includes.BuiltInPalettes)
+local Roact = require(includes.Roact)
 
-local Components = root:FindFirstChild("Components")
-local ColorBrewerPalettes = require(Components:FindFirstChild("ColorBrewerPalettes"))
-local PicularPalette = require(Components:FindFirstChild("PicularPalette"))
-local Palette = require(Components:FindFirstChild("Palette"))
+local Components = root.Components
+local ColorBrewerPalettes = require(Components.ColorBrewerPalettes)
+local PicularPalette = require(Components.PicularPalette)
+local Palette = require(Components.Palette)
 
 local BrickColors = BuiltInPalettes.BrickColors
 local CopicColors = BuiltInPalettes.CopicColors

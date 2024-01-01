@@ -1,24 +1,24 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local BuiltInPaletteComponents = require(Components:FindFirstChild("BuiltInPaletteComponents"))
-local ExportPalette = require(Components:FindFirstChild("ExportPalette"))
-local ImportPalette = require(Components:FindFirstChild("ImportPalette"))
-local NamePalette = require(Components:FindFirstChild("NamePalette"))
-local Pages = require(Components:FindFirstChild("Pages"))
-local Palette = require(Components:FindFirstChild("Palette"))
-local RemovePalette = require(Components:FindFirstChild("RemovePalette"))
+local Components = root.Components
+local BuiltInPaletteComponents = require(Components.BuiltInPaletteComponents)
+local ExportPalette = require(Components.ExportPalette)
+local ImportPalette = require(Components.ImportPalette)
+local NamePalette = require(Components.NamePalette)
+local Pages = require(Components.Pages)
+local Palette = require(Components.Palette)
+local RemovePalette = require(Components.RemovePalette)
 
 ---
 

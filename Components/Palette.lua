@@ -1,24 +1,24 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Style = require(PluginModules:FindFirstChild("Style"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local Style = require(PluginModules.Style)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Color = require(includes.Color).Color
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local Button = require(Components:FindFirstChild("Button"))
-local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
-local PaletteColorGrid = require(Components:FindFirstChild("PaletteColorGrid"))
-local PaletteColorList = require(Components:FindFirstChild("PaletteColorList"))
-local TextInput = require(Components:FindFirstChild("TextInput"))
+local Components = root.Components
+local Button = require(Components.Button)
+local ButtonBar = require(Components.ButtonBar)
+local PaletteColorGrid = require(Components.PaletteColorGrid)
+local PaletteColorList = require(Components.PaletteColorList)
+local TextInput = require(Components.TextInput)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---

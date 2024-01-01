@@ -1,27 +1,27 @@
-local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
+local HttpService: HttpService = game:GetService("HttpService")
+local RunService: RunService = game:GetService("RunService")
 
 ---
 
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local ColorAPIData = require(PluginModules:FindFirstChild("ColorAPIData"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
+local PluginModules = root.PluginModules
+local ColorAPIData = require(PluginModules.ColorAPIData)
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
 
-local includes = root:FindFirstChild("includes")
-local Promise = require(includes:FindFirstChild("Promise"))
-local Signal = require(includes:FindFirstChild("Signal"))
+local includes = root.includes
+local Promise = require(includes.Promise)
+local Signal = require(includes.Signal)
 
 ---
 
-local API_URL = "https://setup.rbxcdn.com/"
-local STUDIO_VERSION_ENDPOINT = "versionQTStudio"
-local API_DATA_ENDPOINT = "%s-API-Dump.json"
+local API_URL: string = "https://setup.rbxcdn.com/"
+local STUDIO_VERSION_ENDPOINT: string = "versionQTStudio"
+local API_DATA_ENDPOINT: string = "%s-API-Dump.json"
 
 local apiData
-local requestInProgress = false
+local requestInProgress: boolean = false
 
 local dataRequestStartedSignal: Signal.Signal<nil>, fireDataRequestStarted: Signal.FireSignal<nil> = Signal.createSignal()
 local dataRequestFinishedSignal: Signal.Signal<boolean>, fireDataRequestFinished: Signal.FireSignal<boolean> = Signal.createSignal()

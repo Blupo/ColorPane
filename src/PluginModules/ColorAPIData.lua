@@ -1,13 +1,16 @@
-local Workspace = game:GetService("Workspace")
+local Workspace: Workspace = game:GetService("Workspace")
 
 ---
 
 local root = script.Parent.Parent
-local includes = root:FindFirstChild("includes")
 
-local ColorLib = require(includes:FindFirstChild("Color"))
+local includes = root.includes
+local ColorLib = require(includes.Color)
+
+local PluginModules = root.PluginModules
+local Util = require(PluginModules.Util)
+
 local Terrain = Workspace.Terrain
-
 local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 
 ---
@@ -15,18 +18,6 @@ local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 local colorProperties = {}
 local classHierarchy = {}
 local materialEnumItems = Enum.Material:GetEnumItems()
-
-local deepFreeze
-
-deepFreeze = function(t: {[any]: any})
-    for _, v in pairs(t) do
-        if (type(v) == "table") then
-            deepFreeze(v)
-        end
-    end
-    
-    table.freeze(t)
-end
 
 ---
 
@@ -121,8 +112,8 @@ ColorAPIData.init = function(apiData)
     end
 
     -- freeze everything
-    deepFreeze(classHierarchy)
-    deepFreeze(colorProperties)
+    Util.table.deepFreeze(classHierarchy)
+    Util.table.deepFreeze(colorProperties)
 end
 
 ColorAPIData.GetProperty = function(className: string, propertyName: string)

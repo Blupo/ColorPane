@@ -1,13 +1,13 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local Style = require(PluginModules:FindFirstChild("Style"))
+local PluginModules = root.PluginModules
+local Style = require(PluginModules.Style)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
+local includes = root.includes
+local Roact = require(includes.Roact)
 
-local Components = root:FindFirstChild("Components")
-local Dropdown = require(Components:FindFirstChild("Dropdown"))
+local Components = root.Components
+local Dropdown = require(Components.Dropdown)
 
 ---
 

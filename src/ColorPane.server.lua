@@ -1,56 +1,47 @@
-local StudioService = game:GetService("StudioService")
-local RunService = game:GetService("RunService")
+local StudioService: StudioService = game:GetService("StudioService")
+local RunService: RunService = game:GetService("RunService")
 
 ---
 
 local root = script.Parent
-local APIScript = root:FindFirstChild("API")
+local APIScript = root.API
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
-local Signal = require(includes:FindFirstChild("Signal"))
+local includes = root.includes
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
+local Signal = require(includes.Signal)
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local DocumentationPluginMenu = require(PluginModules:FindFirstChild("DocumentationPluginMenu"))
-local GradientInfoWidget = require(PluginModules:FindFirstChild("GradientInfoWidget"))
-local GradientPaletteWidget = require(PluginModules:FindFirstChild("GradientPaletteWidget"))
-local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
-local MakeToolbar = require(PluginModules:FindFirstChild("MakeToolbar"))
-local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local RepeatingCallback = require(PluginModules:FindFirstChild("RepeatingCallback"))
-local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
-local SelectionManager = require(PluginModules:FindFirstChild("SelectionManager"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local UpdateChecker = require(PluginModules:FindFirstChild("UpdateChecker"))
+local PluginModules = root.PluginModules
 
-local Components = root:FindFirstChild("Components")
-local ColorProperties = require(Components:FindFirstChild("ColorProperties"))
-local FirstTimeSetup = require(Components:FindFirstChild("FirstTimeSetup"))
-local Settings = require(Components:FindFirstChild("Settings"))
+-- provide plugin object to modules
+-- IMPORTANT: this needs to come before any modules that require the plugin object
+require(PluginModules.PluginProvider)(plugin)  
 
-PluginSettings.init(plugin) -- priority
-DocumentationPluginMenu.init(plugin)
-GradientInfoWidget.init(plugin)
-GradientPaletteWidget.init(plugin)
-RepeatingCallback.init(plugin)
-SelectionManager.init(plugin)
+local PluginToolbar = require(PluginModules.PluginToolbar)
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
+local PluginWidget = require(PluginModules.PluginWidget)
+local RobloxAPI = require(PluginModules.RobloxAPI)
+local Store = require(PluginModules.Store)
+local Translator = require(PluginModules.Translator)
+local UpdateChecker = require(PluginModules.UpdateChecker)
+
+local Components = root.Components
+local ColorProperties = require(Components.ColorProperties)
+local FirstTimeSetup = require(Components.FirstTimeSetup)
+local Settings = require(Components.Settings)
 
 ---
 
-local ColorPane = require(PluginModules:FindFirstChild("APIBroker"))
+local ColorPane = require(PluginModules.APIProvider)
 
-local colorPaneStore = MakeStore(plugin)
-local colorPropertiesWidget = MakeWidget(plugin, "ColorProperties")
-local settingsWidget = MakeWidget(plugin, "Settings")
+local colorPropertiesWidget = PluginWidget("ColorProperties")
+local settingsWidget = PluginWidget("Settings")
 
-local toolbarComponents = MakeToolbar(plugin)
-local colorEditorButton = toolbarComponents.ColorEditorButton
-local gradientEditorButton = toolbarComponents.ColorSequenceEditorButton
-local colorPropertiesButton = toolbarComponents.ColorPropertiesButton
-local settingsButton = toolbarComponents.SettingsButton
+local colorEditorButton = PluginToolbar.ColorEditorButton
+local gradientEditorButton = PluginToolbar.ColorSequenceEditorButton
+local colorPropertiesButton = PluginToolbar.ColorPropertiesButton
+local settingsButton = PluginToolbar.SettingsButton
 
 local colorPropertiesTree
 local settingsTree
@@ -77,7 +68,7 @@ end
 
 local mountSettings = function()
     settingsTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(Settings)
     }), settingsWidget)
@@ -96,7 +87,7 @@ end
 
 local mountColorProperties = function()
     colorPropertiesTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(ColorProperties)
     }), colorPropertiesWidget)
@@ -128,7 +119,7 @@ if (StudioService:FindFirstChild("ColorPane")) then
 end
 
 if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
-    local firstTimeSetupWidget = MakeWidget(plugin, "FirstTimeSetup")
+    local firstTimeSetupWidget = PluginWidget("FirstTimeSetup")
     local firstTimeSetupWidgetEnabledChanged
     local firstTimeSetupTree
     local confirmSignal: Signal.Signal<nil>, fireConfirm: Signal.FireSignal<nil> = Signal.createSignal()
@@ -140,7 +131,7 @@ if (not PluginSettings.Get(PluginEnums.PluginSettingKey.FirstTimeSetup)) then
     end)
 
     firstTimeSetupTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(FirstTimeSetup, {
             onConfirm = function()

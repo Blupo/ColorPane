@@ -1,20 +1,25 @@
-local ChangeHistoryService = game:GetService("ChangeHistoryService")
-local Selection = game:GetService("Selection")
+local ChangeHistoryService: ChangeHistoryService = game:GetService("ChangeHistoryService")
+local Selection: Selection = game:GetService("Selection")
 
 ---
 
 local root = script.Parent.Parent
 
-local includes = root:FindFirstChild("includes")
-local Signal = require(includes:FindFirstChild("Signal"))
+local includes = root.includes
+local Signal = require(includes.Signal)
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local ColorAPIData = require(PluginModules:FindFirstChild("ColorAPIData"))
-local RobloxAPI = require(PluginModules:FindFirstChild("RobloxAPI"))
+local PluginModules = root.PluginModules
+local ColorAPIData = require(PluginModules.ColorAPIData)
+local PluginProvider = require(PluginModules.PluginProvider)
+local RobloxAPI = require(PluginModules.RobloxAPI)
+local Util = require(PluginModules.Util)
 
 ---
 
-local apiIsReady = false
+local plugin: Plugin? = PluginProvider()
+assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+
+local apiIsReady: boolean = false
 
 local currentSelection: {Instance} = {}
 local currentSelectionProperties = {}
@@ -25,17 +30,15 @@ local internalSelectionChanged
 local selectionChangedSignal: Signal.Signal<nil>, fireSelectionChanged: Signal.FireSignal<nil> = Signal.createSignal()
 local selectionColorsChangedSignal: Signal.Signal<nil>, fireSelectionColorsChanged: Signal.FireSignal<nil> = Signal.createSignal()
 
+-- gets all Instances in the selection which are "safe"
+-- i.e. doesn't raise any security errors and has a non-blank ClassName
 local getSafeSelection = function(): {Instance}
     local selection: {Instance} = Selection:Get()
 
     for i = #selection, 1, -1 do
-        local obj = selection[i]
+        local obj: Instance = selection[i]
 
-        --[[
-            Make sure we pass the security check and ClassName isn't blank
-            (because apparently that's a thing)
-        ]]
-        local passesSecurityCheck, validClassName = pcall(function()
+        local passesSecurityCheck: boolean, validClassName: boolean = pcall(function()
             return (obj.ClassName ~= "")
         end)
 
@@ -122,10 +125,6 @@ local generateSelectionCommonColorPropertyValues = function(properties)
     return values
 end
 
----
-
-local SelectionManager = {}
-
 local onSelectionChanged = function()
     currentSelection = getSafeSelection()
     currentSelectionProperties = getSelectionColorProperties(currentSelection)
@@ -163,6 +162,10 @@ local onSelectionChanged = function()
 
     fireSelectionChanged()
 end
+
+---
+
+local SelectionManager = {}
 
 SelectionManager.SelectionChanged = selectionChangedSignal
 SelectionManager.SelectionColorsChanged = selectionColorsChangedSignal
@@ -302,19 +305,14 @@ SelectionManager.SetSelectionProperty = function(className: string, propertyName
     end
 end
 
-SelectionManager.init = function(plugin)
-    SelectionManager.init = nil
-
-    RobloxAPI.DataRequestFinished:subscribe(function(didLoad: boolean)
-        if (not didLoad) then return end
-
-        apiIsReady = true
-        onSelectionChanged()
-    end)
-
-    plugin.Unloading:Connect(SelectionManager.Disconnect)
-end
-
 ---
 
+RobloxAPI.DataRequestFinished:subscribe(function(didLoad: boolean)
+    if (not didLoad) then return end
+
+    apiIsReady = true
+    onSelectionChanged()
+end)
+
+plugin.Unloading:Connect(SelectionManager.Disconnect)
 return SelectionManager

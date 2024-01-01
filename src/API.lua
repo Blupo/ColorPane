@@ -12,29 +12,29 @@
 
 local root = script.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local EditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals"))
-local Constants = require(PluginModules:FindFirstChild("Constants"))
-local MakeStore = require(PluginModules:FindFirstChild("MakeStore"))
-local MakeWidget = require(PluginModules:FindFirstChild("MakeWidget"))
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local PluginSettings = require(PluginModules:FindFirstChild("PluginSettings"))
-local ReleaseVersion = require(PluginModules:FindFirstChild("ReleaseVersion"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
-local Util = require(PluginModules:FindFirstChild("Util"))
+local PluginModules = root.PluginModules
+local EditorInputSignals = require(PluginModules.EditorInputSignals)
+local Constants = require(PluginModules.Constants)
+local PluginEnums = require(PluginModules.PluginEnums)
+local PluginSettings = require(PluginModules.PluginSettings)
+local PluginWidget = require(PluginModules.PluginWidget)
+local ReleaseVersion = require(PluginModules.ReleaseVersion)
+local Store = require(PluginModules.Store)
+local Translator = require(PluginModules.Translator)
+local Util = require(PluginModules.Util)
 
-local includes = root:FindFirstChild("includes")
-local ColorLib = require(includes:FindFirstChild("Color"))
-local Cryo = require(includes:FindFirstChild("Cryo"))
-local Promise = require(includes:FindFirstChild("Promise"))
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
-local Signal = require(includes:FindFirstChild("Signal"))
-local t = require(includes:FindFirstChild("t"))
+local includes = root.includes
+local ColorLib = require(includes.Color)
+local Cryo = require(includes.Cryo)
+local Promise = require(includes.Promise)
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
+local Signal = require(includes.Signal)
+local t = require(includes.t)
 
-local Components = root:FindFirstChild("Components")
-local ColorEditor = require(Components:FindFirstChild("ColorEditor"))
-local GradientEditor = require(Components:FindFirstChild("GradientEditor"))
+local Components = root.Components
+local ColorEditor = require(Components.ColorEditor)
+local GradientEditor = require(Components.GradientEditor)
 
 local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 
@@ -43,49 +43,16 @@ local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 type Color = ColorLib.Color
 type Gradient = ColorLib.Gradient
 
---[=[
-    @interface ReturnColorType
-    @within ColorPane
-    @field Color "Color"
-    @field Color3 "Color3"
-]=]
-
---[=[
-    @interface ReturnGradientType
-    @within ColorPane
-    @field ColorSequence "ColorSequence"
-    @field Gradient "Gradient"
-]=]
-
---[=[
-    @interface ColorPromptOptions
-    @within ColorPane
-    @field PromptTitle string?
-    @field ColorType ReturnColorType?
-    @field InitialColor (Color | Color3)?
-    @field OnColorChanged ((Color | Color3) -> any)?
-]=]
 type ColorPromptOptions = {
     PromptTitle: string?,
-    ColorType: string?,
+    ColorType: ("Color" | "Color3")?,
     InitialColor: (Color | Color3)?,
     OnColorChanged: ((Color | Color3) -> any)?
 }
 
---[=[
-    @interface GradientPromptOptions
-    @within ColorPane
-    @field PromptTitle string?
-    @field GradientType ReturnGradientType?
-    @field InitialGradient (Gradient | ColorSequence)?
-    @field InitialColorSpace ColorType? -- See [the available color spaces](https://blupo.github.io/Color/api/Enums#ColorType)
-    @field InitialHueAdjustment HueAdjustment? -- See [the available adjustments](https://blupo.github.io/Color/api/Enums#HueAdjustment)
-    @field InitialPrecision number?
-    @field OnGradientChanged ((Gradient | ColorSequence) -> any)?
-]=]
 type GradientPromptOptions = {
     PromptTitle: string?,
-    GradientType: string?,
+    GradientType: ("Gradient" | "ColorSequence")?,
     InitialGradient: (Gradient | ColorSequence)?,
     InitialColorSpace: string?,
     InitialHueAdjustment: string?,
@@ -93,13 +60,6 @@ type GradientPromptOptions = {
     OnGradientChanged: ((Gradient | ColorSequence) -> any)?
 }
 
---[=[
-    @interface ColorSequencePromptOptions
-    @within ColorPane
-    @field PromptTitle string?
-    @field InitialColor ColorSequence?
-    @field OnColorChanged ((ColorSequence) -> any)?
-]=]
 type ColorSequencePromptOptions = {
     PromptTitle: string?,
     InitialColor: ColorSequence?,
@@ -109,26 +69,20 @@ type ColorSequencePromptOptions = {
 local DEFAULT_COLOR: Color = Color.new(1, 1, 1)
 local DEFAULT_GRADIENT: Gradient = Gradient.fromColors(DEFAULT_COLOR)
 
-local plugin
-local pluginUnloadingEvent
-local scriptReparentedEvent
+local plugin: Plugin?
+local persistentSettingsChanged: typeof(Store.changed:connect())?
 
-local colorPaneStore
-local persistentSettingsChanged
+local colorEditorTree: typeof(Roact.mount())?
+local colorEditorWidget: DockWidgetPluginGui?
+local colorEditorWidgetEnabledChanged: RBXScriptConnection?
 
-local colorEditorTree
-local colorEditorWidget
-local colorEditorWidgetEnabledChanged
+local gradientEditorTree: typeof(Roact.mount())?
+local gradientEditorWidget: DockWidgetPluginGui?
+local gradientEditorWidgetEnabledChanged: RBXScriptConnection?
 
-local gradientEditorTree
-local gradientEditorWidget
-local gradientEditorWidgetEnabledChanged
-
-local unloadingEvent: Signal.Signal<nil>, fireUnloading: Signal.FireSignal<nil> = Signal.createSignal()
+local unloadingBindable: BindableEvent = Instance.new("BindableEvent")
 local fireColorEditorClosed: Signal.FireSignal<boolean>?
 local fireGradientEditorClosed: Signal.FireSignal<boolean>?
-
-local noOp = function() end
 
 local uiTranslations = Translator.GenerateTranslationTable({
     "ColorEditor_DefaultWindowTitle",
@@ -176,51 +130,44 @@ local checkGradientPromptOptions = t.interface({
 ---
 
 local onUnloading = function()
-    if (scriptReparentedEvent) then
-        scriptReparentedEvent:Disconnect()
-        scriptReparentedEvent = nil
-    end
-
-    if (pluginUnloadingEvent) then
-        pluginUnloadingEvent:Disconnect()
-        pluginUnloadingEvent = nil
-    end
-
-    if (fireUnloading) then
-        fireUnloading()
-    end
-
-    if (plugin) then
+    if (persistentSettingsChanged) then
         persistentSettingsChanged.disconnect()
-        colorEditorWidgetEnabledChanged:Disconnect()
-        gradientEditorWidgetEnabledChanged:Disconnect()
-
-        if (fireColorEditorClosed) then
-            fireColorEditorClosed(false)
-        end
-
-        if (fireGradientEditorClosed) then
-            fireGradientEditorClosed(false)
-        end
     end
 
+    if (colorEditorWidgetEnabledChanged) then
+        colorEditorWidgetEnabledChanged:Disconnect()
+    end
+
+    if (gradientEditorWidgetEnabledChanged) then
+        gradientEditorWidgetEnabledChanged:Disconnect()
+    end
+
+    if (fireColorEditorClosed) then
+        fireColorEditorClosed(false)
+    end
+
+    if (fireGradientEditorClosed) then
+        fireGradientEditorClosed(false)
+    end
+
+    unloadingBindable:Fire()
     script:Destroy()
 end
 
-local mountColorEditor = function(promptOptions, fireFinished)
-    local originalColor = promptOptions.InitialColor
+local mountColorEditor = function(promptOptions: ColorPromptOptions, fireFinished: Signal.FireSignal<boolean>)
+    assert(promptOptions.PromptTitle, Util.makeBugMessage("PromptTitle is missing"))
+    assert(promptOptions.InitialColor, Util.makeBugMessage("InitialColor is missing"))
+    assert(colorEditorWidget, Util.makeBugMessage("Color editor widget is missing"))
 
-    if (typeof(originalColor) == "Color3") then
-        originalColor = Color.fromColor3(originalColor)
-    end
+    local originalColor: Color = promptOptions.InitialColor
 
-    colorPaneStore:dispatch({
+    Store:dispatch({
         type = PluginEnums.StoreActionType.ColorEditor_SetColor,
         color = originalColor,
     })
 
     colorEditorTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(ColorEditor, {
             originalColor = originalColor,
@@ -232,17 +179,15 @@ local mountColorEditor = function(promptOptions, fireFinished)
     colorEditorWidget.Enabled = true
 end
 
-local mountGradientEditor = function(promptOptions, promptForColorEdit, fireFinished)
+local mountGradientEditor = function(promptOptions: GradientPromptOptions, promptForColorEdit: (ColorPromptOptions) -> any, fireFinished: Signal.FireSignal<boolean>)
+    assert(promptOptions.PromptTitle, Util.makeBugMessage("PromptTitle is missing"))
+    assert(promptOptions.InitialGradient, Util.makeBugMessage("InitialGradient is missing"))
+    assert(gradientEditorWidget, Util.makeBugMessage("Gradient editor widget is missing"))
+
     local gradient = promptOptions.InitialGradient
-    local keypoints
+    local keypoints = Util.table.deepCopy(gradient.Keypoints)
 
-    if (typeof(gradient) == "ColorSequence") then
-        gradient = Gradient.fromColorSequence(promptOptions.InitialGradient)
-    end
-
-    keypoints = Util.table.deepCopy(gradient.Keypoints)
-
-    colorPaneStore:dispatch({
+    Store:dispatch({
         type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
 
         keypoints = keypoints,
@@ -252,7 +197,7 @@ local mountGradientEditor = function(promptOptions, promptForColorEdit, fireFini
     })
 
     gradientEditorTree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
-        store = colorPaneStore,
+        store = Store,
     }, {
         App = Roact.createElement(GradientEditor, {
             originalKeypoints = keypoints,
@@ -271,61 +216,26 @@ end
 
 ---
 
---[=[
-    @class ColorPane
-]=]
 local ColorPane = {}
 ColorPane.PromiseStatus = Promise.Status
 ColorPane.PromptError = PluginEnums.PromptError
-ColorPane.Unloading = unloadingEvent
+ColorPane.Unloading = unloadingBindable.Event
 
---[=[
-    @function GetVersion
-    @within ColorPane
-    @return number
-    @return number
-    @return number
-]=]
 ColorPane.GetVersion = function(): (number, number, number)
     return table.unpack(ReleaseVersion)
 end
 
---[=[
-    @function IsColorEditorOpen
-    @within ColorPane
-    @return boolean
-]=]
 ColorPane.IsColorEditorOpen = function(): boolean
     return (colorEditorTree and true or false)
 end
 
---[=[
-    @function IsGradientEditorOpen
-    @within ColorPane
-    @return boolean
-]=]
 ColorPane.IsGradientEditorOpen = function(): boolean
     return (gradientEditorTree and true or false)
 end
 
-local internalPromptForColor = function(optionalPromptOptions: ColorPromptOptions?)
-    local promptOptions: ColorPromptOptions = {
-        PromptTitle = "Select a color",
-        ColorType = "Color3",
-        InitialColor = DEFAULT_COLOR,
-    }
+local __promptForColor = function(config: ColorPromptOptions)
+    assert(colorEditorWidget, Util.makeBugMessage("Color editor widget is missing"))
 
-    if (type(optionalPromptOptions) == "table") then
-        promptOptions = Cryo.Dictionary.join(promptOptions, optionalPromptOptions)
-    elseif (type(optionalPromptOptions) ~= "nil") then
-        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
-    end
-
-    -- type check
-    local result = checkColorPromptOptions(promptOptions)
-    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
-
-    -- prompt stuff
     local editorClosedEvent: Signal.Signal<boolean>, fireEditorClosed: Signal.FireSignal<boolean> = Signal.createSignal()
 
     local editPromise = Promise.new(function(resolve, reject, onCancel)
@@ -334,15 +244,17 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
             subscription:unsubscribe()
 
             if (not confirmed) then
+                -- user cancelled prompt
                 reject(PluginEnums.PromptError.PromptCancelled)
             else
-                local newColor = colorPaneStore:getState().colorEditor.color
+                local newColor = Store:getState().colorEditor.color
 
-                if (promptOptions.ColorType == "Color3") then
+                if (config.ColorType == "Color3") then
                     newColor = newColor:toColor3()
                 end
                 
-                if (newColor == promptOptions.InitialColor) then
+                if (newColor == config.InitialColor) then
+                    -- old color is the same as the new color
                     reject(PluginEnums.PromptError.PromptCancelled)
                 else
                     resolve(newColor)
@@ -355,64 +267,83 @@ local internalPromptForColor = function(optionalPromptOptions: ColorPromptOption
         end)
     end)
 
-    local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
-        if (not promptOptions.OnColorChanged) then return end
+    -- hook into color changes
+    local storeChanged = if config.OnColorChanged then
+        Store.changed:connect(function(newState, oldState)
+            local color = newState.colorEditor.color
+            local oldColor = oldState.colorEditor.color
 
-        local color = newState.colorEditor.color
-        local oldColor = oldState.colorEditor.color
+            if (not (color and oldColor)) then return end
+            if (color == oldColor) then return end
 
-        if (not (color and oldColor)) then return end
-        if (color == oldColor) then return end
+            if (config.ColorType == "Color3") then
+                color = color:toColor3()
+            end
 
-        if (promptOptions.ColorType == "Color3") then
-            color = color:toColor3()
-        end
+            Util.noYield(config.OnColorChanged, color)
+        end)
+    else nil
 
-        Util.noYield(promptOptions.OnColorChanged, color)
-    end)
-
-    editPromise:catch(noOp):finally(function()
+    -- cleanup callback
+    -- the catch is here to supress rejection via cancellation
+    editPromise:catch(function() end):finally(function()
         fireColorEditorClosed = nil
 
-        storeChanged.disconnect()
+        if (storeChanged) then
+            storeChanged.disconnect()
+        end
+
         Roact.unmount(colorEditorTree)
         colorEditorTree = nil
         colorEditorWidget.Enabled = false
         colorEditorWidget.Title = ""
 
-        colorPaneStore:dispatch({
+        Store:dispatch({
             type = PluginEnums.StoreActionType.ColorEditor_SetColor,
         })
     end)
 
     fireColorEditorClosed = fireEditorClosed
-    mountColorEditor(promptOptions, fireEditorClosed)
+    mountColorEditor(config, fireEditorClosed)
     return editPromise
 end
 
---[=[
-    @function PromptForColor
-    @within ColorPane
-    @param options ColorPromptOptions
-    @return Promise
-]=]
-ColorPane.PromptForColor = function(promptOptions: ColorPromptOptions?)
+ColorPane.PromptForColor = function(optionalPromptOptions: ColorPromptOptions?)
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
     if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
-    return internalPromptForColor(promptOptions)
+    -- compose configuration
+    local promptOptions: ColorPromptOptions = {
+        PromptTitle = "Select a color",
+        ColorType = "Color3",
+        InitialColor = DEFAULT_COLOR,
+    }
+
+    if (type(optionalPromptOptions) == "table") then
+        promptOptions = Cryo.Dictionary.join(promptOptions, optionalPromptOptions)
+    elseif (type(optionalPromptOptions) ~= "nil") then
+        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
+    end
+
+    -- validate
+    local validConfig = checkColorPromptOptions(promptOptions)
+    if (not validConfig) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
+
+    -- convert InitialColor if necessary
+    if (typeof(promptOptions.InitialColor) == "Color3") then
+        promptOptions.InitialColor = Color.fromColor3(promptOptions.InitialColor)
+    end
+
+    return __promptForColor(promptOptions)
 end
 
---[=[
-    @function PromptForGradient
-    @within ColorPane
-    @param options GradientPromptOptions
-    @return Promise
-]=]
 ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOptions?)
+    assert(gradientEditorWidget, Util.makeBugMessage("Gradient editor widget is missing"))
+
     if (ColorPane.IsGradientEditorOpen()) then return Promise.reject(PluginEnums.PromptError.PromptAlreadyOpen) end
     if (ColorPane.IsColorEditorOpen()) then return Promise.reject(PluginEnums.PromptError.ReservationProblem) end
 
+    -- compose configuration
     local promptOptions: GradientPromptOptions = {
         PromptTitle = uiTranslations["GradientEditor_DefaultWindowTitle"],
         GradientType = "ColorSequence",
@@ -429,13 +360,20 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
     end
 
     -- check if the given precision is possible
-    if (Util.getUtilisedKeypoints(#promptOptions.InitialGradient.Keypoints, promptOptions.InitialPrecision) > Constants.MAX_COLORSEQUENCE_KEYPOINTS) then
-        return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
+    if (promptOptions.InitialGradient and promptOptions.InitialPrecision) then
+        if (Util.getUtilisedKeypoints(#promptOptions.InitialGradient.Keypoints, promptOptions.InitialPrecision) > Constants.MAX_COLORSEQUENCE_KEYPOINTS) then
+            return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions)
+        end
     end
 
-    -- type check
-    local result = checkGradientPromptOptions(promptOptions)
-    if (not result) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
+    -- validate
+    local validConfig = checkGradientPromptOptions(promptOptions)
+    if (not validConfig) then return Promise.reject(PluginEnums.PromptError.InvalidPromptOptions) end
+
+    -- convert InitialGradient if necessary
+    if (typeof(promptOptions.InitialGradient) == "ColorSequence") then
+        promptOptions.InitialGradient = Gradient.fromColorSequence(promptOptions.InitialGradient)
+    end
 
     -- prompt stuff
     local editorClosedEvent: Signal.Signal<boolean>, fireEditorClosed: Signal.FireSignal<boolean> = Signal.createSignal()
@@ -446,16 +384,18 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
             subscription:unsubscribe()
 
             if (not confirmed) then
+                -- user cancelled the prompt
                 reject(PluginEnums.PromptError.PromptCancelled)
             else
                 local gradient = promptOptions.InitialGradient
-                local newGradient = Gradient.new(colorPaneStore:getState().gradientEditor.displayKeypoints)
+                local newGradient = Gradient.new(Store:getState().gradientEditor.displayKeypoints)
     
                 if (promptOptions.GradientType == "ColorSequence") then
                     newGradient = newGradient:colorSequence()
                 end
                 
                 if (newGradient == gradient) then
+                    -- new gradient is the same as the old one
                     reject(PluginEnums.PromptError.PromptCancelled)
                 else
                     resolve(newGradient)
@@ -468,67 +408,77 @@ ColorPane.PromptForGradient = function(optionalPromptOptions: GradientPromptOpti
         end)
     end)
 
-    local storeChanged = colorPaneStore.changed:connect(function(newState, oldState)
-        if (not promptOptions.OnGradientChanged) then return end
+    -- hook store changes
+    local storeChanged = if promptOptions.OnGradientChanged then
+        Store.changed:connect(function(newState, oldState)
+            if (not promptOptions.OnGradientChanged) then return end
 
-        local keypoints = newState.gradientEditor.displayKeypoints
-        local oldKeypoints = oldState.gradientEditor.displayKeypoints
-        if (not (keypoints and oldKeypoints)) then return end
+            local keypoints = newState.gradientEditor.displayKeypoints
+            local oldKeypoints = oldState.gradientEditor.displayKeypoints
+            if (not (keypoints and oldKeypoints)) then return end
 
-        local gradient = Gradient.new(keypoints)
-        local oldGradient = Gradient.new(oldKeypoints)
-        if (gradient == oldGradient) then return end
+            local gradient = Gradient.new(keypoints)
+            local oldGradient = Gradient.new(oldKeypoints)
+            if (gradient == oldGradient) then return end
 
-        Util.noYield(promptOptions.OnGradientChanged, (promptOptions.GradientType == "Gradient") and gradient or gradient:colorSequence())
-    end)
+            Util.noYield(promptOptions.OnGradientChanged, (promptOptions.GradientType == "Gradient") and gradient or gradient:colorSequence())
+        end)
+    else nil
 
-    editPromise:catch(noOp):finally(function()
+    -- cleanup callback
+    -- the catch is here to supress rejection via cancellation
+    editPromise:catch(function() end):finally(function()
         fireGradientEditorClosed = nil
 
-        storeChanged.disconnect()
+        if (storeChanged) then
+            storeChanged.disconnect()
+        end
+
         Roact.unmount(gradientEditorTree)
         gradientEditorTree = nil
         gradientEditorWidget.Enabled = false
         gradientEditorWidget.Title = ""
 
-        colorPaneStore:dispatch({
+        Store:dispatch({
             type = PluginEnums.StoreActionType.GradientEditor_ResetState,
         })
     end)
 
     fireGradientEditorClosed = fireEditorClosed
-    mountGradientEditor(promptOptions, internalPromptForColor, fireEditorClosed)
+    mountGradientEditor(promptOptions, __promptForColor, fireEditorClosed)
     return editPromise
 end
 
-ColorPane.init = function(pluginObj)
+ColorPane.init = function(pluginObj: Plugin)
     if (plugin) then return end
     plugin = pluginObj
 
-    colorPaneStore = MakeStore(plugin)
-    colorEditorWidget = MakeWidget(plugin, "ColorEditor")
-    gradientEditorWidget = MakeWidget(plugin, "GradientEditor")
+    local newColorEditorWidget = PluginWidget("ColorEditor")
+    local newGradientEditorWidget = PluginWidget("GradientEditor")
 
-    EditorInputSignals.initEditorCursorPositionChanged(plugin, colorEditorWidget, "ColorEditor")
-    EditorInputSignals.initEditorCursorPositionChanged(plugin, gradientEditorWidget, "GradientEditor")
+    colorEditorWidget = newColorEditorWidget
+    gradientEditorWidget = newGradientEditorWidget
 
-    colorEditorWidgetEnabledChanged = colorEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
-        if (colorEditorWidget.Enabled and (not colorEditorTree)) then
-            colorEditorWidget.Enabled = false
-        elseif ((not colorEditorWidget.Enabled) and fireColorEditorClosed) then
+    EditorInputSignals.initEditorCursorPositionChanged(pluginObj, newColorEditorWidget, "ColorEditor")
+    EditorInputSignals.initEditorCursorPositionChanged(pluginObj, newGradientEditorWidget, "GradientEditor")
+
+    colorEditorWidgetEnabledChanged = newColorEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
+        if (newColorEditorWidget.Enabled and (not colorEditorTree)) then
+            newColorEditorWidget.Enabled = false
+        elseif ((not newColorEditorWidget.Enabled) and fireColorEditorClosed) then
             fireColorEditorClosed(false)
         end
     end)
 
-    gradientEditorWidgetEnabledChanged = gradientEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
-        if (gradientEditorWidget.Enabled and (not gradientEditorTree)) then
-            gradientEditorWidget.Enabled = false
-        elseif ((not gradientEditorWidget.Enabled) and fireGradientEditorClosed) then
+    gradientEditorWidgetEnabledChanged = newGradientEditorWidget:GetPropertyChangedSignal("Enabled"):Connect(function()
+        if (newGradientEditorWidget.Enabled and (not gradientEditorTree)) then
+            newGradientEditorWidget.Enabled = false
+        elseif ((not newGradientEditorWidget.Enabled) and fireGradientEditorClosed) then
             fireGradientEditorClosed(false)
         end
     end)
 
-    persistentSettingsChanged = colorPaneStore.changed:connect(function(newState, oldState)
+    persistentSettingsChanged = Store.changed:connect(function(newState, oldState)
         if (newState.colorEditor.palettes ~= oldState.colorEditor.palettes) then
             local newPalettes = Util.table.deepCopy(newState.colorEditor.palettes)
 
@@ -571,24 +521,13 @@ ColorPane.init = function(pluginObj)
         end
     end)
 
-    pluginUnloadingEvent = plugin.Unloading:Connect(onUnloading)
+    pluginObj.Unloading:Connect(onUnloading)
 end
 
---[=[
-    @function IsColorSequenceEditorOpen
-    @within ColorPane
-    @return boolean
-    @deprecated 0.4.0
-]=]
+-- DEPRECATED since v0.4
 ColorPane.IsColorSequenceEditorOpen = ColorPane.IsGradientEditorOpen
 
---[=[
-    @function PromptForColorSequence
-    @within ColorPane
-    @param options ColorSequencePromptOptions?
-    @return Promise
-    @deprecated 0.4.0
-]=]
+-- DEPRECATED since v0.4
 ColorPane.PromptForColorSequence = function(optionalPromptOptions: ColorSequencePromptOptions?)
     local promptOptions: ColorSequencePromptOptions = optionalPromptOptions or {}
 
@@ -597,7 +536,7 @@ ColorPane.PromptForColorSequence = function(optionalPromptOptions: ColorSequence
         GradientType = "ColorSequence",
         InitialGradient = promptOptions.InitialColor,
         OnGradientChanged = promptOptions.OnColorChanged,
-    })
+    }::GradientPromptOptions)
 end
 
 ---

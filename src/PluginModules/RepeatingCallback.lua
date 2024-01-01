@@ -1,33 +1,41 @@
-local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
+--!strict
+
+local HttpService: HttpService = game:GetService("HttpService")
+local RunService: RunService = game:GetService("RunService")
 
 ---
 
 local root = script.Parent.Parent
-local includes = root:FindFirstChild("includes")
 
-local Promise = require(includes:FindFirstChild("Promise"))
+local PluginModules = root.PluginModules
+local PluginProvider = require(PluginModules.PluginProvider)
+local Util = require(PluginModules.Util)
+
+local includes = root.includes
+local Promise = require(includes.Promise)
 
 ---
 
-local ABSOLUTE_MIN_DELTA = 1/60
-local DEFAULT_DELTA = 0.25
+local plugin: Plugin? = PluginProvider()
+assert(plugin, Util.makeBugMessage("Plugin object is missing"))
 
-local repeaterEvent
+local ABSOLUTE_MIN_DELTA: number = 1/60
+local DEFAULT_DELTA: number = 0.25
+
 local repeaters = {}
 
 ---
 
 local RepeatingCallback = {}
 
-RepeatingCallback.new = function(callback, initialDelta, minDelta)
-    minDelta = minDelta or ABSOLUTE_MIN_DELTA
+RepeatingCallback.new = function(callback: () -> nil, initialDelta: number?, optionalMinDelta: number?)
+    local minDelta: number = optionalMinDelta or ABSOLUTE_MIN_DELTA
     minDelta = (minDelta >= ABSOLUTE_MIN_DELTA) and minDelta or ABSOLUTE_MIN_DELTA
 
-    local delta = initialDelta or DEFAULT_DELTA
-    delta = (delta >= minDelta) and delta or minDelta
+    local delta: number = initialDelta or DEFAULT_DELTA
+    delta = if (delta >= minDelta) then delta else minDelta
 
-    local id = HttpService:GenerateGUID()
+    local id: string = HttpService:GenerateGUID()
 
     local self = setmetatable({
         id = id,
@@ -80,39 +88,34 @@ RepeatingCallback.destroy = function(self)
     repeaters[self.id] = nil
 end
 
-RepeatingCallback.init = function(plugin)
-    RepeatingCallback.init = nil
+---
 
-    repeaterEvent = RunService.Heartbeat:Connect(function(step)
-        for _, repeater in pairs(repeaters) do
-            if (repeater.repeating) then
-                repeater.sustained = repeater.sustained + step
+local repeaterEvent = RunService.Heartbeat:Connect(function(step)
+    for _, repeater in pairs(repeaters) do
+        if (repeater.repeating) then
+            repeater.sustained = repeater.sustained + step
 
-                -- invoke callback
-                local now = os.clock()
+            -- invoke callback
+            local now = os.clock()
 
-                if ((now - repeater.lastRepeat) > repeater.actualDelta) then
-                    repeater.lastRepeat = now
-                    repeater.callback()
-                end
-                
-                -- decrease delta
-                local sustained = repeater.sustained
-                local initialDelta = repeater.initialDelta
-                
-                if ((sustained > 1) and (sustained <= 5)) then
-                    repeater.actualDelta = math.max(initialDelta - (math.log(sustained + 1) * 0.5 * initialDelta), repeater.minDelta)
-                end
+            if ((now - repeater.lastRepeat) > repeater.actualDelta) then
+                repeater.lastRepeat = now
+                repeater.callback()
+            end
+            
+            -- decrease delta
+            local sustained = repeater.sustained
+            local initialDelta = repeater.initialDelta
+            
+            if ((sustained > 1) and (sustained <= 5)) then
+                repeater.actualDelta = math.max(initialDelta - (math.log(sustained + 1) * 0.5 * initialDelta), repeater.minDelta)
             end
         end
-    end)
+    end
+end)
 
-    plugin.Unloading:Connect(function()
-        repeaterEvent:Disconnect()
-        repeaterEvent = nil
-    end)
-end
-
----
+plugin.Unloading:Connect(function()
+    repeaterEvent:Disconnect()
+end)
 
 return RepeatingCallback

@@ -1,19 +1,19 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Translator = require(PluginModules:FindFirstChild("Translator"))
+local PluginModules = root.PluginModules
+local PluginEnums = require(PluginModules.PluginEnums)
+local Translator = require(PluginModules.Translator)
 
-local includes = root:FindFirstChild("includes")
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local ColorInfo = require(Components:FindFirstChild("ColorInfo"))
-local ColorSorter = require(Components:FindFirstChild("ColorSorter"))
-local ColorVariations = require(Components:FindFirstChild("ColorVariations"))
-local GradientPickers = require(Components:FindFirstChild("GradientPickers"))
-local Pages = require(Components:FindFirstChild("Pages"))
+local Components = root.Components
+local ColorInfo = require(Components.ColorInfo)
+local ColorSorter = require(Components.ColorSorter)
+local ColorVariations = require(Components.ColorVariations)
+local GradientPickers = require(Components.GradientPickers)
+local Pages = require(Components.Pages)
 
 ---
 

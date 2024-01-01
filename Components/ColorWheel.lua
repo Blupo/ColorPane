@@ -1,20 +1,20 @@
 local root = script.Parent.Parent
 
-local PluginModules = root:FindFirstChild("PluginModules")
-local ColorEditorInputSignals = require(PluginModules:FindFirstChild("EditorInputSignals")).ColorEditor
-local PluginEnums = require(PluginModules:FindFirstChild("PluginEnums"))
-local Style = require(PluginModules:FindFirstChild("Style"))
+local PluginModules = root.PluginModules
+local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
+local PluginEnums = require(PluginModules.PluginEnums)
+local Style = require(PluginModules.Style)
 
-local includes = root:FindFirstChild("includes")
-local Color = require(includes:FindFirstChild("Color")).Color
-local Roact = require(includes:FindFirstChild("Roact"))
-local RoactRodux = require(includes:FindFirstChild("RoactRodux"))
+local includes = root.includes
+local Color = require(includes.Color).Color
+local Roact = require(includes.Roact)
+local RoactRodux = require(includes.RoactRodux)
 
-local Components = root:FindFirstChild("Components")
-local ButtonBar = require(Components:FindFirstChild("ButtonBar"))
-local ConnectTheme = require(Components:FindFirstChild("ConnectTheme"))
+local Components = root.Components
+local ButtonBar = require(Components.ButtonBar)
+local ConnectTheme = require(Components.ConnectTheme)
 
-local StandardComponents = require(Components:FindFirstChild("StandardComponents"))
+local StandardComponents = require(Components.StandardComponents)
 local StandardUICorner = StandardComponents.UICorner
 
 ---
