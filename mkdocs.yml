@@ -2,35 +2,74 @@ site_name: ColorPane
 site_url: https://blupo.github.io/ColorPane
 repo_name: Blupo/ColorPane
 repo_url: https://github.com/Blupo/ColorPane
+edit_uri: edit/develop/docs
 
 theme:
   name: material
+  features:
+    - navigation.tabs
+    - content.action.edit
+    - content.action.view
+  icon:
+    repo: fontawesome/brands/github
   palette:
-    scheme: slate
-    primary: white
-    accent: blue
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
 
-nav:
-  - Home: index.md
-  - User Guide:
-    - Color Editor: user-guide/color-editor.md
-    - Gradient Editor: user-guide/gradient-editor.md
-    - Color Properties: user-guide/color-properties.md
-    - Tips and Tricks: user-guide/tips.md
-  - Developer Guide:
-    - API Integration: developer-guide/api-integration.md
-    - Integration Examples: developer-guide/integration-examples.md
-  - Technical:
-    - Palette Format: technical/palette-format.md
-    - API Reference: technical/api-reference.md 
-  - Changelog: changelog.md
-  - Attribution: attribution.md
-  - Support ColorPane: support.md
+extra_css:
+  - stylesheets/cp-button.css
+  - stylesheets/fonts.css
 
 markdown_extensions:
-  - admonition
-  - codehilite:
+  - markdown.extensions.attr_list
+  - markdown.extensions.codehilite:
       guess_lang: false
-  - pymdownx.superfences
-  - toc:
+  - markdown.extensions.tables
+  - markdown.extensions.toc:
       permalink: true
+  - pymdownx.blocks.admonition
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - privacy
+  - search
+
+nav:
+  - Home:
+    - Introduction: index.md
+    - User Guide:
+      - Color Editor: user-guide/color-editor.md
+      - Gradient Editor: user-guide/gradient-editor.md
+      - Color Properties: user-guide/color-properties.md
+      - Settings: user-guide/settings.md
+      - Tips and Tricks: user-guide/tips.md
+      - Palette Format: user-guide/palette-format.md
+    - Developer Guide:
+      - Integration: developer-guide/integration.md
+      - API Reference: developer-guide/api-reference.md
+      - Proxy API Reference: developer-guide/proxy-reference.md
+    - Attribution: attribution.md
+    - Contributing: contributing.md
+  - Changelog: changelog.md

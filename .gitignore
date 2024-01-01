@@ -9,3 +9,6 @@
 
 # LSP
 /sourcemap.json
+
+# Documentation
+/.cache
