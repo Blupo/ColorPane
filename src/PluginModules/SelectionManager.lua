@@ -20,6 +20,7 @@ local plugin: Plugin? = PluginProvider()
 assert(plugin, Util.makeBugMessage("Plugin object is missing"))
 
 local apiIsReady: boolean = false
+local recordingId: string?
 
 local currentSelection: {Instance} = {}
 local currentSelectionProperties = {}
@@ -242,49 +243,22 @@ SelectionManager.GetSelectionColorPropertyData = function()
     }
 end
 
-SelectionManager.GenerateSelectionColorPropertyValueSnapshot = function(className: string, propertyName: string): {[Instance]: any}
-    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
-    if (not propertyInfo) then return {} end
-
-    local snapshot = {}
-
-    for i = 1, #currentSelection do
-        local object = currentSelection[i]
-
-        if (object:IsA(className)) then
-            snapshot[object] = propertyInfo.Custom and propertyInfo.Get(object) or object[propertyName]
-        end
-    end
-
-    return snapshot
+SelectionManager.BeginRecording = function()
+    assert(not recordingId, Util.makeBugMessage("Recording already started"))
+    recordingId = ChangeHistoryService:TryBeginRecording("Change color properties")
 end
 
-SelectionManager.RestoreSelectionColorPropertyFromSnapshot = function(className: string, propertyName: string, snapshot: {[Instance]: any})
-    local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
-    if (not propertyInfo) then return end
-
-    for i = 1, #currentSelection do
-        local object: Instance = currentSelection[i]
-
-        if (object:IsA(className)) then
-            local color = snapshot[object]
-
-            if (propertyInfo.Custom) then
-                propertyInfo.Set(object, color)
-            else
-                object[propertyName] = color
-            end
-        end
-    end
+SelectionManager.StopRecording = function(operation: Enum.FinishRecordingOperation)
+    assert(recordingId, Util.makeBugMessage("Recording has not started"))
+    ChangeHistoryService:FinishRecording(recordingId, operation)
+    recordingId = nil
 end
 
-SelectionManager.SetSelectionProperty = function(className: string, propertyName: string, newColor: any, setHistoryWaypoint: boolean)
+SelectionManager.SetSelectionProperty = function(className: string, propertyName: string, newColor: any)
+    if (not recordingId) then return end
+
     local propertyInfo = ColorAPIData.GetProperty(className, propertyName)
     if (not propertyInfo) then return end
-
-    if (setHistoryWaypoint) then
-        ChangeHistoryService:SetWaypoint(propertyName)
-    end
 
     for i = 1, #currentSelection do
         local object: Instance = currentSelection[i]
@@ -299,10 +273,6 @@ SelectionManager.SetSelectionProperty = function(className: string, propertyName
             end
         end
     end
-
-    if (setHistoryWaypoint) then
-        ChangeHistoryService:SetWaypoint(propertyName)
-    end
 end
 
 ---
@@ -314,5 +284,12 @@ RobloxAPI.DataRequestFinished:subscribe(function(didLoad: boolean)
     onSelectionChanged()
 end)
 
-plugin.Unloading:Connect(SelectionManager.Disconnect)
+plugin.Unloading:Connect(function()
+    if (recordingId) then
+        SelectionManager.StopRecording(Enum.FinishRecordingOperation.Cancel)
+    end
+
+    SelectionManager.Disconnect()
+end)
+
 return SelectionManager

@@ -380,6 +380,8 @@ ColorPropertiesList.render = function(self)
                     self.state.editColorPromise:cancel()
                 end
 
+                SelectionManager.BeginRecording()
+
                 local rejected = false
                 local commonPropertyValues = self.commonPropertyValues:getValue()
 
@@ -392,14 +394,14 @@ ColorPropertiesList.render = function(self)
                     editValuePromptOptions.InitialGradient = commonPropertyValues[className] and commonPropertyValues[className][propertyName] or nil
         
                     editValuePromptOptions.OnGradientChanged = function(intermediate)
-                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate, false)
+                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate)
                     end
                 else
                     editValuePromptOptions.ColorType = "Color"
                     editValuePromptOptions.InitialColor = commonPropertyValues[className] and commonPropertyValues[className][propertyName] or nil
         
                     editValuePromptOptions.OnColorChanged = function(intermediate)
-                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate, false)
+                        SelectionManager.SetSelectionProperty(className, propertyName, intermediate)
                     end
                 end
 
@@ -409,19 +411,19 @@ ColorPropertiesList.render = function(self)
                     API.PromptForColor(editValuePromptOptions)
                 
                 editColorPromise:andThen(function(newColor)
-                    SelectionManager.SetSelectionProperty(className, propertyName, newColor, true)
+                    SelectionManager.SetSelectionProperty(className, propertyName, newColor)
+                    SelectionManager.StopRecording(Enum.FinishRecordingOperation.Commit)
                 end, function(err)
                     rejected = true
 
                     if (err == PluginEnums.PromptError.PromptCancelled) then
-                        SelectionManager.RestoreSelectionColorPropertyFromSnapshot(className, propertyName, self.state.originalPropertyValues)
+                        SelectionManager.StopRecording(Enum.FinishRecordingOperation.Cancel)
                     end
                 end):finally(function()
                     if (not self.unmounting) then
                         self:setState({
                             editColorPromise = Roact.None,
                             editingProperty = Roact.None,
-                            originalPropertyValues = Roact.None,
                         })
                     end
                 end)
@@ -431,7 +433,6 @@ ColorPropertiesList.render = function(self)
                     self:setState({
                         editColorPromise = editColorPromise,
                         editingProperty = compositeName,
-                        originalPropertyValues = SelectionManager.GenerateSelectionColorPropertyValueSnapshot(className, propertyName)
                     })
                 end
             end,

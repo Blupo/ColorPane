@@ -13,6 +13,7 @@
 - The API script is now injected into StudioService instead of CoreGui
 - Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
 - The type of `API.Unloading` is now an `RBXScriptSignal<nil>`
+- Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
 
 ### Fixed
 - The "*Periodically check for updates*" setting now does what it says it does
