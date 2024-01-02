@@ -84,6 +84,7 @@ local Style: Style = {
         SlidersEditorButtonIcon = "rbxassetid://6333325727",
         PaletteEditorButtonIcon = "rbxassetid://6333569516",
         ColorToolsEditorButtonIcon = "rbxassetid://8988492544",
+        RandomColorButtonIcon = "rbxassetid://15839330158",
 
         -- Gradient editor buttons
         ReverseGradientButtonIcon = "rbxassetid://6409046433",

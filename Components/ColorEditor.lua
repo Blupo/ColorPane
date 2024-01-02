@@ -410,6 +410,21 @@ ColorEditor.render = function(self)
             }),
         }),
 
+        RandomColorButton = Roact.createElement(Button, {
+            AnchorPoint = Vector2.new(0, 1),
+            Position = UDim2.new(0, Style.Constants.DialogButtonWidth + Style.Constants.MinorElementPadding, 1, 0),
+            Size = UDim2.new(0, Style.Constants.StandardButtonHeight, 0, Style.Constants.StandardButtonHeight),
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+
+            displayType = "image",
+            image = Style.Images.RandomColorButtonIcon,
+
+            onActivated = function()
+                self.props.setColor(Color.random())
+            end,
+        }),
+
         Actions = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),

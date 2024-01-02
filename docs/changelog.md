@@ -4,6 +4,7 @@
 - Added a dedicated "Set Color" button for colors in the palette list layout
 - Added a "Reset" button for gradient precision
 - Added partial translations for French (`fr`) and Korean (`ko`)
+- Added a random color button
 
 ### Changed
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
