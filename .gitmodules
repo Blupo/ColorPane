@@ -1,18 +1,24 @@
-[submodule "includes/roact-rodux"]
+[submodule "Common/Includes/RoactRodux"]
 	path = Common/Includes/RoactRodux
-    url = https://github.com/Roblox/roact-rodux
-[submodule "includes/t"]
-	path = Common/Includes/t
-    url = https://github.com/osyrisrblx/t
-[submodule "includes/Promise"]
-	path = Common/Includes/Promise
-    url = https://github.com/evaera/roblox-lua-promise
-[submodule "includes/Color"]
-	path = Common/Includes/Color
-    url = https://github.com/Blupo/Color
-[submodule "includes/Cryo"]
-	path = Common/Includes/Cryo
-	url = https://github.com/Roblox/cryo
-[submodule "includes/Signal"]
+	url = https://github.com/Roblox/roact-rodux
+	branch = master
+[submodule "Common/Includes/Signal"]
 	path = Common/Includes/Signal
 	url = https://github.com/Roblox/signal-lua
+	branch = main
+[submodule "Common/Includes/Cryo"]
+	path = Common/Includes/Cryo
+	url = https://github.com/Roblox/cryo
+	branch = main
+[submodule "Common/Includes/Promise"]
+	path = Common/Includes/Promise
+	url = https://github.com/evaera/roblox-lua-promise
+	branch = master
+[submodule "Common/Includes/t"]
+	path = Common/Includes/t
+	url = https://github.com/osyrisrblx/t
+	branch = master
+[submodule "Common/Includes/Color"]
+	path = Common/Includes/Color
+	url = https://github.com/Blupo/Color
+	branch = develop
