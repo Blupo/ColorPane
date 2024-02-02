@@ -1,0 +1,19 @@
+{
+    "name": "ColorPane",
+    
+    "tree": {
+        "$className": "DataModel",
+        
+        "ServerStorage": {
+            "$className": "ServerStorage",
+
+            "ColorPane": {
+                "$path": "projects/ColorPane"
+            },
+
+            "Settings": {
+                "$path": "projects/Settings"
+            }
+        }
+    }
+}

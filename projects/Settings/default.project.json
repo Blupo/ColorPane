@@ -1,0 +1,7 @@
+{
+    "name": "Settings",
+
+    "tree": {
+        "$path": "src"
+    }
+}
