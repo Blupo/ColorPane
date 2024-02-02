@@ -2,6 +2,10 @@
     "name": "Settings",
 
     "tree": {
-        "$path": "src"
+        "$path": "src",
+
+        "Common": {
+            "$path": "../../Common"
+        }
     }
 }

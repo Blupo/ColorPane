@@ -1,18 +1,18 @@
 [submodule "includes/roact-rodux"]
-    path = includes/RoactRodux
+	path = Common/Includes/RoactRodux
     url = https://github.com/Roblox/roact-rodux
 [submodule "includes/t"]
-    path = includes/t
+	path = Common/Includes/t
     url = https://github.com/osyrisrblx/t
 [submodule "includes/Promise"]
-    path = includes/Promise
+	path = Common/Includes/Promise
     url = https://github.com/evaera/roblox-lua-promise
 [submodule "includes/Color"]
-    path = includes/Color
+	path = Common/Includes/Color
     url = https://github.com/Blupo/Color
 [submodule "includes/Cryo"]
-	path = includes/Cryo
+	path = Common/Includes/Cryo
 	url = https://github.com/Roblox/cryo
 [submodule "includes/Signal"]
-	path = includes/Signal
+	path = Common/Includes/Signal
 	url = https://github.com/Roblox/signal-lua
