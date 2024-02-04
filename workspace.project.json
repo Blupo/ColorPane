@@ -8,11 +8,19 @@
             "$className": "ServerStorage",
 
             "ColorPane": {
-                "$path": "projects/ColorPane"
+                "$path": "projects/ColorPane/src",
+
+                "Common": {
+                    "$path": "Common"
+                }
             },
 
             "Settings": {
-                "$path": "projects/Settings"
+                "$path": "projects/Settings/src",
+
+                "Common": {
+                    "$path": "Common"
+                }
             }
         }
     }
