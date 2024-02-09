@@ -5,12 +5,12 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local CommonComponents = Common.Components
 local ConnectTheme = require(CommonComponents.ConnectTheme)
-local StandardComponents = require(CommonComponents.StandardComponents)
 
-local StandardScrollingFrame = StandardComponents.ScrollingFrame
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUIListLayout = StandardComponents.UIListLayout
-local StandardUIPadding = StandardComponents.UIPadding
+local StandardComponents = CommonComponents.StandardComponents
+local StandardScrollingFrame = require(StandardComponents.ScrollingFrame)
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 ---
 

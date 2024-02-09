@@ -12,8 +12,13 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
 local TextInput = require(CommonComponents.TextInput)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
@@ -26,11 +31,6 @@ local ColorToolPages = require(Components.ColorToolPages)
 local ColorWheel = require(Components.ColorWheel)
 local PalettePages = require(Components.PalettePages)
 local SliderPages = require(Components.SliderPages)
-
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIListLayout = StandardComponents.UIListLayout
-local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 

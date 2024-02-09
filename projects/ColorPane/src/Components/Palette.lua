@@ -12,7 +12,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardUIListLayout = require(CommonComponents.StandardComponents.UIListLayout)
 local TextInput = require(CommonComponents.TextInput)
 
 local PluginModules = root.PluginModules
@@ -23,8 +23,6 @@ local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
 local PaletteColorGrid = require(Components.PaletteColorGrid)
 local PaletteColorList = require(Components.PaletteColorList)
-
-local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 

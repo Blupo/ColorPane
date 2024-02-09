@@ -10,13 +10,13 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
 local ConnectTheme = require(CommonComponents.ConnectTheme)
-local StandardComponents = require(CommonComponents.StandardComponents)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Components = root.Components
 local SimpleList = require(Components.SimpleList)
-
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 

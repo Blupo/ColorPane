@@ -11,7 +11,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local ConnectTheme = require(CommonComponents.ConnectTheme)
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardUICorner = require(CommonComponents.StandardComponents.UICorner)
 
 local PluginModules = root.PluginModules
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
@@ -19,8 +19,6 @@ local PluginEnums = require(PluginModules.PluginEnums)
 
 local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
-
-local StandardUICorner = StandardComponents.UICorner
 
 ---
 

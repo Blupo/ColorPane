@@ -11,18 +11,18 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local ConnectTheme = require(CommonComponents.ConnectTheme)
-local StandardComponents = require(CommonComponents.StandardComponents)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardScrollingFrame = require(StandardComponents.ScrollingFrame)
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
 local BuiltInGradients = require(PluginModules.BuiltInPalettes).Gradients
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
 local PluginEnums = require(PluginModules.PluginEnums)
-
-local StandardScrollingFrame = StandardComponents.ScrollingFrame
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIListLayout = StandardComponents.UIListLayout
-local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 

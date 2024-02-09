@@ -12,7 +12,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardTextLabel = require(CommonComponents.StandardComponents.TextLabel)
 
 local PluginModules = root.PluginModules
 local PluginEnums = require(PluginModules.PluginEnums)
@@ -20,7 +20,7 @@ local PluginEnums = require(PluginModules.PluginEnums)
 local Components = root.Components
 local ColorGrids = require(Components.ColorGrids)
 
-local StandardTextLabel = StandardComponents.TextLabel
+
 
 ---
 

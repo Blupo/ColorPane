@@ -10,13 +10,11 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardUIListLayout = require(CommonComponents.StandardComponents.UIListLayout)
 local TextInput = require(CommonComponents.TextInput)
 
 local Components = root.Components
 local ColorGrids = require(Components.ColorGrids)
-
-local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 

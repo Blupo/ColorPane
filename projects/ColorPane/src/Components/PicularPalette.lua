@@ -18,8 +18,11 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
 local TextInput = require(CommonComponents.TextInput)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
 local PluginEnums = require(PluginModules.PluginEnums)
@@ -29,9 +32,6 @@ local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
 local ColorGrids = require(Components.ColorGrids)
 local SimpleList = require(Components.SimpleList)
-
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 

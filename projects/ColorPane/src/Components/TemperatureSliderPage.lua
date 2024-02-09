@@ -10,8 +10,9 @@ local Color = require(CommonIncludes.Color).Color
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
-local CommonComponents = Common.Components
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardComponents = Common.Components.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
 local Constants = require(PluginModules.Constants)
@@ -21,9 +22,6 @@ local Util = require(PluginModules.Util)
 local Components = root.Components
 local SimpleList = require(Components.SimpleList)
 local Slider = require(Components.Slider)
-
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUIPadding = StandardComponents.UIPadding
 
 ---
 

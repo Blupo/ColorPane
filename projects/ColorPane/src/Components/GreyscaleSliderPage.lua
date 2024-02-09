@@ -11,15 +11,13 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardUIListLayout = require(CommonComponents.StandardComponents.UIListLayout)
 
 local Components = root.Components
 local Slider = require(Components.Slider)
 
 local PluginModules = root.PluginModules
 local PluginEnums = require(PluginModules.PluginEnums)
-
-local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 

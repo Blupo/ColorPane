@@ -16,8 +16,13 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
-local StandardComponents = require(CommonComponents.StandardComponents)
 local TextInput = require(CommonComponents.TextInput)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
 local Constants = require(PluginModules.Constants)
@@ -26,11 +31,6 @@ local GradientInfoWidget = require(PluginModules.GradientInfoWidget)
 local GradientPaletteWidget = require(PluginModules.GradientPaletteWidget)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Util = require(PluginModules.Util)
-
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIListLayout = StandardComponents.UIListLayout
-local StandardUIPadding = StandardComponents.UIPadding
 
 local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 

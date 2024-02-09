@@ -9,11 +9,11 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local CommonComponents = Common.Components
 local ConnectTheme = require(CommonComponents.ConnectTheme)
-local StandardComponents = require(CommonComponents.StandardComponents)
 
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIListLayout = StandardComponents.UIListLayout
+local StandardComponents = CommonComponents.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
 
 ---
 

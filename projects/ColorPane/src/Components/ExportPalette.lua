@@ -16,8 +16,11 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
-local StandardComponents = require(CommonComponents.StandardComponents)
 local Button = require(CommonComponents.Button)
+
+local StandardComponents = CommonComponents.StandardComponents
+local StandardTextLabel = require(StandardComponents.TextLabel)
+local StandardUIListLayout = require(StandardComponents.UIListLayout)
 
 local PluginModules = root.PluginModules
 local Util = require(PluginModules.Util)
@@ -25,9 +28,6 @@ local Util = require(PluginModules.Util)
 local Components = root.Components
 local Dropdown = require(Components.Dropdown)
 local RadioButtonGroup = require(Components.RadioButtonGroup)
-
-local StandardTextLabel = StandardComponents.TextLabel
-local StandardUIListLayout = StandardComponents.UIListLayout
 
 ---
 

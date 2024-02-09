@@ -13,9 +13,9 @@ local Roact = require(Includes.RoactRodux.Roact)
 local Components = root.Components
 local ConnectTheme = require(Components.ConnectTheme)
 
-local StandardComponents = require(Components.StandardComponents)
-local StandardUICorner = StandardComponents.UICorner
-local StandardUIPadding = StandardComponents.UIPadding
+local StandardComponents = Components.StandardComponents
+local StandardUICorner = require(StandardComponents.UICorner)
+local StandardUIPadding = require(StandardComponents.UIPadding)
 
 ---
 

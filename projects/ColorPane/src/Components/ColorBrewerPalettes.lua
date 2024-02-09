@@ -11,7 +11,7 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
-local StandardComponents = require(CommonComponents.StandardComponents)
+local StandardTextLabel = require(CommonComponents.StandardComponents.TextLabel)
 
 local PluginModules = root.PluginModules
 local BuiltInPalettes = require(PluginModules.BuiltInPalettes)
@@ -23,7 +23,6 @@ local ButtonBar = require(Components.ButtonBar)
 local ColorGrids = require(Components.ColorGrids)
 
 local ColorBrewer = BuiltInPalettes.ColorBrewer
-local StandardTextLabel = StandardComponents.TextLabel
 
 ---
 
