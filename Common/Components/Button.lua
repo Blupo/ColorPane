@@ -3,9 +3,9 @@ local root = script.Parent.Parent
 local PluginModules = root.PluginModules
 local Style = require(PluginModules.Style)
 
-local includes = root.includes
-local Cryo = require(includes.Cryo)
-local Roact = require(includes.Roact)
+local Includes = root.Includes
+local Cryo = require(Includes.Cryo)
+local Roact = require(Includes.RoactRodux.Roact)
 
 local Components = root.Components
 local ConnectTheme = require(Components.ConnectTheme)

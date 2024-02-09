@@ -1,19 +1,11 @@
 --!strict
-
-local ContentProvider: ContentProvider = game:GetService("ContentProvider")
-
-local PluginModules = script.Parent
-local Util = require(PluginModules.Util)
-
----
-
-type dictionary<T> = {[string]: T}
+-- GUI styling information and image IDs
 
 type Style = {
-    Fonts: dictionary<Enum.Font>,
-    Constants: dictionary<number>,
-    UDim2: dictionary<UDim2>,
-    Images: dictionary<string>,
+    Fonts: {[string]: Enum.Font},
+    Constants: {[string]: number},
+    UDim2: {[string]: UDim2},
+    Images: {[string]: string},
 }
 
 ---
@@ -23,6 +15,7 @@ local Style: Style = {
 
     Fonts = {
         Standard = Enum.Font.SourceSans,
+        Monospaced = Enum.Font.RobotoMono,
     },
 
     Constants = {
@@ -33,7 +26,7 @@ local Style: Style = {
         PagePadding = 8,
         TextObjectPadding = 4,
 
-        -- Sizes
+        -- Element sizes
         MarkerSize = 8,
 
         StandardTextSize = 14,
@@ -65,7 +58,7 @@ local Style: Style = {
         TetradicHarmonyButtonIcon = "rbxassetid://6237996947",
         HexagonalHarmonyButtonIcon = "rbxassetid://6238003104",
 
-        -- ColorBrewer palette
+        -- ColorBrewer palette types
         SequentialDataTypeButtonIcon = "rbxassetid://6313201384",
         DivergingDataTypeButtonIcon = "rbxassetid://6308594803",
         QualitativeDataTypeButtonIcon = "rbxassetid://6308596898",
@@ -127,17 +120,6 @@ Style.UDim2.ButtonBarSize = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHei
 Style.UDim2.MarkerSize = UDim2.new(0, Style.Constants.MarkerSize, 0, Style.Constants.MarkerSize)
 Style.UDim2.MinorElementPaddingSize = UDim2.new(0, Style.Constants.MinorElementPadding, 0, Style.Constants.MinorElementPadding)
 
--- PRELOAD IMAGES
-
-local styleImages = {}
-
-for _, image in pairs(Style.Images) do
-    table.insert(styleImages, image)
-end
-
-ContentProvider:PreloadAsync(styleImages)
-
 ---
 
-Util.table.deepFreeze(Style)
 return Style

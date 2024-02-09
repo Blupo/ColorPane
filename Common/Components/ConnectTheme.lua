@@ -1,4 +1,4 @@
-local RoactRodux = require(script.Parent.Parent.includes.RoactRodux)
+local RoactRodux = require(script.Parent.Parent.Includes.RoactRodux.RoactRodux)
 
 ---
 

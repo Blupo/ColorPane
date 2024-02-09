@@ -1,4 +1,5 @@
 --!strict
+-- Provides translation functionality
 
 local StudioService: StudioService = game:GetService("StudioService")
 
@@ -6,25 +7,36 @@ local StudioService: StudioService = game:GetService("StudioService")
 
 local Translations: LocalizationTable = script.Parent.Parent.Translations
 
-local FALLBACK_TRANSLATOR: Translator = Translations:GetTranslator("en-us")
-local LocaleTranslator: Translator = Translations:GetTranslator(StudioService.StudioLocaleId)
+local fallbackTranslator: Translator = Translations:GetTranslator("en-us")
+local localTranslator: Translator = Translations:GetTranslator(StudioService.StudioLocaleId)
 
 ---
 
 local Translator = {}
 
+--[[
+    Returns a formatted translation string, see [Translator:FormatByKey](https://create.roblox.com/docs/reference/engine/classes/Translator#FormatByKey)
+    @param key The key to look up in the translation table
+    @param args A table of format arguments in the translation string
+    @return The formatted translatin string
+]]
 Translator.FormatByKey = function(key: string, args: {[any]: any}?): string
-    local success, data = pcall(function()
-        return LocaleTranslator:FormatByKey(key, args)
+    local success: boolean, translatedString: string = pcall(function()
+        return localTranslator:FormatByKey(key, args)
     end)
 
     if (not success) then
-        return FALLBACK_TRANSLATOR:FormatByKey(key, args)
+        return fallbackTranslator:FormatByKey(key, args)
     else
-        return data
+        return translatedString
     end
 end
 
+--[[
+    Returns a table of translated strings
+    @param keys The array of keys to look up in the translation table
+    @return A dictionary containing the translated strings where each dictionary key corresponds to a translation key
+]]
 Translator.GenerateTranslationTable = function(keys: {[number]: string}): {[string]: string}
     local t: {[string]: string} = {}
 

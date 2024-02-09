@@ -1,7 +1,7 @@
 local root = script.Parent.Parent.Parent
 
-local includes = root.includes
-local Roact = require(includes.Roact)
+local Includes = root.Includes
+local Roact = require(Includes.RoactRodux.Roact)
 
 ---
 
