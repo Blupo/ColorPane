@@ -1,90 +1,65 @@
-local makeEnum = function(name, enumItems)
-    local enum = {}
-    
-    for i = 1, #enumItems do
-        local enumItem = enumItems[i]
-        
-        enum[enumItem] = enumItem
-    end
-    
-    return setmetatable(enum, {
-        __index = function(_, key)
-            error(tostring(key) .. " is not a valid member of enum " .. name)
-        end,
-        
-        __newindex = function()
-            error(name .. " cannot be modified")
-        end,
-    })
-end
+--!strict
+-- Provides enums
 
-return setmetatable({
-    StoreActionType = makeEnum("PluginEnums.StoreActionType", {
-        "SetTheme",
-        "UpdateSessionData",
+return {
+    StoreActionType = {
+        SetTheme = "SetTheme",
+        UpdateSessionData = "UpdateSessionData",
 
-        "ColorEditor_SetColor",
-        "ColorEditor_AddQuickPaletteColor",
-        "ColorEditor_AddPalette",
-        "ColorEditor_RemovePalette",
-        "ColorEditor_DuplicatePalette",
-        "ColorEditor_ChangePaletteName",
-        "ColorEditor_AddPaletteColor",
-        "ColorEditor_AddCurrentColorToPalette",
-        "ColorEditor_RemovePaletteColor",
-        "ColorEditor_ChangePaletteColorName",
-        "ColorEditor_ChangePaletteColorPosition",
+        ColorEditor_SetColor = "ColorEditor_SetColor",
+        ColorEditor_AddQuickPaletteColor = "ColorEditor_AddQuickPaletteColor",
+        ColorEditor_AddPalette = "ColorEditor_AddPalette",
+        ColorEditor_RemovePalette = "ColorEditor_RemovePalette",
+        ColorEditor_DuplicatePalette = "ColorEditor_DuplicatePalette",
+        ColorEditor_ChangePaletteName = "ColorEditor_ChangePaletteName",
+        ColorEditor_AddPaletteColor = "ColorEditor_AddPaletteColor",
+        ColorEditor_AddCurrentColorToPalette = "ColorEditor_AddCurrentColorToPalette",
+        ColorEditor_RemovePaletteColor = "ColorEditor_RemovePaletteColor",
+        ColorEditor_ChangePaletteColorName = "ColorEditor_ChangePaletteColorName",
+        ColorEditor_ChangePaletteColorPosition = "ColorEditor_ChangePaletteColorPosition",
 
-        "GradientEditor_ResetState",
-        "GradientEditor_SetKeypoints",
-        "GradientEditor_SetGradient",
-        "GradientEditor_SetSnapValue",
-        "GradientEditor_AddPaletteColor",
-        "GradientEditor_RemovePaletteColor",
-        "GradientEditor_ChangePaletteColorName",
-        "GradientEditor_ChangePaletteColorPosition",
-    }),
+        GradientEditor_ResetState = "GradientEditor_ResetState",
+        GradientEditor_SetKeypoints = "GradientEditor_SetKeypoints",
+        GradientEditor_SetGradient = "GradientEditor_SetGradient",
+        GradientEditor_SetSnapValue = "GradientEditor_SetSnapValue",
+        GradientEditor_AddPaletteColor = "GradientEditor_AddPaletteColor",
+        GradientEditor_RemovePaletteColor = "GradientEditor_RemovePaletteColor",
+        GradientEditor_ChangePaletteColorName = "GradientEditor_ChangePaletteColorName",
+        GradientEditor_ChangePaletteColorPosition = "GradientEditor_ChangePaletteColorPosition",
+    },
 
-    PluginSettingKey = makeEnum("PluginEnums.PluginSettingKey", {
-        "UserPalettes",
-        "SnapValue",
-        "AutoLoadColorProperties",
-        "AskNameBeforePaletteCreation",
-        "AutoCheckForUpdate",
-        "AutoSave",
-        "AutoSaveInterval",
-        "CacheAPIData",
-        "UserGradients",
-        "FirstTimeSetup",
+    PluginSettingKey = {
+        UserPalettes = "UserPalettes",
+        SnapValue = "SnapValue",
+        AutoLoadColorProperties = "AutoLoadColorProperties",
+        AskNameBeforePaletteCreation = "AskNameBeforePaletteCreation",
+        AutoCheckForUpdate = "AutoCheckForUpdate",
+        AutoSave = "AutoSave",
+        AutoSaveInterval = "AutoSaveInterval",
+        CacheAPIData = "CacheAPIData",
+        UserGradients = "UserGradients",
+        FirstTimeSetup = "FirstTimeSetup",
         
         -- DEPRECATED
-        "UserColorSequences",
-    }),
+        UserColorSequences = "UserColorSequences",
+    },
 
-    EditorKey = makeEnum("PluginEnums.EditorKey", {
-        "ColorWheel",
-        "RGBSlider",
-        "CMYKSlider",
-        "HSBSlider",
-        "HSLSlider",
-        "GreyscaleSlider",
-        "KelvinSlider",
+    EditorKey = {
+        ColorWheel = "ColorWheel",
+        RGBSlider = "RGBSlider",
+        CMYKSlider = "CMYKSlider",
+        HSBSlider = "HSBSlider",
+        HSLSlider = "HSLSlider",
+        GreyscaleSlider = "GreyscaleSlider",
+        KelvinSlider = "KelvinSlider",
 
-        "Default",
-    }),
+        Default = "Default",
+    },
 
-    PromptError = makeEnum("PluginEnums.PromptError", {
-        "InvalidPromptOptions",
-        "PromptAlreadyOpen",
-        "ReservationProblem",
-        "PromptCancelled"
-    }),
-}, {
-    __index = function(_, key)
-        error(tostring(key) .. " is not a valid enum")
-    end,
-
-    __newindex = function()
-        error("Enum table cannot be modified")
-    end
-})
+    PromptError = {
+        InvalidPromptOptions = "InvalidPromptOptions",
+        PromptAlreadyOpen = "PromptAlreadyOpen",
+        ReservationProblem = "ReservationProblem",
+        PromptCancelled = "PromptCancelled"
+    }
+}
