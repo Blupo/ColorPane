@@ -1,4 +1,5 @@
 --!strict
+-- Creates DockWidgetPluginGuis
 
 local RunService: RunService = game:GetService("RunService")
 
@@ -12,10 +13,12 @@ local PluginProvider = require(CommonPluginModules.PluginProvider)
 local Style = require(CommonPluginModules.Style)
 
 local PluginModules = script.Parent
-local ProjectInfo = require(PluginModules.ProjectInfo)
+local ProjectId = require(PluginModules.ProjectId)
 local Util = require(PluginModules.Util)
 
 ---
+
+local PROJECT_ID: string = ProjectId()
 
 local plugin: Plugin? = PluginProvider()
 assert(plugin, Util.makeBugMessage("Plugin object is missing"))
@@ -86,7 +89,7 @@ return function(widgetInfoId: PluginWidgetType): DockWidgetPluginGui
     local widgetInfo = widgetsInfo[widgetInfoId]
     local widget: DockWidgetPluginGui = plugin:CreateDockWidgetPluginGui(widgetInfoId, widgetInfo.Info)
 
-    widget.Name = ProjectInfo.Id .. "_" .. widgetInfoId
+    widget.Name = PROJECT_ID .. "_" .. widgetInfoId
     widget.Title = widgetInfo.Title
     widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     widget.Archivable = false

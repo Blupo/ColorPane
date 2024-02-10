@@ -1,4 +1,5 @@
 -- TODO
+-- ColorPane store
 local Studio: Studio = settings().Studio
 
 ---

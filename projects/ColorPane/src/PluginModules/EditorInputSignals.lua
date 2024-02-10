@@ -1,4 +1,5 @@
 --!strict
+-- Provides Signals for editor mouse input
 
 local RunService: RunService = game:GetService("RunService")
 

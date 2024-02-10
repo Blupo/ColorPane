@@ -15,7 +15,7 @@ local localTranslator: Translator = Translations:GetTranslator(StudioService.Stu
 local Translator = {}
 
 --[[
-    Returns a formatted translation string, see [Translator:FormatByKey](https://create.roblox.com/docs/reference/engine/classes/Translator#FormatByKey)
+    Returns a formatted translation string, see [Translator:FormatByKey()](https://create.roblox.com/docs/reference/engine/classes/Translator#FormatByKey)
     @param key The key to look up in the translation table
     @param args A table of format arguments in the translation string
     @return The formatted translatin string
@@ -33,7 +33,8 @@ Translator.FormatByKey = function(key: string, args: {[any]: any}?): string
 end
 
 --[[
-    Returns a table of translated strings
+    Returns a table of translated strings.
+    This function should only be used for translation strings without any format arguments.
     @param keys The array of keys to look up in the translation table
     @return A dictionary containing the translated strings where each dictionary key corresponds to a translation key
 ]]

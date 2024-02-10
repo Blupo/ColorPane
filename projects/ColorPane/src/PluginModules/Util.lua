@@ -1,4 +1,5 @@
 --!strict
+-- ColorPane utilities
 
 local Includes = script.Parent.Parent.Common.Includes
 local ColorLib = require(Includes.Color)
