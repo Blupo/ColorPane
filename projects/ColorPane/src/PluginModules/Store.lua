@@ -74,6 +74,7 @@ local colorPaneStoreInitialState = Util.table.deepFreeze({
     
     colorEditor = {
         authoritativeEditor = "",
+        color = Color.new(1, 1, 1),
         
         quickPalette = {},
         palettes = userPalettes,
@@ -82,6 +83,8 @@ local colorPaneStoreInitialState = Util.table.deepFreeze({
     gradientEditor = {
         snap = 0.00001, --PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
         palette = userGradients,
+
+        -- TODO: populate with default gradient
     }
 })
 

@@ -56,10 +56,11 @@ return {
         Default = "Default",
     },
 
-    PromptError = {
+    PromptRejection = {
         InvalidPromptOptions = "InvalidPromptOptions",
         PromptAlreadyOpen = "PromptAlreadyOpen",
         ReservationProblem = "ReservationProblem",
-        PromptCancelled = "PromptCancelled"
+        PromptCancelled = "PromptCancelled",
+        SameAsInitial = "SameAsInitial",
     }
 }

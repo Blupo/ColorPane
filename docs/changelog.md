@@ -1,25 +1,41 @@
 ## [Unreleased]
 
 ### Added
+#### UX
 - Added a dedicated "Set Color" button for colors in the palette list layout
 - Added a "Reset" button for gradient precision
 - Added partial translations for French (`fr`) and Korean (`ko`)
 - Added a random color button
+#### API
+- Added `API.IsColorPromptAvailable` to check if calling `API.PromptForColor` will succeed or immediately reject
+- Added `API.IsGradientPromptAvailable` to check if calling `API.PromptForGradient` will succeed or immediately reject
 
 ### Changed
+#### UX
+- Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
+#### API
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
 - For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
-- The API script is now injected into StudioService instead of CoreGui
-- Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
-- The type of `API.Unloading` is now an `RBXScriptSignal<nil>`
-- Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
+- The `API.PromptError` enum has been re-named to `API.PromptRejection`
+- The `API.PromptForColor` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new colors are the same
+- The `API.PromptForGradient` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new gradients are the same
 
 ### Fixed
-- The "*Periodically check for updates*" setting now does what it says it does
+#### UX
 - Fixed the initial size of the color editor only showing one page (it should have 2)
+#### API
 - `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
-- Added a workaround for a Studio bug where the Gradient Editor doesn't show up when it should 
+- The `API.PromptForColor` Promise will no longer reject when the inital and new colors are the same even though you didn't specify an initial color
+- The `API.PromptForGradient` Promise will no longer reject when the initial and new gradients are the same even though you didn't specify an initial gradient
+
+### Deprecated
+#### API
+- `API.IsColorEditorOpen` is now deprecated, please use `API.IsColorPromptAvailable` for new work
+- `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
+- `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
+- `API.Unloading` is now deprecated
+- `API.PromiseStatus` is now deprecated
 
 ## [0.4.1] - 2022-09-30
 
