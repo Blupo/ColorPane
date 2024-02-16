@@ -17,11 +17,6 @@ local PluginProvider = require(PluginModules.PluginProvider)
 
 ---
 
-local plugin: Plugin? = PluginProvider()
-assert(plugin, "Plugin is missing")
-
----
-
 type Element = typeof(Roact.createElement())
 type Store = typeof(Rodux.Store.new())
 
@@ -37,14 +32,14 @@ type WindowImpl = {
     new: (id: string, widgetInfo: DockWidgetPluginGuiInfo) -> Window,
 
     --[[
-        Unmounts the currently-mounted element on the window
+        Unmounts the currently-mounted element on the window and closes it
         @param self The window to unmount from
         @param resetTitle (Optional) Reset the plugin gui title
     ]]
     unmount: (Window, boolean?) -> (),
 
     --[[
-        Mounts an element to the window
+        Mounts an element to the window and opens it
         @param self The window to mount to
         @param title The title of the window
         @param element The Roact element to mount to the window
@@ -71,6 +66,20 @@ type WindowImpl = {
         @param self The window to destroy
     ]]
     destroy: (Window) -> (),
+
+    --[[
+        Returns if the window has a mounted element
+        @param self The window to check
+        @return If the window has a mounted element (`true`) or not (`false`)
+    ]]
+    isMounted: (Window) -> boolean,
+
+    --[[
+        Returns if the window is open
+        @param self The window to check
+        @return If the window is open (`true`) or not (`false`)
+    ]]
+    isOpen: (Window) -> boolean,
 }
 
 export type Window = typeof(setmetatable(
@@ -96,6 +105,10 @@ export type Window = typeof(setmetatable(
 
     {}::WindowImpl
 ))
+
+---
+
+local plugin: Plugin = PluginProvider()
 
 local Window: WindowImpl = {}::WindowImpl
 Window.__index = Window
@@ -175,6 +188,23 @@ Window.destroy = function(self: Window)
     end
 
     self.__window:Destroy()
+    self.destroyed = true
+end
+
+Window.isMounted = function(self: Window): boolean
+    if (self.destroyed) then
+        return false
+    else
+        return if (self.__tree) then true else false
+    end
+end
+
+Window.isOpen = function(self: Window): boolean
+    if (self.destroyed) then
+        return false
+    else
+        return self.__window.Enabled
+    end
 end
 
 ---
