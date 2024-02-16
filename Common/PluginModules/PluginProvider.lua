@@ -1,15 +1,26 @@
 --!strict
--- Provides access to the plugin object throughout the project
 
 local savedPlugin: Plugin?
 
 --[[
-    Provides a Plugin object or stores a Plugin object
-    @param plugin The plugin to be stored. If this is `nil`, the currently-stored Plugin will be returned instead (which may be nil)
-    @return The currently-stored Plugin (which may be nil)
+    Stores and/or provides a Plugin object.
+    
+    If called with a plugin, it will be stored for future use.
+    If a plugin is already stored, the function will throw an error.
+
+    If called without a plugin, it will return the currently-stored plugin.
+    If a plugin is not stored, the function will throw an error.
+    
+    @param plugin The plugin to be stored
+    @return The currently-stored plugin
 ]]
-return function(plugin: Plugin?): Plugin?
-    if (not plugin) then return savedPlugin end
+return function(plugin: Plugin?): Plugin
+    if (not plugin) then
+        assert(savedPlugin, "Plugin object is missing")
+        return savedPlugin
+    elseif (savedPlugin) then
+        error("Plugin already stored")
+    end
     
     savedPlugin = plugin
     return plugin

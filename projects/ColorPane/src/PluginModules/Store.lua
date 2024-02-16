@@ -22,11 +22,7 @@ local Util = require(PluginModules.Util)
 
 ---
 
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
-
----
-
+local plugin: Plugin = PluginProvider()
 local userPalettes = {} --Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
 local userGradients = {} --Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserGradients) or {})
 

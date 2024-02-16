@@ -24,8 +24,9 @@ type SignalTable<T> = {
     Fire: Signal.FireSignal<T>
 }
 
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+---
+
+local plugin: Plugin = PluginProvider()
 
 -- set up signals
 local colorEditorInputBeganSignal: Signal.Signal<InputObject>, fireColorEditorInputBegan: Signal.FireSignal<InputObject> = Signal.createSignal()

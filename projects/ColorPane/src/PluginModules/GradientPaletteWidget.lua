@@ -14,15 +14,9 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 local PluginModules = root.PluginModules
 local PluginWidget = require(PluginModules.PluginWidget)
 local Store = require(PluginModules.Store)
-local Util = require(PluginModules.Util)
 
 local Components = root.Components
 local GradientPalette = require(Components.GradientPalette)
-
----
-
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
 
 ---
 

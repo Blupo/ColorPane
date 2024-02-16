@@ -20,12 +20,10 @@ local Util = require(PluginModules.Util)
 
 ---
 
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
-
 local ABSOLUTE_MIN_DELTA: number = 1/60
 local DEFAULT_DELTA: number = 0.25
 
+local plugin: Plugin = PluginProvider()
 local repeaters = {}
 
 ---

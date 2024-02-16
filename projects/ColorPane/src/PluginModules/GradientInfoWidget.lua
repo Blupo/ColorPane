@@ -22,8 +22,7 @@ local GradientInfo = require(Components.GradientInfo)
 
 ---
 
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
+local plugin: Plugin = PluginProvider()
 
 local tree
 local widget = PluginWidget("GradientInfo")

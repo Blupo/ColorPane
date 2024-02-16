@@ -7,9 +7,12 @@ local ProjectId = require(script.PluginModules.ProjectId)
 ---
 
 --[[
-    Initialises ColorPane and returns the API. This function must only be called once.
+    Initialises ColorPane and returns the API. **This function should only be called once.**
+    
+    The project ID is used when creating plugin widgets and in error output.
+    If you do not provide an ID, it will be set to a random UUID.
     @param plugin The Plugin object of your project
-    @param id (Optional) The ID of your project, used when creating plugin widgets and in error output. If you do not provide an ID, this will be set to a random string.
+    @param id (Optional) The ID of your project
     @return The ColorPane API
 ]]
 return function(plugin: Plugin, id: string?)
