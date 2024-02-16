@@ -1,29 +1,18 @@
 --!strict
--- Creates DockWidgetPluginGuis
-
-local RunService: RunService = game:GetService("RunService")
-
----
+-- Holds information for the common plugin widgets
 
 local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonPluginModules = Common.PluginModules
-local PluginProvider = require(CommonPluginModules.PluginProvider)
 local Style = require(CommonPluginModules.Style)
 
 local PluginModules = script.Parent
 local ProjectId = require(PluginModules.ProjectId)
-local Util = require(PluginModules.Util)
 
 ---
 
 local PROJECT_ID: string = ProjectId()
-
-local plugin: Plugin? = PluginProvider()
-assert(plugin, Util.makeBugMessage("Plugin object is missing"))
-
-local widgets: {[string]: DockWidgetPluginGui} = {}
 
 local colorEditorDefaultWidth = Style.Constants.PagePadding +
     (Style.Constants.EditorPageWidth + Style.Constants.MajorElementPadding) * 2 +
@@ -57,50 +46,26 @@ local gradientInfoMinHeight = (Style.Constants.PagePadding * 2) +
     (Style.Constants.MinorElementPadding * 6) +
     (Style.Constants.SpaciousElementPadding * 2)
 
-local widgetsInfo = {
+---
+
+return {
     ColorEditor = {
-        Title = "",
+        Id = PROJECT_ID .. "_ColorEditor",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, colorEditorDefaultWidth, 400, colorEditorMinWidth, 400),
     },
 
     GradientEditor = {
-        Title = "",
+        Id = PROJECT_ID .. "_GradientEditor",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, gradientEditorMinWidth, 130, gradientEditorMinWidth, 130),
     },
 
     GradientPalette = {
-        Title = "",
+        Id = PROJECT_ID .. "_GradientPalette",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.Constants.PagePadding + 230, gradientPaletteMinHeight, Style.Constants.PagePadding + 230, gradientPaletteMinHeight),
     },
 
     GradientInfo = {
-        Title = "",
+        Id = PROJECT_ID .. "_GradientInfo",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, Style.Constants.PagePadding + 230, gradientInfoMinHeight, Style.Constants.PagePadding + 230, gradientInfoMinHeight),
     },
 }
-
----
-
-type PluginWidgetType = "ColorEditor" | "GradientEditor" | "GradientPalette" | "GradientInfo"
-
-return function(widgetInfoId: PluginWidgetType): DockWidgetPluginGui
-    if (widgets[widgetInfoId]) then return widgets[widgetInfoId] end
-
-    local widgetInfo = widgetsInfo[widgetInfoId]
-    local widget: DockWidgetPluginGui = plugin:CreateDockWidgetPluginGui(widgetInfoId, widgetInfo.Info)
-
-    widget.Name = PROJECT_ID .. "_" .. widgetInfoId
-    widget.Title = widgetInfo.Title
-    widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    widget.Archivable = false
-
-    -- fix a bug where PluginGuis don't show up when you enable them
-    RunService.Heartbeat:Wait()
-    widget.Enabled = true
-    RunService.Heartbeat:Wait()
-    RunService.Heartbeat:Wait()
-    widget.Enabled = false
-
-    widgets[widgetInfoId] = widget
-    return widget
-end
