@@ -1,5 +1,5 @@
 {
-    "name": "ColorPane",
+    "name": "Workspace",
     
     "tree": {
         "$className": "DataModel",
@@ -15,8 +15,8 @@
                 }
             },
 
-            "Settings": {
-                "$path": "projects/Settings/src",
+            "Companion": {
+                "$path": "projects/Companion/src",
 
                 "Common": {
                     "$path": "Common"

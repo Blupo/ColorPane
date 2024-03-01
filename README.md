@@ -32,4 +32,4 @@ You can install it from the marketplace (TBA).
 
 ### Color Properties
 
-Color Properties was a functionality integrated into the previous ColorPane plugin that allowed users to modify the color properties of objects using the color tools. This functionality will be spun off into its own plugin, as it originally was when ColorPane first released.
+Color Properties was a functionality integrated into the previous ColorPane plugin that allowed users to modify the color properties of objects using the color tools. This functionality might be spun off into its own plugin, as it originally was when ColorPane first released.
