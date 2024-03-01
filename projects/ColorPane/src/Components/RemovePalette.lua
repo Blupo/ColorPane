@@ -1,3 +1,5 @@
+-- A dialog for removing a palette
+
 local TextService = game:GetService("TextService")
 
 ---
@@ -34,12 +36,10 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     props
-
         paletteIndex: number,
         onPromptClosed: (boolean) -> nil
 
     store props
-
         theme: StudioTheme
         palettes: array<Palette>
 

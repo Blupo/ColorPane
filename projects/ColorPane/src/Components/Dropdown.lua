@@ -1,3 +1,5 @@
+-- A selection button and list
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -22,7 +24,6 @@ local SimpleList = require(Components.SimpleList)
 
 --[[
     props
-
         selectedItem: {number, number}
 
         itemSections: array<{
@@ -43,7 +44,6 @@ local SimpleList = require(Components.SimpleList)
         onItemChanged: (number, number) -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 

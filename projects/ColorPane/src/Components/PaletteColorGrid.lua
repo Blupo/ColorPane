@@ -1,3 +1,5 @@
+-- A color palette where the colors are shown in a grid
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -27,7 +29,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?

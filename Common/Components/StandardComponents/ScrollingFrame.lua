@@ -1,3 +1,5 @@
+-- Standard ScrollingFrame component with theme coloring
+
 local root = script.Parent.Parent.Parent
 
 local PluginModules = root.PluginModules
@@ -13,7 +15,6 @@ local ConnectTheme = require(Components.ConnectTheme)
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?
@@ -28,7 +29,6 @@ local ConnectTheme = require(Components.ConnectTheme)
         useMainBackgroundColor: boolean?
     
     store props
-
         theme: StudioTheme
 ]]
 

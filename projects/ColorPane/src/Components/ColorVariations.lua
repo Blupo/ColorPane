@@ -1,3 +1,5 @@
+-- A page showing variations of a color
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -39,7 +41,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     store props
-
         color: Color
         variationSteps: number
 

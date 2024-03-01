@@ -1,5 +1,5 @@
 --!strict
--- Wrapper for making a callback repeat
+-- Wrapper for making a callback repeat multiple times
 
 local HttpService: HttpService = game:GetService("HttpService")
 local RunService: RunService = game:GetService("RunService")

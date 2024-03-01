@@ -1,3 +1,8 @@
+--[[
+    A color picker containing a hue ring and saturation-value plane
+    with color harmony guides
+]]
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -71,7 +76,6 @@ local harmonies = {
 
 --[[
     props
-
         angle: number
         ringWidth: number
         wheelRadius: Binding<number>
@@ -79,7 +83,6 @@ local harmonies = {
         onActivated: () -> nil
 
     store props
-        
         theme: StudioTheme
 ]]
 

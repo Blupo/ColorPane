@@ -1,3 +1,5 @@
+-- The entire color editor interface 
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -108,12 +110,10 @@ local editorTabs = {
 
 --[[
     props
-
         originalColor: Color
         fireFinished: FireSignal<boolean>
 
     store props
-
         theme: StudioTheme
         editorPage: number
         color: Color

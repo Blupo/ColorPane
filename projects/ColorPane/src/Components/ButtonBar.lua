@@ -1,3 +1,5 @@
+-- A container for multiple buttons, where one button is selected at a time
+
 local Common = script.Parent.Parent.Common
 
 local CommonPluginModules = Common.PluginModules
@@ -19,7 +21,6 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?
@@ -47,7 +48,6 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
         onButtonActivated: (number) -> nil
     
     store props
-
         theme: StudioTheme
 ]]
 

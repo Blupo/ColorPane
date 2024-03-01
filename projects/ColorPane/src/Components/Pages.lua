@@ -1,3 +1,8 @@
+--[[
+    A container for multiple pages which can be selected with a dropdown,
+    and also contains a button for showing page options
+]]
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -14,7 +19,6 @@ local Dropdown = require(Components.Dropdown)
 
 --[[
     props
-
         selectedPage: {number, number}
 
         pageSections: array<{

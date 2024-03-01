@@ -1,3 +1,5 @@
+-- A generic color slider page 
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -23,7 +25,6 @@ local Slider = require(Components.Slider)
 
 --[[
     props
-
         colorSpace: string
         editorKey: string
 
@@ -37,7 +38,6 @@ local Slider = require(Components.Slider)
         sliderMarkerColorGenerators: dictionary<string, (dictionary<string, number>, StudioTheme) -> Color3>?
 
     store props
-
         theme: StudioTheme
         color: Color
         editor: string

@@ -1,3 +1,5 @@
+-- RGB slider page for monochrome colors
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -47,7 +49,6 @@ local percentValueToText, percentTextToValue = valueToTextFactory(100), textToVa
 
 --[[
     store props
-
         theme: StudioTheme
         color: Color
         editor: string

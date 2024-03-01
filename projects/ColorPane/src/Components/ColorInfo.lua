@@ -1,3 +1,5 @@
+-- A page containing information in different formats about a color
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -301,7 +303,6 @@ local infoComponents = {
 
 --[[
     store props
-
         color: Color
         setColor: (Color) -> nil
 ]]

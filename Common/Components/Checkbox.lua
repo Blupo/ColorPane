@@ -1,3 +1,5 @@
+-- A checkbox
+
 local root = script.Parent.Parent
 
 local PluginModules = root.PluginModules
@@ -17,7 +19,6 @@ local StandardUICorner = require(StandardComponents.UICorner)
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?
@@ -29,7 +30,6 @@ local StandardUICorner = require(StandardComponents.UICorner)
         onChecked: (boolean) -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 

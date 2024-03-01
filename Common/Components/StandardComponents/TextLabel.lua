@@ -1,3 +1,5 @@
+-- Standard TextLabel component with theme coloring
+
 local root = script.Parent.Parent.Parent
 
 local PluginModules = root.PluginModules
@@ -13,7 +15,6 @@ local ConnectTheme = require(Components.ConnectTheme)
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?
@@ -31,7 +32,6 @@ local ConnectTheme = require(Components.ConnectTheme)
         TextColor3? = StudioTheme:GetColor(Enum.StudioStyleGuideColor.MainText)
     
     store props
-
         theme: StudioTheme
 ]]
 

@@ -1,3 +1,8 @@
+--[[
+    UICorner component that can either be round
+    or use the standard style corner radius
+]]
+
 local root = script.Parent.Parent.Parent
 
 local PluginModules = root.PluginModules
@@ -10,7 +15,6 @@ local Roact = require(Includes.RoactRodux.Roact)
 
 --[[
     props
-
         circular: boolean?
 ]]
 

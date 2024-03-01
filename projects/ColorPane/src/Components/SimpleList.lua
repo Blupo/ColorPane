@@ -1,3 +1,5 @@
+-- A simple list of elements
+
 local Common = script.Parent.Parent.Common
 
 local CommonIncludes = Common.Includes

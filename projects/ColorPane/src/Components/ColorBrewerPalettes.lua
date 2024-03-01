@@ -1,3 +1,5 @@
+-- Palette page for ColorBrewer palettes
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -82,7 +84,6 @@ end
 
 --[[
     store props
-
         dataClass: number
         numDataClasses: number
 

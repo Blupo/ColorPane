@@ -1,3 +1,5 @@
+-- A page for importing palettes
+
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Selection = game:GetService("Selection")
@@ -94,11 +96,9 @@ local importStatusMessages = {
 
 --[[
     props
-
         onPromptClosed: (boolean) -> nil
     
     store props
-
         theme: StudioTheme
         palettes: array<Palette>
 

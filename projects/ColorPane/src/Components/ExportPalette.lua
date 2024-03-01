@@ -1,3 +1,5 @@
+-- A page for exporting a palette
+
 local HttpService = game:GetService("HttpService")
 local Selection = game:GetService("Selection")
 local ServerStorage = game:GetService("ServerStorage")
@@ -45,12 +47,10 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     props
-
         paletteIndex: number?
         onPromptClosed: (boolean) -> nil
 
     store props
-
         theme: StudioTheme
         palettes: array<Palette>
 ]]

@@ -1,3 +1,5 @@
+-- A Pages container for various color sliders in various color spaces
+
 local root = script.Parent.Parent
 local Common = root.Common
 

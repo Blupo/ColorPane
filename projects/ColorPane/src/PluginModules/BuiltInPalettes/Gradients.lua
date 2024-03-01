@@ -1,3 +1,5 @@
+-- A list of built-in gradients
+
 local root = script.Parent.Parent.Parent
 local Common = root.Common
 

@@ -1,3 +1,5 @@
+-- A palette of the available brick colors
+
 local brickColorsPalette = {
     name = "BrickColors",
     colors = {}

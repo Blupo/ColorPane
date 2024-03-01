@@ -1,3 +1,5 @@
+-- A prompt to take (or avoid) an action
+
 local root = script.Parent.Parent
 
 local PluginModules = root.PluginModules

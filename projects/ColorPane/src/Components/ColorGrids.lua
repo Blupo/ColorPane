@@ -1,3 +1,5 @@
+-- A grid of colors
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -32,7 +34,6 @@ local KEY_CODE_DELTAS = {
 
 --[[
     props
-
         AnchorPoint?
         Position?
 
@@ -43,7 +44,6 @@ local KEY_CODE_DELTAS = {
         onColorSelected: (number) -> nil
 
     store props
-    
         theme: StudioTheme
 ]]
 

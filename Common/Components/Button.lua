@@ -1,3 +1,5 @@
+-- A button that can display multiple types of content
+
 local root = script.Parent.Parent
 
 local PluginModules = root.PluginModules
@@ -79,7 +81,6 @@ local colorSequenceButtonProps = {
         onActivated: () -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 

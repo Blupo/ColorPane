@@ -1,3 +1,5 @@
+-- A color palette where the colors are shown in a list
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -31,7 +33,6 @@ local KEY_CODE_DELTAS = {
 
 --[[
     props
-
         AnchorPoint?
         Position?
         Size?
@@ -52,7 +53,6 @@ local KEY_CODE_DELTAS = {
         onColorMovedDown: () -> nil
 
     store props
-    
         theme: StudioTheme
 ]]
 

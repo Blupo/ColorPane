@@ -1,3 +1,5 @@
+-- A page for sorting colors based on their ΔE* to another color
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -37,7 +39,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     store props
-
         currentColor: Color
         sortAnchor: Color
         colors: array<Color>

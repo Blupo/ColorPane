@@ -1,3 +1,5 @@
+-- A color palette
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -32,7 +34,6 @@ local searchPrompt = Translator.FormatByKey("Searchbar_Prompt")
 
 --[[
     props
-
         palette: Palette?
             OR
         paletteIndex: number?
@@ -40,7 +41,6 @@ local searchPrompt = Translator.FormatByKey("Searchbar_Prompt")
         readOnly: boolean?
 
     store props
-
         theme: StudioTheme
         paletteLayout: number
 

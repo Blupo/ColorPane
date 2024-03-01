@@ -1,3 +1,5 @@
+-- A text input with validation capability
+
 local TextService = game:GetService("TextService")
 
 ---
@@ -40,7 +42,6 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
         onSubmit: (string)?
 
     store props
-
         theme: StudioTheme
 ]]
 

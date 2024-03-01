@@ -1,4 +1,6 @@
 --[[
+    A palette of the colors in the Copic catalog
+
     https://copic.jp/pdf/copic-catalog.pdf
     April 2021 catalog
 --]]

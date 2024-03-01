@@ -1,3 +1,5 @@
+-- A page showing the editing metadata for a gradient
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -78,7 +80,6 @@ end
 
 --[[
     store props
-
         theme: StudioTheme
         colorSpace: string?
         hueAdjustment: string?

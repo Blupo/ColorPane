@@ -1,3 +1,5 @@
+-- A customisable numeric slider
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -23,7 +25,6 @@ local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorE
 
 --[[
     props
-
         AnchorPoint?
         Position?
         LayoutOrder?
@@ -45,7 +46,6 @@ local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorE
         valueChanged: (number) -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 

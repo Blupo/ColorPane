@@ -1,3 +1,5 @@
+-- Palette naming dialog page
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -36,12 +38,10 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     props
-
         paletteIndex: number?
         onPromptClosed: (boolean) -> nil
 
     store props
-
         theme: StudioTheme
         palettes: array<Palette>
 

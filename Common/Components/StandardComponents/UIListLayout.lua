@@ -1,3 +1,5 @@
+-- Standard UIListLayout component with layout information presets
+
 local root = script.Parent.Parent.Parent
 
 local Includes = root.Includes
@@ -7,7 +9,6 @@ local Roact = require(Includes.RoactRodux.Roact)
 
 --[[
     props
-
         Padding?
         FillDirection? = Enum.FillDirection.Vertical
         HorizontalAlignment? = Enum.HorizontalAlignment.Left
@@ -16,7 +17,21 @@ local Roact = require(Includes.RoactRodux.Roact)
 
         [Roact.Change.AbsoluteContentSize]?
 
-        preset: number(1,2)?
+        preset: number?
+    
+    Notes
+        Setting a preset will override the FillDirection, HorizontalAlignment,
+        and VerticalAlignment properties, even if they're specified.
+
+        Preset 1:
+            FillDirection = Enum.FillDirection.Vertical
+            HorizontalAlignment = Enum.HorizontalAlignment.Left
+            VerticalAlignment = Enum.VerticalAlignment.Top
+        
+        Preset 2:
+            FillDirection = Enum.FillDirection.Horizontal
+            HorizontalAlignment = Enum.HorizontalAlignment.Right
+            VerticalAlignment = Enum.VerticalAlignment.Center
 ]]
 
 local StandardUIListLayout = Roact.PureComponent:extend("StandardUIListLayout")

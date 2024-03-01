@@ -1,3 +1,5 @@
+-- A list of the ColorBrewer palettes and their colors
+
 return {
     Accent = {
         type = "Qualitative",

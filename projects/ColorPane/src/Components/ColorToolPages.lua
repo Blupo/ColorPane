@@ -1,3 +1,8 @@
+--[[
+    A Pages container for the Color Information, Color Sorter,
+    Color Variations, and Gradient Pickers pages
+]]
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -31,7 +36,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     store props
-
         lastToolPage: number
         updateToolPage: (number) -> nil
 ]]

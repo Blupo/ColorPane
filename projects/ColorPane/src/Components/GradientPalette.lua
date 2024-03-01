@@ -1,3 +1,5 @@
+-- A page showing a palette of gradients
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -40,11 +42,9 @@ local numBuiltInGradients = #BuiltInGradients
 
 --[[
     props
-
         beforeSetGradient: () -> nil
 
     store props
-
         theme: StudioTheme
 
         keypoints: array<GradientKeypoint>

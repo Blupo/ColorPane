@@ -1,3 +1,5 @@
+-- UIPadding component where the paddings are specified in an array
+
 local root = script.Parent.Parent.Parent
 
 local Includes = root.Includes
@@ -6,14 +8,27 @@ local Roact = require(Includes.RoactRodux.Roact)
 ---
 
 --[[
-    props: array<number>
+    props
+        array<number>
 
-        If 1 number is provided:
+    Notes
+        The props array must contain either 1, 2, or 4 numbers.
+        If it doesn't, an error will occur.
+
+        If only 1 number is provided in the array,
+        all paddings are set to that number.
+
             Top = Bottom = Left = Right = props[1]
-        If 2 numbers are provided:
+
+        If 2 numbers are provided, the top and bottom paddings
+        are set to the first number, and the left and right
+        paddings are set to the second number.
+
             Top, Bottom = props[1]
             Left, Right = props[2]
-        If 4 numbers are provided:
+
+        If 4 numbers are provided, the paddings are set as such:
+
             Top = props[1]
             Bottom = props[2]
             Left = props[3]

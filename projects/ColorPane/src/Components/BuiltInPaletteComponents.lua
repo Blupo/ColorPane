@@ -1,3 +1,5 @@
+-- The list of built-in palette pages
+
 local root = script.Parent.Parent
 local Common = root.Common
 

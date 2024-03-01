@@ -1,5 +1,5 @@
 --!strict
--- Provides enums
+-- Provides enum types
 
 return {
     StoreActionType = {

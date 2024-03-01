@@ -1,3 +1,5 @@
+-- An informational page shown when launching ColorPane for the first time
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -27,11 +29,9 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     props
-
         onConfirm: () -> nil
     
     store props
-
         theme: StudioTheme
 ]]
 

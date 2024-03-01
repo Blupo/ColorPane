@@ -1,3 +1,5 @@
+-- An group of radio buttons, where only one radio button can be selected at a time
+
 local Common = script.Parent.Parent.Common
 
 local CommonPluginModules = Common.PluginModules
@@ -18,7 +20,6 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 
 --[[
     props
-
         AnchorPoint?
         Size?
         Position?
@@ -28,7 +29,6 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
         onSelected: (number) -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 

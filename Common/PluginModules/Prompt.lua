@@ -1,5 +1,5 @@
 --!strict
--- Creates a prompt
+-- Creates windows for prompts
 
 local Common = script.Parent.Parent
 
@@ -29,7 +29,8 @@ type PromptInfo = {
 }
 
 --[[
-    Creates a one-time prompt
+    Creates a one-time prompt to take or avoid an action.
+
     @param id The prompt window ID
     @param widgetInfo The prompt window info
     @param promptInfo The prompt information

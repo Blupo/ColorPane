@@ -1,3 +1,5 @@
+-- A palette page for using Picular to generate color palettes
+
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 
@@ -57,7 +59,6 @@ local contentSize = UDim2.new(
 
 --[[
     store props
-
         theme: StudioTheme
         searchHistory: array<string>
 

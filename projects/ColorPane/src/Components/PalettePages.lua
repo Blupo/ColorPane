@@ -1,3 +1,5 @@
+-- A Pages container for all the built-in and user palettes
+
 -- TODO
 local root = script.Parent.Parent
 local Common = root.Common
@@ -41,7 +43,6 @@ local uiTranslations = Translator.GenerateTranslationTable({
 
 --[[
     store props
-
         theme: StudioTheme
         palettes: array<Palette>
         lastPalettePage: number

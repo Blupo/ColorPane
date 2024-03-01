@@ -1,4 +1,6 @@
 --[[
+    A palette of the web colors
+
     Named colors from CSS Color Module Level 4
     https://www.w3.org/TR/2020/WD-css-color-4-20201112/#named-colors
 --]]

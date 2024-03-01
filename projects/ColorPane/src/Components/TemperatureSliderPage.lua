@@ -1,3 +1,5 @@
+-- A color slider page for black-body color temperatures
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -69,7 +71,6 @@ local temperaturePresets = {
 
 --[[
     store props
-
         theme: StudioTheme
         color: Color
         editor: string

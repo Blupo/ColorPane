@@ -1,3 +1,5 @@
+-- The entire gradient editor interface
+
 local TextService = game:GetService("TextService")
 
 ---
@@ -98,17 +100,15 @@ end
 
 --[[
     props
-
         originalKeypoints: array<GradientKeypoint>
         originalColorSpace: string
         originalHueAdjustment: string
         originalPrecision: number
         fireFinished: FireSignal<boolean>
 
-        promptForColorEdit: (ColorPromptOptions) -> Promise<Color>
+        promptForColorEdit: (ColorPromptOptions?) -> Promise<Color>
 
     store props
-
         theme: StudioTheme
         state: table
 

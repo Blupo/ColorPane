@@ -1,3 +1,5 @@
+-- A page for picking colors from gradients
+
 local root = script.Parent.Parent
 local Common = root.Common
 
@@ -28,7 +30,6 @@ local PluginEnums = require(PluginModules.PluginEnums)
 
 --[[
     props
-
         LayoutOrder?
 
         gradientName: string
@@ -37,7 +38,6 @@ local PluginEnums = require(PluginModules.PluginEnums)
         valuePicked: (number) -> nil
 
     store props
-
         theme: StudioTheme
 ]]
 
