@@ -14,17 +14,23 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local PluginModules = root.PluginModules
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
+local BuiltInPalettes = require(PluginModules.BuiltInPalettes)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Util = require(PluginModules.Util)
 
 local Components = root.Components
-local BuiltInPaletteComponents = require(Components.BuiltInPaletteComponents)
+local ColorBrewerPalettes = require(Components.ColorBrewerPalettes)
 local ExportPalette = require(Components.ExportPalette)
 local ImportPalette = require(Components.ImportPalette)
 local NamePalette = require(Components.NamePalette)
 local Pages = require(Components.Pages)
 local Palette = require(Components.Palette)
+local PicularPalette = require(Components.PicularPalette)
 local RemovePalette = require(Components.RemovePalette)
+
+local BrickColors = BuiltInPalettes.BrickColors
+local CopicColors = BuiltInPalettes.CopicColors
+local WebColors = BuiltInPalettes.WebColors
 
 ---
 
@@ -38,6 +44,48 @@ local uiTranslations = Translator.GenerateTranslationTable({
     "RenamePalette_ButtonText",
     "DeletePalette_ButtonText",
 })
+
+local builtInPaletteElements = {
+    {
+        name = "BrickColors",
+        
+        content = Roact.createElement(Palette, {
+            palette = Util.typeColorPalette(BrickColors, "Color3"),
+            paletteIndex = -1,
+            readOnly = true
+        })
+    },
+
+    {
+        name = "ColorBrewer",
+        content = Roact.createElement(ColorBrewerPalettes)
+    },
+
+    {
+        name = Translator.FormatByKey("Copic_BuiltInPaletteName"),
+        
+        content = Roact.createElement(Palette, {
+            palette = Util.typeColorPalette(CopicColors, "Color3"),
+            paletteIndex = -2,
+            readOnly = true
+        })
+    },
+
+    {
+        name = "Picular",
+        content = Roact.createElement(PicularPalette),
+    },
+
+    {
+        name = Translator.FormatByKey("Web_BuiltInPaletteName"),
+
+        content = Roact.createElement(Palette, {
+            palette = Util.typeColorPalette(WebColors, "Color3"),
+            paletteIndex = -3,
+            readOnly = true
+        })
+    }
+}
 
 ---
 
@@ -114,7 +162,7 @@ end
 
 PalettePages.render = function(self)
     local palettes = self.props.palettes
-    local numBuiltInPalettes = #BuiltInPaletteComponents
+    local numBuiltInPalettes = #builtInPaletteElements
 
     local selectedPage = self.props.lastPalettePage
     local selectedPageSection, selectedPageNum = selectedPage[1], selectedPage[2]
@@ -125,12 +173,7 @@ PalettePages.render = function(self)
     local userPalettePages = {}
 
     for i = 1, numBuiltInPalettes do
-        local palette = BuiltInPaletteComponents[i]
-
-        table.insert(builtInPalettePages, {
-            name = palette.name,
-            content = palette.getContent(self)
-        })
+        table.insert(builtInPalettePages, builtInPaletteElements[i])
     end
 
     for i = 1, #palettes do
