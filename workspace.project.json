@@ -7,6 +7,18 @@
         "ServerStorage": {
             "$className": "ServerStorage",
 
+            "CPTest": {
+                "$path": "projects/CPTester",
+
+                "ColorPane": {
+                    "$path": "projects/ColorPane/src",
+    
+                    "Common": {
+                        "$path": "Common"
+                    }
+                }
+            },
+
             "ColorPane": {
                 "$path": "projects/ColorPane/src",
 
