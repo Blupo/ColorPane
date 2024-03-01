@@ -28,7 +28,7 @@ local PluginModules = root.PluginModules
 local Util = require(PluginModules.Util)
 
 local Components = root.Components
-local Dropdown = require(Components.Dropdown)
+local SelectionComponent = require(Components.Selection)
 local RadioButtonGroup = require(Components.RadioButtonGroup)
 
 ---
@@ -89,7 +89,7 @@ ExportPalette.render = function(self)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {
-        Dropdown = Roact.createElement(Dropdown, {
+        Selection = Roact.createElement(SelectionComponent, {
             selectedItem = {1, self.state.paletteIndex},
 
             itemSections = {

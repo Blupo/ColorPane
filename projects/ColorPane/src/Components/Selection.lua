@@ -47,9 +47,9 @@ local SimpleList = require(Components.SimpleList)
         theme: StudioTheme
 ]]
 
-local Dropdown = Roact.PureComponent:extend("Dropdown")
+local Selection = Roact.PureComponent:extend("Selection")
 
-Dropdown.init = function(self)
+Selection.init = function(self)
     self:setState({
         dropdownOpen = false,
         optionsOpen = false,
@@ -112,7 +112,7 @@ Dropdown.init = function(self)
     end
 end
 
-Dropdown.didUpdate = function(self, _, prevState)
+Selection.didUpdate = function(self, _, prevState)
     local dropdownOpen = self.state.dropdownOpen
     local optionsOpen = self.state.optionsOpen
 
@@ -120,7 +120,7 @@ Dropdown.didUpdate = function(self, _, prevState)
     self.props.onExpandedStateToggle(dropdownOpen or optionsOpen)
 end
 
-Dropdown.render = function(self)
+Selection.render = function(self)
     local theme = self.props.theme
     local itemSections = self.props.itemSections
 
@@ -350,4 +350,4 @@ end
 
 ---
 
-return ConnectTheme(Dropdown)
+return ConnectTheme(Selection)

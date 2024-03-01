@@ -13,7 +13,7 @@ local CommonIncludes = Common.Includes
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local Components = root.Components
-local Dropdown = require(Components.Dropdown)
+local Selection = require(Components.Selection)
 
 ---
 
@@ -60,7 +60,7 @@ Pages.render = function(self)
     if (not selectedPage) then return end
     
     return Roact.createFragment({
-        Dropdown = Roact.createElement(Dropdown, {
+        Selection = Roact.createElement(Selection, {
             selectedItem = selectedPageIndices,
             itemSections = pageSections,
             options = self.props.options,
