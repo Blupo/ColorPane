@@ -1,6 +1,6 @@
 --!strict
 
-local savedPlugin: Plugin?
+local savedPlugin: Plugin? = nil
 
 --[[
     Stores and/or provides a Plugin object.
@@ -18,8 +18,10 @@ return function(plugin: Plugin?): Plugin
     if (not plugin) then
         assert(savedPlugin, "Plugin object is missing")
         return savedPlugin
-    elseif (savedPlugin) then
-        error("Plugin already stored")
+    else
+        if (savedPlugin) then
+            error("Plugin already stored")
+        end
     end
     
     savedPlugin = plugin
