@@ -15,8 +15,11 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local Signal = require(CommonIncludes.Signal)
 
 local PluginModules = root.PluginModules
+local APITypeValidators = require(PluginModules.APITypeValidators)
+local Constants = require(PluginModules.Constants)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Store = require(PluginModules.Store)
+local Util = require(PluginModules.Util)
 local WidgetInfo = require(PluginModules.WidgetInfo)
 
 local Components = root.Components
@@ -91,7 +94,7 @@ type GradientPromptInfoExpectingColorSequence = {
 
 type GradientPromptInfo = GradientPromptInfoExpectingGradient | GradientPromptInfoExpectingColorSequence
 
-type ColorSequencePromptInfo = {
+type ColorSequencePromptInfoArgument = {
     PromptTitle: string?,
     InitialColor: ColorSequence?,
     OnColorChanged: ((ColorSequence) -> ())?
@@ -123,7 +126,7 @@ local gradientEditorWindow = Window.new(WidgetInfo.GradientEditor.Id, WidgetInfo
     This is the actual color prompting function.
 ]]
 local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
-    local fullPromptInfo: ColorPromptInfo = Cryo.Dictionary.join(DEFAULT_COLOR_PROMPT_INFO, promptInfo)
+    local fullPromptInfo: ColorPromptInfo = Cryo.Dictionary.join(DEFAULT_COLOR_PROMPT_INFO, promptInfo or {})
     local finishedSignal: Signal.Signal<boolean>, fireFinished: Signal.FireSignal<boolean> = Signal.createSignal()
     local initialColor: Color
     
@@ -198,7 +201,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
     -- the catch is here to suppress rejection if the user closes the editor
     editPromise:catch(function() end):finally(function()
         if (storeChanged) then
-            storeChanged:unsubscribe()
+            storeChanged:disconnect()
         end
 
         colorEditorWindow:unmount(true)
@@ -250,6 +253,8 @@ end
     }
     ```
 
+    `OnColorChanged` must not yield.
+
     The specified `ColorType` and the type parameter to `OnColorChanged` should match, i.e.
     - `ColorType` is `"Color3"`, and `OnColorChanged` accepts a `Color3`, or
     - `ColorType` is `"Color"`, and `OnColorChanged` accepts a `Color`
@@ -270,7 +275,11 @@ ColorPane.PromptForColor = function(promptInfo: ColorPromptInfoArgument?): Promi
         return Promise.reject(PluginEnums.PromptRejection.PromptAlreadyOpen)
     end
 
-    -- TODO: validate prompt info
+    local isPromptInfoValid: boolean = APITypeValidators.ColorPromptInfoArgument(promptInfo)
+
+    if (not isPromptInfoValid) then
+        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
+    end
 
     return __promptForColor(promptInfo)
 end
@@ -290,13 +299,15 @@ end
     }
     ```
 
+    `OnGradientChanged` must not yield.
+
     The specified `GradientType` and the type parameter to `OnGradientChanged` should match, i.e.
     - `GradientType` is `"ColorSequence"`, and `OnGradientChanged` accepts a `ColorSequence`, or
     - `GradientType` is `"Gradient"`, and `OnGradientChanged` accepts a `Gradient`
 
     but not
     - `GradientType` is `"ColorSequence"`, and `OnGradientChanged` accepts a `Gradient`, nor
-    - `GradientType` is `"Gradient"`, and `OnGradientChanged` accepts a `ColorSequence`
+    - `GradientType` is `"Gradient"`, and `OnGradientChanged` accepts a `ColorSequence`.
 
     @param promptInfo The prompt info, see above
     @return A Promise that will resolve with a user-generated gradient, or reject with a rejection reason
@@ -310,9 +321,13 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         return Promise.reject(PluginEnums.PromptRejection.PromptAlreadyOpen)
     end
 
-    -- TODO: validate prompt info
+    local isPromptInfoValid: boolean = APITypeValidators.GradientPromptInfoArgument(promptInfo)
 
-    local fullPromptInfo: GradientPromptInfo = Cryo.Dictionary.join(DEFAULT_GRADIENT_PROMPT_INFO, promptInfo)
+    if (not isPromptInfoValid) then
+        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
+    end
+
+    local fullPromptInfo: GradientPromptInfo = Cryo.Dictionary.join(DEFAULT_GRADIENT_PROMPT_INFO, promptInfo or {})
     local finishedSignal: Signal.Signal<boolean>, fireFinished: Signal.FireSignal<boolean> = Signal.createSignal()
 
     local initialGradient: Gradient
@@ -329,6 +344,15 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         end
 
         initialKeypoints = initialGradient.Keypoints
+    end
+
+    local isKeypointPrecisionCombinationValid: boolean =
+        Util.getUtilisedKeypoints(#initialKeypoints, fullPromptInfo.InitialPrecision)
+            <=
+        Constants.MAX_COLORSEQUENCE_KEYPOINTS
+
+    if (not isKeypointPrecisionCombinationValid) then
+        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
     end
 
     local editPromise = Promise.new(function(resolve, reject, onCancel)
@@ -404,7 +428,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
     -- the catch is here to suppress rejection if the user closes the editor
     editPromise:catch(function() end):finally(function()
         if (storeChanged) then
-            storeChanged:unsubscribe()
+            storeChanged:disconnect()
         end
 
         gradientEditorWindow:unmount(true)
@@ -456,7 +480,7 @@ ColorPane.PromptError = PluginEnums.PromptRejection
     @param promptInfo The prompt info, see above
     @return A Promise that will resolve with a user-generated ColorSequence, or reject with a rejection reason
 ]]
-ColorPane.PromptForColorSequence = function(promptInfo: ColorSequencePromptInfo?): Promise
+ColorPane.PromptForColorSequence = function(promptInfo: ColorSequencePromptInfoArgument?): Promise
     return ColorPane.PromptForGradient({
         PromptTitle = promptInfo and promptInfo.PromptTitle,
         InitialGradient = promptInfo and promptInfo.InitialColor,
