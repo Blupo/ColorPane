@@ -8,6 +8,7 @@ local Common = root.Common
 local CommonPluginModules = Common.PluginModules
 local Style = require(CommonPluginModules.Style)
 local Translator = require(CommonPluginModules.Translator)
+local Window = require(CommonPluginModules.Window)
 
 local CommonIncludes = Common.Includes
 local ColorLib = require(CommonIncludes.Color)
@@ -24,18 +25,23 @@ local StandardUICorner = require(StandardComponents.UICorner)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
+local Components = root.Components
+local GradientInfo = require(Components.GradientInfo)
+local GradientPalette = require(Components.GradientPalette)
+
 local PluginModules = root.PluginModules
 local Constants = require(PluginModules.Constants)
 local GradientEditorInputSignals = require(PluginModules.EditorInputSignals).GradientEditor
-local GradientInfoWidget = require(PluginModules.GradientInfoWidget)
-local GradientPaletteWidget = require(PluginModules.GradientPaletteWidget)
 local PluginEnums = require(PluginModules.PluginEnums)
+local Store = require(PluginModules.Store)
 local Util = require(PluginModules.Util)
+local WidgetInfo = require(PluginModules.WidgetInfo)
 
 local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 
 ---
 
+-- TODO: move these out
 local CURSOR_KEYPOINT_SNAP_VALUE = 1/100
 local MIN_SNAP_VALUE = 0.001/100
 local MAX_SNAP_VALUE = 25/100
@@ -43,6 +49,8 @@ local MAX_SNAP_VALUE = 25/100
 local uiTranslations = Translator.GenerateTranslationTable({
     "SnapInput_Label",
     "Reset_ButtonText",
+    "GradientInfo_WindowTitle",
+    "GradientPalette_WindowTitle"
 })
 
 local getNearestKeypointIndex = function(keypoints, time: number): (number?, number?)
@@ -121,6 +129,9 @@ GradientEditor.init = function(self)
     self.timelineStartPosition, self.updateTimelineStartPosition = Roact.createBinding(Vector2.new(0, 0))
     self.timelineWidth, self.updateTimelineWidth = Roact.createBinding(0)
     self.timelineProgress, self.updateTimelineProgress = Roact.createBinding(0)
+
+    self.gradientInfoWindow = Window.new(WidgetInfo.GradientInfo.Id, WidgetInfo.GradientInfo.Info)
+    self.gradientPaletteWindow = Window.new(WidgetInfo.GradientPalette.Id, WidgetInfo.GradientPalette.Info)
 
     self.markerTime = self.timelineProgress:map(function(timelineProgress)
         local keypoints = self.props.keypoints
@@ -213,16 +224,11 @@ end
 GradientEditor.willUnmount = function(self)
     self.unmounting = true
 
+    self.gradientInfoWindow:destroy()
+    self.gradientPaletteWindow:destroy()
+
     if (self.state.colorEditPromise) then
         self.state.colorEditPromise:cancel()
-    end
-
-    if (GradientInfoWidget.IsOpen()) then
-        GradientInfoWidget.Close()
-    end
-
-    if (GradientPaletteWidget.IsOpen()) then
-        GradientPaletteWidget.Close()
     end
     
     if (self.cursorPositionChanged) then
@@ -572,7 +578,7 @@ GradientEditor.render = function(self)
 
                             self.props.setKeypoints(newKeypoints)
                         end, function(err)
-                            if (err == PluginEnums.PromptError.PromptCancelled) then
+                            if (err == PluginEnums.PromptRejection.PromptCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
 
                                 local newKeypoints = Util.table.deepCopy(self.props.keypoints)
@@ -697,12 +703,15 @@ GradientEditor.render = function(self)
                 image = Style.Images.GradientInfoButtonIcon,
 
                 onActivated = function()
-                    if (GradientInfoWidget.IsOpen()) then
-                        GradientInfoWidget.Close()
-                        return
+                    if (self.gradientInfoWindow:isMounted()) then
+                        self.gradientInfoWindow:unmount()
+                    else
+                        self.gradientInfoWindow:mount(
+                            uiTranslations["GradientInfo_WindowTitle"],
+                            Roact.createElement(GradientInfo),
+                            Store
+                        )
                     end
-
-                    GradientInfoWidget.Open()
                 end,
             })
         }),
@@ -879,22 +888,29 @@ GradientEditor.render = function(self)
                 image = Style.Images.PaletteEditorButtonIcon,
 
                 onActivated = function()
-                    if (GradientPaletteWidget.IsOpen()) then
-                        GradientPaletteWidget.Close()
-                        return
+                    if (self.gradientPaletteWindow:isMounted()) then
+                        self.gradientPaletteWindow:unmount()
+                    else
+                        self.gradientPaletteWindow:mount(
+                            uiTranslations["GradientPalette_WindowTitle"],
+
+                            Roact.createElement(GradientPalette, {
+                                beforeSetGradient = function()
+                                    if (self.state.colorEditPromise) then
+                                        self.state.colorEditPromise:cancel()
+                                    end
+            
+                                    self.props.setKeypoints(nil, -1)
+            
+                                    self:setState({
+                                        colorEditPromise = Roact.None,
+                                    })
+                                end,
+                            }),
+
+                            Store
+                        )
                     end
-
-                    GradientPaletteWidget.Open(function()
-                        if (self.state.colorEditPromise) then
-                            self.state.colorEditPromise:cancel()
-                        end
-
-                        self.props.setKeypoints(nil, -1)
-
-                        self:setState({
-                            colorEditPromise = Roact.None,
-                        })
-                    end)
                 end
             }),
 
