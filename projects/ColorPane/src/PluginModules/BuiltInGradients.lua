@@ -1,6 +1,6 @@
 -- A list of built-in gradients
 
-local root = script.Parent.Parent.Parent
+local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonPluginModules = Common.PluginModules

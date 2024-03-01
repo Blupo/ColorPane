@@ -22,7 +22,7 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
-local BuiltInGradients = require(PluginModules.BuiltInPalettes.Gradients)
+local BuiltInGradients = require(PluginModules.BuiltInGradients)
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
 local PluginEnums = require(PluginModules.PluginEnums)
 
