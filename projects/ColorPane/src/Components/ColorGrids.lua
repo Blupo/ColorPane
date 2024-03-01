@@ -218,7 +218,10 @@ ColorGrids.render = function(self)
         })
     end
 
-    listElements.UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.MinorElementPadding})
+    listElements.UIPadding = Roact.createElement(StandardUIPadding, {
+        paddings = {Style.Constants.MinorElementPadding}
+    })
+
     listElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.Constants.MinorElementPadding),
         SortOrder = Enum.SortOrder.Name,

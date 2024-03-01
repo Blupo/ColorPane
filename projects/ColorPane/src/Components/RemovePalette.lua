@@ -71,7 +71,9 @@ RemovePalette.render = function(self)
             self.updatePromptWidth(obj.AbsoluteSize.X)
         end
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.MajorElementPadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {0, Style.Constants.MajorElementPadding}
+        }),
 
         WarningText = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 1),

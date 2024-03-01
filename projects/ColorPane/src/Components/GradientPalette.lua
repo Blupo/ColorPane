@@ -240,7 +240,9 @@ GradientPalette.render = function(self)
                 })
             end
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.MinorElementPadding}),
+            UIPadding = Roact.createElement(StandardUIPadding, {
+                paddings = {Style.Constants.MinorElementPadding}
+            }),
 
             ColorIndicator = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),
@@ -388,7 +390,9 @@ GradientPalette.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {Style.Constants.PagePadding}
+        }),
 
         SearchBar = Roact.createElement(TextInput, {
             AnchorPoint = Vector2.new(0, 0),

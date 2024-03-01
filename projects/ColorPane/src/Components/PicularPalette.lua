@@ -237,7 +237,9 @@ PicularPalette.render = function(self)
                 end,
 
                 [Roact.Children] = {
-                    UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.SpaciousElementPadding}),
+                    UIPadding = Roact.createElement(StandardUIPadding, {
+                        paddings = {0, Style.Constants.SpaciousElementPadding}
+                    }),
 
                     RemoveButton = Roact.createElement("ImageButton", {
                         AnchorPoint = Vector2.new(1, 0.5),

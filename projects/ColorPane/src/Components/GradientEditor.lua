@@ -364,7 +364,9 @@ GradientEditor.render = function(self)
             })
         end,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {Style.Constants.PagePadding}
+        }),
 
         GradientEditor = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0),
@@ -496,7 +498,9 @@ GradientEditor.render = function(self)
 
                         ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar),
                     }, {
-                        UIPadding = Roact.createElement(StandardUIPadding, { Style.Constants.MinorElementPadding }),
+                        UIPadding = Roact.createElement(StandardUIPadding, {
+                            paddings = {Style.Constants.MinorElementPadding}
+                        }),
 
                         TextBox = Roact.createElement("TextBox", {
                             AnchorPoint = Vector2.new(0, 0),

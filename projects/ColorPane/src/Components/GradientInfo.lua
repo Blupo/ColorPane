@@ -204,7 +204,9 @@ GradientInfo.render = function(self)
             return UDim2.new(0, 0, 0, length)
         end),
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {Style.Constants.PagePadding}
+        }),
 
         UIListLayout = Roact.createElement(StandardUIListLayout, {
             Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),

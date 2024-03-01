@@ -44,7 +44,9 @@ Prompt.render = function(self)
 
         BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {Style.Constants.PagePadding},
+        }),
 
         PromptText = Roact.createElement(StandardTextLabel, {
             AnchorPoint = Vector2.new(0.5, 0),

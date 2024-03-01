@@ -271,7 +271,9 @@ ColorEditor.render = function(self)
             ColorEditorInputSignals.InputEnded.Fire(input)
         end,
     }, {
-        UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.PagePadding}),
+        UIPadding = Roact.createElement(StandardUIPadding, {
+            paddings = {Style.Constants.PagePadding}
+        }),
 
         EditorPages = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0),

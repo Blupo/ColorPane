@@ -218,7 +218,9 @@ Selection.render = function(self)
                 end,
 
                 [Roact.Children] = {
-                    UIPadding = Roact.createElement(StandardUIPadding, {0, 0, Style.Constants.SpaciousElementPadding, 0}),
+                    UIPadding = Roact.createElement(StandardUIPadding, {
+                        paddings = {0, 0, Style.Constants.SpaciousElementPadding, 0}
+                    }),
                 }
             })
         end
@@ -307,7 +309,10 @@ Selection.render = function(self)
                 end,
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
-                UIPadding = Roact.createElement(StandardUIPadding, {0, 0, Style.Constants.SpaciousElementPadding, 0}),
+                
+                UIPadding = Roact.createElement(StandardUIPadding, {
+                    paddings = {0, 0, Style.Constants.SpaciousElementPadding, 0}
+                }),
 
                 Icon = (numItemsListItems >= 1) and
                     Roact.createElement("ImageLabel", {

@@ -353,7 +353,9 @@ ColorInfo.render = function(self)
         })
     end
 
-    colorInfoElements.UIPadding = Roact.createElement(StandardUIPadding, {0, 0, 0, Style.Constants.SpaciousElementPadding})
+    colorInfoElements.UIPadding = Roact.createElement(StandardUIPadding, {
+        paddings = {0, 0, 0, Style.Constants.SpaciousElementPadding}
+    })
 
     colorInfoElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),

@@ -196,7 +196,10 @@ TextInput.render = function(self)
             BackgroundColor3 = backgroundColor,
         }, {
             UICorner = Roact.createElement(StandardUICorner),
-            UIPadding = Roact.createElement(StandardUIPadding, {0, Style.Constants.TextObjectPadding}),
+
+            UIPadding = Roact.createElement(StandardUIPadding, {
+                paddings = {0, Style.Constants.TextObjectPadding}
+            }),
 
             Input = Roact.createElement("TextBox", {
                 AnchorPoint = Vector2.new(0, 0.5),

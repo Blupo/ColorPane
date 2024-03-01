@@ -210,7 +210,9 @@ GradientPickers.render = function(self)
         addGradient(userGradients[i])
     end
 
-    pickerElements.UIPadding = Roact.createElement(StandardUIPadding, {0, 0, 0, Style.Constants.SpaciousElementPadding})
+    pickerElements.UIPadding = Roact.createElement(StandardUIPadding, {
+        paddings = {0, 0, 0, Style.Constants.SpaciousElementPadding}
+    })
 
     pickerElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
         Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),

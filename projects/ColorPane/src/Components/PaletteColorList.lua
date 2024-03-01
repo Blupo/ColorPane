@@ -164,7 +164,9 @@ PaletteColorList.render = function(self)
                 self.props.onColorSelected(i)
             end
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, {Style.Constants.MinorElementPadding}),
+            UIPadding = Roact.createElement(StandardUIPadding, {
+                paddings = {Style.Constants.MinorElementPadding}
+            }),
 
             ColorIndicator = Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(0, 0),

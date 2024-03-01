@@ -549,7 +549,9 @@ ImportPalette.render = function(self)
                 return UDim2.new(0, 0, 0, length)
             end),
         }, {
-            UIPadding = Roact.createElement(StandardUIPadding, { 0, 0, 0, Style.Constants.SpaciousElementPadding }),
+            UIPadding = Roact.createElement(StandardUIPadding, {
+                paddings = {0, 0, 0, Style.Constants.SpaciousElementPadding}
+            }),
 
             UIListLayout = Roact.createElement(StandardUIListLayout, {
                 Padding = UDim.new(0, Style.Constants.SpaciousElementPadding),
