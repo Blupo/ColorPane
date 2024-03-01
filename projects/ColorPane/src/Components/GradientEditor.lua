@@ -211,7 +211,7 @@ GradientEditor.init = function(self)
 end
 
 GradientEditor.didMount = function(self)
-    self.cursorPositionChanged = GradientEditorInputSignals.CursorPositionChanged:subscribe(function(cursorPosition: Vector2)
+    self.mousePositionChanged = GradientEditorInputSignals.MousePositionChanged.Event:subscribe(function(cursorPosition: Vector2)
         local distanceFromStart = cursorPosition - self.timelineStartPosition:getValue()
         self.updateTimelineProgress(math.clamp(distanceFromStart.X / self.timelineWidth:getValue(), 0, 1))
 
@@ -231,9 +231,8 @@ GradientEditor.willUnmount = function(self)
         self.state.colorEditPromise:cancel()
     end
     
-    if (self.cursorPositionChanged) then
-        self.cursorPositionChanged:unsubscribe()
-        self.cursorPositionChanged = nil
+    if (self.mousePositionChanged) then
+        self.mousePositionChanged:unsubscribe()
     end
 end
 

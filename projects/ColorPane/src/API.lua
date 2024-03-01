@@ -17,6 +17,7 @@ local Signal = require(CommonIncludes.Signal)
 local PluginModules = root.PluginModules
 local APITypeValidators = require(PluginModules.APITypeValidators)
 local Constants = require(PluginModules.Constants)
+local EditorInputSignals = require(PluginModules.EditorInputSignals)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Store = require(PluginModules.Store)
 local Util = require(PluginModules.Util)
@@ -516,7 +517,13 @@ end
 table.freeze(PluginEnums.PromptRejection)
 table.freeze(ColorPane)
 
--- TODO: hook editor input signals
+-- hook editor input signals
+colorEditorWindow:enableMouseTracking()
+gradientEditorWindow:enableMouseTracking()
+
+colorEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.ColorEditor.MousePositionChanged.Fire)
+gradientEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.GradientEditor.MousePositionChanged.Fire)
+
 -- TODO: hook store changes for modifying settings
 
 -- color editor must stay closed when unmounted

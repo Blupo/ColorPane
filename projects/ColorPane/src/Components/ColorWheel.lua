@@ -221,7 +221,7 @@ ColorWheel.getDerivedStateFromProps = function(props, state)
 end
 
 ColorWheel.didMount = function(self)
-    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:subscribe(function(cursorPosition: Vector2)
+    self.mousePositionChanged = ColorEditorInputSignals.MousePositionChanged.Event:subscribe(function(cursorPosition: Vector2)
         if (self.state.trackingH) then
             self.updateH(cursorPosition)
         end
@@ -233,9 +233,8 @@ ColorWheel.didMount = function(self)
 end
 
 ColorWheel.willUnmount = function(self)
-    if (self.cursorPositionChanged) then
-        self.cursorPositionChanged:unsubscribe()
-        self.cursorPositionChanged = nil
+    if (self.mousePositionChanged) then
+        self.mousePositionChanged:unsubscribe()
     end
 end
 

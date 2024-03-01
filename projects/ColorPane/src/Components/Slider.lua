@@ -68,7 +68,7 @@ Slider.init = function(self)
 end
 
 Slider.didMount = function(self)
-    self.cursorPositionChanged = ColorEditorInputSignals.CursorPositionChanged:subscribe(function(cursorPosition: Vector2)
+    self.mousePositionChanged = ColorEditorInputSignals.MousePositionChanged.Event:subscribe(function(cursorPosition: Vector2)
         if (not self.state.tracking) then return end
         
         self.updateValue(cursorPosition)
@@ -76,9 +76,8 @@ Slider.didMount = function(self)
 end
 
 Slider.willUnmount = function(self)
-    if (self.cursorPositionChanged) then
-        self.cursorPositionChanged:unsubscribe()
-        self.cursorPositionChanged = nil
+    if (self.mousePositionChanged) then
+        self.mousePositionChanged:unsubscribe()
     end
 end
 
