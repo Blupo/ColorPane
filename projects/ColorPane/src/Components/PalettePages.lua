@@ -14,9 +14,13 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local PluginModules = root.PluginModules
 local ColorEditorInputSignals = require(PluginModules.EditorInputSignals).ColorEditor
-local BuiltInPalettes = require(PluginModules.BuiltInPalettes)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Util = require(PluginModules.Util)
+
+local BuiltInPalettes = PluginModules.BuiltInPalettes
+local BrickColors = require(BuiltInPalettes.BrickColors)
+local CopicColors = require(BuiltInPalettes.CopicColors)
+local WebColors = require(BuiltInPalettes.WebColors)
 
 local Components = root.Components
 local ColorBrewerPalettes = require(Components.ColorBrewerPalettes)
@@ -27,10 +31,6 @@ local Pages = require(Components.Pages)
 local Palette = require(Components.Palette)
 local PicularPalette = require(Components.PicularPalette)
 local RemovePalette = require(Components.RemovePalette)
-
-local BrickColors = BuiltInPalettes.BrickColors
-local CopicColors = BuiltInPalettes.CopicColors
-local WebColors = BuiltInPalettes.WebColors
 
 ---
 

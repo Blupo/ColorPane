@@ -22,11 +22,9 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local PluginModules = root.PluginModules
-local BuiltInPalettes = require(PluginModules.BuiltInPalettes)
+local WebColorsPalette = require(PluginModules.BuiltInPalettes.WebColors)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Util = require(PluginModules.Util)
-
-local WebColorsPalette = BuiltInPalettes.WebColors
 
 ---
 

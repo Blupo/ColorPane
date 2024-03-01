@@ -16,7 +16,7 @@ local CommonComponents = Common.Components
 local StandardTextLabel = require(CommonComponents.StandardComponents.TextLabel)
 
 local PluginModules = root.PluginModules
-local BuiltInPalettes = require(PluginModules.BuiltInPalettes)
+local ColorBrewerPalette = require(PluginModules.BuiltInPalettes.ColorBrewer)
 local PluginEnums = require(PluginModules.PluginEnums)
 local Util = require(PluginModules.Util)
 
@@ -24,11 +24,8 @@ local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
 local ColorGrids = require(Components.ColorGrids)
 
-local ColorBrewer = BuiltInPalettes.ColorBrewer
-
 ---
 
-local colorSchemes = Util.table.deepCopy(ColorBrewer)
 local buttonBarHeight = Style.Constants.StandardButtonHeight + Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding
 
 local uiTranslations = Translator.GenerateTranslationTable({
@@ -70,7 +67,7 @@ for i = 1, 10 do
     })
 end
 
-for _, scheme in pairs(colorSchemes) do
+for _, scheme in pairs(ColorBrewerPalette) do
     for _, colors in pairs(scheme.colorSets) do
         for i = 1, #colors do
             local color = colors[i]
@@ -98,7 +95,7 @@ ColorBrewerPalettes.render = function(self)
     local includedColorSchemes = {}
     local numIncludedColorSchemes = 0
 
-    for schemeName, scheme in pairs(colorSchemes) do
+    for schemeName, scheme in pairs(ColorBrewerPalette) do
         local colorSet = scheme.colorSets[self.props.numDataClasses]
 
         if ((scheme.type == dataClasses[self.props.dataClass].name) and colorSet) then
