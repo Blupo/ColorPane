@@ -41,9 +41,9 @@ local gradientPaletteMinHeight = (Style.Constants.PagePadding * 2) +
 
 local gradientInfoMinHeight = (Style.Constants.PagePadding * 2) +
     (Style.Constants.StandardTextSize * 3) +
-    (Style.Constants.StandardButtonHeight * 5) +
+    (Style.Constants.StandardButtonHeight * 6) +
     Style.Constants.StandardInputHeight +
-    (Style.Constants.MinorElementPadding * 6) +
+    (Style.Constants.MinorElementPadding * 7) +
     (Style.Constants.SpaciousElementPadding * 2)
 
 ---
