@@ -100,10 +100,10 @@ PaletteColorGrid.render = function(self)
                 Position = UDim2.new(0, 0, 1, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardButtonHeight),
                 
-                Text = colors[selected] and colors[selected].name or "",
+                Text = if colors[selected] then colors[selected].name else "",
                 PlaceholderText = uiTranslations["SelectAColor_Prompt"],
 
-                disabled = ((not selected) or isReadOnly),
+                disabled = (not selected) or isReadOnly,
                 onSubmit = self.props.onColorNameChanged,
             }),
 

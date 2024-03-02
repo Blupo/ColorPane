@@ -133,7 +133,7 @@ ColorBrewerPalettes.render = function(self)
             end
         }),
 
-        InfoText = (numIncludedColorSchemes == 0) and
+        InfoText = if (numIncludedColorSchemes == 0) then
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
@@ -144,7 +144,7 @@ ColorBrewerPalettes.render = function(self)
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
             })
-        or nil,
+        else nil,
 
         Schemes = Roact.createElement(ColorGrids, {
             AnchorPoint = Vector2.new(0.5, 1),

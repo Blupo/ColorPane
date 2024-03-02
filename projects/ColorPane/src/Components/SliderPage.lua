@@ -123,7 +123,7 @@ SliderPage.getDerivedStateFromProps = function(props, state)
         local componentKey = props.componentKeys[i]
         
         if (componentKey == "H") then
-            newComponentsDictionary[componentKey] = (newComponent ~= newComponent) and 0 or newComponent
+            newComponentsDictionary[componentKey] = if (newComponent ~= newComponent) then 0 else newComponent
         else
             newComponentsDictionary[componentKey] = newComponent
         end
@@ -185,7 +185,7 @@ SliderPage.render = function(self)
 
     for i = 1, #componentKeys do
         local componentKey = componentKeys[i]
-        local sliderMarkerColorGenerator = sliderMarkerColorGenerators and sliderMarkerColorGenerators[componentKey] or nil
+        local sliderMarkerColorGenerator = if sliderMarkerColorGenerators then sliderMarkerColorGenerators[componentKey] else nil
 
         elements[componentKey] = Roact.createElement(Slider, {
             LayoutOrder = i,
@@ -199,7 +199,7 @@ SliderPage.render = function(self)
 
             sliderGradient = componentSliderGradientGenerators[componentKey](components),
 
-            markerColor = sliderMarkerColorGenerator and sliderMarkerColorGenerator(components, theme) or
+            markerColor = if sliderMarkerColorGenerator then sliderMarkerColorGenerator(components, theme) else
                 Color.from(colorSpace, table.unpack(componentsArray)):bestContrastingColor(
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)),
                     Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
@@ -223,7 +223,7 @@ SliderPage.render = function(self)
                 end
 
                 self:setState({
-                    captureFocus = (editor ~= editorKey) and true or nil,
+                    captureFocus = if (editor ~= editorKey) then true else nil,
                     components = newComponents,
                 })
 

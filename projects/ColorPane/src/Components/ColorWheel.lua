@@ -168,7 +168,7 @@ ColorWheel.init = function(self, initProps)
         h = math.deg(hueAngle)
 
         self:setState({
-            captureFocus = (self.props.editor ~= EDITOR_KEY) and true or nil,
+            captureFocus = if (self.props.editor ~= EDITOR_KEY) then true else nil,
             h = h,
         })
 
@@ -183,7 +183,7 @@ ColorWheel.init = function(self, initProps)
         local b = 1 - math.clamp((distanceFromWheelCenter.Y / planeSize) + 0.5, 0, 1)
 
         self:setState({
-            captureFocus = (self.props.editor ~= EDITOR_KEY) and true or nil,
+            captureFocus = if (self.props.editor ~= EDITOR_KEY) then true else nil,
             s = s,
             b = b
         })
@@ -195,7 +195,7 @@ ColorWheel.init = function(self, initProps)
         trackingH = false,
         trackingSB = false,
 
-        h = (initH ~= initH) and 0 or initH,
+        h = if (initH ~= initH) then 0 else initH,
         s = initS,
         b = initB,
     })
@@ -214,9 +214,12 @@ ColorWheel.getDerivedStateFromProps = function(props, state)
     if ((h == state.h) and (s == state.s) and (b == state.b)) then return end
 
     return {
-        h = (h ~= state.h) and ((h ~= h) and 0 or h) or nil,
-        s = (s ~= state.s) and s or nil,
-        b = (b ~= state.b) and b or nil,
+        h = if (h ~= state.h) then
+            (if (h ~= h) then 0 else h)
+        else nil,
+
+        s = if (s ~= state.s) then s else nil,
+        b = if (b ~= state.b) then b else nil,
     }
 end
 
@@ -258,8 +261,8 @@ ColorWheel.render = function(self)
             ZIndex = 2,
 
             Size = UDim2.new(
-                0, self.props.ringWidth + (self.state.trackingH and 10 or -10),
-                0, self.props.ringWidth + (self.state.trackingH and 10 or -10)
+                0, self.props.ringWidth + (if self.state.trackingH then 10 else -10),
+                0, self.props.ringWidth + (if self.state.trackingH then 10 else -10)
             ),
 
             Position = self.wheelRadius:map(function(wheelRadius)
@@ -276,7 +279,7 @@ ColorWheel.render = function(self)
         }, {
             UICorner = Roact.createElement(StandardUICorner, { circular = true }),
 
-            Indicator = self.state.trackingH and
+            Indicator = if self.state.trackingH then
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -286,7 +289,7 @@ ColorWheel.render = function(self)
                 }, {
                     UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 })
-            or nil
+            else nil
         })
     }
 
@@ -309,7 +312,7 @@ ColorWheel.render = function(self)
         for i = 1, #harmonicColors do
             local harmonicColor = harmonicColors[i]
             local harmonicH = harmonicColor:toHSB()
-            harmonicH = (harmonicH ~= harmonicH) and 0 or harmonicH
+            harmonicH = if (harmonicH ~= harmonicH) then 0 else harmonicH
 
             hueMarkers[i] = Roact.createElement(HueHarmonyMarker, {
                 angle = harmonicH,
@@ -318,7 +321,7 @@ ColorWheel.render = function(self)
 
                 onActivated = function()
                     self:setState({
-                        captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                        captureFocus = if (editor ~= EDITOR_KEY) then true else nil,
                         h = harmonicH,
                     })
 

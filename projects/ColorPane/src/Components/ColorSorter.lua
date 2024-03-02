@@ -80,9 +80,9 @@ ColorSorter.render = function(self)
                 Position = UDim2.new(0, 0, 1, 0),
                 Size = UDim2.new(0, 60, 0, Style.Constants.StandardButtonHeight),
 
-                displayType = sortAnchor and "color" or "text",
-                text = (not sortAnchor) and uiTranslations["EmptySortAnchor_Indicator"] or nil,
-                color = sortAnchor and sortAnchor:toColor3() or nil,
+                displayType = if sortAnchor then "color" else "text",
+                text = if (not sortAnchor) then uiTranslations["EmptySortAnchor_Indicator"] else nil,
+                color = if sortAnchor then sortAnchor:toColor3() else nil,
 
                 onActivated = function()
                     self.props.setSortAnchor(currentColor)

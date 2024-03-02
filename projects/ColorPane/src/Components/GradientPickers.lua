@@ -103,7 +103,7 @@ GradientPicker.render = function(self)
 
             BackgroundColor3 = theme:GetColor(
                 Enum.StudioStyleGuideColor.InputFieldBorder,
-                self.state.tracking and Enum.StudioStyleGuideModifier.Selected or nil
+                if self.state.tracking then Enum.StudioStyleGuideModifier.Selected else nil
             ),
         }, {
             UICorner = Roact.createElement(StandardUICorner),

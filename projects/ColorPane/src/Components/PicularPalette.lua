@@ -358,7 +358,7 @@ PicularPalette.render = function(self)
                 Size = UDim2.new(0, (Style.Constants.StandardButtonHeight * 2) + 2, 1, 0),
 
                 displayType = "image",
-                selected = (contentView == "ColorGrid") and 1 or 2,
+                selected = if (contentView == "ColorGrid") then 1 else 2,
 
                 buttons = {
                     {
@@ -375,7 +375,7 @@ PicularPalette.render = function(self)
 
                 onButtonActivated = function(i)
                     self:setState({
-                        contentView = (i == 1) and "ColorGrid" or "SearchHistory",
+                        contentView = if (i == 1) then "ColorGrid" else "SearchHistory",
                     })
                 end,
             }),
@@ -393,7 +393,7 @@ PicularPalette.render = function(self)
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, 0, 1, 0),
 
-                Text = uiTranslations[showHistory and "SearchHistory_Label" or "ColorList_Label"],
+                Text = uiTranslations[if showHistory then "SearchHistory_Label" else "ColorList_Label"],
             }),
 
             Extra = headerExtra,

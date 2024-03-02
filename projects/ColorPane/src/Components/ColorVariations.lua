@@ -67,7 +67,7 @@ ColorVariations.render = function(self)
         modifiedColors[uiTranslations["Tones_Label"]][i] = color:desaturate(i/2):toColor3()
 
         local h, s, b = color:toHSB()
-        h = (h ~= h) and 0 or h
+        h = if (h ~= h) then 0 else h
         h = (h + (360 / (MAX_STEPS + 1) * i)) % 360
 
         modifiedColors[uiTranslations["Hues_Label"]][i] = Color.fromHSB(h, s, b):toColor3()

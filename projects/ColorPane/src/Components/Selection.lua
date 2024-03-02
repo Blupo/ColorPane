@@ -70,12 +70,12 @@ Selection.init = function(self)
             
             if (nextItem <= 0) then
                 nextSection = selectedItemSectionNum - 1
-                nextSection = (nextSection == 0) and #itemSections or nextSection
+                nextSection = if (nextSection == 0) then #itemSections else nextSection
 
                 nextItem = #itemSections[nextSection].items
             elseif (nextItem > #itemSections[selectedItemSectionNum].items) then
                 nextSection = selectedItemSectionNum + 1
-                nextSection = (nextSection > #itemSections) and 1 or nextSection
+                nextSection = if (nextSection > #itemSections) then 1 else nextSection
 
                 nextItem = 1
             else
@@ -189,7 +189,7 @@ Selection.render = function(self)
             TextSize = Style.Constants.LargeTextSize,
             
             Size = UDim2.new(
-                1, self.props.options and (-Style.Constants.LargeButtonHeight - 6) or -2,
+                1, if self.props.options then (-Style.Constants.LargeButtonHeight - 6) else -2,
                 0, Style.Constants.LargeButtonHeight * 5
             ),
 
@@ -231,8 +231,8 @@ Selection.render = function(self)
             TextSize = Style.Constants.LargeTextSize,
             
             Size = UDim2.new(
-                1, self.props.options and (-Style.Constants.LargeButtonHeight - 6) or -2,
-                0, Style.Constants.LargeButtonHeight * ((numOptionsListItems <= 8) and numOptionsListItems or 8)
+                1, if self.props.options then (-Style.Constants.LargeButtonHeight - 6) else -2,
+                0, Style.Constants.LargeButtonHeight * (if (numOptionsListItems <= 8) then numOptionsListItems else 8)
             ),
 
             itemHeight = Style.Constants.LargeButtonHeight,
@@ -256,7 +256,7 @@ Selection.render = function(self)
         SelectionButton = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0, 0.5),
             Position = UDim2.new(0, 0, 0.5, 0),
-            Size = UDim2.new(1, self.props.options and (-Style.Constants.LargeButtonHeight - 4) or 0, 1, 0),
+            Size = UDim2.new(1, if self.props.options then (-Style.Constants.LargeButtonHeight - 4) else 0, 1, 0),
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
             ClipsDescendants = true,
@@ -314,7 +314,7 @@ Selection.render = function(self)
                     paddings = {0, 0, Style.Constants.SpaciousElementPadding, 0}
                 }),
 
-                Icon = (numItemsListItems >= 1) and
+                Icon = if (numItemsListItems >= 1) then
                     Roact.createElement("ImageLabel", {
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -2, 0.5, 0),
@@ -322,14 +322,14 @@ Selection.render = function(self)
                         BackgroundTransparency = 1,
                         BorderSizePixel = 0,
     
-                        Image = self.state.dropdownOpen and Style.Images.CloseDropdownButtonIcon or Style.Images.OpenDropdownButtonIcon,
+                        Image = if self.state.dropdownOpen then Style.Images.CloseDropdownButtonIcon else Style.Images.OpenDropdownButtonIcon,
                         ImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonText),
                     })
-                or nil
+                else nil
             }),
         }),
 
-        OptionsButton = self.props.options and
+        OptionsButton = if self.props.options then
             Roact.createElement(Button, {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, 0, 0.5, 0),
@@ -347,7 +347,7 @@ Selection.render = function(self)
                     end)
                 end
             })
-        or nil,
+        else nil,
 
         List = list,
     })

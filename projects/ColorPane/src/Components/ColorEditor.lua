@@ -51,7 +51,7 @@ local getMaxPages = function(width)
     local maxPagesNoPadding = math.floor(width / Style.Constants.EditorPageWidth)
     local maxPaddingSpaces = math.floor((width % Style.Constants.EditorPageWidth) / Style.Constants.MajorElementPadding)
 
-    return (maxPaddingSpaces >= (maxPagesNoPadding - 1)) and maxPagesNoPadding or (maxPagesNoPadding - 1)
+    return if (maxPaddingSpaces >= (maxPagesNoPadding - 1)) then maxPagesNoPadding else (maxPagesNoPadding - 1)
 end
 
 local editorTabs = {
@@ -180,7 +180,7 @@ ColorEditor.render = function(self)
         local page
 
         if (maxPages ~= #editorTabs) then
-            page = (i ~= maxPages) and i or selectedEditor
+            page = if (i ~= maxPages) then i else selectedEditor
         else
             page = i
         end
@@ -406,7 +406,7 @@ ColorEditor.render = function(self)
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 isTextAValidValue = function(text)
-                    return (pcall(Color.fromHex, text)) and true or false
+                    return (pcall(Color.fromHex, text))
                 end,
 
                 onSubmit = function(text)

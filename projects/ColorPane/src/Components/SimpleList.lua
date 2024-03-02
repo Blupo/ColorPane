@@ -76,11 +76,11 @@ SimpleList.render = function(self)
                 
                 BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.HeaderSection),
             }, {
-                UIPadding = self.props.itemPadding and
+                UIPadding = if self.props.itemPadding then
                     Roact.createElement(StandardUIPadding, {
                         paddings = {0, 0, self.props.itemPadding, 0}
                     })
-                or nil,
+                else nil,
             }))
         end
 

@@ -92,7 +92,7 @@ Palette.render = function(self)
         if (searchTerm) then
             local start = string.find(string.lower(color.name), searchTerm)
 
-            include = start and true or false
+            include = if start then true else false
         end
 
         if (include) then
@@ -136,7 +136,7 @@ Palette.render = function(self)
                         Style.Constants.StandardButtonHeight * 2 +
                         2 +
                         Style.Constants.MinorElementPadding +
-                        (isReadOnly and 0 or (Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding))
+                        (if isReadOnly then 0 else (Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding))
                     ),
                     1, 0
                 ),
@@ -152,16 +152,16 @@ Palette.render = function(self)
                     if (selectedColor) then
                         local start = string.find(string.lower(selectedColor.name), newSearchTerm)
                         
-                        resetSelected = (not start) and true or false
+                        resetSelected = if (not start) then true else false
                     else
                         resetSelected = false
                     end
 
                     self:setState({
-                        selectedColorIndex = resetSelected and Roact.None or nil,
+                        selectedColorIndex = if resetSelected then Roact.None else nil,
 
                         searchDisplayText = newText,
-                        searchTerm = (newSearchTerm ~= "") and newSearchTerm or Roact.None
+                        searchTerm = if (newSearchTerm ~= "") then newSearchTerm else Roact.None
                     })
                 end,
 
@@ -173,7 +173,7 @@ Palette.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                selected = (paletteLayout == "grid") and 1 or 2,
+                selected = if (paletteLayout == "grid") then 1 else 2,
 
                 buttons = {
                     {
@@ -188,11 +188,11 @@ Palette.render = function(self)
                 },
 
                 onButtonActivated = function(i)
-                    self.props.updatePaletteLayout((i == 1) and "grid" or "list")
+                    self.props.updatePaletteLayout(if (i == 1) then "grid" else "list")
                 end,
             }),
 
-            AddColorButton = (not isReadOnly) and
+            AddColorButton = if (not isReadOnly) then
                 Roact.createElement(Button, {
                     LayoutOrder = 2,
 
@@ -210,26 +210,26 @@ Palette.render = function(self)
                         self.props.addCurrentColorToPalette(paletteIndex)
                     end
                 })
-            or nil,
+            else nil,
         }),
 
-        Colors = Roact.createElement((paletteLayout == "grid") and PaletteColorGrid or PaletteColorList, {
+        Colors = Roact.createElement(if (paletteLayout == "grid") then PaletteColorGrid else PaletteColorList, {
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + 1),
             Size = UDim2.new(1, -2, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding + 2)),
 
             readOnly = isReadOnly,
-            colors = searchTerm and paletteColorsSliceArray or paletteColorsSlice,
-            selected = searchTerm and paletteColorsWholeToSliceMap[self.state.selectedColorIndex] or self.state.selectedColorIndex,
+            colors = if searchTerm then paletteColorsSliceArray else paletteColorsSlice,
+            selected = if searchTerm then  paletteColorsWholeToSliceMap[self.state.selectedColorIndex] else self.state.selectedColorIndex,
 
             onColorSelected = function(i)
                 self:setState({
-                    selectedColorIndex = searchTerm and paletteColorsSliceToWholeMap[i] or i
+                    selectedColorIndex = if searchTerm then paletteColorsSliceToWholeMap[i] else i
                 })
             end,
 
             onColorSet = function(i)
-                i = searchTerm and paletteColorsSliceToWholeMap[i] or i
+                i = if searchTerm then paletteColorsSliceToWholeMap[i] else i
                 
                 self.props.setColor(Color.fromColor3(palette.colors[i].color))
             end,

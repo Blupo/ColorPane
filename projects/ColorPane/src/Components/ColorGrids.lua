@@ -119,12 +119,12 @@ ColorGrid.render = function(self)
             displayType = "color",
             color = color,
 
-            borderColor = (self.props.selected == i) and
+            borderColor = if (self.props.selected == i) then
                 theme:GetColor(
                     Enum.StudioStyleGuideColor.InputFieldBorder,
                     Enum.StudioStyleGuideModifier.Selected
                 )
-            or nil,
+            else nil,
 
             onActivated = function()
                 self.props.onColorSelected(i)
@@ -156,25 +156,29 @@ ColorGrid.render = function(self)
         Position = self.props.Position,
 
         Size = self.gridLength:map(function(gridLength)
-            return UDim2.new(1, 0, 0, gridLength + (self.props.title and (Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0))
+            return UDim2.new(1, 0, 0, gridLength + (
+                if self.props.title then
+                    (Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding)
+                else 0
+            ))
         end),
 
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {
-        GridLabel = self.props.title and
+        GridLabel = if self.props.title then
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
                 Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
                 Text = self.props.title,
             })
-        or nil,
+        else nil,
 
         Grid = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 1),
             Position = UDim2.new(0.5, 0, 1, 0),
-            Size = UDim2.new(1, 0, 1, self.props.title and -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0),
+            Size = UDim2.new(1, 0, 1, if self.props.title then -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) else 0),
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
         }, colorElements)
@@ -209,7 +213,7 @@ ColorGrids.render = function(self)
     for gridName, gridColors in pairs(self.props.colorLists) do
         listElements[gridName] = Roact.createElement(ColorGrid, {
             colors = gridColors,
-            title = (self.props.named) and gridName or nil,
+            title = if self.props.named then gridName else nil,
             selected = self.props.selected,
 
             onColorSelected = function(i)

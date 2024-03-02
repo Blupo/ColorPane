@@ -122,21 +122,21 @@ GradientInfo.render = function(self)
             displayType = "text",
             text = uiTranslations[listColorSpace .. "_ColorType"],
 
-            hoverColor = selected and
+            hoverColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            borderColor = selected and
+            borderColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            backgroundColor = selected and
+            backgroundColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            displayColor = selected and
+            displayColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.ButtonText, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
             onActivated = function()
                 self.props.setColorSpace(listColorSpace)
@@ -155,21 +155,21 @@ GradientInfo.render = function(self)
             displayType = "text",
             text = uiTranslations[listHueAdjustment .. "_HueInterpolation"],
 
-            hoverColor = selected and
+            hoverColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            borderColor = selected and
+            borderColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            backgroundColor = selected and
+            backgroundColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.Button, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
-            displayColor = selected and
+            displayColor = if selected then
                 theme:GetColor(Enum.StudioStyleGuideColor.ButtonText, Enum.StudioStyleGuideModifier.Selected)
-            or nil,
+            else nil,
 
             onActivated = function()
                 self.props.setHueAdjustment(listHueAdjustment)
@@ -355,7 +355,9 @@ GradientInfo.render = function(self)
                         if (not n) then return false end
                         if (math.floor(n) ~= n) then return false end
 
-                        return (n >= MIN_PRECISION) and (n <= MAX_PRECISION) and (Util.getUtilisedKeypoints(numKeypoints, n) <= Constants.MAX_COLORSEQUENCE_KEYPOINTS)
+                        return (n >= MIN_PRECISION) and
+                            (n <= MAX_PRECISION) and
+                            (Util.getUtilisedKeypoints(numKeypoints, n) <= Constants.MAX_COLORSEQUENCE_KEYPOINTS)
                     end,
     
                     onSubmit = function(text)

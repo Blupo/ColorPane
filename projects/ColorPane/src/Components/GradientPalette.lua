@@ -103,7 +103,7 @@ GradientPalette.init = function(self)
                     if (searchTerm) then
                         local start = string.find(string.lower(color.name), searchTerm)
             
-                        include = start and true or false
+                        include = if start then true else false
                     end
             
                     if (include) then
@@ -169,7 +169,7 @@ GradientPalette.render = function(self)
         if (searchTerm) then
             local start = string.find(string.lower(color.name), searchTerm)
 
-            include = start and true or false
+            include = if start then true else false
         end
 
         if (include) then
@@ -193,8 +193,8 @@ GradientPalette.render = function(self)
         end
     end
 
-    for i, gradient in pairs(searchTerm and paletteColorsSliceArray or paletteColorsSlice) do
-        local wholeIndex = searchTerm and paletteColorsSliceToWholeMap[i] or i
+    for i, gradient in pairs(if searchTerm then paletteColorsSliceArray else paletteColorsSlice) do
+        local wholeIndex = if searchTerm then paletteColorsSliceToWholeMap[i] else i
         local isReadOnly = (wholeIndex <= numBuiltInGradients)
         local isSelected = (selected == wholeIndex)
         local realIndex = wholeIndex - numBuiltInGradients
@@ -202,7 +202,8 @@ GradientPalette.render = function(self)
         local listItemHeight
 
         if (isSelected) then
-            listItemHeight = (Style.Constants.StandardButtonHeight * (isReadOnly and 1 or 2)) + (Style.Constants.MinorElementPadding * (isReadOnly and 2 or 3))
+            listItemHeight = (Style.Constants.StandardButtonHeight * (if isReadOnly then 1 else 2)) +
+                (Style.Constants.MinorElementPadding * (if isReadOnly then 2 else 3))
         else
             listItemHeight = Style.Constants.StandardButtonHeight + (Style.Constants.MinorElementPadding * 2)
         end
@@ -216,9 +217,9 @@ GradientPalette.render = function(self)
             Text = "",
             TextTransparency = 1,
 
-            BackgroundColor3 = isSelected and
+            BackgroundColor3 = if isSelected then
                 theme:GetColor(Enum.StudioStyleGuideColor.TableItem, Enum.StudioStyleGuideModifier.Selected)
-            or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
+            else theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
             [Roact.Event.MouseEnter] = function(obj)
                 if (isSelected) then return end
@@ -276,7 +277,7 @@ GradientPalette.render = function(self)
                 end,
             }),
 
-            ColorName = isSelected and
+            ColorName = if isSelected then
                 Roact.createElement(TextInput, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding, 0, 0),
@@ -291,17 +292,17 @@ GradientPalette.render = function(self)
                     
                     disabled = isReadOnly,
                 })
-            or
+            else
                 Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.SpaciousElementPadding + 1, 0, 0),
                     Size = UDim2.new(1, -(Style.Constants.ColorSequencePreviewWidth + Style.Constants.SpaciousElementPadding + 1), 1, 0),
                     Text = gradient.name,
 
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
+                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, if isSelected then Enum.StudioStyleGuideModifier.Selected else nil),
                 }),
 
-            ColorActions = (isSelected and (not isReadOnly)) and
+            ColorActions = if (isSelected and (not isReadOnly)) then
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0, 1),
                     Position = UDim2.new(0, Style.Constants.ColorSequencePreviewWidth + Style.Constants.MinorElementPadding, 1, 0),
@@ -316,7 +317,7 @@ GradientPalette.render = function(self)
                         preset = 2,
                     }),
 
-                    RemoveColorButton = (isSelected and (not isReadOnly)) and
+                    RemoveColorButton = if (isSelected and (not isReadOnly)) then
                         Roact.createElement(Button, {
                             LayoutOrder = 1,
             
@@ -331,9 +332,9 @@ GradientPalette.render = function(self)
                                 self.props.removePaletteColor(realIndex)
                             end,
                         })
-                    or nil,
+                    else nil,
         
-                    MoveUpButton = (isSelected and (not isReadOnly)) and
+                    MoveUpButton = if (isSelected and (not isReadOnly)) then
                         Roact.createElement(Button, {
                             LayoutOrder = 2,
             
@@ -349,9 +350,9 @@ GradientPalette.render = function(self)
                                 self.props.changePaletteColorPosition(realIndex, -1)
                             end,
                         })
-                    or nil,
+                    else nil,
         
-                    MoveDownButton = (isSelected and (not isReadOnly)) and
+                    MoveDownButton = if (isSelected and (not isReadOnly)) then
                         Roact.createElement(Button, {
                             LayoutOrder = 3,
             
@@ -367,9 +368,9 @@ GradientPalette.render = function(self)
                                 self.props.changePaletteColorPosition(realIndex, 1)
                             end,
                         })
-                    or nil,
+                    else nil,
                 })
-            or nil,
+            else nil,
         }))
     end
 
@@ -411,16 +412,16 @@ GradientPalette.render = function(self)
                 if (selectedColor) then
                     local start = string.find(string.lower(selectedColor.name), newSearchTerm)
                     
-                    resetSelected = (not start) and true or false
+                    resetSelected = if (not start) then true else false
                 else
                     resetSelected = false
                 end
 
                 self:setState({
-                    selected = resetSelected and Roact.None or nil,
+                    selected = if resetSelected then Roact.None else nil,
 
                     searchDisplayText = newText,
-                    searchTerm = (newSearchTerm ~= "") and newSearchTerm or Roact.None
+                    searchTerm = if (newSearchTerm ~= "") then newSearchTerm else Roact.None
                 })
             end,
 

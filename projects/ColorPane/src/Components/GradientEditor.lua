@@ -89,7 +89,7 @@ local getColorSequenceCode = function(keypoints): string
 
         code = code ..
             string.format("\n    ColorSequenceKeypoint.new(%f, Color3.new(%f, %f, %f))", keypoint.Time, keypoint.Color:components()) ..
-            ((i ~= #keypoints) and "," or "")
+            (if (i ~= #keypoints) then "," else "")
     end
 
     code = code .. "\n})"
@@ -139,7 +139,7 @@ GradientEditor.init = function(self)
         local nearestKeypoint, nearestKeypointTimeDiff = getNearestKeypointIndex(keypoints, timelineProgress)
         local isKeypointInSnapProximity = (nearestKeypointTimeDiff < CURSOR_KEYPOINT_SNAP_VALUE)
 
-        return (isKeypointInSnapProximity and keypoints[nearestKeypoint].Time or timelineProgress)
+        return (if isKeypointInSnapProximity then keypoints[nearestKeypoint].Time else timelineProgress)
     end)
 
     self.getNewKeypointTime = function(time: number, snapValue: number?): number?
@@ -286,11 +286,11 @@ GradientEditor.render = function(self)
                 Color.fromColor3(theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame)):invert()
             ):toColor3(),
         }, {
-            UICorner = (not isFixed) and
+            UICorner = if (not isFixed) then
                 Roact.createElement(StandardUICorner)
-            or nil,
+            else nil,
 
-            Inner = (selectedKeypoint == i) and
+            Inner = if (selectedKeypoint == i) then
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -299,15 +299,15 @@ GradientEditor.render = function(self)
                     
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, Enum.StudioStyleGuideModifier.Selected),
                 }, {
-                    UICorner = (not isFixed) and
+                    UICorner = if (not isFixed) then
                         Roact.createElement(StandardUICorner)
-                    or nil,
+                    else nil,
                 })
-            or nil
+            else nil
         }))
     end
 
-    gradientElements.TimelineMarker = (self.state.showTimelineMarker) and
+    gradientElements.TimelineMarker = if (self.state.showTimelineMarker) then
         Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Size = UDim2.new(0, 1, 1, 0),
@@ -325,7 +325,7 @@ GradientEditor.render = function(self)
                 ):toColor3()
             end),
         })
-    or nil
+    else nil
 
     gradientElements.UICorner = Roact.createElement(StandardUICorner)
     gradientElements.UIGradient = Roact.createElement("UIGradient", {
@@ -383,7 +383,7 @@ GradientEditor.render = function(self)
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
 
-                Editor = (not showCode) and
+                Editor = if (not showCode) then
                     Roact.createElement("Frame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -471,9 +471,9 @@ GradientEditor.render = function(self)
                             self.updateTimelineWidth(obj.AbsoluteSize.X)
                         end,
                     }, gradientElements)
-                or nil,
+                else nil,
 
-                ColorSequenceCode = (showCode) and
+                ColorSequenceCode = if (showCode) then
                     Roact.createElement("ScrollingFrame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -523,11 +523,11 @@ GradientEditor.render = function(self)
                             end,
                         })
                     })
-                or nil,
+                else nil,
             }),
         }),
 
-        SelectedKeypointInfo = selectedKeypoint and
+        SelectedKeypointInfo = if selectedKeypoint then
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0, 1),
                 Position = UDim2.new(0, 0, 1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding)),
@@ -549,7 +549,7 @@ GradientEditor.render = function(self)
 
                     displayType = "color",
                     color = keypoints[selectedKeypoint].Color:toColor3(),
-                    disabled = (colorEditPromise and true or false),
+                    disabled = if colorEditPromise then true else false,
 
                     onActivated = function()
                         if (colorEditPromise) then
@@ -635,7 +635,7 @@ GradientEditor.render = function(self)
                         self.props.setKeypoints(keypoints, newKeypointIndex)
                     end,
                     
-                    disabled = (colorEditPromise and true or false),
+                    disabled = if colorEditPromise then true else false,
                 }),
 
                 ProgressLabel = Roact.createElement(StandardTextLabel, {
@@ -645,7 +645,7 @@ GradientEditor.render = function(self)
                     Text = "%",
                 }),
             })
-        or nil,
+        else nil,
 
         GradientInfo = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(1, 1),
@@ -677,7 +677,7 @@ GradientEditor.render = function(self)
                 LayoutOrder = 1,
 
                 displayType = "image",
-                image = showCode and Style.Images.HideCodeButtonIcon or Style.Images.ShowCodeButtonIcon,
+                image = if showCode then Style.Images.HideCodeButtonIcon else Style.Images.ShowCodeButtonIcon,
 
                 onActivated = function()
                     local newShowCode = (not showCode)
@@ -692,7 +692,7 @@ GradientEditor.render = function(self)
 
                     self:setState({
                         showCode = newShowCode,
-                        colorEditPromise = newShowCode and Roact.None or nil,
+                        colorEditPromise = if newShowCode then Roact.None else nil,
                         tracking = false,
                     })
                 end,
@@ -791,7 +791,7 @@ GradientEditor.render = function(self)
 
                 displayType = "image",
                 image = Style.Images.ReverseGradientButtonIcon,
-                disabled = colorEditPromise and true or false,
+                disabled = if colorEditPromise then true else false,
 
                 onActivated = function()
                     local reversedKeypoints = {}

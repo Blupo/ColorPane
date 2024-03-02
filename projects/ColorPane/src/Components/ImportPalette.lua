@@ -174,7 +174,7 @@ ImportPalette.render = function(self)
     local palettes = self.props.palettes
     local palette = self.state.palette
     local paletteName = self.state.paletteName
-    local newPaletteName = paletteName and Util.palette.getNewItemName(palettes, paletteName) or nil
+    local newPaletteName = if paletteName then Util.palette.getNewItemName(palettes, paletteName) else nil
 
     if (importType == "ModuleScript") then
         importPage = Roact.createElement("Frame", {
@@ -248,8 +248,11 @@ ImportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
-                Image = status and statusIcons[status] or "",
-                ImageColor3 = statusColorGenerators[status] and statusColorGenerators[status](theme) or theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+                Image = if status then statusIcons[status] else "",
+
+                ImageColor3 = if statusColorGenerators[status] then
+                    statusColorGenerators[status](theme)
+                else theme:GetColor(Enum.StudioStyleGuideColor.MainText),
 
                 [Roact.Ref] = self.statusIcon,
             }),
@@ -332,8 +335,11 @@ ImportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
-                Image = status and statusIcons[status] or "",
-                ImageColor3 = statusColorGenerators[status] and statusColorGenerators[status](theme) or theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+                Image = if status then statusIcons[status] else "",
+
+                ImageColor3 = if statusColorGenerators[status] then
+                    statusColorGenerators[status](theme)
+                else theme:GetColor(Enum.StudioStyleGuideColor.MainText),
 
                 [Roact.Ref] = self.statusIcon,
             }),
@@ -408,8 +414,11 @@ ImportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
-                Image = status and statusIcons[status] or "",
-                ImageColor3 = statusColorGenerators[status] and statusColorGenerators[status](theme) or theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+                Image = if status then statusIcons[status] else "",
+
+                ImageColor3 = if statusColorGenerators[status] then
+                    statusColorGenerators[status](theme)
+                else theme:GetColor(Enum.StudioStyleGuideColor.MainText),
 
                 [Roact.Ref] = self.statusIcon,
             }),
@@ -518,8 +527,11 @@ ImportPalette.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
 
-                Image = status and statusIcons[status] or "",
-                ImageColor3 = statusColorGenerators[status] and statusColorGenerators[status](theme) or theme:GetColor(Enum.StudioStyleGuideColor.MainText),
+                Image = if status then statusIcons[status] else "",
+
+                ImageColor3 = if statusColorGenerators[status] then
+                    statusColorGenerators[status](theme)
+                else theme:GetColor(Enum.StudioStyleGuideColor.MainText),
 
                 [Roact.Ref] = self.statusIcon,
             }),
@@ -588,7 +600,7 @@ ImportPalette.render = function(self)
                 end,
             }),
 
-            Separator1 = self.state.importType and
+            Separator1 = if self.state.importType then
                 Roact.createElement("Frame", {
                     Size = UDim2.new(1, 0, 0, 1),
                     BackgroundTransparency = 0,
@@ -597,13 +609,11 @@ ImportPalette.render = function(self)
 
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Separator)
                 })
-            or nil,
+            else nil,
 
-            ImportPage = self.state.importType and
-                importPage
-            or nil,
+            ImportPage = if self.state.importType then importPage else nil,
 
-            Separator2 = self.state.palette and
+            Separator2 = if self.state.palette then
                 Roact.createElement("Frame", {
                     Size = UDim2.new(1, 0, 0, 1),
                     BackgroundTransparency = 0,
@@ -612,9 +622,9 @@ ImportPalette.render = function(self)
 
                     BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Separator)
                 })
-            or nil,
+            else nil,
 
-            Naming = self.state.palette and
+            Naming = if self.state.palette then
                 Roact.createElement("Frame", {
                     Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding),
                     BackgroundTransparency = 1,
@@ -640,10 +650,13 @@ ImportPalette.render = function(self)
                         AnchorPoint = Vector2.new(0, 0),
                         Position = UDim2.new(0, 0, 0, Style.Constants.StandardInputHeight + Style.Constants.MinorElementPadding),
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-                        Text = (paletteName ~= newPaletteName) and Translator.FormatByKey("PaletteRename_Message", { newPaletteName }) or uiTranslations["PaletteNameOK_Message"],
+
+                        Text = if (paletteName ~= newPaletteName) then
+                            Translator.FormatByKey("PaletteRename_Message", { newPaletteName })
+                        else uiTranslations["PaletteNameOK_Message"],
                     }),
                 })
-            or nil,
+            else nil,
         }),
 
         Buttons = Roact.createElement("Frame", {

@@ -74,7 +74,7 @@ Pages.render = function(self)
             onItemChanged = self.props.onPageChanged
         }),
 
-        Page = (not self.state.dropdownExpanded) and
+        Page = if (not self.state.dropdownExpanded) then
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
@@ -82,9 +82,9 @@ Pages.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                Content = (not self.state.dropdownExpanded) and selectedPage.content or nil
+                Content = if (not self.state.dropdownExpanded) then selectedPage.content else nil
             })
-        or nil
+        else nil
     })
 end
 

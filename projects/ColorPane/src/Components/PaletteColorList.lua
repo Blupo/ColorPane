@@ -142,9 +142,9 @@ PaletteColorList.render = function(self)
             Text = "",
             TextTransparency = 1,
 
-            BackgroundColor3 = isSelected and
+            BackgroundColor3 = if isSelected then
                 theme:GetColor(Enum.StudioStyleGuideColor.TableItem, Enum.StudioStyleGuideModifier.Selected)
-            or theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
+            else theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
             [Roact.Event.MouseEnter] = function(obj)
                 if (isSelected) then return end
@@ -181,7 +181,7 @@ PaletteColorList.render = function(self)
                 end,
             }),
 
-            ColorName = (isSelected) and
+            ColorName = if (isSelected) then
                 Roact.createElement(TextInput, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding, 0, 0),
@@ -193,17 +193,17 @@ PaletteColorList.render = function(self)
                     disabled = isReadOnly,
                     onSubmit = self.props.onColorNameChanged,
                 })
-            or
+            else
                 Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(0, 0),
                     Position = UDim2.new(0, Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding + 1, 0, 0),
                     Size = UDim2.new(1, -(Style.Constants.StandardButtonHeight + Style.Constants.SpaciousElementPadding + 1), 1, 0),
                     Text = color.name,
 
-                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, isSelected and Enum.StudioStyleGuideModifier.Selected or nil),
+                    TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, if isSelected then Enum.StudioStyleGuideModifier.Selected else nil),
                 }),
 
-            ColorActions = (isSelected) and
+            ColorActions = if (isSelected) then
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0, 1),
                     Position = UDim2.new(0, Style.Constants.StandardButtonHeight + Style.Constants.MinorElementPadding, 1, 0),
@@ -219,7 +219,7 @@ PaletteColorList.render = function(self)
                         VerticalAlignment = Enum.VerticalAlignment.Center,
                     }),
 
-                    RemoveColorButton = (not isReadOnly) and
+                    RemoveColorButton = if (not isReadOnly) then
                         Roact.createElement(Button, {
                             LayoutOrder = 1,
             
@@ -228,9 +228,9 @@ PaletteColorList.render = function(self)
 
                             onActivated = self.props.onColorRemoved,
                         })
-                    or nil,
+                    else nil,
         
-                    MoveUpButton = (not isReadOnly) and
+                    MoveUpButton = if (not isReadOnly) then
                         Roact.createElement(Button, {
                             LayoutOrder = 2,
             
@@ -240,9 +240,9 @@ PaletteColorList.render = function(self)
                                     
                             onActivated = self.props.onColorMovedUp,
                         })
-                    or nil,
+                    else nil,
         
-                    MoveDownButton = (not isReadOnly) and
+                    MoveDownButton = if (not isReadOnly) then
                         Roact.createElement(Button, {
                             LayoutOrder = 3,
             
@@ -252,7 +252,7 @@ PaletteColorList.render = function(self)
 
                             onActivated = self.props.onColorMovedDown,
                         })
-                    or nil,
+                    else nil,
 
                     SetColorButton = Roact.createElement(Button, {
                         LayoutOrder = 4,
@@ -266,7 +266,7 @@ PaletteColorList.render = function(self)
                         end,
                     })
                 })
-            or nil,
+            else nil,
         }))
     end
 

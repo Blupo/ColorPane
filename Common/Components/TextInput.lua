@@ -140,17 +140,17 @@ TextInput.render = function(self)
 
         backgroundColor = theme:GetColor(
             Enum.StudioStyleGuideColor.InputFieldBackground,
-            self.state.hover and Enum.StudioStyleGuideModifier.Hover or nil
+            if self.state.hover then Enum.StudioStyleGuideModifier.Hover else nil
         )
     else
         borderColor = theme:GetColor(
             Enum.StudioStyleGuideColor.InputFieldBorder,
-            self.state.hover and Enum.StudioStyleGuideModifier.Hover or nil
+            if self.state.hover then Enum.StudioStyleGuideModifier.Hover else nil
         )
 
         backgroundColor = theme:GetColor(
             Enum.StudioStyleGuideColor.InputFieldBackground,
-            self.state.hover and Enum.StudioStyleGuideModifier.Hover or nil
+            if self.state.hover then Enum.StudioStyleGuideModifier.Hover else nil
         )
     end
 
@@ -223,7 +223,7 @@ TextInput.render = function(self)
     
                 TextColor3 = theme:GetColor(
                     Enum.StudioStyleGuideColor.MainText,
-                    disabled and Enum.StudioStyleGuideModifier.Disabled or nil
+                    if disabled then Enum.StudioStyleGuideModifier.Disabled else nil
                 ),
     
                 PlaceholderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Disabled),
@@ -250,7 +250,7 @@ TextInput.render = function(self)
                     if (disabled) then return end
     
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
-                    local isValid = (not isTextAValidValue) and true or isTextAValidValue(newText)
+                    local isValid = if (not isTextAValidValue) then true else isTextAValidValue(newText)
                     local originalText = self.props.Text
     
                     if (newText == originalText) then
@@ -304,7 +304,7 @@ TextInput.render = function(self)
                     if (actualContainerSize <= 0) then return end
     
                     obj.Size = UDim2.new(
-                        (textBounds.X > actualContainerSize) and UDim.new(0, textBounds.X) or UDim.new(1, 0),
+                        if (textBounds.X > actualContainerSize) then UDim.new(0, textBounds.X) else UDim.new(1, 0),
                         UDim.new(1, 0)
                     )
 

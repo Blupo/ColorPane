@@ -91,17 +91,18 @@ ButtonBar.render = function(self)
         local buttonInfo = self.props.buttons[i]
 
         local buttonProps: {[any]: any} = {
-            Size = self.props.vertical and
-                UDim2.new(1, -2, 1 / numButtons, ((i == 1) or (i == numButtons)) and -1 or 0)
-            or UDim2.new(1 / numButtons, ((i == 1) or (i == numButtons)) and -1 or 0, 1, -2),
+            Size = if self.props.vertical then
+                UDim2.new(1, -2, 1 / numButtons, if ((i == 1) or (i == numButtons)) then -1 else 0)
+            else UDim2.new(1 / numButtons, if ((i == 1) or (i == numButtons)) then -1 else 0, 1, -2),
+
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
-            LayoutOrder = self.props.customLayout and buttonInfo.order or i,
+            LayoutOrder = if self.props.customLayout then buttonInfo.order else i,
             AutoButtonColor = false,
     
             BackgroundColor3 = theme:GetColor(
                 Enum.StudioStyleGuideColor.Button,
-                (selected == i) and Enum.StudioStyleGuideModifier.Selected or nil
+                if (selected == i) then Enum.StudioStyleGuideModifier.Selected else nil
             ),
     
             [Roact.Event.MouseEnter] = function(obj)
@@ -152,7 +153,7 @@ ButtonBar.render = function(self)
 
     buttonElements.UICorner = Roact.createElement(StandardUICorner)
     buttonElements.UIListLayout = Roact.createElement(StandardUIListLayout, {
-        FillDirection = self.props.vertical and Enum.FillDirection.Vertical or Enum.FillDirection.Horizontal,
+        FillDirection = if self.props.vertical then Enum.FillDirection.Vertical else Enum.FillDirection.Horizontal,
         HorizontalAlignment = Enum.HorizontalAlignment.Center,
         VerticalAlignment = Enum.VerticalAlignment.Center,
     })
@@ -165,7 +166,7 @@ ButtonBar.render = function(self)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
     }, {
-        TitleLabel = (self.props.title and (not self.props.vertical)) and
+        TitleLabel = if (self.props.title and (not self.props.vertical)) then
             Roact.createElement(StandardTextLabel, {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, 0),
@@ -174,7 +175,7 @@ ButtonBar.render = function(self)
                 Font = Style.Fonts.Standard,
                 Text = self.props.title .. ": " .. self.props.buttons[selected].name,
             })
-        or nil,
+        else nil,
 
         Buttons = Roact.createElement("Frame", {
             AnchorPoint = Vector2.new(0.5, 1),
@@ -182,9 +183,11 @@ ButtonBar.render = function(self)
             BackgroundTransparency = 0,
             BorderSizePixel = 0,
 
-            Size = self.props.vertical and
+            Size = if self.props.vertical then
                 UDim2.new(1, 0, 1, 0)
-            or UDim2.new(1, 0, 1, self.props.title and -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding) or 0),
+            else UDim2.new(1, 0, 1, if self.props.title then
+                -(Style.Constants.StandardTextSize + Style.Constants.MinorElementPadding)
+            else 0),
 
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ButtonBorder)
         }, buttonElements)

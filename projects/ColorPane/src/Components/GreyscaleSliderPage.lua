@@ -121,7 +121,7 @@ GreyscaleSliderPage.render = function(self)
 
             valueChanged = function(value)
                 self:setState({
-                    captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                    captureFocus = if (editor ~= EDITOR_KEY) then true else nil,
                     brightness = value
                 })
                 

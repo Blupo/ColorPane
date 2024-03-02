@@ -119,7 +119,7 @@ Slider.render = function(self)
     return Roact.createElement("Frame", {
         AnchorPoint = self.props.AnchorPoint,
         Position = self.props.Position,
-        Size = self.props.keypoints and UDim2.new(1, 0, 0, 66) or UDim2.new(1, 0, 0, 40),
+        Size = if self.props.keypoints then UDim2.new(1, 0, 0, 66) else UDim2.new(1, 0, 0, 40),
         LayoutOrder = self.props.LayoutOrder,
         BackgroundTransparency = 1,
         BorderSizePixel = 0
@@ -140,7 +140,7 @@ Slider.render = function(self)
 
             BackgroundColor3 = theme:GetColor(
                 Enum.StudioStyleGuideColor.InputFieldBorder,
-                self.state.tracking and Enum.StudioStyleGuideModifier.Selected or nil
+                if self.state.tracking then Enum.StudioStyleGuideModifier.Selected else nil
             ),
         }, {
             UICorner = Roact.createElement(StandardUICorner),
@@ -226,14 +226,14 @@ Slider.render = function(self)
             Input = Roact.createElement(TextInput, {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Position = UDim2.new(0, 0, 0.5, 0),
-                Size = UDim2.new(1, self.props.unitLabel and -(10 + Style.Constants.MinorElementPadding) or 0, 1, 0),
+                Size = UDim2.new(1, if self.props.unitLabel then -(10 + Style.Constants.MinorElementPadding) else 0, 1, 0),
                 TextXAlignment = Enum.TextXAlignment.Center,
                 Text = self.props.valueToText(value),
 
                 selectTextOnFocus = true,
     
                 isTextAValidValue = function(text)
-                    return self.props.textToValue(text) and true or false
+                    return (if self.props.textToValue(text) then true else false)
                 end,
 
                 onSubmit = function(newText)
@@ -246,14 +246,14 @@ Slider.render = function(self)
                 end
             }),
 
-            UnitLabel = self.props.unitLabel and
+            UnitLabel = if self.props.unitLabel then
                 Roact.createElement(StandardTextLabel, {
                     AnchorPoint = Vector2.new(1, 0.5),
                     Position = UDim2.new(1, 0, 0.5, 0),
                     Size = UDim2.new(0, 10, 1, 0),
                     Text = self.props.unitLabel,
                 })
-            or nil
+            else nil
         })
     })
 end

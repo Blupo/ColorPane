@@ -161,11 +161,11 @@ Button.render = function(self)
         Button = Roact.createElement(buttonTypes[self.props.displayType], buttonProps, {
             UICorner = Roact.createElement(StandardUICorner),
 
-            UIGradient = (displayType == "colorSequence") and
+            UIGradient = if (displayType == "colorSequence") then
                 Roact.createElement("UIGradient", {
                     Color = self.props.color,
                 })
-            or nil,
+            else nil,
         })
     })
 end

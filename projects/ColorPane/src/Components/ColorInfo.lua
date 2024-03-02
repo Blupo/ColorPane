@@ -86,7 +86,7 @@ local infoComponents = {
 
         getComponentString = function(color)
             local h, s, b = color:toHSB()
-            h = (h ~= h) and 0 or h
+            h = if (h ~= h) then 0 else h
             s, b = math.floor(s * 100), math.floor(b * 100)
 
             return string.format("%d, %d, %d", h, s, b)
@@ -106,7 +106,7 @@ local infoComponents = {
 
         getComponentString = function(color)
             local h, s, l = color:toHSL()
-            h = (h ~= h) and 0 or h
+            h = if (h ~= h) then 0 else h
             s, l = math.floor(s * 100), math.floor(l * 100)
 
             return string.format("%d, %d, %d", h, s, l)
@@ -126,7 +126,7 @@ local infoComponents = {
 
         getComponentString = function(color)
             local h, w, b = color:toHWB()
-            h = (h ~= h) and 0 or h
+            h = if (h ~= h) then 0 else h
             w, b = math.floor(w * 100), math.floor(b * 100)
 
             return string.format("%d, %d, %d", h, w, b)
@@ -184,7 +184,7 @@ local infoComponents = {
 
         getComponentString = function(color)
             local l, c, h = color:toLChab()
-            h = (h ~= h) and 0 or h
+            h = if (h ~= h) then 0 else h
             l, c = l * 100, c * 100
 
             return string.format("%.03f, %.03f, %.03f", l, c, h)
@@ -204,7 +204,7 @@ local infoComponents = {
 
         getComponentString = function(color)
             local l, c, h = color:toLChuv()
-            h = (h ~= h) and 0 or h
+            h = if (h ~= h) then 0 else h
             l, c = l * 100, c * 100
 
             return string.format("%.03f, %.03f, %.03f", l, c, h)
@@ -339,7 +339,7 @@ ColorInfo.render = function(self)
                 Text = component.getComponentString(color),
 
                 isTextAValidValue = function(text)
-                    return (component.getColor(text) and true or false)
+                    return (if component.getColor(text) then true else false)
                 end,
 
                 onSubmit = function(newText)

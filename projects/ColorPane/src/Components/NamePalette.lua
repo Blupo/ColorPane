@@ -57,7 +57,9 @@ RenamePalette.init = function(self, initProps)
     local paletteIndex = initProps.paletteIndex
 
     self:setState({
-        newPaletteName = paletteIndex and palettes[paletteIndex].name or uiTranslations["DefaultPaletteName"]
+        newPaletteName = if paletteIndex then
+            palettes[paletteIndex].name
+        else uiTranslations["DefaultPaletteName"]
     })
 end
 
@@ -82,7 +84,10 @@ RenamePalette.render = function(self)
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, 0),
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-            Text = selectedPalette and Translator.FormatByKey("RenamePalette_Prompt", { selectedPalette.name }) or uiTranslations["NamePalette_Prompt"],
+            
+            Text = if selectedPalette then
+                Translator.FormatByKey("RenamePalette_Prompt", { selectedPalette.name })
+            else uiTranslations["NamePalette_Prompt"],
         }),
 
         NameInput = Roact.createElement(TextInput, {
@@ -104,7 +109,10 @@ RenamePalette.render = function(self)
             AnchorPoint = Vector2.new(0.5, 0),
             Position = UDim2.new(0.5, 0, 0, Style.Constants.StandardTextSize + Style.Constants.LargeButtonHeight + (Style.Constants.MinorElementPadding * 2)),
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize),
-            Text = (newPaletteName ~= actualNewPaletteName) and Translator.FormatByKey("PaletteRename_Message", { actualNewPaletteName }) or uiTranslations["PaletteNameOK_Message"],
+            
+            Text = if (newPaletteName ~= actualNewPaletteName) then
+                Translator.FormatByKey("PaletteRename_Message", { actualNewPaletteName })
+            else uiTranslations["PaletteNameOK_Message"],
         }),
 
         Buttons = Roact.createElement("Frame", {

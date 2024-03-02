@@ -32,7 +32,7 @@ local RepeatingCallback = {}
 
 RepeatingCallback.new = function(callback: () -> nil, initialDelta: number?, optionalMinDelta: number?)
     local minDelta: number = optionalMinDelta or ABSOLUTE_MIN_DELTA
-    minDelta = (minDelta >= ABSOLUTE_MIN_DELTA) and minDelta or ABSOLUTE_MIN_DELTA
+    minDelta = if (minDelta >= ABSOLUTE_MIN_DELTA) then minDelta else ABSOLUTE_MIN_DELTA
 
     local delta: number = initialDelta or DEFAULT_DELTA
     delta = if (delta >= minDelta) then delta else minDelta

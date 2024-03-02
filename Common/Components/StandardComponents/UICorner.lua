@@ -22,9 +22,9 @@ local StandardUICorner = Roact.PureComponent:extend("StandardUICorner")
 
 StandardUICorner.render = function(self)
     return Roact.createElement("UICorner", {
-        CornerRadius = self.props.circular and
+        CornerRadius = if self.props.circular then
             UDim.new(1, 0)
-        or UDim.new(0, Style.Constants.StandardCornerRadius),
+        else UDim.new(0, Style.Constants.StandardCornerRadius),
     })
 end
 

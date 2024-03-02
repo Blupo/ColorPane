@@ -287,52 +287,60 @@ PalettePages.render = function(self)
                     end
                 },
 
-                (selectedPageSection == 2) and {
-                    name = uiTranslations["ExportPalette_ButtonText"],
+                if (selectedPageSection == 2) then
+                    {
+                        name = uiTranslations["ExportPalette_ButtonText"],
 
-                    onActivated = function()
-                        self:setState({
-                            displayPage = "exportPalette",
-                            paletteIndex = selectedPageNum,
-                        })
-                    end
-                } or nil,
-
-                (selectedPageSection == 2) and {
-                    name = uiTranslations["DuplicatePalette_ButtonText"],
-
-                    onActivated = function()
-                        self.props.duplicatePalette(selectedPageNum)
-                        self.props.updatePalettePage(2, #palettes + 1)
-                    end
-                } or nil,
-
-                (selectedPageSection == 2) and {
-                    name = uiTranslations["RenamePalette_ButtonText"],
-
-                    onActivated = function()
-                        self:setState({
-                            displayPage = "renamePalette",
-                            paletteIndex = selectedPageNum,
-                        })
-                    end
-                } or nil,
-
-                (selectedPageSection == 2) and {
-                    name = uiTranslations["DeletePalette_ButtonText"],
-
-                    onActivated = function()
-                        if (self.state.leftShiftDown or self.state.rightShiftDown) then
-                            self.props.removePalette(selectedPageNum)
-                            self.props.updatePalettePage(1, 1)
-                        else
+                        onActivated = function()
                             self:setState({
-                                displayPage = "removePalette",
-                                paletteIndex = selectedPageNum
+                                displayPage = "exportPalette",
+                                paletteIndex = selectedPageNum,
                             })
                         end
-                    end
-                } or nil,
+                    }
+                else nil,
+
+                if (selectedPageSection == 2) then
+                    {
+                        name = uiTranslations["DuplicatePalette_ButtonText"],
+
+                        onActivated = function()
+                            self.props.duplicatePalette(selectedPageNum)
+                            self.props.updatePalettePage(2, #palettes + 1)
+                        end
+                    }
+                else nil,
+
+                if (selectedPageSection == 2) then
+                    {
+                        name = uiTranslations["RenamePalette_ButtonText"],
+
+                        onActivated = function()
+                            self:setState({
+                                displayPage = "renamePalette",
+                                paletteIndex = selectedPageNum,
+                            })
+                        end
+                    }
+                else nil,
+
+                if (selectedPageSection == 2) then
+                    {
+                        name = uiTranslations["DeletePalette_ButtonText"],
+
+                        onActivated = function()
+                            if (self.state.leftShiftDown or self.state.rightShiftDown) then
+                                self.props.removePalette(selectedPageNum)
+                                self.props.updatePalettePage(1, 1)
+                            else
+                                self:setState({
+                                    displayPage = "removePalette",
+                                    paletteIndex = selectedPageNum
+                                })
+                            end
+                        end
+                    }
+                else nil,
             }
         })
     end

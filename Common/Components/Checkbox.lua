@@ -65,8 +65,9 @@ Checkbox.render = function(self)
             Text = "",
             TextTransparency = 1,
 
-            BackgroundColor3 = disabled and theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder)
-                or theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, hover and Enum.StudioStyleGuideModifier.Hover or nil),
+            BackgroundColor3 = if disabled then 
+                theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder)
+            else theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBorder, if hover then Enum.StudioStyleGuideModifier.Hover else nil),
 
             [Roact.Event.MouseButton1Click] = function()
                 if (disabled) then return end
@@ -97,13 +98,14 @@ Checkbox.render = function(self)
                 BackgroundTransparency = 0,
                 BorderSizePixel = 0,
 
-                BackgroundColor3 = disabled and theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground)
-                    or theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground, hover and Enum.StudioStyleGuideModifier.Hover or nil),
+                BackgroundColor3 = if disabled then
+                    theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground)
+                else theme:GetColor(Enum.StudioStyleGuideColor.InputFieldBackground, if hover then Enum.StudioStyleGuideModifier.Hover else nil),
             }, {
                 UICorner = Roact.createElement(StandardUICorner),
             }),
 
-            CheckboxIndicator = self.props.value and
+            CheckboxIndicator = if self.props.value then
                 Roact.createElement("Frame", {
                     AnchorPoint = Vector2.new(0.5, 0.5),
                     Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -113,12 +115,12 @@ Checkbox.render = function(self)
 
                     BackgroundColor3 = theme:GetColor(
                         Enum.StudioStyleGuideColor.InputFieldBorder,
-                        disabled and Enum.StudioStyleGuideModifier.Disabled or Enum.StudioStyleGuideModifier.Selected
+                        if disabled then Enum.StudioStyleGuideModifier.Disabled else Enum.StudioStyleGuideModifier.Selected
                     ),
                 }, {
                     UICorner = Roact.createElement(StandardUICorner),
                 })
-            or nil,
+            else nil,
 
             UICorner = Roact.createElement(StandardUICorner),
         }),
@@ -135,7 +137,7 @@ Checkbox.render = function(self)
 
             TextColor3 = theme:GetColor(
                 Enum.StudioStyleGuideColor.MainText,
-                disabled and Enum.StudioStyleGuideModifier.Disabled or nil
+                if disabled then Enum.StudioStyleGuideModifier.Disabled else nil
             )
         })
     })

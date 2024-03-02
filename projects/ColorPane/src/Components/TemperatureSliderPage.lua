@@ -119,7 +119,7 @@ TemperatureSliderPage.render = function(self)
 
             onActivated = function()
                 self:setState({
-                    captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                    captureFocus = if (editor ~= EDITOR_KEY) then true else nil,
                     temperature = presetTemperature
                 })
 
@@ -162,14 +162,14 @@ TemperatureSliderPage.render = function(self)
             textToValue = textToValue,
 
             isTextAValidValue = function(text)
-                return textToValue(text) and true or false
+                return (if textToValue(text) then true else false)
             end,
 
             valueChanged = function(value)
                 local newTemperature = Util.lerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, value)
 
                 self:setState({
-                    captureFocus = (editor ~= EDITOR_KEY) and true or nil,
+                    captureFocus = if (editor ~= EDITOR_KEY) then true else nil,
                     temperature = newTemperature
                 })
 

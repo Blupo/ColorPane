@@ -78,7 +78,7 @@ RadioButtonGroup.render = function(self)
                     UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                 }),
 
-                Indicator = (self.props.selected == i) and
+                Indicator = if (self.props.selected == i) then
                     Roact.createElement("Frame", {
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Size = UDim2.new(1, -Style.Constants.SpaciousElementPadding, 1, -Style.Constants.SpaciousElementPadding),
@@ -91,7 +91,7 @@ RadioButtonGroup.render = function(self)
                     }, {
                         UICorner = Roact.createElement(StandardUICorner, { circular = true }),
                     })
-                or nil,
+                else nil,
             }),
 
             Label = Roact.createElement(StandardTextLabel, {

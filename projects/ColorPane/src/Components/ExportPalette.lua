@@ -72,7 +72,7 @@ ExportPalette.render = function(self)
     local exportType = self.state.exportType
 
     local paletteIndex = self.state.paletteIndex
-    local paletteName = paletteIndex and palettes[paletteIndex].name or nil
+    local paletteName = if paletteIndex then palettes[paletteIndex].name else nil
 
     local nameItems = {}
 
@@ -112,7 +112,7 @@ ExportPalette.render = function(self)
             end,
         }),
 
-        Dialog = ((not dropdownExpanded) and paletteIndex) and
+        Dialog = if ((not dropdownExpanded) and paletteIndex) then
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0),
                 Position = UDim2.new(0.5, 0, 0, Style.Constants.LargeButtonHeight + Style.Constants.SpaciousElementPadding),
@@ -147,7 +147,7 @@ ExportPalette.render = function(self)
                     end,
                 }),
 
-                ScriptInjectionWarning = (exportType == "ModuleScript") and
+                ScriptInjectionWarning = if (exportType == "ModuleScript") then
                     Roact.createElement(StandardTextLabel, {
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                         LayoutOrder = 3,
@@ -157,19 +157,19 @@ ExportPalette.render = function(self)
 
                         TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.WarningText),
                     })
-                or nil,
+                else nil,
 
-                ExportLocation = paletteName and
+                ExportLocation = if paletteName then
                     Roact.createElement(StandardTextLabel, {
                         Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
                         LayoutOrder = 4,
                         Text = Translator.FormatByKey("ExportDestination_Message", { paletteName }),
                     })
-                or nil,
+                else nil,
             })
-        or nil,
+        else nil,
 
-        Buttons = (not dropdownExpanded) and
+        Buttons = if (not dropdownExpanded) then
             Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(1, 1),
                 Position = UDim2.new(1, 0, 1, 0),
@@ -271,7 +271,7 @@ ExportPalette.render = function(self)
                     end
                 }),
             })
-        or nil
+        else nil
     })
 end
 
