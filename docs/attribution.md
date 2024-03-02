@@ -1,5 +1,12 @@
 # Attribution
 
+## Translations
+
+- French (`fr`) translation:
+    - [Clem Gaming (clmntfeugere)](https://crowdin.com/profile/clmntfeugere)
+- Korean (`ko`) translation:
+    - [CoouDo](https://crowdin.com/profile/cooudo)
+
 ## ColorBrewer
 
 This product includes color specifications and designs developed by Cynthia Brewer ([http://colorbrewer.org/](http://colorbrewer.org/)).
