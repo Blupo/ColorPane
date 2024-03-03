@@ -120,8 +120,11 @@ local DEFAULT_GRADIENT_PROMPT_INFO: GradientPromptInfo = {
 
 local plugin: Plugin = PluginProvider()
 
-local colorEditorWindow = Window.new(WidgetInfo.ColorEditor.Id, WidgetInfo.ColorEditor.Info)
-local gradientEditorWindow = Window.new(WidgetInfo.GradientEditor.Id, WidgetInfo.GradientEditor.Info)
+local colorEditorWindow: Window.Window = Window.new(WidgetInfo.ColorEditor.Id, WidgetInfo.ColorEditor.Info)
+local gradientEditorWindow: Window.Window = Window.new(WidgetInfo.GradientEditor.Id, WidgetInfo.GradientEditor.Info)
+
+local fireColorEditFinished: Signal.FireSignal<boolean> = function(_: boolean) end
+local fireGradientEditFinished: Signal.FireSignal<boolean> = function(_: boolean) end
 
 --[[
     This is the actual color prompting function.
@@ -213,6 +216,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
         })
     end)
 
+    fireColorEditFinished = fireFinished
     colorEditorWindow:mount(fullPromptInfo.PromptTitle, colorEditorElement, Store)
     return editPromise
 end
@@ -439,6 +443,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         })
     end)
 
+    fireGradientEditFinished = fireFinished
     gradientEditorWindow:mount(fullPromptInfo.PromptTitle, gradientEditorElement, Store)
     return editPromise
 end
@@ -536,17 +541,20 @@ gradientEditorWindow.openedWithoutMounting:subscribe(function()
     gradientEditorWindow:close()
 end)
 
--- color editor must stay open when mounted
+-- user closing the color editor is the same as cancelling the prompt
 colorEditorWindow.closedWithoutUnmounting:subscribe(function()
-    colorEditorWindow:open()
+    fireColorEditFinished(false)
 end)
 
--- gradient editor must stay open when mounted
+-- user closing the gradient editor is the same as cancelling the prompt
 gradientEditorWindow.closedWithoutUnmounting:subscribe(function()
-    gradientEditorWindow:open()
+    fireGradientEditFinished(false)
 end)
 
 plugin.Unloading:Connect(function()
+    fireColorEditFinished(false)
+    fireGradientEditFinished(false)
+
     colorEditorWindow:destroy()
     gradientEditorWindow:destroy()
 end)
