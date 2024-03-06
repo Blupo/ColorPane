@@ -11,7 +11,7 @@
                 "$path": "projects/CPTester",
 
                 "ColorPane": {
-                    "$path": "projects/ColorPane/src",
+                    "$path": "projects/ColorPane",
     
                     "Common": {
                         "$path": "Common"
@@ -20,7 +20,7 @@
             },
 
             "ColorPane": {
-                "$path": "projects/ColorPane/src",
+                "$path": "projects/ColorPane",
 
                 "Common": {
                     "$path": "Common"
@@ -28,7 +28,7 @@
             },
 
             "Companion": {
-                "$path": "projects/Companion/src",
+                "$path": "projects/Companion",
 
                 "Common": {
                     "$path": "Common"

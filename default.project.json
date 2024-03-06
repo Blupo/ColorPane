@@ -2,7 +2,7 @@
     "name": "ColorPane",
 
     "tree": {
-        "$path": "projects/ColorPane/src",
+        "$path": "projects/ColorPane",
 
         "Common": {
             "$path": "Common"

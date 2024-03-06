@@ -5,8 +5,8 @@
 
 local root = script.Parent.Parent.Parent
 
-local PluginModules = root.PluginModules
-local Style = require(PluginModules.Style)
+local Modules = root.Modules
+local Style = require(Modules.Style)
 
 local Includes = root.Includes
 local Roact = require(Includes.RoactRodux.Roact)
