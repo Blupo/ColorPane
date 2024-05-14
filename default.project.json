@@ -5,7 +5,7 @@
         "$path": "projects/ColorPane",
 
         "Common": {
-            "$path": "Common"
+            "$path": "projects/Common"
         }
     }
 }

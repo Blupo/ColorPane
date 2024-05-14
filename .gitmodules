@@ -1,21 +1,21 @@
 [submodule "Common/Includes/RoactRodux"]
-	path = Common/Includes/RoactRodux
+	path = projects/Common/Includes/RoactRodux
 	url = https://github.com/Roblox/roact-rodux
 	branch = master
 [submodule "Common/Includes/Signal"]
-	path = Common/Includes/Signal
+	path = projects/Common/Includes/Signal
 	url = https://github.com/Roblox/signal-lua
 	branch = main
 [submodule "Common/Includes/Cryo"]
-	path = Common/Includes/Cryo
+	path = projects/Common/Includes/Cryo
 	url = https://github.com/Roblox/cryo
 	branch = main
 [submodule "Common/Includes/Promise"]
-	path = Common/Includes/Promise
+	path = projects/Common/Includes/Promise
 	url = https://github.com/evaera/roblox-lua-promise
 	branch = master
 [submodule "Common/Includes/t"]
-	path = Common/Includes/t
+	path = projects/Common/Includes/t
 	url = https://github.com/osyrisrblx/t
 	branch = master
 [submodule "Common/Includes/Color"]
