@@ -55,7 +55,7 @@ type WindowImpl = {
 
     --[[
         Enables mouse tracking for this window.
-        No effect if mouse track is already enabled.
+        No effect if mouse tracking is already enabled.
 
         @param self The window to track
     ]]
@@ -77,7 +77,7 @@ type WindowImpl = {
     open: (Window) -> (),
 
     --[[
-        Closes the window (make is invisible)
+        Closes the window (makes is invisible)
 
         @param self The window to close
     ]]
@@ -133,7 +133,7 @@ export type Window = typeof(setmetatable(
         closedWithoutUnmounting: Signal.Signal<nil>,
 
         --[[
-            A signal that fires when the the mouse position changes,
+            A signal that fires when the the mouse position changes
             and mouse tracking has been enabled for the window
         ]]
         mousePositionChanged: Signal.Signal<Vector2>,

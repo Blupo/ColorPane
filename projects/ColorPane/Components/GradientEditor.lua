@@ -578,7 +578,7 @@ GradientEditor.render = function(self)
 
                             newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = newColor }
 
-                            self.props.setKeypoints(newKeypoints)
+                            self.props.setKeypoints(newKeypoints, nil)
                         end, function(err)
                             if (err == PluginEnums.PromptRejection.PromptCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
@@ -586,7 +586,7 @@ GradientEditor.render = function(self)
                                 local newKeypoints = Util.table.deepCopy(self.props.keypoints)
                                 newKeypoints[selectedKeypoint] = { Time = keypoint.Time, Color = originalColor }
 
-                                self.props.setKeypoints(newKeypoints)
+                                self.props.setKeypoints(newKeypoints, nil)
                             end
                         end):finally(function()
                             if (not self.unmounting) then

@@ -213,7 +213,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
         colorEditorWindow:unmount(true)
 
         Store:dispatch({
-            type = PluginEnums.StoreActionType.GradientEditor_ResetState,
+            type = PluginEnums.StoreActionType.ColorEditor_SetColor,
             color = nil,
         })
     end)
