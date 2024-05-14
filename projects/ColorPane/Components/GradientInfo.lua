@@ -4,6 +4,7 @@ local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local Constants = require(CommonModules.Constants)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 
@@ -22,7 +23,6 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Modules = root.Modules
-local Constants = require(Modules.Constants)
 local PluginEnums = require(Modules.PluginEnums)
 local Util = require(Modules.Util)
 

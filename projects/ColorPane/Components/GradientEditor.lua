@@ -8,6 +8,7 @@ local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local Constants = require(CommonModules.Constants)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 local Window = require(CommonModules.Window)
@@ -34,7 +35,6 @@ local Includes = root.Includes
 local ColorLib = require(Includes.Color)
 
 local Modules = root.Modules
-local Constants = require(Modules.Constants)
 local GradientEditorInputSignals = require(Modules.EditorInputSignals).GradientEditor
 local PluginEnums = require(Modules.PluginEnums)
 local Store = require(Modules.Store)
@@ -45,10 +45,7 @@ local Color, Gradient = ColorLib.Color, ColorLib.Gradient
 
 ---
 
--- TODO: move these out
-local CURSOR_KEYPOINT_SNAP_VALUE = 1/100
-local MIN_SNAP_VALUE = 0.001/100
-local MAX_SNAP_VALUE = 25/100
+local CURSOR_KEYPOINT_SNAP_VALUE = 0.01
 
 local uiTranslations = Translator.GenerateTranslationTable({
     "SnapInput_Label",
@@ -622,7 +619,7 @@ GradientEditor.render = function(self)
     
                     onSubmit = function(text)
                         local newTime = tonumber(text)
-                        newTime = self.getNewKeypointTime(newTime / 100, MIN_SNAP_VALUE)
+                        newTime = self.getNewKeypointTime(newTime / 100, Constants.MIN_SNAP_VALUE)
                         if (not newTime) then return end
 
                         local newKeypoint = { Time = newTime, Color = keypoints[selectedKeypoint].Color }
@@ -845,13 +842,13 @@ GradientEditor.render = function(self)
                         if (not n) then return false end
 
                         n = n / 100
-                        return ((n >= MIN_SNAP_VALUE) and (n <= MAX_SNAP_VALUE))
+                        return ((n >= Constants.MIN_SNAP_VALUE) and (n <= Constants.MAX_SNAP_VALUE))
                     end,
     
                     onSubmit = function(text)
                         local n = tonumber(text)
-                        n = math.clamp(n / 100, MIN_SNAP_VALUE, MAX_SNAP_VALUE)
-                        n = Util.round(n, math.log10(MIN_SNAP_VALUE))
+                        n = math.clamp(n / 100, Constants.MIN_SNAP_VALUE, Constants.MAX_SNAP_VALUE)
+                        n = Util.round(n, math.log10(Constants.MIN_SNAP_VALUE))
 
                         self.props.setSnapValue(n)
                     end,

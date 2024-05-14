@@ -4,6 +4,7 @@ local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local Constants = require(CommonModules.Constants)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 
@@ -19,7 +20,6 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local Constants = require(Modules.Constants)
 local PluginEnums = require(Modules.PluginEnums)
 local Util = require(Modules.Util)
 

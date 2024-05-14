@@ -4,6 +4,7 @@ local root = script.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local Constants = require(CommonModules.Constants)
 local PluginProvider = require(CommonModules.PluginProvider)
 local Window = require(CommonModules.Window)
 
@@ -18,7 +19,6 @@ local ColorLib = require(Includes.Color)
 
 local Modules = root.Modules
 local APITypeValidators = require(Modules.APITypeValidators)
-local Constants = require(Modules.Constants)
 local EditorInputSignals = require(Modules.EditorInputSignals)
 local PluginEnums = require(Modules.PluginEnums)
 local Store = require(Modules.Store)

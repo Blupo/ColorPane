@@ -1,12 +1,36 @@
 --!strict
--- Provides constants used in ColorPane
+-- Provides constants used in the projects
 
 local CONSTANTS = {
+    --[[
+        The list of valid gradient color spaces.
+    ]]
     VALID_GRADIENT_COLOR_SPACES = { "RGB", "CMYK", "HSB", "HWB", "HSL", "HPLuv", "HSLuv", "Lab", "Oklab", "Luv", "LChab", "LChuv", "xyY", "XYZ" },
+
+    --[[
+        The list of valid hue adjustments.
+    ]]
     VALID_HUE_ADJUSTMENTS = { "Shorter", "Longer", "Increasing", "Decreasing", "Specified" },
 
+    --[[
+        The lower bound of color temperatures, in Kelvin.
+    ]]
     KELVIN_LOWER_RANGE = 1000,
+
+    --[[
+        The upper bound of color temperatures, in Kelvin.
+    ]]
     KELVIN_UPPER_RANGE = 10000,
+
+    --[[
+        The minimum time value that gradient keypoints must be separated by.
+    ]]
+    MIN_SNAP_VALUE = 0.00001,
+
+    --[[
+        The maximum time value that gradient keypoints can be separated by.
+    ]]
+    MAX_SNAP_VALUE = 0.25,
 }
 
 -- Calculate the maximum number of keypoints that can be in a ColorSequence
@@ -36,6 +60,9 @@ do
         end
     end
 
+    --[[
+        The maximum number of ColorSequenceKeypoints that can be in a ColorSequence.
+    ]]
     CONSTANTS.MAX_COLORSEQUENCE_KEYPOINTS = numKeypoints
 end
 
