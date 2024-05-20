@@ -49,6 +49,7 @@ Util.table = {}
 Util.palette = {}
 
 -- TABLE UTIL
+-- TODO: Remove Util.table, it was moved to Common
 
 Util.table.deepFreeze = function(tbl: {[any]: any}): {[any]: any}
     for _, v in pairs(tbl) do
@@ -191,6 +192,7 @@ Util.getMaxUserKeypoints = function(maxKeypoints: number, precision: number): nu
     return math.floor(((maxKeypoints - 1) / (precision + 1)) + 1)
 end
 
+-- TODO: Remove, it was moved to Common
 Util.getUtilisedKeypoints = function(keypoints: number, precision: number): number
     return (precision * (keypoints - 1)) + keypoints
 end

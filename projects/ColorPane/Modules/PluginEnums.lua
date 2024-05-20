@@ -28,22 +28,6 @@ return {
         GradientEditor_ChangePaletteColorPosition = "GradientEditor_ChangePaletteColorPosition",
     },
 
-    PluginSettingKey = {
-        UserPalettes = "UserPalettes",
-        SnapValue = "SnapValue",
-        AutoLoadColorProperties = "AutoLoadColorProperties",
-        AskNameBeforePaletteCreation = "AskNameBeforePaletteCreation",
-        AutoCheckForUpdate = "AutoCheckForUpdate",
-        AutoSave = "AutoSave",
-        AutoSaveInterval = "AutoSaveInterval",
-        CacheAPIData = "CacheAPIData",
-        UserGradients = "UserGradients",
-        FirstTimeSetup = "FirstTimeSetup",
-        
-        -- DEPRECATED
-        UserColorSequences = "UserColorSequences",
-    },
-
     EditorKey = {
         ColorWheel = "ColorWheel",
         RGBSlider = "RGBSlider",
