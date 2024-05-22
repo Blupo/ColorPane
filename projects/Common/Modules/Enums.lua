@@ -12,7 +12,8 @@ return {
     UserDataError = {
         InvalidKey = "InvalidKey",
         InvalidValue = "InvalidValue",
-        SameValue = "SameValue",
+        ValidatorNotFound = "ValidatorNotFound",
+        InvalidUserData = "InvalidUserData",
     },
 
     UpstreamUserDataProviderError = {

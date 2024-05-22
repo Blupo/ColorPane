@@ -5,7 +5,7 @@ local Types = {}
 
 ---
 
-export type UserDataValue = {
+export type KeyValue = {
     Key: string,
     Value: any
 }

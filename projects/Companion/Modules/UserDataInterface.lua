@@ -31,7 +31,7 @@ local valueChangedEvent: BindableEvent = Instance.new("BindableEvent")
 
 ---
 
-getValueFunction.OnInvoke = function(key: string): (boolean, any)
+getValueFunction.OnInvoke = function(key: string): any
     return ManagedUserData:getValue(key)
 end
 
@@ -39,11 +39,11 @@ getAllValuesFunction.OnInvoke = function(): CommonTypes.UserData
     return ManagedUserData:getAllValues()
 end
 
-setValueFunction.OnInvoke = function(key: string, value: any): (boolean, string?)
-    return ManagedUserData:setValue(key, value)
+setValueFunction.OnInvoke = function(key: string, value: any): ()
+    ManagedUserData:setValue(key, value)
 end
 
-local valueChangedSubscription = ManagedUserData.valueChanged:subscribe(function(value: CommonTypes.UserDataValue)
+local valueChangedSubscription = ManagedUserData.valueChanged:subscribe(function(value: CommonTypes.KeyValue)
     valueChangedEvent:Fire(value)
 end)
 

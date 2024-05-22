@@ -91,7 +91,7 @@ return function(userData: UserData.UserData, initialWrite: boolean)
         writeSettings(true)
     end
 
-    local valueChangedSubscription = userData.valueChanged:subscribe(function(_: CommonTypes.UserDataValue)
+    local valueChangedSubscription = userData.valueChanged:subscribe(function(_: CommonTypes.KeyValue)
         writeSettings()
     end)
 

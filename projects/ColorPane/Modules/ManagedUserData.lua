@@ -26,7 +26,7 @@ local availabilityChangedSubscription
 
 do
     -- initialise user data
-    local gotValues: boolean, data: string | CommonTypes.UserData = UpstreamUserData.GetAllValues()
+    local gotValues: boolean, data: string | CommonTypes.UserData = pcall(UpstreamUserData.GetAllValues)
 
     if (gotValues) then
         userData = UserData.new(data::CommonTypes.UserData)
@@ -35,11 +35,11 @@ do
     end
 
     -- subscribe to events
-    userDataValueChangedSubscription = userData.valueChanged:subscribe(function(value: CommonTypes.UserDataValue)
+    userDataValueChangedSubscription = userData.valueChanged:subscribe(function(value: CommonTypes.KeyValue)
         UpstreamUserData.SetValue(value.Key, value.Value)
     end)
 
-    upstreamDataValueChangedSubscription = UpstreamUserData.ValueChanged:subscribe(function(value: CommonTypes.UserDataValue)
+    upstreamDataValueChangedSubscription = UpstreamUserData.ValueChanged:subscribe(function(value: CommonTypes.KeyValue)
         userData:setValue(value.Key, value.Value)
     end)
 
@@ -56,7 +56,7 @@ do
             data will always be overwritten.
         ]]
 
-        local success, values = UpstreamUserData.GetAllValues()
+        local success, values = pcall(UpstreamUserData.GetAllValues)
         if (not success) then return end
 
         for k, v in pairs(values) do

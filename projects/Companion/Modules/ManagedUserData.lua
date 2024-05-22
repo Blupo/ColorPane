@@ -117,7 +117,7 @@ local initUserData = function(): (CommonTypes.UserData, boolean)
         return defaultUserDataCopy, true
     else
         -- check for missing or invalid values
-        local modified: boolean = true
+        local modified: boolean = false
 
         for key: string in pairs(CommonEnums.UserDataKey) do
             -- TODO: examine individual palettes to avoid erasing all of them

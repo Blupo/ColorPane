@@ -25,7 +25,7 @@ local setValueFunction: BindableFunction?
 local valueChangedEvent: BindableEvent?
 local valueChangedConnection: RBXScriptConnection?
 
-local upstreamValueChangedSignal: Signal.Signal<CommonTypes.UserDataValue>, fireUpstreamValueChanged: Signal.FireSignal<CommonTypes.UserDataValue> = Signal.createSignal()
+local upstreamValueChangedSignal: Signal.Signal<CommonTypes.KeyValue>, fireUpstreamValueChanged: Signal.FireSignal<CommonTypes.KeyValue> = Signal.createSignal()
 local upstreamAvailabilityChangedSignal: Signal.Signal<boolean>, fireUpstreamAvailabilityChanged: Signal.FireSignal<boolean> = Signal.createSignal()
 
 local resetUpstreamInterface = function()
@@ -110,29 +110,21 @@ end
     Retrives a value from the upstream provider.
 
     @param key The name of the value to retrieve
-    @return If the retrieval was successful
-    @return The value of the user data value if the retrieval was successful. Otherwise, an error message.
+    @return The user data value
 ]]
-UpstreamUserData.GetValue = function(key: string): (boolean, any)
-    if (not UpstreamUserData.IsAvailable()) then
-        return false, CommonEnums.UpstreamUserDataProviderError.Unavailable
-    end
-
+UpstreamUserData.GetValue = function(key: string): any
+    assert(UpstreamUserData.IsAvailable(), CommonEnums.UpstreamUserDataProviderError.Unavailable)
     return (getValueFunction::BindableFunction):Invoke(key)
 end
 
 --[[
     Retrives all values from the upstream provider.
 
-    @return If the retrieval was successful
-    @return The values table if the retrieval was successful. Otherwise, an error message.
+    @return The values table
 ]]
-UpstreamUserData.GetAllValues = function(): (boolean, string | CommonTypes.UserData)
-    if (not UpstreamUserData.IsAvailable()) then
-        return false, CommonEnums.UpstreamUserDataProviderError.Unavailable
-    end
-
-    return true, (getAllValuesFunction::BindableFunction):Invoke()
+UpstreamUserData.GetAllValues = function(): CommonTypes.UserData
+    assert(UpstreamUserData.IsAvailable(), CommonEnums.UpstreamUserDataProviderError.Unavailable)
+    return (getAllValuesFunction::BindableFunction):Invoke()
 end
 
 --[[
@@ -143,11 +135,8 @@ end
     @return If the update was successful
     @return An error message if the update wasn't successful
 ]]
-UpstreamUserData.SetValue = function(key: string, value: any): (boolean, string?)
-    if (not UpstreamUserData.IsAvailable()) then
-        return false, CommonEnums.UpstreamUserDataProviderError.Unavailable
-    end
-
+UpstreamUserData.SetValue = function(key: string, value: any): ()
+    assert(UpstreamUserData.IsAvailable(), CommonEnums.UpstreamUserDataProviderError.Unavailable)
     return (setValueFunction::BindableFunction):Invoke(key, value)
 end
 

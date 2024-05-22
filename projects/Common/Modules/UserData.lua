@@ -30,10 +30,9 @@ type UserDataImpl = {
 
         @param self The UserData to retrieve the value from
         @param key The name of the value to retrieve
-        @return If the retrieval was successful or not
-        @return The user data value if the retrieval was successful. Otherwise, an error message.
+        @return The user data value
     ]]
-    getValue: (UserData, string) -> (boolean, any),
+    getValue: (UserData, string) -> any,
 
     --[[
         Retrieves all user data values.
@@ -45,25 +44,26 @@ type UserDataImpl = {
 
     --[[
         Updates a user data value.
+        If the new value is the same value as the
+        currently-stored value, the update will
+        be silently dropped.
 
         @param self The UserData to be updated
         @param key The name of the value to update
         @param value The new value
-        @return If the update waas successful
-        @return An error message if the update was not successful
     ]]
-    setValue: (UserData, string, any) -> (boolean, string?),
+    setValue: (UserData, string, any) -> (),
 }
 
 export type UserData = typeof(setmetatable(
     {}::{
         __data: Types.UserData,
-        __fireValueChanged: Signal.FireSignal<Types.UserDataValue>,
+        __fireValueChanged: Signal.FireSignal<Types.KeyValue>,
 
         --[[
             Fires when a user data value changes.
         ]]
-        valueChanged: Signal.Signal<Types.UserDataValue>,
+        valueChanged: Signal.Signal<Types.KeyValue>,
     },
 
     {}::UserDataImpl
@@ -79,13 +79,10 @@ local UserData: UserDataImpl = {}::UserDataImpl
 UserData.__index = UserData
 
 UserData.new = function(userData: Types.UserData): UserData
-    local userDataIsValid: boolean, invalidReason: string? = UserDataValidators.UserData(userData)
+    local userDataIsValid: boolean = UserDataValidators.UserData(userData)
+    assert(userDataIsValid, Enums.UserDataError.InvalidUserData)
 
-    if (not userDataIsValid) then
-        error("Invalid user data: " .. invalidReason::string)
-    end
-
-    local valueChangedSignal: Signal.Signal<Types.UserDataValue>, fireValueChanged: Signal.FireSignal<Types.UserDataValue> = Signal.createSignal()
+    local valueChangedSignal: Signal.Signal<Types.KeyValue>, fireValueChanged: Signal.FireSignal<Types.KeyValue> = Signal.createSignal()
 
     local self = {
         __data = userData, 
@@ -97,17 +94,15 @@ UserData.new = function(userData: Types.UserData): UserData
     return setmetatable(self, UserData)
 end
 
-UserData.getValue = function(self: UserData, key: string): (boolean, any)
-    if (not Enums.UserDataKey[key]) then
-        return false, Enums.UserDataError.InvalidKey
-    end
+UserData.getValue = function(self: UserData, key: string): any
+    assert(Enums.UserDataKey[key] ~= nil, Enums.UserDataError.InvalidKey)
 
     local value = self.__data[key]
 
     if (typeof(value) == "table") then
-        return true, Util.table.deepCopy(value)
+        return Util.table.deepCopy(value)
     else
-        return true, value
+        return value
     end
 end
 
@@ -115,23 +110,15 @@ UserData.getAllValues = function(self: UserData): Types.UserData
     return Util.table.deepCopy(self.__data)
 end
 
-UserData.setValue = function(self: UserData, key: string, value: any): (boolean, string?)
-    if (not Enums.UserDataKey[key]) then
-        return false, Enums.UserDataError.InvalidKey
-    end
+UserData.setValue = function(self: UserData, key: string, value: any): ()
+    assert(Enums.UserDataKey[key] ~= nil, Enums.UserDataError.InvalidKey)
 
     -- validate value
     local validator = UserDataValidators[key]
+    assert(validator ~= nil, Enums.UserDataError.ValidatorNotFound)
 
-    if (not validator) then
-        error("Validator for key " .. key .. " not found!")
-    end
-
-    local valueIsValid: boolean, invalidReason: string? = validator(value)
-    
-    if (not valueIsValid) then
-        return false, invalidReason
-    end
+    local valueIsValid: boolean = validator(value)
+    assert(valueIsValid, Enums.UserDataError.InvalidValue)
 
     -- compare values to see if they're actually different
     local originalValue: any = self.__data[key]
@@ -146,7 +133,7 @@ UserData.setValue = function(self: UserData, key: string, value: any): (boolean,
     end
 
     if (isSameValue) then
-        return false, Enums.UserDataError.SameValue
+        return
     end
 
     -- add a copy of tables to prevent unintended behaviour
@@ -160,8 +147,6 @@ UserData.setValue = function(self: UserData, key: string, value: any): (boolean,
         Key = key,
         Value = value
     })
-
-    return true
 end
 
 ---
