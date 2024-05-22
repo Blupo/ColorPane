@@ -20,7 +20,7 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local Components = root.Components
@@ -29,7 +29,7 @@ local Slider = require(Components.Slider)
 
 ---
 
-local EDITOR_KEY = PluginEnums.EditorKey.KelvinSlider
+local EDITOR_KEY = Enums.EditorKey.KelvinSlider
 
 local valueToText = function(value)
     return math.floor(Util.lerp(Constants.KELVIN_LOWER_RANGE, Constants.KELVIN_UPPER_RANGE, value))
@@ -239,7 +239,7 @@ end, function(dispatch)
     return {
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
                 editor = EDITOR_KEY
             })

@@ -22,14 +22,14 @@ local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
 
 ---
 
-local EDITOR_KEY = PluginEnums.EditorKey.ColorWheel
+local EDITOR_KEY = Enums.EditorKey.ColorWheel
 local ANALOGY_ANGLE = math.deg(math.pi / 6)
 
 local harmonies = {
@@ -545,7 +545,7 @@ end, function(dispatch)
     return {
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
                 editor = EDITOR_KEY
             })
@@ -553,7 +553,7 @@ end, function(dispatch)
 
         setHarmony = function(newHarmony)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastHueHarmony = newHarmony
                 }

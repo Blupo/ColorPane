@@ -26,7 +26,7 @@ local Gradient = require(Includes.Color).Gradient
 local Modules = root.Modules
 local BuiltInGradients = require(Modules.BuiltInGradients)
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 ---
 
@@ -249,7 +249,7 @@ end, function(dispatch)
     return {
         setColor = function(color)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = color
             })
         end,

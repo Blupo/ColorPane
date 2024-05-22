@@ -26,7 +26,7 @@ local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local Components = root.Components
@@ -496,21 +496,21 @@ end, function(dispatch)
     return {
         setColor = function(color)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = color
             })
         end,
 
         addQuickPaletteColor = function(color)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor,
+                type = Enums.StoreActionType.ColorEditor_AddQuickPaletteColor,
                 color = color,
             })
         end,
 
         setEditorPage = function(page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     editorPage = page
                 }

@@ -14,7 +14,7 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 local Components = root.Components
 local GreyscaleSliderPage = require(Components.GreyscaleSliderPage)
@@ -75,7 +75,7 @@ SliderPages.render = function(self)
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "RGB",
-                            editorKey = PluginEnums.EditorKey.RGBSlider,
+                            editorKey = Enums.EditorKey.RGBSlider,
                             componentKeys = {"R", "G", "B"},
 
                             componentRanges = {
@@ -117,7 +117,7 @@ SliderPages.render = function(self)
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "CMYK",
-                            editorKey = PluginEnums.EditorKey.CMYKSlider,
+                            editorKey = Enums.EditorKey.CMYKSlider,
                             componentKeys = {"C", "M", "Y", "K"},
 
                             componentRanges = {
@@ -185,7 +185,7 @@ SliderPages.render = function(self)
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "HSB",
-                            editorKey = PluginEnums.EditorKey.HSBSlider,
+                            editorKey = Enums.EditorKey.HSBSlider,
                             componentKeys = {"H", "S", "B"},
 
                             componentRanges = {
@@ -255,7 +255,7 @@ SliderPages.render = function(self)
 
                         content = Roact.createElement(SliderPage, {
                             colorSpace = "HSL",
-                            editorKey = PluginEnums.EditorKey.HSLSlider,
+                            editorKey = Enums.EditorKey.HSLSlider,
                             componentKeys = {"H", "S", "L"},
 
                             componentRanges = {
@@ -345,7 +345,7 @@ end, function(dispatch)
     return {
         updateSliderPage = function(section, page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastSliderPage = {section, page}
                 }

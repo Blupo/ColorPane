@@ -16,8 +16,7 @@ local StandardTextLabel = require(CommonComponents.StandardComponents.TextLabel)
 
 local Modules = root.Modules
 local ColorBrewerPalette = require(Modules.BuiltInPalettes.ColorBrewer)
-local PluginEnums = require(Modules.PluginEnums)
-local Util = require(Modules.Util)
+local Enums = require(Modules.Enums)
 
 local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
@@ -174,14 +173,14 @@ end, function(dispatch)
     return {
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor
             })
         end,
 
         setDataClass = function(dataClass)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     cbDataClass = dataClass
                 }
@@ -190,7 +189,7 @@ end, function(dispatch)
 
         setNumDataClasses = function(numDataClasses)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     cbNumDataClasses = numDataClasses
                 }

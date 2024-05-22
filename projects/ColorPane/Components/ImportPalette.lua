@@ -30,7 +30,7 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local Components = root.Components
@@ -732,7 +732,7 @@ end, function(dispatch)
     return {
         addPalette = function(palette)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddPalette,
+                type = Enums.StoreActionType.ColorEditor_AddPalette,
                 palette = palette,
             })
         end,

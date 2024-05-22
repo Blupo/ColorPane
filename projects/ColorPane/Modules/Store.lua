@@ -18,15 +18,15 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 --local PluginSettings = require(Modules.PluginSettings)
 local Util = require(Modules.Util)
 
 ---
 
 local plugin: Plugin = PluginProvider()
-local userPalettes = {} --Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserPalettes) or {})
-local userGradients = {} --Util.table.deepCopy(PluginSettings.Get(PluginEnums.PluginSettingKey.UserGradients) or {})
+local userPalettes = {} --Util.table.deepCopy(PluginSettings.Get(Enums.PluginSettingKey.UserPalettes) or {})
+local userGradients = {} --Util.table.deepCopy(PluginSettings.Get(Enums.PluginSettingKey.UserGradients) or {})
 
 -- convert saved palettes into actual palettes
 for i = 1, #userPalettes do
@@ -82,7 +82,7 @@ local colorPaneStoreInitialState = Util.table.deepFreeze({
     },
 
     gradientEditor = {
-        snap = 0.00001, --PluginSettings.Get(PluginEnums.PluginSettingKey.SnapValue),
+        snap = 0.00001, --PluginSettings.Get(Enums.PluginSettingKey.SnapValue),
         palette = userGradients,
     }
 })
@@ -93,7 +93,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         theme: StudioTheme
     ]]
-    [PluginEnums.StoreActionType.SetTheme] = function(oldState, action)
+    [Enums.StoreActionType.SetTheme] = function(oldState, action)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             theme = action.theme
         }))
@@ -102,7 +102,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         slice: dictionary<any, any>
     ]]
-    [PluginEnums.StoreActionType.UpdateSessionData] = function(oldState, action)
+    [Enums.StoreActionType.UpdateSessionData] = function(oldState, action)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             sessionData = Cryo.Dictionary.join(oldState.sessionData, action.slice)
         }))
@@ -110,13 +110,13 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     
     --[[
         color: Color
-        editor: PluginEnums.EditorKey?
+        editor: Enums.EditorKey?
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_SetColor] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_SetColor] = function(oldState, action)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
                 color = action.color,
-                authoritativeEditor = action.editor or PluginEnums.EditorKey.Default
+                authoritativeEditor = action.editor or Enums.EditorKey.Default
             })
         }))
     end,
@@ -124,7 +124,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         color: Color
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_AddQuickPaletteColor] = function(oldState, action)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
                 quickPalette = Cryo.List.join({action.color}, oldState.colorEditor.quickPalette)
@@ -136,7 +136,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         palette: Palette?
         name: string?
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_AddPalette] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_AddPalette] = function(oldState, action)
         local newPalette
         local palettes = oldState.colorEditor.palettes
 
@@ -162,7 +162,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         index: number
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_RemovePalette] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_RemovePalette] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local index = action.index
         if (not palettes[index]) then return oldState end
@@ -177,7 +177,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         index: number
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_DuplicatePalette] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_DuplicatePalette] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local index = action.index
 
@@ -202,7 +202,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         index: number
         newName: string
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_ChangePaletteName] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_ChangePaletteName] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local index = action.index
 
@@ -225,7 +225,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         paletteIndex: number,
         newName: string?
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local paletteIndex = action.paletteIndex
         
@@ -253,7 +253,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         paletteIndex: number,
         colorIndex: number
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_RemovePaletteColor] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local paletteIndex = action.paletteIndex
         
@@ -280,7 +280,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         colorIndex: number,
         newName: string
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_ChangePaletteColorName] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local paletteIndex = action.paletteIndex
         
@@ -312,7 +312,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         colorIndex: number,
         offset: number,
     ]]
-    [PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(oldState, action)
+    [Enums.StoreActionType.ColorEditor_ChangePaletteColorPosition] = function(oldState, action)
         local palettes = oldState.colorEditor.palettes
         local paletteIndex = action.paletteIndex
         
@@ -336,7 +336,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         }))
     end,
 
-    [PluginEnums.StoreActionType.GradientEditor_ResetState] = function(oldState)
+    [Enums.StoreActionType.GradientEditor_ResetState] = function(oldState)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = {
                 snap = oldState.gradientEditor.snap,
@@ -349,7 +349,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         keypoints: array<GradientKeypoint>?
         selectedKeypoint: number?
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_SetKeypoints] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_SetKeypoints] = function(oldState, action)
         local gradientEditorState = oldState.gradientEditor
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
@@ -373,7 +373,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         hueAdjustment: string?,
         precision: number?
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_SetGradient] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_SetGradient] = function(oldState, action)
         local newKeypointInfo = Cryo.Dictionary.join(oldState.gradientEditor, {
             keypoints = action.keypoints,
             colorSpace = action.colorSpace,
@@ -398,7 +398,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         snap: number
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_SetSnapValue] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_SetSnapValue] = function(oldState, action)
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
                 snap = action.snap
@@ -414,7 +414,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         hueAdjustment: string?
         precision: number?
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_AddPaletteColor] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_AddPaletteColor] = function(oldState, action)
         local gradientPalette = oldState.gradientEditor.palette
         local newColorName = Util.palette.getNewItemName(gradientPalette, action.name or "New Gradient")
 
@@ -437,7 +437,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
     --[[
         index: number
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_RemovePaletteColor] = function(oldState, action)
         local gradientPalette = oldState.gradientEditor.palette
         local index = action.index
         if (not gradientPalette[index]) then return oldState end
@@ -453,7 +453,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         index: number,
         newName: string
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(oldState, action)
         local gradientPalette = oldState.gradientEditor.palette
         local index = action.index
 
@@ -476,7 +476,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         index: number,
         offset: number,
     ]]
-    [PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(oldState, action)
+    [Enums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(oldState, action)
         local gradientPalette = oldState.gradientEditor.palette
         local index = action.index
         if (not gradientPalette[index]) then return oldState end
@@ -499,7 +499,7 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
 
 local themeChanged = Studio.ThemeChanged:Connect(function()
     Store:dispatch({
-        type = PluginEnums.StoreActionType.SetTheme,
+        type = Enums.StoreActionType.SetTheme,
         theme = Studio.Theme,
     })
 end)

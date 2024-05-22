@@ -21,11 +21,11 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 ---
 
-local EDITOR_KEY = PluginEnums.EditorKey.GreyscaleSlider
+local EDITOR_KEY = Enums.EditorKey.GreyscaleSlider
 
 local sliderLabel = Translator.FormatByKey("GreyscaleSlider_Brightness_Label")
 
@@ -145,7 +145,7 @@ end, function(dispatch)
     return {
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor,
                 editor = EDITOR_KEY
             })

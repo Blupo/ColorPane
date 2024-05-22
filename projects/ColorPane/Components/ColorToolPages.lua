@@ -14,7 +14,7 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 local Components = root.Components
 local ColorInfo = require(Components.ColorInfo)
@@ -87,7 +87,7 @@ end, function(dispatch)
     return {
         updateToolPage = function(section, page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastToolPage = {section, page}
                 }

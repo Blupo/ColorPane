@@ -35,8 +35,8 @@ local Includes = root.Includes
 local ColorLib = require(Includes.Color)
 
 local Modules = root.Modules
+local Enums = require(Modules.Enums)
 local GradientEditorInputSignals = require(Modules.EditorInputSignals).GradientEditor
-local PluginEnums = require(Modules.PluginEnums)
 local Store = require(Modules.Store)
 local Util = require(Modules.Util)
 local WidgetInfo = require(Modules.WidgetInfo)
@@ -580,7 +580,7 @@ GradientEditor.render = function(self)
 
                             self.props.setKeypoints(newKeypoints, nil)
                         end, function(err)
-                            if (err == PluginEnums.PromptRejection.PromptCancelled) then
+                            if (err == Enums.PromptRejection.PromptCancelled) then
                                 local keypoint = keypoints[selectedKeypoint]
 
                                 local newKeypoints = Util.table.deepCopy(self.props.keypoints)
@@ -998,7 +998,7 @@ end, function(dispatch)
     return {
         setKeypoints = function(keypoints, selectedKeypoint)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetKeypoints,
+                type = Enums.StoreActionType.GradientEditor_SetKeypoints,
 
                 keypoints = keypoints,
                 selectedKeypoint = selectedKeypoint,
@@ -1007,7 +1007,7 @@ end, function(dispatch)
 
         setGradient = function(keypoints, colorSpace, hueAdjustment, precision)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+                type = Enums.StoreActionType.GradientEditor_SetGradient,
 
                 keypoints = keypoints,
                 colorSpace = colorSpace,
@@ -1018,14 +1018,14 @@ end, function(dispatch)
 
         setSnapValue = function(snapValue)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetSnapValue,
+                type = Enums.StoreActionType.GradientEditor_SetSnapValue,
                 snap = snapValue
             })
         end,
 
         resetState = function()
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_ResetState,
+                type = Enums.StoreActionType.GradientEditor_ResetState,
             })
         end,
     }

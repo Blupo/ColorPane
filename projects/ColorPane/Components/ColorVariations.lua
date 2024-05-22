@@ -19,7 +19,7 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 local Components = root.Components
 local ColorGrids = require(Components.ColorGrids)
@@ -158,14 +158,14 @@ end, function(dispatch)
     return {
         setColor = function(color)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = color
             })
         end,
 
         updateVariationSteps = function(steps)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     variationSteps = steps
                 }

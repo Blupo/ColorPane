@@ -20,7 +20,7 @@ local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 ---
@@ -183,7 +183,7 @@ end, function(dispatch)
     return {
         updatePalettePage = function(section, page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastPalettePage = {section, page}
                 }
@@ -192,14 +192,14 @@ end, function(dispatch)
 
         addPalette = function(name)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddPalette,
+                type = Enums.StoreActionType.ColorEditor_AddPalette,
                 name = name
             })
         end,
 
         changePaletteName = function(index, newName)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteName,
+                type = Enums.StoreActionType.ColorEditor_ChangePaletteName,
                 index = index,
                 newName = newName,
             })

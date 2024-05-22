@@ -24,8 +24,8 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
+local Enums = require(Modules.Enums)
 local WebColorsPalette = require(Modules.BuiltInPalettes.WebColors)
-local PluginEnums = require(Modules.PluginEnums)
 local Util = require(Modules.Util)
 
 ---
@@ -387,7 +387,7 @@ end, function(dispatch)
     return {
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor
             })
         end

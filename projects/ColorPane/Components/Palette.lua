@@ -20,7 +20,7 @@ local Includes = root.Includes
 local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local Components = root.Components
@@ -276,7 +276,7 @@ end, function(dispatch)
     return {
         updatePaletteLayout = function(newLayout)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     paletteLayout = newLayout
                 }
@@ -285,21 +285,21 @@ end, function(dispatch)
 
         setColor = function(newColor)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+                type = Enums.StoreActionType.ColorEditor_SetColor,
                 color = newColor
             })
         end,
 
         addCurrentColorToPalette = function(paletteIndex)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddCurrentColorToPalette,
+                type = Enums.StoreActionType.ColorEditor_AddCurrentColorToPalette,
                 paletteIndex = paletteIndex
             })
         end,
 
         removePaletteColor = function(paletteIndex, colorIndex)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_RemovePaletteColor,
+                type = Enums.StoreActionType.ColorEditor_RemovePaletteColor,
                 paletteIndex = paletteIndex,
                 colorIndex = colorIndex
             })
@@ -307,7 +307,7 @@ end, function(dispatch)
 
         changePaletteColorName = function(paletteIndex, colorIndex, newName)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorName,
+                type = Enums.StoreActionType.ColorEditor_ChangePaletteColorName,
                 paletteIndex = paletteIndex,
                 colorIndex = colorIndex,
                 newName = newName
@@ -316,7 +316,7 @@ end, function(dispatch)
 
         changePaletteColorPosition = function(paletteIndex, colorIndex, offset)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_ChangePaletteColorPosition,
+                type = Enums.StoreActionType.ColorEditor_ChangePaletteColorPosition,
                 paletteIndex = paletteIndex,
                 colorIndex = colorIndex,
                 offset = offset,

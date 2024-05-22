@@ -26,7 +26,7 @@ local Gradient = require(Includes.Color).Gradient
 
 local Modules = root.Modules
 local BuiltInGradients = require(Modules.BuiltInGradients)
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local RepeatingCallback = require(Modules.RepeatingCallback)
 local Util = require(Modules.Util)
 
@@ -502,7 +502,7 @@ end, function(dispatch)
     return {
         setGradient = function(keypoints, colorSpace, hueAdjustment, precision)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+                type = Enums.StoreActionType.GradientEditor_SetGradient,
 
                 keypoints = keypoints,
                 colorSpace = colorSpace,
@@ -513,7 +513,7 @@ end, function(dispatch)
 
         addPaletteColor = function(keypoints, colorSpace, hueAdjustment, precision)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_AddPaletteColor,
+                type = Enums.StoreActionType.GradientEditor_AddPaletteColor,
 
                 keypoints = keypoints,
                 colorSpace = colorSpace,
@@ -524,14 +524,14 @@ end, function(dispatch)
 
         removePaletteColor = function(index)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_RemovePaletteColor,
+                type = Enums.StoreActionType.GradientEditor_RemovePaletteColor,
                 index = index,
             })
         end,
 
         changePaletteColorName = function(index, newColorName)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorName,
+                type = Enums.StoreActionType.GradientEditor_ChangePaletteColorName,
                 index = index,
                 newName = newColorName
             })
@@ -539,7 +539,7 @@ end, function(dispatch)
 
         changePaletteColorPosition = function(index, positionOffset)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_ChangePaletteColorPosition,
+                type = Enums.StoreActionType.GradientEditor_ChangePaletteColorPosition,
                 index = index,
                 offset = positionOffset,
             })

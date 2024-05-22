@@ -23,7 +23,7 @@ local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 
 ---
 
@@ -157,7 +157,7 @@ end, function(dispatch)
     return {
         updatePalettePage = function(section, page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastPalettePage = {section, page}
                 }
@@ -166,7 +166,7 @@ end, function(dispatch)
 
         removePalette = function(index)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_RemovePalette,
+                type = Enums.StoreActionType.ColorEditor_RemovePalette,
                 index = index,
             })
         end,

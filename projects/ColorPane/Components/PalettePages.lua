@@ -14,7 +14,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local BuiltInPalettes = Modules.BuiltInPalettes
@@ -105,7 +105,7 @@ local PalettePages = Roact.PureComponent:extend("PalettePages")
 
 PalettePages.init = function(self)
     self:setState({
-        askNameBeforeCreation = true, --PluginSettings.Get(PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation),
+        askNameBeforeCreation = true, --PluginSettings.Get(Enums.PluginSettingKey.AskNameBeforePaletteCreation),
         displayPage = "palettes",
 
         leftShiftDown = false,
@@ -145,7 +145,7 @@ PalettePages.didMount = function(self)
     --[[
     self.settingsChanged = PluginSettings.SettingChanged:subscribe(function(setting)
         local key, newValue = setting.Key, setting.Value
-        if (key ~= PluginEnums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
+        if (key ~= Enums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
 
         self:setState({
             askNameBeforeCreation = newValue
@@ -361,7 +361,7 @@ end, function(dispatch)
     return {
         updatePalettePage = function(section, page)
             dispatch({
-                type = PluginEnums.StoreActionType.UpdateSessionData,
+                type = Enums.StoreActionType.UpdateSessionData,
                 slice = {
                     lastPalettePage = {section, page}
                 }
@@ -370,21 +370,21 @@ end, function(dispatch)
 
         addPalette = function(name)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_AddPalette,
+                type = Enums.StoreActionType.ColorEditor_AddPalette,
                 name = name
             })
         end,
 
         duplicatePalette = function(index)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_DuplicatePalette,
+                type = Enums.StoreActionType.ColorEditor_DuplicatePalette,
                 index = index,
             })
         end,
 
         removePalette = function(index)
             dispatch({
-                type = PluginEnums.StoreActionType.ColorEditor_RemovePalette,
+                type = Enums.StoreActionType.ColorEditor_RemovePalette,
                 index = index
             })
         end,

@@ -23,7 +23,7 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Modules = root.Modules
-local PluginEnums = require(Modules.PluginEnums)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 ---
@@ -388,21 +388,21 @@ end, function(dispatch)
     return {
         setColorSpace = function(colorSpace: string)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+                type = Enums.StoreActionType.GradientEditor_SetGradient,
                 colorSpace = colorSpace
             })
         end,
 
         setHueAdjustment = function(hueAdjustment: string)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+                type = Enums.StoreActionType.GradientEditor_SetGradient,
                 hueAdjustment = hueAdjustment
             })
         end,
 
         setPrecision = function(precision: number)
             dispatch({
-                type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+                type = Enums.StoreActionType.GradientEditor_SetGradient,
                 precision = precision
             })
         end,
