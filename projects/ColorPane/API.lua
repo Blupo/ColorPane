@@ -4,6 +4,7 @@ local root = script.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local CommonEnums = require(CommonModules.Enums)
 local Constants = require(CommonModules.Constants)
 local PluginProvider = require(CommonModules.PluginProvider)
 local Window = require(CommonModules.Window)
@@ -20,7 +21,8 @@ local ColorLib = require(Includes.Color)
 local Modules = root.Modules
 local APITypeValidators = require(Modules.APITypeValidators)
 local EditorInputSignals = require(Modules.EditorInputSignals)
-local PluginEnums = require(Modules.PluginEnums)
+local ManagedUserData = require(Modules.ManagedUserData)
+local Enums = require(Modules.Enums)
 local Store = require(Modules.Store)
 local Util = require(Modules.Util)
 local WidgetInfo = require(Modules.WidgetInfo)
@@ -158,7 +160,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
 
                 -- if the user provided an initial color, we need to check if the new color is the same
                 if (promptInfo and (promptInfo.InitialColor ~= nil) and (newColor == initialColor)) then
-                    reject(PluginEnums.PromptRejection.SameAsInitial)
+                    reject(Enums.PromptRejection.SameAsInitial)
                     return
                 end
 
@@ -168,7 +170,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
                     (resolve::(Color) -> ())(newColor)
                 end
             else
-                reject(PluginEnums.PromptRejection.PromptCancelled)
+                reject(Enums.PromptRejection.PromptCancelled)
             end
         end)
 
@@ -184,7 +186,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
 
     -- set up prompt state
     Store:dispatch({
-        type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+        type = Enums.StoreActionType.ColorEditor_SetColor,
         color = initialColor,
     })
 
@@ -213,7 +215,7 @@ local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
         colorEditorWindow:unmount(true)
 
         Store:dispatch({
-            type = PluginEnums.StoreActionType.ColorEditor_SetColor,
+            type = Enums.StoreActionType.ColorEditor_SetColor,
             color = nil,
         })
     end)
@@ -230,7 +232,7 @@ local ColorPane = {}
 --[[
     Prompt rejection enum
 ]]
-ColorPane.PromptRejection = PluginEnums.PromptRejection
+ColorPane.PromptRejection = Enums.PromptRejection
 
 --[[
     Returns if a request to prompt for a color will succeed
@@ -276,16 +278,16 @@ end
 ColorPane.PromptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
     if (gradientEditorWindow:isMounted()) then
         -- can't open the prompt because the gradient prompt might need it
-        return Promise.reject(PluginEnums.PromptRejection.ReservationProblem)
+        return Promise.reject(Enums.PromptRejection.ReservationProblem)
     elseif (colorEditorWindow:isMounted()) then
         -- can't open the prompt if it's already open
-        return Promise.reject(PluginEnums.PromptRejection.PromptAlreadyOpen)
+        return Promise.reject(Enums.PromptRejection.PromptAlreadyOpen)
     end
 
     local isPromptInfoValid: boolean = APITypeValidators.ColorPromptInfoArgument(promptInfo)
 
     if (not isPromptInfoValid) then
-        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
+        return Promise.reject(Enums.PromptRejection.InvalidPromptOptions)
     end
 
     return __promptForColor(promptInfo)
@@ -320,18 +322,22 @@ end
     @return A Promise that will resolve with a user-generated gradient, or reject with a rejection reason
 ]]
 ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?): Promise
+    -- TODO
+    return Promise.reject("NotImplemented")
+
+    --[[
     if (colorEditorWindow:isMounted()) then
         -- can't open the prompt because it might need the color prompt
-        return Promise.reject(PluginEnums.PromptRejection.ReservationProblem)
+        return Promise.reject(Enums.PromptRejection.ReservationProblem)
     elseif (gradientEditorWindow:isMounted()) then
         -- can't open the prompt if it's already open
-        return Promise.reject(PluginEnums.PromptRejection.PromptAlreadyOpen)
+        return Promise.reject(Enums.PromptRejection.PromptAlreadyOpen)
     end
 
     local isPromptInfoValid: boolean = APITypeValidators.GradientPromptInfoArgument(promptInfo)
 
     if (not isPromptInfoValid) then
-        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
+        return Promise.reject(Enums.PromptRejection.InvalidPromptOptions)
     end
 
     local fullPromptInfo: GradientPromptInfo = Cryo.Dictionary.join(DEFAULT_GRADIENT_PROMPT_INFO, promptInfo or {})
@@ -359,7 +365,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         Constants.MAX_COLORSEQUENCE_KEYPOINTS
 
     if (not isKeypointPrecisionCombinationValid) then
-        return Promise.reject(PluginEnums.PromptRejection.InvalidPromptOptions)
+        return Promise.reject(Enums.PromptRejection.InvalidPromptOptions)
     end
 
     local editPromise = Promise.new(function(resolve, reject, onCancel)
@@ -374,7 +380,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
 
                 -- if the user provided an initial gradient, we need to check if the new gradient is the same
                 if (promptInfo and (promptInfo.InitialGradient ~= nil) and (newGradient == initialGradient)) then
-                    reject(PluginEnums.PromptRejection.SameAsInitial)
+                    reject(Enums.PromptRejection.SameAsInitial)
                     return
                 end
 
@@ -384,7 +390,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
                     (resolve::(Gradient) -> ())(newGradient)
                 end
             else
-                reject(PluginEnums.PromptRejection.PromptCancelled)
+                reject(Enums.PromptRejection.PromptCancelled)
             end
         end)
 
@@ -405,7 +411,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
 
     -- set up prompt state
     Store:dispatch({
-        type = PluginEnums.StoreActionType.GradientEditor_SetGradient,
+        type = Enums.StoreActionType.GradientEditor_SetGradient,
 
         keypoints = initialKeypoints,
         colorSpace = fullPromptInfo.InitialColorSpace,
@@ -441,13 +447,14 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         gradientEditorWindow:unmount(true)
 
         Store:dispatch({
-            type = PluginEnums.StoreActionType.GradientEditor_ResetState,
+            type = Enums.StoreActionType.GradientEditor_ResetState,
         })
     end)
 
     fireGradientEditFinished = fireFinished
     gradientEditorWindow:mount(fullPromptInfo.PromptTitle, gradientEditorElement, Store)
     return editPromise
+    --]]
 end
 
 --[[
@@ -470,7 +477,7 @@ ColorPane.Unloading = Instance.new("BindableEvent").Event
 
     Prompt rejection enum
 ]]
-ColorPane.PromptError = PluginEnums.PromptRejection
+ColorPane.PromptError = Enums.PromptRejection
 
 --[[
     **DEPRECATED**: Use `ColorPane.PromptForGradient` instead.
@@ -521,7 +528,7 @@ end
 ---
 
 -- make sure the user doesn't accidentally modify these
-table.freeze(PluginEnums.PromptRejection)
+table.freeze(Enums.PromptRejection)
 table.freeze(ColorPane)
 
 -- hook editor input signals
@@ -531,7 +538,49 @@ gradientEditorWindow:enableMouseTracking()
 colorEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.ColorEditor.MousePositionChanged.Fire)
 gradientEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.GradientEditor.MousePositionChanged.Fire)
 
--- TODO: hook store changes for modifying settings
+Store.changed:connect(function(newState, oldState)
+    if (newState.colorEditor.palettes ~= oldState.colorEditor.palettes) then
+        local newPalettes = Util.table.deepCopy(newState.colorEditor.palettes)
+
+        for i = 1, #newPalettes do
+            local palette = newPalettes[i]
+
+            for j = 1, #palette.colors do
+                local color = palette.colors[j]
+                local colorValue = color.color
+
+                color.color = {colorValue.R, colorValue.G, colorValue.B}
+            end
+        end
+
+        ManagedUserData:setValue(CommonEnums.UserDataKey.UserColorPalettes, newPalettes)
+    end
+
+    if (newState.gradientEditor.palettes ~= oldState.gradientEditor.palettes) then
+        local newPalettes = Util.table.deepCopy(newState.gradientEditor.palettes)
+
+        for i = 1, #newPalettes do
+            local palette = newPalettes[i]
+            local gradients = palette.gradients
+
+            for j = 1, #gradients do
+                local gradient = gradients[j]
+                local keypoints = gradient.keypoints
+
+                for k = 1, #keypoints do
+                    local keypoint = keypoints[k]
+
+                    keypoints[k] = {
+                        time = keypoint.time, 
+                        color = {keypoint.color:components()}
+                    }
+                end
+            end
+        end
+
+        ManagedUserData:setValue(CommonEnums.UserDataKey.UserGradientPalettes, newPalettes)
+    end
+end)
 
 -- color editor must stay closed when unmounted
 colorEditorWindow.openedWithoutMounting:subscribe(function()

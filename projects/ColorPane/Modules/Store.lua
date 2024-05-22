@@ -8,6 +8,7 @@ local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local CommonEnums = require(CommonModules.Enums)
 local PluginProvider = require(CommonModules.PluginProvider)
 
 local CommonIncludes = Common.Includes
@@ -19,43 +20,14 @@ local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)
---local PluginSettings = require(Modules.PluginSettings)
+local ManagedUserData = require(Modules.ManagedUserData)
 local Util = require(Modules.Util)
 
 ---
 
 local plugin: Plugin = PluginProvider()
-local userPalettes = {} --Util.table.deepCopy(PluginSettings.Get(Enums.PluginSettingKey.UserPalettes) or {})
-local userGradients = {} --Util.table.deepCopy(PluginSettings.Get(Enums.PluginSettingKey.UserGradients) or {})
 
--- convert saved palettes into actual palettes
-for i = 1, #userPalettes do
-    local palette = userPalettes[i]
-
-    for j = 1, #palette.colors do
-        local color = palette.colors[j]
-        local colorValue = color.color
-
-        color.color = Color3.new(colorValue[1], colorValue[2], colorValue[3])
-    end
-end
-
--- convert saved gradients into actual gradients
-for i = 1, #userGradients do
-    local gradient = userGradients[i]
-    local keypoints = gradient.keypoints
-
-    for j = 1, #keypoints do
-        local keypoint = keypoints[j]
-
-        keypoints[j] = {
-            Time = keypoint.Time, 
-            Color = Color.new(table.unpack(keypoint.Color))
-        }
-    end
-end
-
-local colorPaneStoreInitialState = Util.table.deepFreeze({
+local initialState = {
     theme = Studio.Theme,
 
     sessionData = {
@@ -78,18 +50,59 @@ local colorPaneStoreInitialState = Util.table.deepFreeze({
         authoritativeEditor = "",
         
         quickPalette = {},
-        palettes = userPalettes,
+        palettes = {},
     },
 
     gradientEditor = {
-        snap = 0.00001, --PluginSettings.Get(Enums.PluginSettingKey.SnapValue),
-        palette = userGradients,
+        snap = ManagedUserData:getValue(CommonEnums.UserDataKey.SnapValue),
+        palettes = {},
     }
-})
+}
 
 ---
 
-local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
+-- we need to convert the palettes to use the correct formats
+do
+    local userColorPalettes = ManagedUserData:getValue(CommonEnums.UserDataKey.UserColorPalettes)
+    local userGradientPalettes = ManagedUserData:getValue(CommonEnums.UserDataKey.UserGradientPalettes)
+
+    for i = 1, #userColorPalettes do
+        local palette = userColorPalettes[i]
+    
+        for j = 1, #palette.colors do
+            local color = palette.colors[j]
+            local colorValue = color.color
+    
+            -- we use Color3s because we only need to display the colors,
+            -- not manipulate them
+            color.color = Color3.new(table.unpack(colorValue))
+        end
+    end
+
+    for i = 1, #userGradientPalettes do
+        local palette = userGradientPalettes[i]
+        local gradients = palette.gradients
+
+        for j = 1, #gradients do
+            local gradient = gradients[j]
+            local keypoints = gradient.keypoints
+        
+            for k = 1, #keypoints do
+                local keypoint = keypoints[k]
+        
+                keypoints[k] = {
+                    time = keypoint.time, 
+                    color = Color.new(table.unpack(keypoint.color))
+                }
+            end
+        end
+    end
+
+    initialState.colorEditor.palettes = userColorPalettes
+    initialState.gradientEditor.palettes = userGradientPalettes
+end
+
+local Store = Rodux.Store.new(Rodux.createReducer(initialState, {
     --[[
         theme: StudioTheme
     ]]
@@ -402,94 +415,6 @@ local Store = Rodux.Store.new(Rodux.createReducer(colorPaneStoreInitialState, {
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
                 snap = action.snap
-            })
-        }))
-    end,
-
-    --[[
-        name: string
-
-        keypoints: array<GradientKeypoint>
-        colorSpace: string?
-        hueAdjustment: string?
-        precision: number?
-    ]]
-    [Enums.StoreActionType.GradientEditor_AddPaletteColor] = function(oldState, action)
-        local gradientPalette = oldState.gradientEditor.palette
-        local newColorName = Util.palette.getNewItemName(gradientPalette, action.name or "New Gradient")
-
-        local newColor = {
-            name = newColorName,
-
-            keypoints = action.keypoints,
-            colorSpace = action.colorSpace,
-            hueAdjustment = action.hueAdjustment,
-            precision = action.precision,
-        }
-
-        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
-            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palette = Cryo.List.join(gradientPalette, {newColor}),
-            })
-        }))
-    end,
-
-    --[[
-        index: number
-    ]]
-    [Enums.StoreActionType.GradientEditor_RemovePaletteColor] = function(oldState, action)
-        local gradientPalette = oldState.gradientEditor.palette
-        local index = action.index
-        if (not gradientPalette[index]) then return oldState end
-
-        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
-            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palette = Cryo.List.removeIndex(gradientPalette, index)
-            })
-        }))
-    end,
-
-    --[[
-        index: number,
-        newName: string
-    ]]
-    [Enums.StoreActionType.GradientEditor_ChangePaletteColorName] = function(oldState, action)
-        local gradientPalette = oldState.gradientEditor.palette
-        local index = action.index
-
-        local color = gradientPalette[index]
-        if (not color) then return oldState end
-
-        local newColorName = Util.palette.getNewItemName(gradientPalette, action.newName, index)
-        if (newColorName == color.name) then return oldState end
-
-        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
-            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palette = Cryo.List.replaceIndex(gradientPalette, index, Cryo.Dictionary.join(color, {
-                    name = newColorName
-                })),
-            })
-        }))
-    end,
-
-    --[[
-        index: number,
-        offset: number,
-    ]]
-    [Enums.StoreActionType.GradientEditor_ChangePaletteColorPosition] = function(oldState, action)
-        local gradientPalette = oldState.gradientEditor.palette
-        local index = action.index
-        if (not gradientPalette[index]) then return oldState end
-
-        local newColorIndex = index + action.offset
-        if (not gradientPalette[newColorIndex]) then return oldState end
-
-        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
-            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palette = Cryo.Dictionary.join(gradientPalette, {
-                    [index] = gradientPalette[newColorIndex],
-                    [newColorIndex] = gradientPalette[index],
-                })
             })
         }))
     end,
