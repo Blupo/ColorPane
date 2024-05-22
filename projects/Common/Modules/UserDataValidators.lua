@@ -192,6 +192,8 @@ local gradientPalette = t.strictInterface({
 ---
 
 local UserDataValidators = {
+    ColorPalette = colorPalette,
+
     --[[
         Checks if a value is valid for the AskNameBeforePaletteCreation value.
 

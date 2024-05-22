@@ -1,10 +1,10 @@
 --!strict
--- ColorPane utilities
 
 local root = script.Parent.Parent
 
-local CommonIncludes = root.Common.Includes
-local t = require(CommonIncludes.t)
+local CommonModules = root.Common.Modules
+local CommonUtil = require(CommonModules.Util)
+local UserDataValidators = require(CommonModules.UserDataValidators)
 
 local Includes = script.Parent.Parent.Includes
 local ColorLib = require(Includes.Color)
@@ -15,20 +15,6 @@ local Color = ColorLib.Color
 
 type Color = ColorLib.Color
 type GradientKeypoint = ColorLib.GradientKeypoint
-
-local paletteTypeCheck = t.strictInterface({
-    name = t.string,
-
-    colors = t.array(t.strictInterface({
-        name = t.string,
-        
-        color = t.strictInterface({
-            [1] = t.numberConstrained(0, 1),
-            [2] = t.numberConstrained(0, 1),
-            [3] = t.numberConstrained(0, 1),
-        })
-    }))
-})
 
 local noYieldReturnHandler = function(routine: thread, success: boolean, ...: any)
     if (not success) then
@@ -44,13 +30,24 @@ end
 
 ---
 
+--[[
+    Utility functions
+]]
 local Util = {}
+
+--[[
+    Table utilities
+]]
 Util.table = {}
-Util.palette = {}
+Util.table.deepCopy = CommonUtil.table.deepCopy
 
--- TABLE UTIL
--- TODO: Remove Util.table, it was moved to Common
+--[[
+    Freezes a table and its sub-tables.
+    Does not freeze metatables.
 
+    @param t The table to deep-freeze
+    @return `t` itself
+]]
 Util.table.deepFreeze = function(tbl: {[any]: any}): {[any]: any}
     for _, v in pairs(tbl) do
         if ((type(v) == "table") and (not table.isfrozen(v))) then
@@ -62,35 +59,24 @@ Util.table.deepFreeze = function(tbl: {[any]: any}): {[any]: any}
     return tbl
 end
 
-Util.table.deepCopy = function(tbl: {[any]: any}): {[any]: any}
-    local copy: {[any]: any} = {}
+--[[
+    Compares two tables and returns a list of keys with different values.
 
-    for k, v in pairs(tbl) do
-        if (type(v) ~= "table") then
-            copy[k] = v
-        else
-            if (getmetatable(v) == nil) then
-                copy[k] = Util.table.deepCopy(v)
-            else
-                copy[k] = v
-            end
-        end
-    end
-
-    return copy
-end
-
-Util.table.shallowCompare = function(tbl: {[any]: any}, u: {[any]: any}): {string}
+    @param this The table to be compared to
+    @param that The table to compare
+    @return A list of keys that have different values between the two tables
+]]
+Util.table.shallowCompare = function(this: {[any]: any}, that: {[any]: any}): {any}
     local diff = {}
 
-    for k, v in pairs(tbl) do
-        if (u[k] ~= v) then
+    for k, v in pairs(this) do
+        if (that[k] ~= v) then
             table.insert(diff, k)
         end
     end
 
-    for k, v in pairs(u) do
-        if ((not table.find(diff, k)) and (tbl[k] ~= v)) then
+    for k, v in pairs(that) do
+        if ((not table.find(diff, k)) and (this[k] ~= v)) then
             table.insert(diff, k)
         end
     end
@@ -98,7 +84,10 @@ Util.table.shallowCompare = function(tbl: {[any]: any}, u: {[any]: any}): {strin
     return diff
 end
 
--- PALETTE UTIL
+--[[
+    Palette utilities
+]]
+Util.palette = {}
 
 Util.palette.getNewItemName = function(items, originalName: string, selfIndex: number?): (string, number)
     local found: boolean = false
@@ -122,9 +111,9 @@ Util.palette.getNewItemName = function(items, originalName: string, selfIndex: n
     return itemName, numDuplicates
 end
 
-Util.palette.validate = function(palette: any)
+Util.palette.validate = function(palette: any): (boolean, string?)
     -- type check
-    local typeCheckSuccess, message = paletteTypeCheck(palette)
+    local typeCheckSuccess, message = UserDataValidators.ColorPalette(palette)
     if (not typeCheckSuccess) then return false, message end
 
     -- check for "blank" name
@@ -161,9 +150,8 @@ Util.inverseLerp = function(a: number, b: number, v: number): number
     return (v - a) / (b - a)
 end
 
-Util.round = function(n: number, optionalE: number?): number
-    local e: number = optionalE or 0
-    local p: number = 10^e
+Util.round = function(n: number, e: number?): number
+    local p: number = 10^(e or 0)
 
     if (p >= 0) then
         return math.floor((n / p) + 0.5) * p
@@ -192,10 +180,7 @@ Util.getMaxUserKeypoints = function(maxKeypoints: number, precision: number): nu
     return math.floor(((maxKeypoints - 1) / (precision + 1)) + 1)
 end
 
--- TODO: Remove, it was moved to Common
-Util.getUtilisedKeypoints = function(keypoints: number, precision: number): number
-    return (precision * (keypoints - 1)) + keypoints
-end
+Util.getUtilisedKeypoints = CommonUtil.gradient.getUtilisedKeypoints
 
 Util.generateFullKeypointList = function(keypoints: {GradientKeypoint}, colorSpace: ColorLib.MixableColorType?, hueAdjustment: ColorLib.HueAdjustment?, precision: number): {GradientKeypoint}
     local fullKeypoints: {GradientKeypoint} = {}
@@ -241,16 +226,6 @@ Util.typeColorPalette = function(palette, colorType: string)
 
     return paletteCopy
 end
-
--- DEEP FREEZE
-
-for _, tab in pairs(Util) do
-    if (type(tab) == "table") then
-        table.freeze(tab)
-    end
-end
-
-table.freeze(Util)
 
 ---
 

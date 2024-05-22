@@ -11,24 +11,6 @@ local Util = {}
 Util.table = {}
 
 --[[
-    Freezes a table and its sub-tables.
-    Does not freeze metatables.
-
-    @param t The table to deep-freeze
-    @return `t` itself
-]]
-Util.table.deepFreeze = function(t: {[any]: any}): {[any]: any}
-    for _, v in pairs(t) do
-        if ((type(v) == "table") and (not table.isfrozen(v))) then
-            Util.table.deepFreeze(v)
-        end
-    end
-
-    table.freeze(t)
-    return t
-end
-
---[[
     Creates a copy of a table with sub-tables also being copied.
 
     If a sub-table has a metatable, it will not be copied.
