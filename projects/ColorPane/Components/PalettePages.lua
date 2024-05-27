@@ -1,11 +1,9 @@
 -- A Pages container for all the built-in and user palettes
-
--- TODO
 local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
---local PluginSettings = require(CommonModules.PluginSettings)
+local CommonEnums = require(CommonModules.Enums)
 local Translator = require(CommonModules.Translator)
 
 local CommonIncludes = Common.Includes
@@ -15,6 +13,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
 local Enums = require(Modules.Enums)
+local ManagedUserData = require(Modules.ManagedUserData)
 local Util = require(Modules.Util)
 
 local BuiltInPalettes = Modules.BuiltInPalettes
@@ -105,7 +104,7 @@ local PalettePages = Roact.PureComponent:extend("PalettePages")
 
 PalettePages.init = function(self)
     self:setState({
-        askNameBeforeCreation = true, --PluginSettings.Get(Enums.PluginSettingKey.AskNameBeforePaletteCreation),
+        askNameBeforeCreation = ManagedUserData:getValue(CommonEnums.UserDataKey.AskNameBeforePaletteCreation),
         displayPage = "palettes",
 
         leftShiftDown = false,
@@ -142,22 +141,20 @@ PalettePages.didMount = function(self)
         end
     end)
 
-    --[[
-    self.settingsChanged = PluginSettings.SettingChanged:subscribe(function(setting)
+    self.valueChanged = ManagedUserData.valueChanged:subscribe(function(setting)
         local key, newValue = setting.Key, setting.Value
-        if (key ~= Enums.PluginSettingKey.AskNameBeforePaletteCreation) then return end
+        if (key ~= CommonEnums.UserDataKey.AskNameBeforePaletteCreation) then return end
 
         self:setState({
             askNameBeforeCreation = newValue
         })
     end)
-    ]]
 end
 
 PalettePages.willUnmount = function(self)
     self.keyDown:unsubscribe()
     self.keyUp:unsubscribe()
-    --self.settingsChanged:unsubscribe()
+    self.valueChanged:unsubscribe()
 end
 
 PalettePages.render = function(self)
