@@ -1,10 +1,6 @@
 --!strict
 -- Common Luau types used in the projects
 
-local Types = {}
-
----
-
 export type KeyValue = {
     Key: string,
     Value: any
@@ -46,4 +42,6 @@ export type UserData = {
     UserGradientPalettes: GradientPalettes,
 }
 
-return Types
+---
+
+return {}

@@ -89,7 +89,7 @@ end
 ]]
 Util.palette = {}
 
-Util.palette.getNewItemName = function(items, originalName: string, selfIndex: number?): (string, number)
+Util.palette.getNewItemName = function(items: {[any]: any}, originalName: string, selfIndex: number?): (string, number)
     local found: boolean = false
     local numDuplicates: number = 0
     local itemName: string = originalName
