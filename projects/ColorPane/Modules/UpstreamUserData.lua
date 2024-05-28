@@ -14,6 +14,7 @@ local CommonModules = Common.Modules
 local CommonEnums = require(CommonModules.Enums)
 local CommonTypes = require(CommonModules.Types)
 local UserDataInterfaceValidator = require(CommonModules.UserDataInterfaceValidator)
+local UserDataInterfaceVersion = require(CommonModules.UserDataInterfaceVersion)
 
 ---
 
@@ -45,6 +46,10 @@ end
 
 local hookUpstreamInterface = function(child: Instance)
     if (not UserDataInterfaceValidator(child)) then return end
+
+    local getVersion: BindableFunction = child:FindFirstChild("GetVersion")::BindableFunction
+    local thisVersion: number = getVersion:Invoke()
+    if (thisVersion ~= UserDataInterfaceVersion) then return end
 
     upstreamInterfaceFolder = child::Folder
     getValueFunction = child:FindFirstChild("GetValue")::BindableFunction

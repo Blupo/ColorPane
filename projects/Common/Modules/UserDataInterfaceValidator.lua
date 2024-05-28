@@ -16,6 +16,7 @@ local t = require(Includes.t)
 ]]
 return function(value: any): (boolean, string?)
     local success: boolean, failReason: string? = t.instanceOf("Folder", {
+        GetVersion = t.instanceOf("BindableFunction"),
         GetValue = t.instanceOf("BindableFunction"),
         GetAllValues = t.instanceOf("BindableFunction"),
         SetValue = t.instanceOf("BindableFunction"),
