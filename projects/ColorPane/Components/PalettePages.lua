@@ -372,17 +372,17 @@ end, function(dispatch)
             })
         end,
 
-        duplicatePalette = function(index)
+        duplicatePalette = function(paletteIndex)
             dispatch({
                 type = Enums.StoreActionType.ColorEditor_DuplicatePalette,
-                index = index,
+                paletteIndex = paletteIndex,
             })
         end,
 
-        removePalette = function(index)
+        removePalette = function(paletteIndex)
             dispatch({
                 type = Enums.StoreActionType.ColorEditor_RemovePalette,
-                index = index
+                paletteIndex = paletteIndex
             })
         end,
     }

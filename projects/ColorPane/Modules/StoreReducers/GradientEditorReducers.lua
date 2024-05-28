@@ -173,7 +173,7 @@ return {
 
         ```
         action = {
-            index: number
+            paletteIndex: number
         }
         ```
 
@@ -183,12 +183,12 @@ return {
     ]]
     [Enums.StoreActionType.GradientEditor_RemovePalette] = function(oldState: table, action: table): table
         local palettes: {GradientPalette} = oldState.gradientEditor.palettes
-        local index: number = action.index
-        if (not palettes[index]) then return oldState end
+        local paletteIndex: number = action.paletteIndex
+        if (not palettes[paletteIndex]) then return oldState end
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palettes = Cryo.List.removeIndex(palettes, index)
+                palettes = Cryo.List.removeIndex(palettes, paletteIndex)
             })
         }))
     end,
@@ -198,7 +198,7 @@ return {
 
         ```
         action = {
-            index: number
+            paletteIndex: number
         }
         ```
         
@@ -208,9 +208,9 @@ return {
     ]]
     [Enums.StoreActionType.GradientEditor_DuplicatePalette] = function(oldState: table, action: table): table
         local palettes: {GradientPalette} = oldState.gradientEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
 
-        local palette: GradientPalette = palettes[index]
+        local palette: GradientPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
         local matchStart: number? = string.find(palette.name, "%s*%(%d+%)$")
@@ -232,7 +232,7 @@ return {
 
         ```
         action = {
-            index: number,
+            paletteIndex: number,
             newName: string
         }
         ```
@@ -243,17 +243,17 @@ return {
     ]]
     [Enums.StoreActionType.GradientEditor_ChangePaletteName] = function(oldState: table, action: table): table
         local palettes: {GradientPalette} = oldState.gradientEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
 
-        local palette: GradientPalette = palettes[index]
+        local palette: GradientPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
-        local newPaletteName: string = Util.palette.getNewItemName(palettes, action.newName, index)
+        local newPaletteName: string = Util.palette.getNewItemName(palettes, action.newName, paletteIndex)
         if (newPaletteName == palette.name) then return oldState end
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palettes = Cryo.List.replaceIndex(palettes, index, Cryo.Dictionary.join(palette, {
+                palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
                     name = newPaletteName
                 }))
             })
@@ -265,7 +265,7 @@ return {
 
         ```
         action = {
-            index: number,
+            paletteIndex: number,
             newName: string?
         }
         ```
@@ -276,9 +276,9 @@ return {
     ]]
     [Enums.StoreActionType.GradientEditor_AddCurrentGradientToPalette] = function(oldState: table, action: table): table
         local palettes: {GradientPalette} = oldState.gradientEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
         
-        local palette: GradientPalette = palettes[index]
+        local palette: GradientPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
         local paletteGradients: {Gradient} = palette.gradients
@@ -295,7 +295,7 @@ return {
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                palettes = Cryo.List.replaceIndex(palettes, index, Cryo.Dictionary.join(palette, {
+                palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
                     gradients = Cryo.List.join(paletteGradients, {newGradient})
                 }))
             })

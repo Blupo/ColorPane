@@ -108,7 +108,7 @@ return {
 
         ```
         action = {
-            index: number
+            paletteIndex: number
         }
         ```
 
@@ -118,12 +118,12 @@ return {
     ]]
     [Enums.StoreActionType.ColorEditor_RemovePalette] = function(oldState: table, action: table): table
         local palettes: {ColorPalette} = oldState.colorEditor.palettes
-        local index: number = action.index
-        if (not palettes[index]) then return oldState end
+        local paletteIndex: number = action.paletteIndex
+        if (not palettes[paletteIndex]) then return oldState end
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
-                palettes = Cryo.List.removeIndex(palettes, index)
+                palettes = Cryo.List.removeIndex(palettes, paletteIndex)
             })
         }))
     end,
@@ -133,7 +133,7 @@ return {
 
         ```
         action = {
-            index: number
+            paletteIndex: number
         }
         ```
         
@@ -143,9 +143,9 @@ return {
     ]]
     [Enums.StoreActionType.ColorEditor_DuplicatePalette] = function(oldState: table, action: table): table
         local palettes: {ColorPalette} = oldState.colorEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
 
-        local palette: ColorPalette = palettes[index]
+        local palette: ColorPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
         local matchStart: number? = string.find(palette.name, "%s*%(%d+%)$")
@@ -167,7 +167,7 @@ return {
 
         ```
         action = {
-            index: number,
+            paletteIndex: number,
             newName: string
         }
         ```
@@ -178,17 +178,17 @@ return {
     ]]
     [Enums.StoreActionType.ColorEditor_ChangePaletteName] = function(oldState: table, action: table): table
         local palettes: {ColorPalette} = oldState.colorEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
 
-        local palette: ColorPalette = palettes[index]
+        local palette: ColorPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
-        local newPaletteName: string = Util.palette.getNewItemName(palettes, action.newName, index)
+        local newPaletteName: string = Util.palette.getNewItemName(palettes, action.newName, paletteIndex)
         if (newPaletteName == palette.name) then return oldState end
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
-                palettes = Cryo.List.replaceIndex(palettes, index, Cryo.Dictionary.join(palette, {
+                palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
                     name = newPaletteName
                 }))
             })
@@ -200,7 +200,7 @@ return {
 
         ```
         action = {
-            index: number,
+            paletteIndex: number,
             newName: string?
         }
         ```
@@ -211,9 +211,9 @@ return {
     ]]
     [Enums.StoreActionType.ColorEditor_AddCurrentColorToPalette] = function(oldState: table, action: table): table
         local palettes: {ColorPalette} = oldState.colorEditor.palettes
-        local index: number = action.index
+        local paletteIndex: number = action.paletteIndex
         
-        local palette: ColorPalette = palettes[index]
+        local palette: ColorPalette = palettes[paletteIndex]
         if (not palette) then return oldState end
 
         local paletteColors: {Color} = palette.colors
@@ -226,7 +226,7 @@ return {
 
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
-                palettes = Cryo.List.replaceIndex(palettes, index, Cryo.Dictionary.join(palette, {
+                palettes = Cryo.List.replaceIndex(palettes, paletteIndex, Cryo.Dictionary.join(palette, {
                     colors = Cryo.List.join(paletteColors, {newColor})
                 }))
             })

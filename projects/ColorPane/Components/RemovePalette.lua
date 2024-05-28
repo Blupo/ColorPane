@@ -164,10 +164,10 @@ end, function(dispatch)
             })
         end,
 
-        removePalette = function(index)
+        removePalette = function(paletteIndex)
             dispatch({
                 type = Enums.StoreActionType.ColorEditor_RemovePalette,
-                index = index,
+                paletteIndex = paletteIndex,
             })
         end,
     }

@@ -197,10 +197,10 @@ end, function(dispatch)
             })
         end,
 
-        changePaletteName = function(index, newName)
+        changePaletteName = function(paletteIndex, newName)
             dispatch({
                 type = Enums.StoreActionType.ColorEditor_ChangePaletteName,
-                index = index,
+                paletteIndex = paletteIndex,
                 newName = newName,
             })
         end
