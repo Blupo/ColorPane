@@ -14,7 +14,6 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor
 local Enums = require(Modules.Enums)
-local ManagedUserData = require(Modules.ManagedUserData)
 local Util = require(Modules.Util)
 
 local BuiltInPalettes = Modules.BuiltInPalettes
@@ -105,7 +104,6 @@ local PalettePages = Roact.PureComponent:extend("PalettePages")
 
 PalettePages.init = function(self)
     self:setState({
-        askNameBeforeCreation = ManagedUserData:getValue(CommonEnums.UserDataKey.AskNameBeforePaletteCreation),
         displayPage = "palettes",
 
         leftShiftDown = false,
@@ -141,21 +139,11 @@ PalettePages.didMount = function(self)
             })
         end
     end)
-
-    self.valueChanged = ManagedUserData.valueChanged:subscribe(function(setting)
-        local key, newValue = setting.Key, setting.Value
-        if (key ~= CommonEnums.UserDataKey.AskNameBeforePaletteCreation) then return end
-
-        self:setState({
-            askNameBeforeCreation = newValue
-        })
-    end)
 end
 
 PalettePages.willUnmount = function(self)
     self.keyDown:unsubscribe()
     self.keyUp:unsubscribe()
-    self.valueChanged:unsubscribe()
 end
 
 PalettePages.render = function(self)
@@ -252,7 +240,7 @@ PalettePages.render = function(self)
                     name = uiTranslations["CreatePalette_ButtonText"],
 
                     onActivated = function()
-                        if (self.state.askNameBeforeCreation) then
+                        if (self.props.askNameBeforePaletteCreation) then
                             self:setState({
                                 displayPage = "namePalette",
                                 newPaletteName = Util.palette.getNewItemName(palettes, "New Palette")
@@ -360,6 +348,7 @@ return RoactRodux.connect(function(state)
         palettes = state.colorEditor.palettes,
         upstreamAvailable = state.upstreamAvailable,
         lastPalettePage = state.sessionData.lastPalettePage,
+        askNameBeforePaletteCreation = state.userData[CommonEnums.UserDataKey.AskNameBeforePaletteCreation]
     }
 end, function(dispatch)
     return {

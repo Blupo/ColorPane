@@ -6,6 +6,7 @@ return {
         SetTheme = "SetTheme",
         UpstreamAvailabilityChanged = "UpstreamAvailabilityChanged",
         UpdateSessionData = "UpdateSessionData",
+        UpdateUserData = "UpdateUserData",
 
         ColorEditor_SetColor = "ColorEditor_SetColor",
         ColorEditor_AddQuickPaletteColor = "ColorEditor_AddQuickPaletteColor",

@@ -63,6 +63,11 @@ local initialState: {[any]: any} = {
     theme = Studio.Theme,
     upstreamAvailable = UpstreamUserData.IsAvailable(),
 
+    userData = {
+        [CommonEnums.UserDataKey.SnapValue] = ManagedUserData:getValue(CommonEnums.UserDataKey.SnapValue),
+        [CommonEnums.UserDataKey.AskNameBeforePaletteCreation] = ManagedUserData:getValue(CommonEnums.UserDataKey.AskNameBeforePaletteCreation)
+    },
+
     sessionData = {
         editorPage = 1,
         lastSliderPage = {1, 1},
@@ -87,7 +92,6 @@ local initialState: {[any]: any} = {
     },
 
     gradientEditor = {
-        snap = ManagedUserData:getValue(CommonEnums.UserDataKey.SnapValue),
         palettes = {},
     }
 }
@@ -128,10 +132,14 @@ end)
 valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
     local key: string = value.Key
 
-    if (key == CommonEnums.UserDataKey.SnapValue) then
+    if (
+        (key == CommonEnums.UserDataKey.SnapValue) or
+        (key == CommonEnums.UserDataKey.AskNameBeforePaletteCreation)
+    ) then
         Store:dispatch({
-            type = Enums.StoreActionType.GradientEditor_SetSnapValue,
-            snap = value.Value,
+            type = Enums.StoreActionType.UpdateUserData,
+            key = key,
+            value = value.Value,
         })
     elseif (key == CommonEnums.UserDataKey.UserColorPalettes) then
         local palettes: table = Util.table.deepCopy(value.Value)

@@ -86,4 +86,26 @@ return Cryo.Dictionary.join({
             sessionData = Cryo.Dictionary.join(oldState.sessionData, action.slice)
         }))
     end,
+
+    --[[
+        Updates a stored user data value.
+
+        ```
+        action = {
+            key: string,
+            value: any
+        }
+        ```
+
+        @param oldState The previous state
+        @param action The action information
+        @return The next state
+    ]]
+    [Enums.StoreActionType.UpdateUserData] = function(oldState: table, action: table): table
+        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+            userData = Cryo.Dictionary.join(oldState.userData, {
+                [action.key] = action.value
+            })
+        }))
+    end,
 }, ColorEditorReducers, GradientEditorReducers)
