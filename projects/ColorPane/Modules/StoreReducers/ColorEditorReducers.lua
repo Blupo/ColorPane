@@ -349,4 +349,25 @@ return {
             })
         }))
     end,
+
+    --[[
+        Overrides the current set of color palettes.
+
+        ```
+        action = {
+            palettes: {ColorPalette}
+        }
+        ```
+
+        @param oldState The previous state
+        @param action The action information
+        @return The next state
+    ]]
+    [Enums.StoreActionType.ColorEditor_SetPalettes] = function(oldState: table, action: table): table
+        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+            colorEditor = Cryo.Dictionary.join(oldState.colorEditor, {
+                palettes = action.palettes
+            }),
+        }))
+    end,
 }

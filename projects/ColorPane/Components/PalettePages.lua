@@ -7,6 +7,7 @@ local CommonEnums = require(CommonModules.Enums)
 local Translator = require(CommonModules.Translator)
 
 local CommonIncludes = Common.Includes
+local Cryo = require(CommonIncludes.Cryo)
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
@@ -160,6 +161,7 @@ end
 PalettePages.render = function(self)
     local palettes = self.props.palettes
     local numBuiltInPalettes = #builtInPaletteElements
+    local upstreamAvailable: boolean = self.props.upstreamAvailable
 
     local selectedPage = self.props.lastPalettePage
     local selectedPageSection, selectedPageNum = selectedPage[1], selectedPage[2]
@@ -182,10 +184,12 @@ PalettePages.render = function(self)
             content = Roact.createElement(Palette, {
                 palette = palette,
                 paletteIndex = i,
+                readOnly = not upstreamAvailable,
             })
         })
     end
     
+    -- decide which component to display
     if (displayPage == "namePalette") then
         displayPageElement = Roact.createElement(NamePalette, {
             onPromptClosed = function()
@@ -240,24 +244,10 @@ PalettePages.render = function(self)
             end
         })
     elseif (displayPage == "palettes") then
-        displayPageElement = Roact.createElement(Pages, {
-            selectedPage = selectedPage,
-            showAllSections = true,
-            onPageChanged = self.props.updatePalettePage,
+        local pageOptions = {}
 
-            pageSections = {
-                {
-                    name = uiTranslations["BuiltInPalette_Category"],
-                    items = builtInPalettePages,
-                },
-
-                {
-                    name = uiTranslations["UserPalette_Category"],
-                    items = userPalettePages,
-                }
-            },
-
-            options = {
+        if (upstreamAvailable) then
+            pageOptions = Cryo.List.join(pageOptions, {
                 {
                     name = uiTranslations["CreatePalette_ButtonText"],
 
@@ -283,8 +273,10 @@ PalettePages.render = function(self)
                         })
                     end
                 },
+            })
 
-                if (selectedPageSection == 2) then
+            if (selectedPageSection == 2) then
+                pageOptions = Cryo.List.join(pageOptions, {
                     {
                         name = uiTranslations["ExportPalette_ButtonText"],
 
@@ -294,10 +286,8 @@ PalettePages.render = function(self)
                                 paletteIndex = selectedPageNum,
                             })
                         end
-                    }
-                else nil,
+                    },
 
-                if (selectedPageSection == 2) then
                     {
                         name = uiTranslations["DuplicatePalette_ButtonText"],
 
@@ -305,10 +295,8 @@ PalettePages.render = function(self)
                             self.props.duplicatePalette(selectedPageNum)
                             self.props.updatePalettePage(2, #palettes + 1)
                         end
-                    }
-                else nil,
+                    },
 
-                if (selectedPageSection == 2) then
                     {
                         name = uiTranslations["RenamePalette_ButtonText"],
 
@@ -318,10 +306,8 @@ PalettePages.render = function(self)
                                 paletteIndex = selectedPageNum,
                             })
                         end
-                    }
-                else nil,
+                    },
 
-                if (selectedPageSection == 2) then
                     {
                         name = uiTranslations["DeletePalette_ButtonText"],
 
@@ -336,9 +322,29 @@ PalettePages.render = function(self)
                                 })
                             end
                         end
-                    }
-                else nil,
-            }
+                    },
+                })
+            end
+        end
+
+        displayPageElement = Roact.createElement(Pages, {
+            selectedPage = selectedPage,
+            showAllSections = true,
+            onPageChanged = self.props.updatePalettePage,
+
+            pageSections = {
+                {
+                    name = uiTranslations["BuiltInPalette_Category"],
+                    items = builtInPalettePages,
+                },
+
+                {
+                    name = uiTranslations["UserPalette_Category"],
+                    items = userPalettePages,
+                }
+            },
+
+            options = if (#pageOptions > 1) then pageOptions else nil,
         })
     end
 
@@ -352,6 +358,7 @@ return RoactRodux.connect(function(state)
         theme = state.theme,
 
         palettes = state.colorEditor.palettes,
+        upstreamAvailable = state.upstreamAvailable,
         lastPalettePage = state.sessionData.lastPalettePage,
     }
 end, function(dispatch)

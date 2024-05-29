@@ -4,6 +4,7 @@
 return {
     StoreActionType = {
         SetTheme = "SetTheme",
+        UpstreamAvailabilityChanged = "UpstreamAvailabilityChanged",
         UpdateSessionData = "UpdateSessionData",
 
         ColorEditor_SetColor = "ColorEditor_SetColor",
@@ -17,6 +18,7 @@ return {
         ColorEditor_RemovePaletteColor = "ColorEditor_RemovePaletteColor",
         ColorEditor_ChangePaletteColorName = "ColorEditor_ChangePaletteColorName",
         ColorEditor_ChangePaletteColorPosition = "ColorEditor_ChangePaletteColorPosition",
+        ColorEditor_SetPalettes = "ColorEditor_SetPalettes",
 
         GradientEditor_ResetState = "GradientEditor_ResetState",
         GradientEditor_SetKeypoints = "GradientEditor_SetKeypoints",
@@ -31,6 +33,7 @@ return {
         GradientEditor_ChangePaletteName = "GradientEditor_ChangePaletteName",
         GradientEditor_AddPaletteGradient = "GradientEditor_AddPaletteGradient",
         GradientEditor_AddCurrentGradientToPalette = "GradientEditor_AddCurrentGradientToPalette",
+        GradientEditor_SetPalettes = "GradientEditor_SetPalettes",
     },
 
     EditorKey = {

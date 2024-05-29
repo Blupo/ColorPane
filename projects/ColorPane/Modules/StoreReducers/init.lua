@@ -44,6 +44,31 @@ return Cryo.Dictionary.join({
     end,
 
     --[[
+        Updates the upstream availability status.
+
+        ```
+        action = {
+            available: boolean
+        }
+        ```
+
+        @param oldState The previous state
+        @param action The action information
+        @return The next state
+    ]]
+    [Enums.StoreActionType.UpstreamAvailabilityChanged] = function(oldState: table, action: table): table
+        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+            upstreamAvailable = action.available,
+
+            sessionData = if (oldState.upstreamAvailable == false) and (action.available == true) then
+                Cryo.Dictionary.join(oldState.sessionData, {
+                    lastPalettePage = {1, 1}
+                })
+            else nil,
+        }))
+    end,
+
+    --[[
         Updates some session information.
 
         ```

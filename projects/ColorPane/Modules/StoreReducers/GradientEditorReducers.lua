@@ -418,4 +418,25 @@ return {
             })
         }))
     end,
+
+    --[[
+        Overrides the current set of gradient palettes.
+
+        ```
+        action = {
+            palettes: {GradientPalette}
+        }
+        ```
+
+        @param oldState The previous state
+        @param action The action information
+        @return The next state
+    ]]
+    [Enums.StoreActionType.GradientEditor_SetPalettes] = function(oldState: table, action: table): table
+        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
+            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
+                palettes = action.palettes
+            })
+        }))
+    end,
 }
