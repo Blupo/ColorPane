@@ -82,7 +82,7 @@ Pages.render = function(self)
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
             }, {
-                Content = if (not self.state.dropdownExpanded) then selectedPage.content else nil
+                Content = selectedPage.content
             })
         else nil
     })

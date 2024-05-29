@@ -116,8 +116,13 @@ Selection.didUpdate = function(self, _, prevState)
     local dropdownOpen = self.state.dropdownOpen
     local optionsOpen = self.state.optionsOpen
 
-    if ((dropdownOpen == prevState.dropdownOpen) and (optionsOpen == prevState.optionsOpen)) then return end
-    self.props.onExpandedStateToggle(dropdownOpen or optionsOpen)
+    if ((dropdownOpen ~= prevState.dropdownOpen) or (optionsOpen ~= prevState.optionsOpen)) then
+        self.props.onExpandedStateToggle(dropdownOpen or optionsOpen)
+    elseif (optionsOpen and (not self.props.options)) then
+        self:setState({
+            optionsOpen = false,
+        })
+    end
 end
 
 Selection.render = function(self)
@@ -197,7 +202,7 @@ Selection.render = function(self)
             itemPadding = Style.Constants.SpaciousElementPadding,
             sections = itemListSections,
         })
-    elseif ((self.state.optionsOpen) and (self.props.options)) then
+    elseif (self.state.optionsOpen and self.props.options) then
         local options = self.props.options
         local optionListItems = {}
         local numOptionsListItems = #options
