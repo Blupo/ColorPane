@@ -8,6 +8,7 @@ local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
+local CommonEnums = require(CommonModules.Enums)
 local Constants = require(CommonModules.Constants)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
@@ -29,7 +30,7 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Components = root.Components
 local GradientInfo = require(Components.GradientInfo)
-local GradientPalette = require(Components.GradientPalette)
+--local GradientPalette = require(Components.GradientPalette)
 
 local Includes = root.Includes
 local ColorLib = require(Includes.Color)
@@ -883,6 +884,7 @@ GradientEditor.render = function(self)
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 
+            --[[
             PalettesButton = Roact.createElement(Button, {
                 LayoutOrder = 1,
 
@@ -915,6 +917,7 @@ GradientEditor.render = function(self)
                     end
                 end
             }),
+            --]]
 
             ResetButton = Roact.createElement(Button, {
                 Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),
@@ -992,7 +995,7 @@ return RoactRodux.connect(function(state)
         colorSpace = state.gradientEditor.colorSpace,
         hueAdjustment = state.gradientEditor.hueAdjustment,
         precision = state.gradientEditor.precision,
-        timeSnapValue = state.gradientEditor.snap,
+        timeSnapValue = state.userData[CommonEnums.UserDataKey.SnapValue],
     }
 end, function(dispatch)
     return {
@@ -1018,8 +1021,9 @@ end, function(dispatch)
 
         setSnapValue = function(snapValue)
             dispatch({
-                type = Enums.StoreActionType.GradientEditor_SetSnapValue,
-                snap = snapValue
+                type = Enums.StoreActionType.UpdateUserData,
+                key = CommonEnums.UserDataKey.SnapValue,
+                value = snapValue
             })
         end,
 

@@ -322,10 +322,6 @@ end
     @return A Promise that will resolve with a user-generated gradient, or reject with a rejection reason
 ]]
 ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?): Promise
-    -- TODO
-    return Promise.reject("NotImplemented")
-
-    --[[
     if (colorEditorWindow:isMounted()) then
         -- can't open the prompt because it might need the color prompt
         return Promise.reject(Enums.PromptRejection.ReservationProblem)
@@ -454,7 +450,6 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
     fireGradientEditFinished = fireFinished
     gradientEditorWindow:mount(fullPromptInfo.PromptTitle, gradientEditorElement, Store)
     return editPromise
-    --]]
 end
 
 --[[
@@ -539,6 +534,14 @@ colorEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.ColorEditor.
 gradientEditorWindow.mousePositionChanged:subscribe(EditorInputSignals.GradientEditor.MousePositionChanged.Fire)
 
 Store.changed:connect(function(newState, oldState)
+    -- update non-palette user data
+    if (newState.userData ~= oldState.userData) then
+        for key: string, value: any in pairs(newState.userData) do
+            ManagedUserData:setValue(key, value)
+        end
+    end
+
+    -- update color palettes
     if (newState.colorEditor.palettes ~= oldState.colorEditor.palettes) then
         local newPalettes = Util.table.deepCopy(newState.colorEditor.palettes)
 
@@ -556,6 +559,7 @@ Store.changed:connect(function(newState, oldState)
         ManagedUserData:setValue(CommonEnums.UserDataKey.UserColorPalettes, newPalettes)
     end
 
+    -- update gradient palettes
     if (newState.gradientEditor.palettes ~= oldState.gradientEditor.palettes) then
         local newPalettes = Util.table.deepCopy(newState.gradientEditor.palettes)
 

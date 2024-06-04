@@ -34,8 +34,7 @@ return {
     [Enums.StoreActionType.GradientEditor_ResetState] = function(oldState: table, _: table): table
         return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
             gradientEditor = {
-                snap = oldState.gradientEditor.snap,
-                palette = oldState.gradientEditor.palette,
+                palettes = oldState.gradientEditor.palettes,
             }
         }))
     end,
@@ -107,27 +106,6 @@ return {
             gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, newKeypointInfo, {
                 displayKeypoints = newDisplayKeypoints
             }),
-        }))
-    end,
-
-    --[[
-        Updates the gradient editor's keypoint snap value.
-
-        ```
-        action = {
-            snap: number
-        }
-        ```
-
-        @param oldState The previous state
-        @param action The action information
-        @return The next state
-    ]]
-    [Enums.StoreActionType.GradientEditor_SetSnapValue] = function(oldState: table, action: table): table
-        return Util.table.deepFreeze(Cryo.Dictionary.join(oldState, {
-            gradientEditor = Cryo.Dictionary.join(oldState.gradientEditor, {
-                snap = action.snap
-            })
         }))
     end,
 
