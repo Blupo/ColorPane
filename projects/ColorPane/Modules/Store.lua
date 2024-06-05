@@ -43,7 +43,7 @@ local convertColorPaletteToColor3s = function(palette: table)
     end
 end
 
-local convertGradientPaletteToColors = function(palette: table)
+local convertGradientPalettes = function(palette: table)
     for i = 1, #palette.gradients do
         local gradient = palette.gradients[i]
         local keypoints = gradient.keypoints
@@ -52,8 +52,8 @@ local convertGradientPaletteToColors = function(palette: table)
             local keypoint = keypoints[j]
     
             keypoints[j] = {
-                time = keypoint.time, 
-                color = Color.new(table.unpack(keypoint.color))
+                Time = keypoint.time, 
+                Color = Color.new(table.unpack(keypoint.color))
             }
         end
     end
@@ -108,7 +108,7 @@ do
     end
 
     for i = 1, #userGradientPalettes do
-        convertGradientPaletteToColors(userGradientPalettes[i])
+        convertGradientPalettes(userGradientPalettes[i])
     end
 
     initialState.colorEditor.palettes = userColorPalettes
@@ -156,7 +156,7 @@ valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
         local palettes: table = Util.table.deepCopy(value.Value)
 
         for i = 1, #palettes do
-            convertGradientPaletteToColors(palettes[i])
+            convertGradientPalettes(palettes[i])
         end
 
         Store:dispatch({

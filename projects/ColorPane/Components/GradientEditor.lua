@@ -30,7 +30,7 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Components = root.Components
 local GradientInfo = require(Components.GradientInfo)
---local GradientPalette = require(Components.GradientPalette)
+local GradientPalette = require(Components.GradientPalette)
 
 local Includes = root.Includes
 local ColorLib = require(Includes.Color)
@@ -884,7 +884,6 @@ GradientEditor.render = function(self)
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
 
-            --[[
             PalettesButton = Roact.createElement(Button, {
                 LayoutOrder = 1,
 
@@ -917,7 +916,6 @@ GradientEditor.render = function(self)
                     end
                 end
             }),
-            --]]
 
             ResetButton = Roact.createElement(Button, {
                 Size = UDim2.new(0, Style.Constants.DialogButtonWidth, 0, Style.Constants.StandardButtonHeight),

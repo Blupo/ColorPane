@@ -445,7 +445,7 @@ GradientPalette.render = function(self)
                     searchTerm = Roact.None,
                 })
 
-                self.props.addPaletteColor(self.props.keypoints, self.props.colorSpace, self.props.hueAdjustment, self.props.precision)
+                self.props.addPaletteColor()
             end,
         }),
 
@@ -496,7 +496,7 @@ return RoactRodux.connect(function(state)
         hueAdjustment = state.gradientEditor.hueAdjustment,
         precision = state.gradientEditor.precision,
 
-        gradients = state.gradientEditor.palette,
+        gradients = state.gradientEditor.palettes[1].gradients,
     }
 end, function(dispatch)
     return {
@@ -511,36 +511,35 @@ end, function(dispatch)
             })
         end,
 
-        addPaletteColor = function(keypoints, colorSpace, hueAdjustment, precision)
+        addPaletteColor = function()
             dispatch({
-                type = Enums.StoreActionType.GradientEditor_AddPaletteColor,
-
-                keypoints = keypoints,
-                colorSpace = colorSpace,
-                hueAdjustment = hueAdjustment,
-                precision = precision,
+                type = Enums.StoreActionType.GradientEditor_AddCurrentGradientToPalette,
+                paletteIndex = 1,
             })
         end,
 
         removePaletteColor = function(index)
             dispatch({
-                type = Enums.StoreActionType.GradientEditor_RemovePaletteColor,
-                index = index,
+                type = Enums.StoreActionType.GradientEditor_RemovePaletteGradient,
+                paletteIndex = 1,
+                gradientIndex = index,
             })
         end,
 
         changePaletteColorName = function(index, newColorName)
             dispatch({
-                type = Enums.StoreActionType.GradientEditor_ChangePaletteColorName,
-                index = index,
+                type = Enums.StoreActionType.GradientEditor_ChangePaletteGradientName,
+                paletteIndex = 1,
+                gradientIndex = index,
                 newName = newColorName
             })
         end,
 
         changePaletteColorPosition = function(index, positionOffset)
             dispatch({
-                type = Enums.StoreActionType.GradientEditor_ChangePaletteColorPosition,
-                index = index,
+                type = Enums.StoreActionType.GradientEditor_ChangePaletteGradientPosition,
+                paletteIndex = 1,
+                gradientIndex = index,
                 offset = positionOffset,
             })
         end

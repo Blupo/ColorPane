@@ -243,7 +243,7 @@ GradientPicker = ConnectTheme(GradientPicker)
 
 return RoactRodux.connect(function(state)
     return {
-        gradients = state.gradientEditor.palette,
+        gradients = state.gradientEditor.palettes[1].gradients,
     }
 end, function(dispatch)
     return {

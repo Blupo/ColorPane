@@ -575,8 +575,8 @@ Store.changed:connect(function(newState, oldState)
                     local keypoint = keypoints[k]
 
                     keypoints[k] = {
-                        time = keypoint.time, 
-                        color = {keypoint.color:components()}
+                        time = keypoint.Time, 
+                        color = {keypoint.Color:components()}
                     }
                 end
             end

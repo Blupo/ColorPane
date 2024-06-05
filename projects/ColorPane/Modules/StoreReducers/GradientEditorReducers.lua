@@ -260,7 +260,7 @@ return {
         if (not palette) then return oldState end
 
         local paletteGradients: {Gradient} = palette.gradients
-        local newGradientName: string = Util.palette.getNewItemName(paletteGradients, action.newName or "New Color")
+        local newGradientName: string = Util.palette.getNewItemName(paletteGradients, action.newName or "New Gradient")
 
         local newGradient: Gradient = {
             name = newGradientName,
