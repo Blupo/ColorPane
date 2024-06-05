@@ -635,7 +635,7 @@ GradientEditor.render = function(self)
                         self.props.setKeypoints(keypoints, newKeypointIndex)
                     end,
                     
-                    disabled = if colorEditPromise then true else false,
+                    disabled = (colorEditPromise or (selectedKeypoint == 1) or (selectedKeypoint == #keypoints)),
                 }),
 
                 ProgressLabel = Roact.createElement(StandardTextLabel, {
