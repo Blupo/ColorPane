@@ -496,7 +496,9 @@ return RoactRodux.connect(function(state)
         hueAdjustment = state.gradientEditor.hueAdjustment,
         precision = state.gradientEditor.precision,
 
-        gradients = state.gradientEditor.palettes[1].gradients,
+        gradients = if (state.gradientEditor.palettes[1]) then
+            state.gradientEditor.palettes[1].gradients
+        else {},
     }
 end, function(dispatch)
     return {
