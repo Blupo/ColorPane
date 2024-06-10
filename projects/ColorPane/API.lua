@@ -7,6 +7,7 @@ local CommonModules = Common.Modules
 local CommonEnums = require(CommonModules.Enums)
 local Constants = require(CommonModules.Constants)
 local PluginProvider = require(CommonModules.PluginProvider)
+local Translator = require(CommonModules.Translator)
 local Window = require(CommonModules.Window)
 
 local CommonIncludes = Common.Includes
@@ -107,14 +108,19 @@ type ColorSequencePromptInfoArgument = {
 
 ---
 
+local UI_TRANSLATIONS = Translator.GenerateTranslationTable({
+    "ColorEditor_DefaultWindowTitle",
+    "GradientEditor_DefaultWindowTitle",
+})
+
 local DEFAULT_COLOR_PROMPT_INFO: ColorPromptInfo = {
-    PromptTitle = "Select a color",
+    PromptTitle = UI_TRANSLATIONS["ColorEditor_DefaultWindowTitle"],
     ColorType = "Color3",
     InitialColor = Color3.new(1, 1, 1),
 }
 
 local DEFAULT_GRADIENT_PROMPT_INFO: GradientPromptInfo = {
-    PromptTitle = "Create a gradient",
+    PromptTitle = UI_TRANSLATIONS["GradientEditor_DefaultWindowTitle"],
     GradientType = "ColorSequence",
     InitialGradient = ColorSequence.new(Color3.new(1, 1, 1)),
     InitialColorSpace = "RGB",
