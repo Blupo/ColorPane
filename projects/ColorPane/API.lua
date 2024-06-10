@@ -235,6 +235,11 @@ local ColorPane = {}
 ColorPane.PromptRejection = Enums.PromptRejection
 
 --[[
+    Promise status enum
+]]
+ColorPane.PromiseStatus = Promise.Status
+
+--[[
     Returns if a request to prompt for a color will succeed
     instead of immediately rejecting.
 ]]
@@ -451,14 +456,6 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
     gradientEditorWindow:mount(fullPromptInfo.PromptTitle, gradientEditorElement, Store)
     return editPromise
 end
-
---[[
-    **DEPRECATED**: If you need to check the status of a Promise,
-    please use your own copy of the Promise library
-    
-    Promise status enum
-]]
-ColorPane.PromiseStatus = Promise.Status
 
 --[[
     **DEPRECATED**: You should subscribe to your project's `Plugin.Unloading` event instead.

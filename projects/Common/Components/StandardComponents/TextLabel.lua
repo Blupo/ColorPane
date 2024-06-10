@@ -27,6 +27,7 @@ local ConnectTheme = require(Components.ConnectTheme)
         TextXAlignment? = Enum.TextXAlignment.Left
         TextYAlignment? = Enum.TextYAlignment.Center
         TextWrapped?
+        RichText?
 
         BackgroundColor3? = StudioTheme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
         TextColor3? = StudioTheme:GetColor(Enum.StudioStyleGuideColor.MainText)
@@ -49,6 +50,7 @@ StandardTextLabel.render = function(self)
         BackgroundTransparency = props.BackgroundTransparency or 1,
         BorderSizePixel = 0,
 
+        RichText = props.RichText,
         Text = props.Text,
         Font = props.Font or Style.Fonts.Standard,
         TextSize = props.TextSize or Style.Constants.StandardTextSize,

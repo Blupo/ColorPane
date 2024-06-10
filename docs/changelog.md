@@ -35,7 +35,6 @@
 - `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
 - `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
 - `API.Unloading` is now deprecated
-- `API.PromiseStatus` is now deprecated
 
 ## [0.4.1] - 2022-09-30
 

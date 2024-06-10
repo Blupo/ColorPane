@@ -1,16 +1,9 @@
 --!strict
 -- GUI styling information and image IDs
 
-type Style = {
-    Fonts: {[string]: Enum.Font},
-    Constants: {[string]: number},
-    UDim2: {[string]: UDim2},
-    Images: {[string]: string},
-}
-
 ---
 
-local Style: Style = {
+local Style = {
     UDim2 = {},
 
     Fonts = {
@@ -104,6 +97,11 @@ local Style: Style = {
         ScrollbarImage = "rbxassetid://590077572",
         SearchHistoryButtonIcon = "rbxassetid://9126497911",
         ColorSequenceTypeIcon = "rbxassetid://1097454788",
+
+        -- Companion toolbar buttons
+        ColorEditorToolbarButtonIcon = "rbxassetid://7066707717",
+        GradientEditorToolbarButtonIcon = "rbxassetid://7066742393",
+        SettingsToolbarButtonIcon = "rbxassetid://6528624327",
     }
 }
 

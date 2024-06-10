@@ -30,6 +30,18 @@
             "Companion": {
                 "$path": "projects/Companion",
 
+                "Includes": {
+                    "$className": "Folder",
+
+                    "ColorPane": {
+                        "$path": "projects/ColorPane",
+        
+                        "Common": {
+                            "$path": "projects/Common"
+                        }
+                    }
+                },
+
                 "Common": {
                     "$path": "projects/Common"
                 }
