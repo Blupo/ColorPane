@@ -1,9 +1,5 @@
 -- A text input with validation capability
 
-local TextService = game:GetService("TextService")
-
----
-
 local root = script.Parent.Parent
 
 local Modules = root.Modules
@@ -48,52 +44,6 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
 local TextInput = Roact.PureComponent:extend("TextInput")
 
 TextInput.init = function(self)
-    self.textBox = Roact.createRef()
-    self.textBoxContainer = Roact.createRef()
-    self.textBoxOffset, self.updateTextBoxOffset = Roact.createBinding(0)
-
-    self.updateOffsets = function()
-        local textBox = self.textBox:getValue()
-        local textBoxContainer = self.textBoxContainer:getValue()
-        if (not (textBox and textBoxContainer)) then return end
-
-        local textBounds = textBox.TextBounds
-        local textBoxContainerSize = textBoxContainer.AbsoluteSize
-
-        if (textBounds.X <= (textBoxContainerSize.X - (Style.Constants.TextObjectPadding * 2))) then
-            self.updateTextBoxOffset(0)
-            return
-        end
-
-        local cursorPosition = textBox.CursorPosition
-        if (cursorPosition < 1) then return end
-        
-        local textBoxPosition = textBox.AbsolutePosition
-        local textBoxPositionStart, textBoxPositionEnd = textBoxPosition.X, textBoxPosition.X + textBox.AbsoluteSize.X
-
-        local textBoxContainerPosition = textBoxContainer.AbsolutePosition
-        local textBoxContainerPositionStart = textBoxContainerPosition.X + Style.Constants.TextObjectPadding
-        local textBoxContainerPositionEnd = textBoxContainerPosition.X + textBoxContainerSize.X - Style.Constants.TextObjectPadding
-
-        local startToCursorSubstring = string.sub(textBox.Text, 1, cursorPosition - 1)
-        local startToCursorSubstringBounds = TextService:GetTextSize(startToCursorSubstring, textBox.TextSize, textBox.Font, Vector2.new(math.huge, math.huge))
-        local startToCursorSubstringEnd = textBoxPositionStart + startToCursorSubstringBounds.X
-
-        local offset = 0
-        
-        if (textBoxPositionEnd < textBoxContainerPositionEnd) then
-            offset = offset + (textBoxContainerPositionEnd - textBoxPositionEnd)
-        end
-
-        if (startToCursorSubstringEnd < textBoxContainerPositionStart) then
-            offset = textBoxContainerPositionStart - startToCursorSubstringEnd
-        elseif (startToCursorSubstringEnd > textBoxContainerPositionEnd)  then
-            offset = textBoxContainerPositionEnd - startToCursorSubstringEnd
-        end
-
-        self.updateTextBoxOffset(self.textBoxOffset:getValue() + offset)
-    end
-
     self:setState({
         focused = false,
         hover = false,
@@ -164,9 +114,6 @@ TextInput.render = function(self)
 
         BackgroundColor3 = borderColor,
 
-        [Roact.Ref] = self.textBoxContainer,
-        [Roact.Change.AbsoluteSize] = self.updateOffsets,
-
         [Roact.Event.MouseEnter] = function()
             if (self.state.focused or disabled) then return end
 
@@ -203,15 +150,12 @@ TextInput.render = function(self)
 
             Input = Roact.createElement("TextBox", {
                 AnchorPoint = Vector2.new(0, 0.5),
+                Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(1, 0, 1, 0),
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 TextEditable = (not disabled),
-    
-                Position = self.textBoxOffset:map(function(offset)
-                    return UDim2.new(0, offset, 0.5, 0)
-                end),
-    
+
                 Font = Style.Fonts.Standard,
                 MultiLine = false,
                 ClearTextOnFocus = false,
@@ -220,44 +164,41 @@ TextInput.render = function(self)
                 TextYAlignment = Enum.TextYAlignment.Center,
                 PlaceholderText = self.props.PlaceholderText or "",
                 Text = self.props.Text,
-    
+
                 TextColor3 = theme:GetColor(
                     Enum.StudioStyleGuideColor.MainText,
                     if disabled then Enum.StudioStyleGuideModifier.Disabled else nil
                 ),
-    
+
                 PlaceholderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainText, Enum.StudioStyleGuideModifier.Disabled),
-    
-                [Roact.Ref] = self.textBox,
-                [Roact.Change.CursorPosition] = self.updateOffsets,
-    
+
                 [Roact.Event.Focused] = function(obj)
                     if (disabled) then return end
-                    
+
                     if (self.props.selectTextOnFocus) then
                         obj.CursorPosition = string.len(obj.Text) + 1
                         obj.SelectionStart = 1
                     end
-    
+
                     self:setState({
                         focused = true,
                         hover = false,
                     })
                 end,
-    
+
                 [Roact.Event.FocusLost] = function(obj)
                     if (self.unmounting) then return end -- we could also check if the InputObject is nil
                     if (disabled) then return end
-    
+
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
                     local isValid = if (not isTextAValidValue) then true else isTextAValidValue(newText)
                     local originalText = self.props.Text
-    
+
                     if (newText == originalText) then
                         self:setState({
                             focused = false,
                         })
-    
+
                         obj.Text = originalText
                         return
                     end
@@ -270,7 +211,7 @@ TextInput.render = function(self)
                         obj.Text = originalText
                         return
                     end
-    
+
                     if (isValid and onSubmit) then
                         --[[
                             Since we can't know if the Text prop will change after onSubmit,
@@ -283,40 +224,19 @@ TextInput.render = function(self)
     
                         onSubmit(newText)
                     end
-    
-                    self.updateTextBoxOffset(0)
+
                     self:setState({
                         focused = false,
                         invalidInput = (not isValid),
                     })
                 end,
-    
-                [Roact.Change.TextBounds] = function(obj)
-                    if (self.unmounting) then return end
 
-                    local textBoxContainer = obj.Parent
-                    if (not textBoxContainer) then return end
-    
-                    local textBounds = obj.TextBounds
-                    local containerSize = textBoxContainer.AbsoluteSize
-
-                    local actualContainerSize = containerSize.X - (Style.Constants.TextObjectPadding * 2)
-                    if (actualContainerSize <= 0) then return end
-    
-                    obj.Size = UDim2.new(
-                        if (textBounds.X > actualContainerSize) then UDim.new(0, textBounds.X) else UDim.new(1, 0),
-                        UDim.new(1, 0)
-                    )
-
-                    self.updateOffsets()
-                end,
-    
                 [Roact.Change.Text] = function(obj)
                     if (self.unmounting) then return end
                     if (disabled) then return end
-    
+
                     local newText = string.match(obj.Text, "^%s*(.-)%s*$")
-    
+
                     if (onTextChanged) then
                         onTextChanged(newText)
                     end
