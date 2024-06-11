@@ -238,9 +238,7 @@ ColorWheel.didMount = function(self)
 end
 
 ColorWheel.willUnmount = function(self)
-    if (self.mousePositionChanged) then
-        self.mousePositionChanged:unsubscribe()
-    end
+    self.mousePositionChanged:unsubscribe()
 end
 
 ColorWheel.render = function(self)

@@ -226,13 +226,10 @@ GradientEditor.willUnmount = function(self)
 
     self.gradientInfoWindow:destroy()
     self.gradientPaletteWindow:destroy()
+    self.mousePositionChanged:unsubscribe()
 
     if (self.state.colorEditPromise) then
         self.state.colorEditPromise:cancel()
-    end
-    
-    if (self.mousePositionChanged) then
-        self.mousePositionChanged:unsubscribe()
     end
 end
 

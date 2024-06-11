@@ -70,9 +70,7 @@ GradientPicker.didMount = function(self)
 end
 
 GradientPicker.willUnmount = function(self)
-    if (self.mousePositionChanged) then
-        self.mousePositionChanged:unsubscribe()
-    end
+    self.mousePositionChanged:unsubscribe()
 end
 
 GradientPicker.render = function(self)

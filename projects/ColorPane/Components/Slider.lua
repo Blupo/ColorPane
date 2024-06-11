@@ -76,9 +76,7 @@ Slider.didMount = function(self)
 end
 
 Slider.willUnmount = function(self)
-    if (self.mousePositionChanged) then
-        self.mousePositionChanged:unsubscribe()
-    end
+    self.mousePositionChanged:unsubscribe()
 end
 
 Slider.render = function(self)
