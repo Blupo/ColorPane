@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.7
         with:
-          submodules: true
+          submodules: recursive
 
       - name: Setup Aftman
         uses: ok-nick/setup-aftman@v0.4.2
