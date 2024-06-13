@@ -2,10 +2,6 @@
     "name": "ColorPane",
 
     "tree": {
-        "$path": "projects/ColorPane",
-
-        "Common": {
-            "$path": "projects/Common"
-        }
+        "$path": "build/ColorPane.project.json"
     }
 }

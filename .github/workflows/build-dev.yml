@@ -1,0 +1,29 @@
+name: Build Development Code
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          repository: develop
+          submodules: true
+
+      - name: Setup Aftman
+        uses: ok-nick/setup-aftman@v0.4.2
+        with:
+          version: v0.3.0
+      
+      - name: Build and Upload ColorPane
+        run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COLORPANE_WORKING_COPY_ASSET_ID }}" build/ColorPane.project.json
+
+      - name: Build and Upload Companion
+        run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COMPANION_WORKING_COPY_ASSET_ID }}" build/Companion.project.json

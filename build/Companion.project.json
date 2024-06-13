@@ -1,0 +1,19 @@
+{
+    "name": "Companion",
+
+    "tree": {
+        "$path": "../projects/Companion",
+
+        "Includes": {
+            "$className": "Folder",
+
+            "ColorPane": {
+                "$path": "ColorPane.project.json"
+            }
+        },
+
+        "Common": {
+            "$path": "../projects/Common"
+        }
+    }
+}

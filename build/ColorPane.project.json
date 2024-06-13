@@ -1,0 +1,11 @@
+{
+    "name": "ColorPane",
+
+    "tree": {
+        "$path": "../projects/ColorPane",
+
+        "Common": {
+            "$path": "../projects/Common"
+        }
+    }
+}
