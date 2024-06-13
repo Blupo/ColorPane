@@ -38,7 +38,9 @@ jobs:
             Companion.rbxm
 
       - name: Build and Upload ColorPane
+        continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COLORPANE_WORKING_COPY_ASSET_ID }}" build/ColorPane.project.json
 
       - name: Build and Upload Companion
+        continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COMPANION_WORKING_COPY_ASSET_ID }}" build/Companion.project.json
