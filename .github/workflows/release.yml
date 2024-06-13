@@ -25,7 +25,7 @@ jobs:
 
       - name: Build Companion for Release
         run: rojo build --output Companion.rbxm build/Companion.project.json
-      
+
       - name: Create Release
         uses: anton-yurchenko/git-release@v6.0.0
         env:
