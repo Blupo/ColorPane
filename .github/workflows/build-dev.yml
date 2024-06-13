@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - develop
+    paths-ignore:
+      - "docs/**"
   workflow_dispatch:
 
 jobs:
