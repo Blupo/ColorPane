@@ -13,19 +13,16 @@ local t = require(Includes.t)
 ---
 
 --[[
-    Checks if a value is a valid RGB tuple. A valid value is: 
-    - An array,
-    - with exactly 3 elements,
-    - whose elements are numbers in the range [0, 1]
+    Checks if a value is a valid RGB tuple (a 3-element array of numbers).
 
     @param value The value to check
     @return If the value is a valid RGB tuple
     @return An error message, if the value was invalid
 ]]
 local rgbTuple = t.strictInterface({
-    [1] = t.numberConstrained(0, 1),
-    [2] = t.numberConstrained(0, 1),
-    [3] = t.numberConstrained(0, 1)
+    [1] = t.number,
+    [2] = t.number,
+    [3] = t.number,
 })
 
 --[[
@@ -193,6 +190,7 @@ local gradientPalette = t.strictInterface({
 
 local UserDataValidators = {
     ColorPalette = colorPalette,
+    GradientPalette = gradientPalette,
 
     --[[
         Checks if a value is valid for the AskNameBeforePaletteCreation value.

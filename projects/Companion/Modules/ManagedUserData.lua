@@ -120,14 +120,55 @@ local initUserData = function(): (CommonTypes.UserData, boolean)
         local modified: boolean = false
 
         for key: string in pairs(CommonEnums.UserDataKey) do
-            -- TODO: examine individual palettes to avoid erasing all of them
             local isValid: boolean, failReason: string? = t.optional(UserDataValidators[key])(savedUserData[key])
 
             if (not isValid) then
-                savedUserData[key] = nil
-                modified = true
+                if (key == CommonEnums.UserDataKey.UserColorPalettes) then
+                    local palettes = savedUserData[key]
+                    local isArrayOfThings: boolean = t.array(t.any)(palettes)
 
-                warn("ColorPane user data value " .. key .. " is invalid and will be replaced, reason is: " .. failReason::string)
+                    -- check if the value is an array
+                    if (not isArrayOfThings) then
+                        savedUserData[key] = nil
+                    else
+                        -- check which elements are non-conformant
+                        for i = #palettes, 1, -1 do
+                            local palette = palettes[i]
+                            local isPalette: boolean = UserDataValidators.ColorPalette(palette)
+
+                            if (not isPalette) then
+                                table.remove(palettes, i)
+                                warn("ColorPane color palette at index " .. i .. " is invalid and will be removed")
+                            end
+                        end
+                    end
+                elseif (key == CommonEnums.UserDataKey.UserGradientPalettes) then
+                    local palettes = savedUserData[key]
+                    local isArrayOfThings: boolean = t.array(t.any)(palettes)
+
+                    -- check if the value is an array
+                    if (not isArrayOfThings) then
+                        savedUserData[key] = nil
+                    else
+                        -- check which elements are non-conformant
+                        for i = #palettes, 1, -1 do
+                            local palette = palettes[i]
+                            local isPalette: boolean = UserDataValidators.GradientPalette(palette)
+
+                            if (not isPalette) then
+                                table.remove(palettes, i)
+                                warn("ColorPane gradient palette at index " .. i .. " is invalid and will be removed")
+                            end
+                        end
+                    end
+                else
+                    savedUserData[key] = nil
+                    warn("ColorPane user data value " .. key .. " is invalid and will be replaced, reason is: " .. failReason::string)
+                end
+
+                modified = true
+            elseif (savedUserData[key] == nil) then
+                modified = true
             end
         end
 

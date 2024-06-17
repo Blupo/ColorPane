@@ -13,6 +13,8 @@
 ### Changed
 #### UX
 - Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
+- Invalid palettes will no longer cause the entire list of palettes to be removed, only the invalid palettes are removed
+- Palette colors are now allowed to have RGB values outside of [0, 1]
 #### API
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
@@ -35,6 +37,10 @@
 - `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
 - `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
 - `API.Unloading` is now deprecated
+
+### Removed
+#### API
+- The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. You will need to add the library to your project to continue using them.
 
 ## [0.4.1] - 2022-09-30
 

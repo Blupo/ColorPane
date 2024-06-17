@@ -7,8 +7,8 @@ local StudioService: StudioService = game:GetService("StudioService")
 
 local Translations: LocalizationTable = script.Parent.Parent.Translations
 
-local fallbackTranslator: Translator = Translations:GetTranslator("en-us")
-local localTranslator: Translator = Translations:GetTranslator(StudioService.StudioLocaleId)
+local fallbackTranslator: Translator = Translations:GetTranslator("en-us")::Translator
+local localTranslator: Translator = Translations:GetTranslator(StudioService.StudioLocaleId)::Translator
 
 ---
 
