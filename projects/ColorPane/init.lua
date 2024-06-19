@@ -1,5 +1,12 @@
 --!strict
--- ColorPane entry point
+--[[
+    v0.5.0
+
+    ColorPane is a suite of color tools for Roblox Studio projects.
+    Learn more here: https://devforum.roblox.com/t/1106112
+
+    Please refer to the documentation for integrating these tools.
+]]
 
 local PluginProvider = require(script.Common.Modules.PluginProvider)
 local ProjectId = require(script.Modules.ProjectId)

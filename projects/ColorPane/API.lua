@@ -1,4 +1,10 @@
 --!strict
+--[[
+    The ColorPane API.
+    
+    Please refer to the documentation for the available API
+    members.
+]]
 
 local root = script.Parent
 local Common = root.Common
