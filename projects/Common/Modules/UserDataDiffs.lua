@@ -124,6 +124,14 @@ UserDataDiffs.GetModifiedValues = function(this: UserData, that: UserData)
         modifiedValues.SnapValue = that.SnapValue
     end
 
+    if (that.AutoLoadColorPropertiesAPIData ~= this.AutoLoadColorPropertiesAPIData) then
+        modifiedValues.AutoLoadColorPropertiesAPIData = that.AutoLoadColorPropertiesAPIData
+    end
+
+    if (that.CacheColorPropertiesAPIData ~= this.CacheColorPropertiesAPIData) then
+        modifiedValues.CacheColorPropertiesAPIData = that.CacheColorPropertiesAPIData
+    end
+
     -- compare palettes
     if (UserDataDiffs.ColorPalettesAreDifferent(this.UserColorPalettes, that.UserColorPalettes)) then
         modifiedValues.UserColorPalettes = that.UserColorPalettes

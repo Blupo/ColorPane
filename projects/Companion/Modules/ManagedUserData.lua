@@ -42,7 +42,12 @@ local migrateLegacyData = function(legacyUserData): (boolean, string | CommonTyp
         SnapValue = t.optional(UserDataValidators.SnapValue),
         UserPalettes = t.optional(UserDataValidators.UserColorPalettes),
         UserGradients = t.optional(UserDataValidators.__legacy_UserGradients),
+        AutoLoadColorProperties = UserDataValidators.AutoLoadColorPropertiesAPIData,
+        CacheAPIData = UserDataValidators.CacheColorPropertiesAPIData,
     })(legacyUserData)
+
+    -- we shouldn't directly modify this data
+    legacyUserData = Util.table.deepCopy(legacyUserData)
 
     if (isValid) then
         local newSettings: CommonTypes.UserData = {
@@ -50,6 +55,8 @@ local migrateLegacyData = function(legacyUserData): (boolean, string | CommonTyp
             SnapValue = legacyUserData.SnapValue,
             UserColorPalettes = legacyUserData.UserPalettes,
             UserGradientPalettes = {},
+            AutoLoadColorPropertiesAPIData = legacyUserData.AutoLoadColorProperties,
+            CacheColorPropertiesAPIData = legacyUserData.CacheAPIData,
         }
         
         if (legacyUserData.UserGradients) then

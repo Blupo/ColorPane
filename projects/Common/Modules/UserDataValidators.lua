@@ -229,6 +229,24 @@ local UserDataValidators = {
     UserGradientPalettes = t.array(gradientPalette),
 
     --[[
+        Checks if a value is valid for the AutoLoadColorPropertiesAPIData value.
+
+        @param value The value to check
+        @return If the value is valid
+        @return An error message, if the value was invalid
+    ]]
+    AutoLoadColorPropertiesAPIData = t.boolean,
+
+    --[[
+        Checks if a value is valid for the CacheColorPropertiesAPIData value.
+
+        @param value The value to check
+        @return If the value is valid
+        @return An error message, if the value was invalid
+    ]]
+    CacheColorPropertiesAPIData = t.boolean,
+
+    --[[
         Checks if a value is a valid legacy gradient palette.
 
         @param value The value to check
@@ -282,6 +300,8 @@ UserDataValidators.UserData = t.interface({
     SnapValue = UserDataValidators.SnapValue,
     UserColorPalettes = UserDataValidators.UserColorPalettes,
     UserGradientPalettes = UserDataValidators.UserGradientPalettes,
+    AutoLoadColorPropertiesAPIData = UserDataValidators.AutoLoadColorPropertiesAPIData,
+    CacheColorPropertiesAPIData = UserDataValidators.CacheColorPropertiesAPIData,
 })
 
 ---

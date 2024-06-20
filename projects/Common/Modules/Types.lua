@@ -40,6 +40,9 @@ export type UserData = {
 
     UserColorPalettes: ColorPalettes,
     UserGradientPalettes: GradientPalettes,
+
+    AutoLoadColorPropertiesAPIData: boolean,
+    CacheColorPropertiesAPIData: boolean,
 }
 
 ---

@@ -1,5 +1,7 @@
 --!strict
--- Cross-project enums
+--[[
+    Enums used by more than one project.
+]]
 
 return {
     UserDataKey = {
@@ -7,6 +9,8 @@ return {
         UserColorPalettes = "UserColorPalettes",
         UserGradientPalettes = "UserGradientPalettes",
         AskNameBeforePaletteCreation = "AskNameBeforePaletteCreation",
+        AutoLoadColorPropertiesAPIData = "AutoLoadColorPropertiesAPIData",
+        CacheColorPropertiesAPIData = "CacheColorPropertiesAPIData",
     },
 
     UserDataError = {

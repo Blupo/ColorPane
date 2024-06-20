@@ -11,4 +11,6 @@ return {
     UserColorPalettes = {},
     UserGradientPalettes = {},
     AskNameBeforePaletteCreation = true,
+    AutoLoadColorPropertiesAPIData = false,
+    CacheColorPropertiesAPIData = false,
 }::Types.UserData
