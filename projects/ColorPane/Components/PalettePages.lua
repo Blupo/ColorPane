@@ -348,7 +348,7 @@ return RoactRodux.connect(function(state)
         palettes = state.colorEditor.palettes,
         upstreamAvailable = state.upstreamAvailable,
         lastPalettePage = state.sessionData.lastPalettePage,
-        askNameBeforePaletteCreation = state.userData[CommonEnums.UserDataKey.AskNameBeforePaletteCreation]
+        askNameBeforePaletteCreation = state.userData[CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation]
     }
 end, function(dispatch)
     return {

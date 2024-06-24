@@ -1,18 +1,22 @@
 --!strict
+--[[
+    A class wrapper for a list of key-value pairs.
+]]
 
 local root = script.Parent.Parent
 
 local Includes = root.Includes
 local Signal = require(Includes.Signal)
+local t = require(Includes.t)
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)
 local Types = require(Modules.Types)
-local UserDataDiffs = require(Modules.UserDataDiffs)
-local UserDataValidators = require(Modules.UserDataValidators)
 local Util = require(Modules.Util)
 
 ---
+
+type Values = Types.UserDataValues
 
 type UserDataImpl = {
     __index: UserDataImpl,
@@ -20,10 +24,18 @@ type UserDataImpl = {
     --[[
         Creates a new UserData.
 
-        @param userData The user data values to operate on
+        @param keys The set of valid user data keys
+        @param validators The set of user data value validators
+        @param diffs The set of custom user data value comparators
+        @param userData The initial set of user data values
         @return A new UserData
     ]]
-    new: (Types.UserData) -> UserData,
+    new: (
+        Values,
+        {[string]: (any) -> (boolean, string?)},
+        {[string]: (any, any) -> boolean},
+        Values
+    ) -> UserData,
 
     --[[
         Retrieves a user data value.
@@ -40,7 +52,7 @@ type UserDataImpl = {
         @param self The UserData to retrieve data from
         @return The user data table
     ]]
-    getAllValues: (UserData) -> Types.UserData,
+    getAllValues: (UserData) -> Values,
 
     --[[
         Updates a user data value.
@@ -57,7 +69,10 @@ type UserDataImpl = {
 
 export type UserData = typeof(setmetatable(
     {}::{
-        __data: Types.UserData,
+        __data: Values,
+        __keys: Values,
+        __validators: {[string]: (any) -> (boolean, string?)},
+        __diffs: {[string]: (any, any) -> boolean},
         __fireValueChanged: Signal.FireSignal<Types.KeyValue>,
 
         --[[
@@ -78,14 +93,28 @@ export type UserData = typeof(setmetatable(
 local UserData: UserDataImpl = {}::UserDataImpl
 UserData.__index = UserData
 
-UserData.new = function(userData: Types.UserData): UserData
-    local userDataIsValid: boolean = UserDataValidators.UserData(userData)
-    assert(userDataIsValid, Enums.UserDataError.InvalidUserData)
+UserData.new = function(
+    keys: Values,
+    validators: {[string]: (any) -> (boolean, string?)},
+    diffs: {[string]: (any, any) -> boolean},
+    userData: Values
+): UserData
+    local userDataIsValidTable = t.keys(t.string)
+    assert(userDataIsValidTable, Enums.UserDataError.InvalidUserData)
+
+    for key, value in pairs(userData) do
+        local validator: (any) -> (boolean, string?) = validators[key]
+        assert(validator, Enums.UserDataError.ValidatorNotFound .. " " .. key)
+        assert(validator(value), Enums.UserDataError.InvalidUserData)
+    end
 
     local valueChangedSignal: Signal.Signal<Types.KeyValue>, fireValueChanged: Signal.FireSignal<Types.KeyValue> = Signal.createSignal()
 
     local self = {
-        __data = userData, 
+        __data = userData,
+        __keys = keys,
+        __validators = validators,
+        __diffs = diffs,
         __fireValueChanged = fireValueChanged,
 
         valueChanged = valueChangedSignal,
@@ -95,7 +124,7 @@ UserData.new = function(userData: Types.UserData): UserData
 end
 
 UserData.getValue = function(self: UserData, key: string): any
-    assert(Enums.UserDataKey[key] ~= nil, Enums.UserDataError.InvalidKey)
+    assert(self.__keys[key], Enums.UserDataError.InvalidKey)
 
     local value = self.__data[key]
 
@@ -106,16 +135,16 @@ UserData.getValue = function(self: UserData, key: string): any
     end
 end
 
-UserData.getAllValues = function(self: UserData): Types.UserData
+UserData.getAllValues = function(self: UserData): Values
     return Util.table.deepCopy(self.__data)
 end
 
 UserData.setValue = function(self: UserData, key: string, value: any): ()
-    assert(Enums.UserDataKey[key] ~= nil, Enums.UserDataError.InvalidKey)
+    assert(self.__keys[key], Enums.UserDataError.InvalidKey)
 
     -- validate value
-    local validator = UserDataValidators[key]
-    assert(validator ~= nil, Enums.UserDataError.ValidatorNotFound)
+    local validator = self.__validators[key]
+    assert(validator, Enums.UserDataError.ValidatorNotFound)
 
     local valueIsValid: boolean = validator(value)
     assert(valueIsValid, Enums.UserDataError.InvalidValue)
@@ -124,10 +153,8 @@ UserData.setValue = function(self: UserData, key: string, value: any): ()
     local originalValue: any = self.__data[key]
     local isSameValue: boolean
 
-    if (key == "UserColorPalettes") then
-        isSameValue = not UserDataDiffs.ColorPalettesAreDifferent(originalValue, value)
-    elseif (key == "UserGradientPalettes") then
-        isSameValue = not UserDataDiffs.GradientPalettesAreDifferent(originalValue, value)
+    if (self.__diffs[key]) then
+        isSameValue = self.__diffs[key](originalValue, value)
     else
         isSameValue = originalValue == value
     end

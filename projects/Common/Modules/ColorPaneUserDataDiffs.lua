@@ -1,4 +1,7 @@
 --!strict
+--[[
+    Functions for comparing ColorPane user data values.
+]]
 
 local Modules = script.Parent
 local Types = require(Modules.Types)
@@ -7,12 +10,12 @@ local Types = require(Modules.Types)
 
 type ColorPalettes = Types.ColorPalettes
 type GradientPalettes = Types.GradientPalettes
-type UserData = Types.UserData
+type ColorPaneUserData = Types.ColorPaneUserData
 
 --[[
     Functions for comparing user data values
 ]]
-local UserDataDiffs = {}
+local ColorPaneUserDataDiffs = {}
 
 --[[
     Checks if two color palettes are different.
@@ -21,7 +24,7 @@ local UserDataDiffs = {}
     @param that The palette to compare
     @return `true` if the palettes are different, `false` otherwise
 ]]
-UserDataDiffs.ColorPalettesAreDifferent = function(this: ColorPalettes, that: ColorPalettes): boolean
+ColorPaneUserDataDiffs.ColorPalettesAreDifferent = function(this: ColorPalettes, that: ColorPalettes): boolean
     if (#that ~= #this) then
         return true
     else
@@ -59,7 +62,7 @@ end
     @param that The palette to compare
     @return `true` if the palettes are different, `false` otherwise
 ]]
-UserDataDiffs.GradientPalettesAreDifferent = function(this: GradientPalettes, that: GradientPalettes): boolean
+ColorPaneUserDataDiffs.GradientPalettesAreDifferent = function(this: GradientPalettes, that: GradientPalettes): boolean
     if (#that ~= #this) then
         return true
     else
@@ -112,7 +115,7 @@ end
     @param that The values to compare
     @return A table containing the differing values between `this` and `that`, whose values come from `that`
 ]]
-UserDataDiffs.GetModifiedValues = function(this: UserData, that: UserData)
+ColorPaneUserDataDiffs.GetModifiedValues = function(this: ColorPaneUserData, that: ColorPaneUserData)
     local modifiedValues = {}
 
     -- compare non-palettes
@@ -124,20 +127,12 @@ UserDataDiffs.GetModifiedValues = function(this: UserData, that: UserData)
         modifiedValues.SnapValue = that.SnapValue
     end
 
-    if (that.AutoLoadColorPropertiesAPIData ~= this.AutoLoadColorPropertiesAPIData) then
-        modifiedValues.AutoLoadColorPropertiesAPIData = that.AutoLoadColorPropertiesAPIData
-    end
-
-    if (that.CacheColorPropertiesAPIData ~= this.CacheColorPropertiesAPIData) then
-        modifiedValues.CacheColorPropertiesAPIData = that.CacheColorPropertiesAPIData
-    end
-
     -- compare palettes
-    if (UserDataDiffs.ColorPalettesAreDifferent(this.UserColorPalettes, that.UserColorPalettes)) then
+    if (ColorPaneUserDataDiffs.ColorPalettesAreDifferent(this.UserColorPalettes, that.UserColorPalettes)) then
         modifiedValues.UserColorPalettes = that.UserColorPalettes
     end
 
-    if (UserDataDiffs.GradientPalettesAreDifferent(this.UserGradientPalettes, that.UserGradientPalettes)) then
+    if (ColorPaneUserDataDiffs.GradientPalettesAreDifferent(this.UserGradientPalettes, that.UserGradientPalettes)) then
         modifiedValues.UserGradientPalettes = that.UserGradientPalettes
     end
 
@@ -146,4 +141,4 @@ end
 
 ---
 
-return UserDataDiffs
+return ColorPaneUserDataDiffs

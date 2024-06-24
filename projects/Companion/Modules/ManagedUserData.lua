@@ -1,5 +1,7 @@
 --!strict
--- Manages the initialisation and synchronisation of user data
+--[[
+    Manages the initialisation and synchronisation of user data
+]]
 
 local root = script.Parent.Parent
 local Common = root.Common
@@ -9,16 +11,21 @@ local Cryo = require(CommonIncludes.Cryo)
 local t = require(CommonIncludes.t)
 
 local CommonModules = Common.Modules
+local ColorPaneUserDataDefaultValues = require(CommonModules.ColorPaneUserDataDefaultValues)
+local ColorPaneUserDataDiffs = require(CommonModules.ColorPaneUserDataDiffs)
+local ColorPaneUserDataFactory = require(CommonModules.ColorPaneUserDataFactory)
+local ColorPaneUserDataValidators = require(CommonModules.ColorPaneUserDataValidators)
 local CommonEnums = require(CommonModules.Enums)
 local CommonTypes = require(CommonModules.Types)
-local DefaultUserData = require(CommonModules.DefaultUserData)
 local PluginProvider = require(CommonModules.PluginProvider)
 local UserData = require(CommonModules.UserData)
-local UserDataValidators = require(CommonModules.UserDataValidators)
 local Util = require(CommonModules.Util)
 
 local Modules = root.Modules
+local CompanionUserDataDefaultValues = require(Modules.CompanionUserDataDefaultValues)
 local Constants = require(Modules.Constants)
+local Enums = require(Modules.Enums)
+local Types = require(Modules.Types)
 local UserDataSynchroniser = require(Modules.UserDataSynchroniser)
 
 ---
@@ -26,35 +33,40 @@ local UserDataSynchroniser = require(Modules.UserDataSynchroniser)
 local LEGACY_USERDATA_KEY: string = "ColorPane_Settings"
 local LEGACY_USERDATA_BACKUP_KEY: string = "ColorPane_Settings_Backup"
 
-local userDataObj: UserData.UserData
+local colorPaneUserDataObj: UserData.UserData
+local companionUserDataObj: UserData.UserData
 local plugin: Plugin = PluginProvider()
 
 --[[
-    Migrates legacy ColorPane user data to the current format.
+    Migrates legacy ColorPane user data to the current format,
+    and returns the user data values.
 
     @param legacyUserData The user data in an old format
-    @return If the migration was successful
-    @return The user data in the current format if the migration was successful. Otherwise, an error message.
+    @return The set of ColorPane user data values
+    @return The set of Companion user data values
 ]]
-local migrateLegacyData = function(legacyUserData): (boolean, string | CommonTypes.UserData)
-    local isValid: boolean, failReason: string? = t.interface({
-        AskNameBeforePaletteCreation = t.optional(UserDataValidators.AskNameBeforePaletteCreation),
-        SnapValue = t.optional(UserDataValidators.SnapValue),
-        UserPalettes = t.optional(UserDataValidators.UserColorPalettes),
-        UserGradients = t.optional(UserDataValidators.__legacy_UserGradients),
-        AutoLoadColorProperties = UserDataValidators.AutoLoadColorPropertiesAPIData,
-        CacheAPIData = UserDataValidators.CacheColorPropertiesAPIData,
-    })(legacyUserData)
-
+local migrateLegacyData = function(legacyUserData): (CommonTypes.ColorPaneUserData, Types.CompanionUserData)
     -- we shouldn't directly modify this data
     legacyUserData = Util.table.deepCopy(legacyUserData)
+    
+    local isValid: boolean, failReason: string? = t.interface({
+        AskNameBeforePaletteCreation = t.optional(ColorPaneUserDataValidators.AskNameBeforePaletteCreation),
+        SnapValue = t.optional(ColorPaneUserDataValidators.SnapValue),
+        UserPalettes = t.optional(ColorPaneUserDataValidators.UserColorPalettes),
+        UserGradients = t.optional(ColorPaneUserDataValidators.__userGradients),
+        AutoLoadColorProperties = t.optional(t.boolean),
+        CacheAPIData = t.optional(t.boolean),
+    })(legacyUserData)
 
     if (isValid) then
-        local newSettings: CommonTypes.UserData = {
+        local newColorPaneValues: CommonTypes.ColorPaneUserData = {
             AskNameBeforePaletteCreation = legacyUserData.AskNameBeforePaletteCreation,
             SnapValue = legacyUserData.SnapValue,
             UserColorPalettes = legacyUserData.UserPalettes,
             UserGradientPalettes = {},
+        }
+
+        local newCompanionValues: Types.CompanionUserData = {
             AutoLoadColorPropertiesAPIData = legacyUserData.AutoLoadColorProperties,
             CacheColorPropertiesAPIData = legacyUserData.CacheAPIData,
         }
@@ -77,71 +89,49 @@ local migrateLegacyData = function(legacyUserData): (boolean, string | CommonTyp
                 newPalette.gradients[i] = gradient
             end
 
-            newSettings.UserGradientPalettes = {newPalette}
+            newColorPaneValues.UserGradientPalettes = {newPalette}
         end
 
-        return true, newSettings
+        return newColorPaneValues, newCompanionValues
     else
-        return false, failReason::string
+        error("Could not migrate old ColorPane user data: " .. failReason::string)
     end
 end
 
 --[[
-    Initialises user data.
+    Initialises ColorPane user data.
 
-    @return If the current user data should be overwritten
-    @return The user's data
+    @param userData The current ColorPane user data
+    @return The user's ColorPane data
+    @return If the current ColorPane data should be overwritten
 ]]
-local initUserData = function(): (CommonTypes.UserData, boolean)
-    local defaultUserDataCopy: CommonTypes.UserData = Util.table.deepCopy(DefaultUserData)
-    local legacyUserData = plugin:GetSetting(LEGACY_USERDATA_KEY)
-
-    if (legacyUserData) then
-        -- migrate old data
-        local migrationSuccess: boolean, data = migrateLegacyData(legacyUserData)
-
-        if (not migrationSuccess) then
-            error("Could not migrate old ColorPane user data: " .. data::string)
-        else
-            plugin:SetSetting(LEGACY_USERDATA_BACKUP_KEY, legacyUserData)
-            plugin:SetSetting(LEGACY_USERDATA_KEY, nil)
-
-            print("Successfully migrated user data, a backup is available under the setting key "
-                .. LEGACY_USERDATA_BACKUP_KEY .. " if something went wrong")
-            
-            return Cryo.Dictionary.join(defaultUserDataCopy, data::CommonTypes.UserData), true
-        end
-    end
-
-    local savedUserData = plugin:GetSetting(Constants.USERDATA_KEY)
-
-    if (savedUserData == nil) then
-        -- saved data is missing
-        return defaultUserDataCopy, true
-    elseif (type(savedUserData) ~= "table") then
-        -- saved data is invalid
+local initColorPaneUserData = function(userData, colorPaneDefaultUserDataValues): (CommonTypes.ColorPaneUserData, boolean)
+    if (userData == nil) then
+        return colorPaneDefaultUserDataValues, true
+    elseif (type(userData) ~= "table") then
         warn("ColorPane user data is invalid and will be re-created")
-        return defaultUserDataCopy, true
+        return colorPaneDefaultUserDataValues, true
     else
         -- check for missing or invalid values
         local modified: boolean = false
 
-        for key: string in pairs(CommonEnums.UserDataKey) do
-            local isValid: boolean, failReason: string? = t.optional(UserDataValidators[key])(savedUserData[key])
+        for key: string in pairs(CommonEnums.ColorPaneUserDataKey) do
+            local isValid: boolean, failReason: string? =
+                t.optional(ColorPaneUserDataValidators[key])(userData[key])
 
             if (not isValid) then
-                if (key == CommonEnums.UserDataKey.UserColorPalettes) then
-                    local palettes = savedUserData[key]
+                if (key == CommonEnums.ColorPaneUserDataKey.UserColorPalettes) then
+                    local palettes = userData[key]
                     local isArrayOfThings: boolean = t.array(t.any)(palettes)
 
                     -- check if the value is an array
                     if (not isArrayOfThings) then
-                        savedUserData[key] = nil
+                        userData[key] = nil
                     else
                         -- check which elements are non-conformant
                         for i = #palettes, 1, -1 do
                             local palette = palettes[i]
-                            local isPalette: boolean = UserDataValidators.ColorPalette(palette)
+                            local isPalette: boolean = ColorPaneUserDataValidators.ColorPalette(palette)
 
                             if (not isPalette) then
                                 table.remove(palettes, i)
@@ -149,18 +139,18 @@ local initUserData = function(): (CommonTypes.UserData, boolean)
                             end
                         end
                     end
-                elseif (key == CommonEnums.UserDataKey.UserGradientPalettes) then
-                    local palettes = savedUserData[key]
+                elseif (key == CommonEnums.ColorPaneUserDataKey.UserGradientPalettes) then
+                    local palettes = userData[key]
                     local isArrayOfThings: boolean = t.array(t.any)(palettes)
 
                     -- check if the value is an array
                     if (not isArrayOfThings) then
-                        savedUserData[key] = nil
+                        userData[key] = nil
                     else
                         -- check which elements are non-conformant
                         for i = #palettes, 1, -1 do
                             local palette = palettes[i]
-                            local isPalette: boolean = UserDataValidators.GradientPalette(palette)
+                            local isPalette: boolean = ColorPaneUserDataValidators.GradientPalette(palette)
 
                             if (not isPalette) then
                                 table.remove(palettes, i)
@@ -169,32 +159,157 @@ local initUserData = function(): (CommonTypes.UserData, boolean)
                         end
                     end
                 else
-                    savedUserData[key] = nil
+                    userData[key] = nil
                     warn("ColorPane user data value " .. key .. " is invalid and will be replaced, reason is: " .. failReason::string)
                 end
 
                 modified = true
-            elseif (savedUserData[key] == nil) then
+            elseif (userData[key] == nil) then
                 modified = true
             end
         end
 
         if (modified) then
-            return Cryo.Dictionary.join(defaultUserDataCopy, savedUserData), true
+            return Cryo.Dictionary.join(colorPaneDefaultUserDataValues, userData), true
         else
-            return savedUserData, false
+            return userData, false
         end
     end
+end
+
+--[[
+    Initialises Companion user data.
+
+    @param userData The current Companion user data
+    @return The user's Companion data
+    @return If the current Companion data should be overwritten
+]]
+local initCompanionUserData = function(userData, companionDefaultUserDataValues): (Types.CompanionUserData, boolean)
+    if (userData == nil) then
+        return companionDefaultUserDataValues, false
+    elseif (type(userData) ~= "table") then
+        warn("ColorPane user data is invalid and will be re-created")
+        return companionDefaultUserDataValues, false
+    else
+        -- check for missing or invalid values
+        local modified: boolean = false
+
+        for key: string in pairs(CommonEnums.ColorPaneUserDataKey) do
+            local isValid: boolean, failReason: string? =
+                t.optional(ColorPaneUserDataValidators[key])(userData[key])
+
+            if (not isValid) then
+                userData[key] = nil
+                modified = true
+                warn("Companion user data value " .. key .. " is invalid and will be replaced, reason is: " .. failReason::string)
+            elseif (userData[key] == nil) then
+                modified = true
+            end
+        end
+
+        if (modified) then
+            return Cryo.Dictionary.join(companionDefaultUserDataValues, userData), true
+        else
+            return userData, false
+        end
+    end  
+end
+
+--[[
+    Initialises user data.
+
+    @return The user's ColorPane data
+    @return If the current ColorPane data should be overwritten
+    @return The user's Companion data
+    @return If the current Companion user data should be overwritten
+]]
+local initUserData = function(): (CommonTypes.ColorPaneUserData, boolean, Types.CompanionUserData, boolean)
+    local colorPaneDefaultUserDataValues = Util.table.deepCopy(ColorPaneUserDataDefaultValues)
+    local companionDefaultUserDataValues = Util.table.deepCopy(CompanionUserDataDefaultValues)
+    local legacyUserData = plugin:GetSetting(LEGACY_USERDATA_KEY)
+
+    -- if there's legacy user data, we'll migrate it
+    -- and skip the rest of the initialisation
+    if (legacyUserData) then
+        local colorPaneUserData, companionUserData = migrateLegacyData(legacyUserData)
+
+        plugin:SetSetting(LEGACY_USERDATA_BACKUP_KEY, legacyUserData)
+        plugin:SetSetting(LEGACY_USERDATA_KEY, nil)
+
+        print("Successfully migrated user data, a backup is available under the setting key "
+            .. LEGACY_USERDATA_BACKUP_KEY .. " if something went wrong")
+        
+        return
+            Cryo.Dictionary.join(colorPaneDefaultUserDataValues, colorPaneUserData), true,
+            Cryo.Dictionary.join(companionDefaultUserDataValues, companionUserData), true
+    end
+
+    -- the rest of the initialisation
+    local savedColorPaneUserData = plugin:GetSetting(Constants.COLORPANE_USERDATA_KEY)
+    local savedCompanionUserData = plugin:GetSetting(Constants.COMPANION_USERDATA_KEY)
+
+    local colorPaneUserData, overwriteColorPaneUserData =
+        initColorPaneUserData(savedColorPaneUserData, colorPaneDefaultUserDataValues)
+
+    local companionUserData, overwriteCompanionUserData =
+        initCompanionUserData(savedCompanionUserData, companionDefaultUserDataValues)
+    
+    return
+        colorPaneUserData, overwriteColorPaneUserData,
+        companionUserData, overwriteCompanionUserData
 end
 
 ---
 
 do
-    local userData: CommonTypes.UserData, initialWrite: boolean = initUserData()
-    userData[Constants.META_UPDATE_SOURCE_KEY] = nil
+    local colorPaneUserData, colorPaneInitialWrite,
+        companionUserData, companionInitialWrite = initUserData()
 
-    userDataObj = UserData.new(userData)
-    UserDataSynchroniser(userDataObj, initialWrite)
+    colorPaneUserData[Constants.META_UPDATE_SOURCE_KEY] = nil
+    companionUserData[Constants.META_UPDATE_SOURCE_KEY] = nil
+
+    colorPaneUserDataObj = ColorPaneUserDataFactory(colorPaneUserData)
+
+    companionUserDataObj = UserData.new(
+        Enums.CompanionUserDataKey,
+
+        {
+            [Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] = t.boolean,
+            [Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] = t.boolean,
+        },
+
+        {},
+        companionUserData
+    )
+
+    UserDataSynchroniser.new(
+        colorPaneUserDataObj,
+        Constants.COLORPANE_USERDATA_KEY,
+        ColorPaneUserDataDiffs.GetModifiedValues,
+        colorPaneInitialWrite
+    )
+
+    UserDataSynchroniser.new(
+        companionUserDataObj,
+        Constants.COMPANION_USERDATA_KEY,
+
+        function(this, that)
+            return {
+                [Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] = if
+                    this[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] == that[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData]
+                then nil else that[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData],
+
+                [Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] = if
+                    this[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] == that[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData]
+                then nil else that[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData],
+            }
+        end,
+
+        companionInitialWrite
+    )
 end
 
-return userDataObj
+return {
+    ColorPane = colorPaneUserDataObj,
+    Companion = companionUserDataObj,
+}

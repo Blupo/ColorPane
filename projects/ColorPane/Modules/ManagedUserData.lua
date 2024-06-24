@@ -4,8 +4,9 @@
 local root = script.Parent.Parent
 
 local CommonModules = root.Common.Modules
+local ColorPaneUserDataDefaultValues = require(CommonModules.ColorPaneUserDataDefaultValues)
+local ColorPaneUserDataFactory = require(CommonModules.ColorPaneUserDataFactory)
 local CommonTypes = require(CommonModules.Types)
-local DefaultUserData = require(CommonModules.DefaultUserData)
 local PluginProvider = require(CommonModules.PluginProvider)
 local UserData = require(CommonModules.UserData)
 local Util = require(CommonModules.Util)
@@ -26,12 +27,12 @@ local availabilityChangedSubscription
 
 do
     -- initialise user data
-    local gotValues: boolean, data: string | CommonTypes.UserData = pcall(UpstreamUserData.GetAllValues)
+    local gotValues: boolean, data: string | CommonTypes.ColorPaneUserData = pcall(UpstreamUserData.GetAllValues)
 
     if (gotValues) then
-        userData = UserData.new(data::CommonTypes.UserData)
+        userData = ColorPaneUserDataFactory(data::CommonTypes.ColorPaneUserData)
     else
-        userData = UserData.new(Util.table.deepCopy(DefaultUserData))
+        userData = ColorPaneUserDataFactory(Util.table.deepCopy(ColorPaneUserDataDefaultValues))
     end
 
     -- subscribe to events

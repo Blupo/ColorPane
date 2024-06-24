@@ -1,11 +1,21 @@
 --!strict
--- Common Luau types used in the projects
 
+--[[
+    Represents the set of values used in UserData.
+]]
+export type UserDataValues = {[string]: any}
+
+--[[
+    Represents a key-value pair.
+]]
 export type KeyValue = {
     Key: string,
     Value: any
 }
 
+--[[
+    Represents a raw color palette.
+]]
 export type ColorPalette = {
     name: string,
 
@@ -15,6 +25,9 @@ export type ColorPalette = {
     }},
 }
 
+--[[
+    Represents a raw gradient palette.
+]]
 export type GradientPalette = {
     name: string,
     
@@ -31,18 +44,25 @@ export type GradientPalette = {
     }}
 }
 
+--[[
+    An array of raw color palettes.
+]]
 export type ColorPalettes = {ColorPalette}
+
+--[[
+    An array of raw gradient palettes.
+]]
 export type GradientPalettes = {GradientPalette}
 
-export type UserData = {
+--[[
+    User data values for ColorPane.
+]]
+export type ColorPaneUserData = {
     AskNameBeforePaletteCreation: boolean,
     SnapValue: number,
 
     UserColorPalettes: ColorPalettes,
     UserGradientPalettes: GradientPalettes,
-
-    AutoLoadColorPropertiesAPIData: boolean,
-    CacheColorPropertiesAPIData: boolean,
 }
 
 ---

@@ -4,7 +4,7 @@ local root = script.Parent.Parent
 
 local CommonModules = root.Common.Modules
 local CommonUtil = require(CommonModules.Util)
-local UserDataValidators = require(CommonModules.UserDataValidators)
+local ColorPaneUserDataValidators = require(CommonModules.ColorPaneUserDataValidators)
 
 local Includes = script.Parent.Parent.Includes
 local ColorLib = require(Includes.Color)
@@ -113,7 +113,7 @@ end
 
 Util.palette.validate = function(palette: any): (boolean, string?)
     -- type check
-    local typeCheckSuccess, message = UserDataValidators.ColorPalette(palette)
+    local typeCheckSuccess, message = ColorPaneUserDataValidators.__colorPalette(palette)
     if (not typeCheckSuccess) then return false, message end
 
     -- check for "blank" name

@@ -64,8 +64,8 @@ local initialState: {[any]: any} = {
     upstreamAvailable = UpstreamUserData.IsAvailable(),
 
     userData = {
-        [CommonEnums.UserDataKey.SnapValue] = ManagedUserData:getValue(CommonEnums.UserDataKey.SnapValue),
-        [CommonEnums.UserDataKey.AskNameBeforePaletteCreation] = ManagedUserData:getValue(CommonEnums.UserDataKey.AskNameBeforePaletteCreation)
+        [CommonEnums.ColorPaneUserDataKey.SnapValue] = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.SnapValue),
+        [CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation] = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation)
     },
 
     sessionData = {
@@ -100,8 +100,8 @@ local initialState: {[any]: any} = {
 
 -- we need to convert the palettes to use the correct formats
 do
-    local userColorPalettes = ManagedUserData:getValue(CommonEnums.UserDataKey.UserColorPalettes)
-    local userGradientPalettes = ManagedUserData:getValue(CommonEnums.UserDataKey.UserGradientPalettes)
+    local userColorPalettes = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes)
+    local userGradientPalettes = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes)
 
     for i = 1, #userColorPalettes do
         convertColorPaletteToColor3s(userColorPalettes[i])
@@ -133,15 +133,15 @@ valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
     local key: string = value.Key
 
     if (
-        (key == CommonEnums.UserDataKey.SnapValue) or
-        (key == CommonEnums.UserDataKey.AskNameBeforePaletteCreation)
+        (key == CommonEnums.ColorPaneUserDataKey.SnapValue) or
+        (key == CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation)
     ) then
         Store:dispatch({
             type = Enums.StoreActionType.UpdateUserData,
             key = key,
             value = value.Value,
         })
-    elseif (key == CommonEnums.UserDataKey.UserColorPalettes) then
+    elseif (key == CommonEnums.ColorPaneUserDataKey.UserColorPalettes) then
         local palettes: table = Util.table.deepCopy(value.Value)
 
         for i = 1, #palettes do
@@ -152,7 +152,7 @@ valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
             type = Enums.StoreActionType.ColorEditor_SetPalettes,
             palettes = palettes,
         })
-    elseif (key == CommonEnums.UserDataKey.UserGradientPalettes) then
+    elseif (key == CommonEnums.ColorPaneUserDataKey.UserGradientPalettes) then
         local palettes: table = Util.table.deepCopy(value.Value)
 
         for i = 1, #palettes do

@@ -18,10 +18,10 @@ local Includes = root.Includes
 local InitColorPane = require(Includes.ColorPane)
 
 local Modules = root.Modules
+require(Modules.ColorPaneUserDataInterface)
 require(Modules.ManagedUserData)
 local Store = require(Modules.Store)
 local Toolbar = require(Modules.Toolbar)
-require(Modules.UserDataInterface)
 local WidgetInfo = require(Modules.WidgetInfo)
 
 ---

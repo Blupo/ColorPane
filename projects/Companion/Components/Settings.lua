@@ -9,7 +9,7 @@ local Common = root.Common
 
 local CommonModules = Common.Modules
 local Constants = require(CommonModules.Constants)
-local Enums = require(CommonModules.Enums)
+local CommonEnums = require(CommonModules.Enums)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 
@@ -28,15 +28,19 @@ local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
 local Modules = root.Modules
+local Enums = require(Modules.Enums)
 local ManagedUserData = require(Modules.ManagedUserData)
 
 ---
 
-local SETTINGS_LIST = {
-    [Enums.UserDataKey.AskNameBeforePaletteCreation] = true,
-    [Enums.UserDataKey.SnapValue] = true,
-    [Enums.UserDataKey.AutoLoadColorPropertiesAPIData] = true,
-    [Enums.UserDataKey.CacheColorPropertiesAPIData] = true,
+local COLORPANE_SETTINGS_LIST = {
+    [CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation] = true,
+    [CommonEnums.ColorPaneUserDataKey.SnapValue] = true,
+}
+
+local COMPANION_SETTINGS_LIST = {
+    [Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] = true,
+    [Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] = true,
 }
 
 local UI_TRANSLATIONS = Translator.GenerateTranslationTable({
@@ -44,6 +48,9 @@ local UI_TRANSLATIONS = Translator.GenerateTranslationTable({
     "AutoLoadColorProperties_SettingDescription",
     "CacheAPIData_SettingDescription",
 })
+
+local colorPaneUserData = ManagedUserData.ColorPane
+local companionUserData = ManagedUserData.Companion
 
 local round = function(n: number, optionalE: number?): number
     local e: number = optionalE or 0
@@ -119,8 +126,12 @@ local Settings = Roact.PureComponent:extend("Settings")
 Settings.init = function(self)
     local initSettings = {}
 
-    for key in pairs(SETTINGS_LIST) do
-        initSettings[key] = ManagedUserData:getValue(key)
+    for key in pairs(COLORPANE_SETTINGS_LIST) do
+        initSettings[key] = colorPaneUserData:getValue(key)
+    end
+
+    for key in pairs(COMPANION_SETTINGS_LIST) do
+        initSettings[key] = companionUserData:getValue(key)
     end
 
     self.listLength, self.updateListLength = Roact.createBinding(0)
@@ -128,9 +139,18 @@ Settings.init = function(self)
 end
 
 Settings.didMount = function(self)
-    self.valueChanged = ManagedUserData.valueChanged:subscribe(function(setting)
+    self.colorPaneValueChanged = colorPaneUserData.valueChanged:subscribe(function(setting)
         local key, newValue = setting.Key, setting.Value
-        if (not SETTINGS_LIST[key]) then return end
+        if (not COLORPANE_SETTINGS_LIST[key]) then return end
+        
+        self:setState({
+            [key] = newValue,
+        })
+    end)
+
+    self.companionValueChanged = companionUserData.valueChanged:subscribe(function(setting)
+        local key, newValue = setting.Key, setting.Value
+        if (not COMPANION_SETTINGS_LIST[key]) then return end
         
         self:setState({
             [key] = newValue,
@@ -143,7 +163,8 @@ Settings.willUnmount = function(self)
         self.state.restorePromptSubscription:unsubscribe()
     end
 
-    self.valueChanged:unsubscribe()
+    self.colorPaneValueChanged:unsubscribe()
+    self.companionValueChanged:unsubscribe()
 end
 
 Settings.render = function(self)
@@ -185,11 +206,11 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardInputHeight),
             LayoutOrder = 2,
             
-            value = self.state[Enums.UserDataKey.AskNameBeforePaletteCreation],
+            value = self.state[CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation],
             text = UI_TRANSLATIONS["AskNameBeforePaletteCreation_SettingDescription"],
 
             onChecked = function(newValue)
-                ManagedUserData:setValue(Enums.UserDataKey.AskNameBeforePaletteCreation, newValue)
+                colorPaneUserData:setValue(CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation, newValue)
             end,
         }),
 
@@ -216,7 +237,7 @@ Settings.render = function(self)
                 Size = UDim2.new(0, 40, 1, 0),
                 Position = UDim2.new(0, 0, 0.5, 0),
 
-                Text = self.state[Enums.UserDataKey.SnapValue] * 100,
+                Text = self.state[CommonEnums.ColorPaneUserDataKey.SnapValue] * 100,
                 TextXAlignment = Enum.TextXAlignment.Center,
 
                 isTextAValidValue = function(text)
@@ -232,7 +253,7 @@ Settings.render = function(self)
                     n = math.clamp(n / 100, Constants.MIN_SNAP_VALUE, Constants.MAX_SNAP_VALUE)
                     n = round(n, math.log10(Constants.MIN_SNAP_VALUE))
 
-                    ManagedUserData:setValue(Enums.UserDataKey.SnapValue, n)
+                    colorPaneUserData:setValue(CommonEnums.ColorPaneUserDataKey.SnapValue, n)
                 end,
             })
         }),
@@ -246,11 +267,11 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             LayoutOrder = 5,
             
-            value = self.state[Enums.UserDataKey.AutoLoadColorPropertiesAPIData],
+            value = self.state[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData],
             text = UI_TRANSLATIONS["AutoLoadColorProperties_SettingDescription"],
 
             onChecked = function(newValue)
-                ManagedUserData:setValue(Enums.UserDataKey.AutoLoadColorPropertiesAPIData, newValue)
+                companionUserData:setValue(Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData, newValue)
             end,
         }),
 
@@ -258,11 +279,11 @@ Settings.render = function(self)
             Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize * 2),
             LayoutOrder = 6,
             
-            value = self.state[Enums.UserDataKey.CacheColorPropertiesAPIData],
+            value = self.state[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData],
             text = UI_TRANSLATIONS["CacheAPIData_SettingDescription"],
 
             onChecked = function(newValue)
-                ManagedUserData:setValue(Enums.UserDataKey.CacheColorPropertiesAPIData, newValue)
+                companionUserData:setValue(Enums.CompanionUserDataKey.CacheColorPropertiesAPIData, newValue)
             end,
         }),
     })

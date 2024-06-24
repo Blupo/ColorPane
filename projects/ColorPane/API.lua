@@ -565,7 +565,7 @@ Store.changed:connect(function(newState, oldState)
             end
         end
 
-        ManagedUserData:setValue(CommonEnums.UserDataKey.UserColorPalettes, newPalettes)
+        ManagedUserData:setValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes, newPalettes)
     end
 
     -- update gradient palettes
@@ -591,7 +591,7 @@ Store.changed:connect(function(newState, oldState)
             end
         end
 
-        ManagedUserData:setValue(CommonEnums.UserDataKey.UserGradientPalettes, newPalettes)
+        ManagedUserData:setValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes, newPalettes)
     end
 end)
 

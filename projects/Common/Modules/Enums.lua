@@ -4,13 +4,11 @@
 ]]
 
 return {
-    UserDataKey = {
+    ColorPaneUserDataKey = {
         SnapValue = "SnapValue",
         UserColorPalettes = "UserColorPalettes",
         UserGradientPalettes = "UserGradientPalettes",
         AskNameBeforePaletteCreation = "AskNameBeforePaletteCreation",
-        AutoLoadColorPropertiesAPIData = "AutoLoadColorPropertiesAPIData",
-        CacheColorPropertiesAPIData = "CacheColorPropertiesAPIData",
     },
 
     UserDataError = {

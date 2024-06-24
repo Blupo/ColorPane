@@ -990,7 +990,7 @@ return RoactRodux.connect(function(state)
         colorSpace = state.gradientEditor.colorSpace,
         hueAdjustment = state.gradientEditor.hueAdjustment,
         precision = state.gradientEditor.precision,
-        timeSnapValue = state.userData[CommonEnums.UserDataKey.SnapValue],
+        timeSnapValue = state.userData[CommonEnums.ColorPaneUserDataKey.SnapValue],
     }
 end, function(dispatch)
     return {
@@ -1017,7 +1017,7 @@ end, function(dispatch)
         setSnapValue = function(snapValue)
             dispatch({
                 type = Enums.StoreActionType.UpdateUserData,
-                key = CommonEnums.UserDataKey.SnapValue,
+                key = CommonEnums.ColorPaneUserDataKey.SnapValue,
                 value = snapValue
             })
         end,

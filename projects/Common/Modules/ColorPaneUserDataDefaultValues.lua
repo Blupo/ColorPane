@@ -1,5 +1,7 @@
 --!strict
--- Provides the default user data for ColorPane instances
+--[[
+    Provides the default user data values for ColorPane user data.
+]]
 
 local Modules = script.Parent
 local Types = require(Modules.Types)
@@ -11,6 +13,4 @@ return {
     UserColorPalettes = {},
     UserGradientPalettes = {},
     AskNameBeforePaletteCreation = true,
-    AutoLoadColorPropertiesAPIData = false,
-    CacheColorPropertiesAPIData = false,
-}::Types.UserData
+}::Types.ColorPaneUserData

@@ -12,10 +12,10 @@ local root = script.Parent.Parent
 
 local Common = root.Common
 local CommonModules = Common.Modules
+local ColorPaneUserDataInterfaceValidator = require(CommonModules.ColorPaneUserDataInterfaceValidator)
+local ColorPaneUserDataInterfaceVersion = require(CommonModules.ColorPaneUserDataInterfaceVersion)
 local CommonTypes = require(CommonModules.Types)
 local PluginProvider = require(CommonModules.PluginProvider)
-local UserDataInterfaceValidator = require(CommonModules.UserDataInterfaceValidator)
-local UserDataInterfaceVersion = require(CommonModules.UserDataInterfaceVersion)
 
 local Modules = root.Modules
 local ManagedUserData = require(Modules.ManagedUserData)
@@ -23,6 +23,7 @@ local ManagedUserData = require(Modules.ManagedUserData)
 ---
 
 local plugin: Plugin = PluginProvider()
+local colorPaneUserData = ManagedUserData.ColorPane
 
 local interfaceFolder: Folder = Instance.new("Folder")
 local getVersionFunction: BindableFunction = Instance.new("BindableFunction")
@@ -34,22 +35,22 @@ local valueChangedEvent: BindableEvent = Instance.new("BindableEvent")
 ---
 
 getVersionFunction.OnInvoke = function(): number
-    return UserDataInterfaceVersion
+    return ColorPaneUserDataInterfaceVersion
 end
 
 getValueFunction.OnInvoke = function(key: string): any
-    return ManagedUserData:getValue(key)
+    return colorPaneUserData:getValue(key)
 end
 
-getAllValuesFunction.OnInvoke = function(): CommonTypes.UserData
-    return ManagedUserData:getAllValues()
+getAllValuesFunction.OnInvoke = function(): CommonTypes.ColorPaneUserData
+    return colorPaneUserData:getAllValues()
 end
 
 setValueFunction.OnInvoke = function(key: string, value: any): ()
-    ManagedUserData:setValue(key, value)
+    colorPaneUserData:setValue(key, value)
 end
 
-local valueChangedSubscription = ManagedUserData.valueChanged:subscribe(function(value: CommonTypes.KeyValue)
+local valueChangedSubscription = colorPaneUserData.valueChanged:subscribe(function(value: CommonTypes.KeyValue)
     valueChangedEvent:Fire(value)
 end)
 
@@ -77,7 +78,7 @@ valueChangedEvent.Parent = interfaceFolder
 
 -- check if the interface is valid before we put it out into the world
 do
-    local interfaceIsValid: boolean, invalidReason: string? = UserDataInterfaceValidator(interfaceFolder)
+    local interfaceIsValid: boolean, invalidReason: string? = ColorPaneUserDataInterfaceValidator(interfaceFolder)
 
     if (not interfaceIsValid) then
         error("[CPCompanion] The user data interface is invalid: " .. invalidReason::string)
@@ -88,6 +89,11 @@ end
 
 plugin.Unloading:Connect(function()
     valueChangedSubscription:unsubscribe()
+    getVersionFunction:Destroy()
+    getValueFunction:Destroy()
+    getAllValuesFunction:Destroy()
+    setValueFunction:Destroy()
+    valueChangedEvent:Destroy()
     interfaceFolder:Destroy()
 end)
 

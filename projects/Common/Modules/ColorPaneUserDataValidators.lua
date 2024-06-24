@@ -1,10 +1,13 @@
 --!strict
--- Run-time validators for user data values
+--[[
+    Defines the set of validators for ColorPane user data values.
+]]
 
 local root = script.Parent.Parent
 
 local Modules = root.Modules
 local Constants = require(Modules.Constants)
+local Enums = require(Modules.Enums)
 local Util = require(Modules.Util)
 
 local Includes = root.Includes
@@ -188,9 +191,9 @@ local gradientPalette = t.strictInterface({
 
 ---
 
-local UserDataValidators = {
-    ColorPalette = colorPalette,
-    GradientPalette = gradientPalette,
+local ColorPaneUserDataValidators = {
+    __colorPalette = colorPalette,
+    __gradientPalette = gradientPalette,
 
     --[[
         Checks if a value is valid for the AskNameBeforePaletteCreation value.
@@ -199,7 +202,7 @@ local UserDataValidators = {
         @return If the value is valid
         @return An error message, if the value was invalid
     ]]
-    AskNameBeforePaletteCreation = t.boolean,
+    [Enums.ColorPaneUserDataKey.AskNameBeforePaletteCreation] = t.boolean,
 
     --[[
         Checks if a value is a valid snap value (a constrained number).
@@ -208,7 +211,7 @@ local UserDataValidators = {
         @return If the value is a valid snap value
         @return An error message, if the value was invalid
     ]]
-    SnapValue = t.numberConstrained(Constants.MIN_SNAP_VALUE, Constants.MAX_SNAP_VALUE),
+    [Enums.ColorPaneUserDataKey.SnapValue] = t.numberConstrained(Constants.MIN_SNAP_VALUE, Constants.MAX_SNAP_VALUE),
 
     --[[
         Checks if a value is an array of color palettes.
@@ -217,7 +220,7 @@ local UserDataValidators = {
         @return If the value is an array of color palettes
         @return An error message, if the value was invalid
     ]]
-    UserColorPalettes = t.array(colorPalette),
+    [Enums.ColorPaneUserDataKey.UserColorPalettes] = t.array(colorPalette),
 
     --[[
         Checks if a value is an array of gradient palettes.
@@ -226,25 +229,7 @@ local UserDataValidators = {
         @return If the value is an array of gradient palettes
         @return An error message, if the value was invalid
     ]]
-    UserGradientPalettes = t.array(gradientPalette),
-
-    --[[
-        Checks if a value is valid for the AutoLoadColorPropertiesAPIData value.
-
-        @param value The value to check
-        @return If the value is valid
-        @return An error message, if the value was invalid
-    ]]
-    AutoLoadColorPropertiesAPIData = t.boolean,
-
-    --[[
-        Checks if a value is valid for the CacheColorPropertiesAPIData value.
-
-        @param value The value to check
-        @return If the value is valid
-        @return An error message, if the value was invalid
-    ]]
-    CacheColorPropertiesAPIData = t.boolean,
+    [Enums.ColorPaneUserDataKey.UserGradientPalettes] = t.array(gradientPalette),
 
     --[[
         Checks if a value is a valid legacy gradient palette.
@@ -253,7 +238,7 @@ local UserDataValidators = {
         @return If the value is valid
         @return An error message, if the value was invalid
     ]]
-    __legacy_UserGradients = t.array(t.strictInterface({
+    __userGradients = t.array(t.strictInterface({
         name = t.string,
         colorSpace = t.string,
         precision = t.integer,
@@ -295,15 +280,13 @@ local UserDataValidators = {
     @return An error message, if the value was invalid
 
 ]]
-UserDataValidators.UserData = t.interface({
-    AskNameBeforePaletteCreation = UserDataValidators.AskNameBeforePaletteCreation,
-    SnapValue = UserDataValidators.SnapValue,
-    UserColorPalettes = UserDataValidators.UserColorPalettes,
-    UserGradientPalettes = UserDataValidators.UserGradientPalettes,
-    AutoLoadColorPropertiesAPIData = UserDataValidators.AutoLoadColorPropertiesAPIData,
-    CacheColorPropertiesAPIData = UserDataValidators.CacheColorPropertiesAPIData,
+ColorPaneUserDataValidators.__userData = t.interface({
+    AskNameBeforePaletteCreation = ColorPaneUserDataValidators.AskNameBeforePaletteCreation,
+    SnapValue = ColorPaneUserDataValidators.SnapValue,
+    UserColorPalettes = ColorPaneUserDataValidators.UserColorPalettes,
+    UserGradientPalettes = ColorPaneUserDataValidators.UserGradientPalettes,
 })
 
 ---
 
-return UserDataValidators
+return ColorPaneUserDataValidators

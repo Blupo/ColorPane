@@ -13,8 +13,8 @@ local Signal = require(CommonIncludes.Signal)
 local CommonModules = Common.Modules
 local CommonEnums = require(CommonModules.Enums)
 local CommonTypes = require(CommonModules.Types)
-local UserDataInterfaceValidator = require(CommonModules.UserDataInterfaceValidator)
-local UserDataInterfaceVersion = require(CommonModules.UserDataInterfaceVersion)
+local ColorPaneUserDataInterfaceValidator = require(CommonModules.ColorPaneUserDataInterfaceValidator)
+local ColorPaneUserDataInterfaceVersion = require(CommonModules.ColorPaneUserDataInterfaceVersion)
 
 ---
 
@@ -45,11 +45,11 @@ local resetUpstreamInterface = function()
 end
 
 local hookUpstreamInterface = function(child: Instance)
-    if (not UserDataInterfaceValidator(child)) then return end
+    if (not ColorPaneUserDataInterfaceValidator(child)) then return end
 
     local getVersion: BindableFunction = child:FindFirstChild("GetVersion")::BindableFunction
     local thisVersion: number = getVersion:Invoke()
-    if (thisVersion ~= UserDataInterfaceVersion) then return end
+    if (thisVersion ~= ColorPaneUserDataInterfaceVersion) then return end
 
     upstreamInterfaceFolder = child::Folder
     getValueFunction = child:FindFirstChild("GetValue")::BindableFunction
@@ -127,7 +127,7 @@ end
 
     @return The values table
 ]]
-UpstreamUserData.GetAllValues = function(): CommonTypes.UserData
+UpstreamUserData.GetAllValues = function(): CommonTypes.ColorPaneUserData
     assert(UpstreamUserData.IsAvailable(), CommonEnums.UpstreamUserDataProviderError.Unavailable)
     return (getAllValuesFunction::BindableFunction):Invoke()
 end
@@ -154,7 +154,7 @@ do
     for i = 1, #children do
         local child: Instance = children[i]
 
-        if (UserDataInterfaceValidator(child)) then
+        if (ColorPaneUserDataInterfaceValidator(child)) then
             hookUpstreamInterface(child)
             break
         end
