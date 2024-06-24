@@ -36,7 +36,7 @@
 - `API.IsColorEditorOpen` is now deprecated, please use `API.IsColorPromptAvailable` for new work
 - `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
 - `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
-- `API.Unloading` is now deprecated
+- `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
 
 ### Removed
 #### API

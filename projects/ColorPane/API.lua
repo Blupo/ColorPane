@@ -470,11 +470,11 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
 end
 
 --[[
-    **DEPRECATED**: You should subscribe to your project's `Plugin.Unloading` event instead.
+    **DEPRECATED**: You should subscribe to your plugin's Unloading event instead.
 
     Fires when the API is about to unload
 ]]
-ColorPane.Unloading = Instance.new("BindableEvent").Event
+ColorPane.Unloading = plugin.Unloading
 
 --[[
     **DEPRECATED**: Use `ColorPane.PromptRejection` instead
