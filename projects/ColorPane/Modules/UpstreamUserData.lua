@@ -15,32 +15,39 @@ local CommonEnums = require(CommonModules.Enums)
 local CommonTypes = require(CommonModules.Types)
 local ColorPaneUserDataInterfaceValidator = require(CommonModules.ColorPaneUserDataInterfaceValidator)
 local ColorPaneUserDataInterfaceVersion = require(CommonModules.ColorPaneUserDataInterfaceVersion)
+local PluginProvider =  require(CommonModules.PluginProvider)
 
 ---
+
+local plugin: Plugin = PluginProvider()
+local childAdded: RBXScriptConnection
 
 local upstreamInterfaceFolder: Folder?
 local getValueFunction: BindableFunction?
 local getAllValuesFunction: BindableFunction?
 local setValueFunction: BindableFunction?
-
 local valueChangedEvent: BindableEvent?
-local valueChangedConnection: RBXScriptConnection?
+
+local valueChangedConnection: RBXScriptConnection
+local interfaceChildRemoved: RBXScriptConnection
+local interfaceAncestryChanged: RBXScriptConnection
+local interfaceDestroying: RBXScriptConnection
 
 local upstreamValueChangedSignal: Signal.Signal<CommonTypes.KeyValue>, fireUpstreamValueChanged: Signal.FireSignal<CommonTypes.KeyValue> = Signal.createSignal()
 local upstreamAvailabilityChangedSignal: Signal.Signal<boolean>, fireUpstreamAvailabilityChanged: Signal.FireSignal<boolean> = Signal.createSignal()
 
 local resetUpstreamInterface = function()
+    valueChangedConnection:Disconnect()
+    interfaceChildRemoved:Disconnect()
+    interfaceAncestryChanged:Disconnect()
+    interfaceDestroying:Disconnect()
+
     upstreamInterfaceFolder = nil
     getValueFunction = nil
     getAllValuesFunction = nil
     setValueFunction = nil
     valueChangedEvent = nil
 
-    if (valueChangedConnection) then
-        valueChangedConnection:Disconnect()
-    end
-
-    valueChangedConnection = nil
     fireUpstreamAvailabilityChanged(false)
 end
 
@@ -60,7 +67,7 @@ local hookUpstreamInterface = function(child: Instance)
     valueChangedConnection = valueChanged.Event:Connect(fireUpstreamValueChanged)
     valueChangedEvent = valueChanged
 
-    child.ChildRemoved:Connect(function()
+    interfaceChildRemoved = child.ChildRemoved:Connect(function()
         if (
             (child == getValueFunction) or
             (child == getAllValuesFunction) or
@@ -71,12 +78,12 @@ local hookUpstreamInterface = function(child: Instance)
         end
     end)
 
-    child.AncestryChanged:Connect(function(this: Instance)
+    interfaceAncestryChanged = child.AncestryChanged:Connect(function(this: Instance)
         if (this ~= child) then return end
         resetUpstreamInterface()
     end)
 
-    child.Destroying:Connect(resetUpstreamInterface)
+    interfaceDestroying = child.Destroying:Connect(resetUpstreamInterface)
     fireUpstreamAvailabilityChanged(true)
 end
 
@@ -137,10 +144,9 @@ end
 
     @param key The name of the value to update
     @param value The new value of the value
-    @return If the update was successful
-    @return An error message if the update wasn't successful
+    @return If the value was actually updated
 ]]
-UpstreamUserData.SetValue = function(key: string, value: any): ()
+UpstreamUserData.SetValue = function(key: string, value: any): boolean
     assert(UpstreamUserData.IsAvailable(), CommonEnums.UpstreamUserDataProviderError.Unavailable)
     return (setValueFunction::BindableFunction):Invoke(key, value)
 end
@@ -161,6 +167,11 @@ do
     end
 end
 
-StudioService.ChildAdded:Connect(hookUpstreamInterface)
+childAdded = StudioService.ChildAdded:Connect(hookUpstreamInterface)
+
+plugin.Unloading:Connect(function()
+    childAdded:Disconnect()
+    resetUpstreamInterface()
+end)
 
 return UpstreamUserData

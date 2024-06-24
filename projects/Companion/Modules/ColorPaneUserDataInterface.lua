@@ -46,8 +46,8 @@ getAllValuesFunction.OnInvoke = function(): CommonTypes.ColorPaneUserData
     return colorPaneUserData:getAllValues()
 end
 
-setValueFunction.OnInvoke = function(key: string, value: any): ()
-    colorPaneUserData:setValue(key, value)
+setValueFunction.OnInvoke = function(key: string, value: any): boolean
+    return colorPaneUserData:setValue(key, value)
 end
 
 local valueChangedSubscription = colorPaneUserData.valueChanged:subscribe(function(value: CommonTypes.KeyValue)

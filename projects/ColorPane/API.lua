@@ -546,7 +546,7 @@ Store.changed:connect(function(newState, oldState)
     -- update non-palette user data
     if (newState.userData ~= oldState.userData) then
         for key: string, value: any in pairs(newState.userData) do
-            ManagedUserData:setValue(key, value)
+            ManagedUserData.SetValue(key, value)
         end
     end
 
@@ -565,7 +565,7 @@ Store.changed:connect(function(newState, oldState)
             end
         end
 
-        ManagedUserData:setValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes, newPalettes)
+        ManagedUserData.SetValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes, newPalettes)
     end
 
     -- update gradient palettes
@@ -591,7 +591,7 @@ Store.changed:connect(function(newState, oldState)
             end
         end
 
-        ManagedUserData:setValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes, newPalettes)
+        ManagedUserData.SetValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes, newPalettes)
     end
 end)
 

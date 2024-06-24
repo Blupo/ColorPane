@@ -56,15 +56,13 @@ type UserDataImpl = {
 
     --[[
         Updates a user data value.
-        If the new value is the same value as the
-        currently-stored value, the update will
-        be silently dropped.
 
         @param self The UserData to be updated
         @param key The name of the value to update
         @param value The new value
+        @return If the value was actually updated
     ]]
-    setValue: (UserData, string, any) -> (),
+    setValue: (UserData, string, any) -> boolean,
 }
 
 export type UserData = typeof(setmetatable(
@@ -139,7 +137,7 @@ UserData.getAllValues = function(self: UserData): Values
     return Util.table.deepCopy(self.__data)
 end
 
-UserData.setValue = function(self: UserData, key: string, value: any): ()
+UserData.setValue = function(self: UserData, key: string, value: any): boolean
     assert(self.__keys[key], Enums.UserDataError.InvalidKey)
 
     -- validate value
@@ -151,16 +149,16 @@ UserData.setValue = function(self: UserData, key: string, value: any): ()
 
     -- compare values to see if they're actually different
     local originalValue: any = self.__data[key]
-    local isSameValue: boolean
+    local isDifferentValue: boolean
 
     if (self.__diffs[key]) then
-        isSameValue = self.__diffs[key](originalValue, value)
+        isDifferentValue = self.__diffs[key](originalValue, value)
     else
-        isSameValue = originalValue == value
+        isDifferentValue = originalValue ~= value
     end
 
-    if (isSameValue) then
-        return
+    if (not isDifferentValue) then
+        return false
     end
 
     -- add a copy of tables to prevent unintended behaviour
@@ -174,6 +172,8 @@ UserData.setValue = function(self: UserData, key: string, value: any): ()
         Key = key,
         Value = value
     })
+
+    return true
 end
 
 ---

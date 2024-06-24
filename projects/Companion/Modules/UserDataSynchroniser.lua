@@ -44,9 +44,8 @@ type UserDataSynchroniserImpl = {
         Writes the current user data values to the plugin settings.
 
         @param self The user data synchroniser
-        @param bypassPull Bypass pulling settings before writing them
     ]]
-    __writeSettings: (UserDataSynchroniser, boolean?) -> (),
+    __writeSettings: (UserDataSynchroniser) -> (),
 
     --[[
         Creates a new synchroniser for a UserData.
@@ -105,11 +104,7 @@ UserDataSynchroniser.__pullSettings = function(self: UserDataSynchroniser)
     end
 end
 
-UserDataSynchroniser.__writeSettings = function(self: UserDataSynchroniser, bypassPull: boolean?)
-    if (not bypassPull) then
-        self:__pullSettings()
-    end
-
+UserDataSynchroniser.__writeSettings = function(self: UserDataSynchroniser)
     local writtenUserData = Cryo.Dictionary.join(self.__userData:getAllValues(), {
         [Constants.META_UPDATE_SOURCE_KEY] = self.__synchroniserId
     })
@@ -135,14 +130,12 @@ UserDataSynchroniser.new = function(
         __syncing = false,
     }, UserDataSynchroniser)
 
-    
-
     -- these connections will be replaced
     self.__valueChangedSubscription:unsubscribe()
     self.__heartbeat:Disconnect()
 
     if (initialWrite) then
-        self:__writeSettings(true)
+        self:__writeSettings()
     end
     
     self.__valueChangedSubscription = userData.valueChanged:subscribe(function()

@@ -29,8 +29,8 @@ local Studio: Studio = settings().Studio
 
 local plugin: Plugin = PluginProvider()
 local themeChanged: RBXScriptConnection
-local valueChanged
-local upstreamAvailabilityChanged
+local valueChangedSubscription
+local upstreamAvailabilityChangedSubscription
 
 local convertColorPaletteToColor3s = function(palette: table)
     for i = 1, #palette.colors do
@@ -64,8 +64,8 @@ local initialState: {[any]: any} = {
     upstreamAvailable = UpstreamUserData.IsAvailable(),
 
     userData = {
-        [CommonEnums.ColorPaneUserDataKey.SnapValue] = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.SnapValue),
-        [CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation] = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation)
+        [CommonEnums.ColorPaneUserDataKey.SnapValue] = ManagedUserData.GetValue(CommonEnums.ColorPaneUserDataKey.SnapValue),
+        [CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation] = ManagedUserData.GetValue(CommonEnums.ColorPaneUserDataKey.AskNameBeforePaletteCreation)
     },
 
     sessionData = {
@@ -100,8 +100,8 @@ local initialState: {[any]: any} = {
 
 -- we need to convert the palettes to use the correct formats
 do
-    local userColorPalettes = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes)
-    local userGradientPalettes = ManagedUserData:getValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes)
+    local userColorPalettes = ManagedUserData.GetValue(CommonEnums.ColorPaneUserDataKey.UserColorPalettes)
+    local userGradientPalettes = ManagedUserData.GetValue(CommonEnums.ColorPaneUserDataKey.UserGradientPalettes)
 
     for i = 1, #userColorPalettes do
         convertColorPaletteToColor3s(userColorPalettes[i])
@@ -129,7 +129,7 @@ themeChanged = Studio.ThemeChanged:Connect(function()
     })
 end)
 
-valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
+valueChangedSubscription = ManagedUserData.ValueChanged:subscribe(function(value)
     local key: string = value.Key
 
     if (
@@ -166,7 +166,7 @@ valueChanged = ManagedUserData.valueChanged:subscribe(function(value)
     end
 end)
 
-upstreamAvailabilityChanged = UpstreamUserData.AvailabilityChanged:subscribe(function(available: boolean)
+upstreamAvailabilityChangedSubscription = UpstreamUserData.AvailabilityChanged:subscribe(function(available: boolean)
     Store:dispatch({
         type = Enums.StoreActionType.UpstreamAvailabilityChanged,
         available = available,
@@ -175,8 +175,8 @@ end)
 
 plugin.Unloading:Connect(function()
     themeChanged:Disconnect()
-    valueChanged:unsubscribe()
-    upstreamAvailabilityChanged:unsubscribe()
+    valueChangedSubscription:unsubscribe()
+    upstreamAvailabilityChangedSubscription:unsubscribe()
 end)
 
 return Store
