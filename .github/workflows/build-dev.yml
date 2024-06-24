@@ -26,25 +26,21 @@ jobs:
       - name: Build ColorPane
         run: rojo build --output ColorPane.rbxm build/ColorPane.project.json
 
-      - name: Upload ColorPane as Artifact
-        uses: actions/upload-artifact@v4.3.3
-        with:
-          name: ColorPane Library
-          path: ColorPane.rbxm
-
       - name: Build Companion
         run: rojo build --output Companion.rbxm build/Companion.project.json
 
-      - name: Upload Companion as Artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4.3.3
         with:
-          name: Companion Plugin
-          path: Companion.rbxm
+          name: Models
+          path: |
+            ColorPane.rbxm
+            Companion.rbxm
 
-      - name: Build and Upload ColorPane to Roblox
+      - name: Build and Upload ColorPane
         continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COLORPANE_WORKING_COPY_ASSET_ID }}" build/ColorPane.project.json
 
-      - name: Build and Upload Companion to Roblox
+      - name: Build and Upload Companion
         continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COMPANION_WORKING_COPY_ASSET_ID }}" build/Companion.project.json

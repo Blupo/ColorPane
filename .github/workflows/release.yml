@@ -20,10 +20,10 @@ jobs:
         with:
           version: v0.3.0
 
-      - name: Build ColorPane as Release Asset
+      - name: Build ColorPane for Release
         run: rojo build --output ColorPane.rbxm build/ColorPane.project.json
 
-      - name: Build Companion as Release Asset
+      - name: Build Companion for Release
         run: rojo build --output Companion.rbxm build/Companion.project.json
 
       - name: Create Release
@@ -36,10 +36,10 @@ jobs:
             ColorPane.rbxm
             Companion.rbxm
 
-      - name: Build and Upload ColorPane to Roblox
+      - name: Build and Upload ColorPane
         continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COLORPANE_ASSET_ID }}" build/ColorPane.project.json
 
-      - name: Build and Upload Companion to Roblox
+      - name: Build and Upload Companion
         continue-on-error: true
         run: rojo upload --cookie "${{ secrets.ROBLOSECURITY }}" --asset_id "${{ vars.COMPANION_ASSET_ID }}" build/Companion.project.json
