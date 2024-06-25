@@ -7,5 +7,7 @@ return {
     CompanionUserDataKey = {
         AutoLoadColorPropertiesAPIData = "AutoLoadColorPropertiesAPIData",
         CacheColorPropertiesAPIData = "CacheColorPropertiesAPIData",
+        RobloxApiDump = "RobloxApiDump",
+        RobloxApiDumpLastUpdated = "RobloxApiDumpLastUpdated",
     }
 }

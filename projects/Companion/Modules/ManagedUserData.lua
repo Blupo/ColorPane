@@ -23,6 +23,7 @@ local Util = require(CommonModules.Util)
 
 local Modules = root.Modules
 local CompanionUserDataDefaultValues = require(Modules.CompanionUserDataDefaultValues)
+local CompanionUserDataValidators = require(Modules.CompanionUserDataValidators)
 local Constants = require(Modules.Constants)
 local Enums = require(Modules.Enums)
 local Types = require(Modules.Types)
@@ -164,7 +165,7 @@ local initColorPaneUserData = function(userData, colorPaneDefaultUserDataValues)
                 end
 
                 modified = true
-            elseif (userData[key] == nil) then
+            elseif ((userData[key] == nil) and (colorPaneDefaultUserDataValues[key] ~= nil)) then
                 modified = true
             end
         end
@@ -188,21 +189,21 @@ local initCompanionUserData = function(userData, companionDefaultUserDataValues)
     if (userData == nil) then
         return companionDefaultUserDataValues, false
     elseif (type(userData) ~= "table") then
-        warn("ColorPane user data is invalid and will be re-created")
+        warn("Companion user data is invalid and will be re-created")
         return companionDefaultUserDataValues, false
     else
         -- check for missing or invalid values
         local modified: boolean = false
 
-        for key: string in pairs(CommonEnums.ColorPaneUserDataKey) do
+        for key: string in pairs(Enums.CompanionUserDataKey) do
             local isValid: boolean, failReason: string? =
-                t.optional(ColorPaneUserDataValidators[key])(userData[key])
+                t.optional(CompanionUserDataValidators[key])(userData[key])
 
             if (not isValid) then
                 userData[key] = nil
                 modified = true
                 warn("Companion user data value " .. key .. " is invalid and will be replaced, reason is: " .. failReason::string)
-            elseif (userData[key] == nil) then
+            elseif ((userData[key] == nil) and (companionDefaultUserDataValues[key] ~= nil)) then
                 modified = true
             end
         end
@@ -216,7 +217,7 @@ local initCompanionUserData = function(userData, companionDefaultUserDataValues)
 end
 
 --[[
-    Initialises user data.
+    Initialises all user data.
 
     @return The user's ColorPane data
     @return If the current ColorPane data should be overwritten
@@ -272,12 +273,7 @@ do
 
     companionUserDataObj = UserData.new(
         Enums.CompanionUserDataKey,
-
-        {
-            [Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] = t.boolean,
-            [Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] = t.boolean,
-        },
-
+        CompanionUserDataValidators,
         {},
         companionUserData
     )
@@ -294,15 +290,15 @@ do
         Constants.COMPANION_USERDATA_KEY,
 
         function(this, that)
-            return {
-                [Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] = if
-                    this[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData] == that[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData]
-                then nil else that[Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData],
+            local modifiedValues = {}
 
-                [Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] = if
-                    this[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData] == that[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData]
-                then nil else that[Enums.CompanionUserDataKey.CacheColorPropertiesAPIData],
-            }
+            for key in pairs(Enums.CompanionUserDataKey) do
+                if (this[key] ~= that[key]) then
+                    modifiedValues[key] = that[key]
+                end
+            end
+
+            return modifiedValues
         end,
 
         companionInitialWrite

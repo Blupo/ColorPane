@@ -6,6 +6,8 @@
 export type CompanionUserData = {
     AutoLoadColorPropertiesAPIData: boolean,
     CacheColorPropertiesAPIData: boolean,
+    RobloxApiDump: string?,
+    RobloxApiDumpLastUpdated: number?,
 }
 
 ---

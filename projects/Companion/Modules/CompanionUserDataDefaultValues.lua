@@ -11,4 +11,6 @@ local Types = require(Modules.Types)
 return {
     AutoLoadColorPropertiesAPIData = false,
     CacheColorPropertiesAPIData = false,
+    RobloxApiDump = nil,
+    RobloxApiDumpLastUpdated = nil,
 }::Types.CompanionUserData
