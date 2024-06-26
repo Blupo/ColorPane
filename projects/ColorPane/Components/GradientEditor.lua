@@ -884,6 +884,7 @@ GradientEditor.render = function(self)
 
                 displayType = "image",
                 image = Style.Images.PaletteEditorButtonIcon,
+                displayColor = Color3.new(1, 1, 1),
 
                 onActivated = function()
                     if (self.gradientPaletteWindow:isMounted()) then

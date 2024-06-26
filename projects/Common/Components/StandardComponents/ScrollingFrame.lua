@@ -60,7 +60,7 @@ StandardScrollingFrame.render = function(self)
         BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
 
         BackgroundColor3 = if props.useMainBackgroundColor then
-            theme:GetColor(Enum.StudioStyleGuideColor.MainBackground)
+            theme:GetColor(Enum.StudioStyleGuideColor.ScrollBarBackground)
         else theme:GetColor(Enum.StudioStyleGuideColor.ColorPickerFrame),
 
         [Roact.Event.InputBegan] = props[Roact.Event.InputBegan],

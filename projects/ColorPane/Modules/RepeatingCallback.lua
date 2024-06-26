@@ -15,9 +15,6 @@ local PluginProvider = require(CommonModules.PluginProvider)
 local CommonIncludes = Common.Includes
 local Promise = require(CommonIncludes.Promise)
 
-local Modules = root.Modules
-local Util = require(Modules.Util)
-
 ---
 
 local ABSOLUTE_MIN_DELTA: number = 1/60

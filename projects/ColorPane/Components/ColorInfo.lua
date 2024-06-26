@@ -293,6 +293,8 @@ local infoComponents = {
                     return webColor.color
                 end
             end
+
+            return nil
         end
     }
 }
