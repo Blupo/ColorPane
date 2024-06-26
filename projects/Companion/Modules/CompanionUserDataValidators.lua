@@ -40,7 +40,7 @@ return {
         @return If the value is valid
         @return An error message, if the value was invalid
     ]]
-    [Enums.CompanionUserDataKey.RobloxApiDump] = t.optional(t.string),
+    [Enums.CompanionUserDataKey.RobloxApiDump] = t.optional(t.table),
 
     --[[
         Checks if a value is valid for the RobloxApiDumpLastUpdated value.

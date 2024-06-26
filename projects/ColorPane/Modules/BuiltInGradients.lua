@@ -3,12 +3,12 @@
 local root = script.Parent.Parent
 local Common = root.Common
 
+local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
+
 local CommonModules = Common.Modules
 local Constants = require(CommonModules.Constants)
 local Translator = require(CommonModules.Translator)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local Util = require(Modules.Util)

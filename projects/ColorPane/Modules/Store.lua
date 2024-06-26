@@ -8,10 +8,8 @@ local CommonEnums = require(CommonModules.Enums)
 local PluginProvider = require(CommonModules.PluginProvider)
 
 local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
 local Rodux = require(CommonIncludes.RoactRodux.Rodux)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)

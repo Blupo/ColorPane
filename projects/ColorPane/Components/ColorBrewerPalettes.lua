@@ -8,6 +8,7 @@ local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 
 local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
@@ -21,9 +22,6 @@ local Enums = require(Modules.Enums)
 local Components = root.Components
 local ButtonBar = require(Components.ButtonBar)
 local ColorGrids = require(Components.ColorGrids)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 ---
 

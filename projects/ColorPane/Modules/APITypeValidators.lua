@@ -4,10 +4,8 @@
 local root = script.Parent.Parent
 
 local CommonIncludes = root.Common.Includes
+local ColorLib = require(CommonIncludes.Color)
 local t = require(CommonIncludes.t)
-
-local Includes = root.Includes
-local ColorLib = require(Includes.Color)
 
 local Color = ColorLib.Color
 local Gradient = ColorLib.Gradient

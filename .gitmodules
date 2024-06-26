@@ -19,6 +19,6 @@
 	url = https://github.com/osyrisrblx/t
 	branch = master
 [submodule "Common/Includes/Color"]
-	path = projects/ColorPane/Includes/Color
+	path = projects/Common/Includes/Color
 	url = https://github.com/Blupo/Color
 	branch = develop

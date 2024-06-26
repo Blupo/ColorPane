@@ -7,6 +7,7 @@ local CommonModules = Common.Modules
 local Style = require(CommonModules.Style)
 
 local CommonIncludes = Common.Includes
+local Gradient = require(CommonIncludes.Color).Gradient
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
@@ -19,9 +20,6 @@ local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUICorner = require(StandardComponents.UICorner)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
-
-local Includes = root.Includes
-local Gradient = require(Includes.Color).Gradient
 
 local Modules = root.Modules
 local BuiltInGradients = require(Modules.BuiltInGradients)

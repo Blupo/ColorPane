@@ -10,15 +10,13 @@ local CommonModules = Common.Modules
 local Style = require(CommonModules.Style)
 
 local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local ConnectTheme = require(CommonComponents.ConnectTheme)
 local StandardUICorner = require(CommonComponents.StandardComponents.UICorner)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local ColorEditorInputSignals = require(Modules.EditorInputSignals).ColorEditor

@@ -1,13 +1,14 @@
 --!strict
 
 local root = script.Parent.Parent
+local Common = root.Common
 
-local CommonModules = root.Common.Modules
+local CommonIncludes = Common.Includes
+local ColorLib = require(CommonIncludes.Color)
+
+local CommonModules = Common.Modules
 local CommonUtil = require(CommonModules.Util)
 local ColorPaneUserDataValidators = require(CommonModules.ColorPaneUserDataValidators)
-
-local Includes = script.Parent.Parent.Includes
-local ColorLib = require(Includes.Color)
 
 local Color = ColorLib.Color
 

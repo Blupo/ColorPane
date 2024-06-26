@@ -17,13 +17,11 @@ local Translator = require(CommonModules.Translator)
 local Window = require(CommonModules.Window)
 
 local CommonIncludes = Common.Includes
+local ColorLib = require(CommonIncludes.Color)
 local Cryo = require(CommonIncludes.Cryo)
 local Promise = require(CommonIncludes.Promise)
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local Signal = require(CommonIncludes.Signal)
-
-local Includes = root.Includes
-local ColorLib = require(Includes.Color)
 
 local Modules = root.Modules
 local APITypeValidators = require(Modules.APITypeValidators)

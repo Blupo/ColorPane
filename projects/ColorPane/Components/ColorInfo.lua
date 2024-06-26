@@ -8,6 +8,7 @@ local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
 
 local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
@@ -19,9 +20,6 @@ local StandardScrollingFrame = require(StandardComponents.ScrollingFrame)
 local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)

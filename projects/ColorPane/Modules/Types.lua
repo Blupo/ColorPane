@@ -2,8 +2,9 @@
 -- Common Luau types used in ColorPane
 
 local root = script.Parent.Parent
-local Includes = root.Includes
-local Color = require(Includes.Color)
+local Common = root.Common
+local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color)
 
 ---
 

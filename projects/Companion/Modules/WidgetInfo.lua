@@ -20,5 +20,10 @@ return {
     RestoreDefaultsPrompt = {
         Id = "CPCompanion_RestoreDefaultsPrompt",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, true, 300, 120, 300, 120),
+    },
+
+    ColorProperties = {
+        Id = "CPCompanion_ColorProperties",
+        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, Style.Constants.EditorPageWidth, 400, Style.Constants.EditorPageWidth, 200),
     }
 }

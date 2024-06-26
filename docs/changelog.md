@@ -15,6 +15,7 @@
 - Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
 - Invalid palettes will no longer cause the entire list of palettes to be removed, only the invalid palettes are removed
 - Palette colors are now allowed to have RGB values outside of [0, 1]
+- Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
 #### API
 - Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
 - For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match

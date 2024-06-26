@@ -7,14 +7,12 @@ local CommonModules = Common.Modules
 local Style = require(CommonModules.Style)
 
 local CommonIncludes = Common.Includes
+local Color = require(CommonIncludes.Color).Color
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local StandardUIListLayout = require(CommonComponents.StandardComponents.UIListLayout)
-
-local Includes = root.Includes
-local Color = require(Includes.Color).Color
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)

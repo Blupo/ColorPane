@@ -1,5 +1,9 @@
 --!strict
 
+local RunService: RunService = game:GetService("RunService")
+
+---
+
 local root = script.Parent
 local Common = root.Common
 
@@ -13,27 +17,48 @@ local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local Components = root.Components
 local Settings = require(Components.Settings)
-
-local Includes = root.Includes
-local InitColorPane = require(Includes.ColorPane)
+local ColorProperties = require(Components.ColorProperties)
 
 local Modules = root.Modules
 require(Modules.ColorPaneUserDataInterface)
-require(Modules.ManagedUserData)
+local Enums = require(Modules.Enums)
+local ManagedUserData = require(Modules.ManagedUserData)
+local ColorPane = require(Modules.ColorPane)
+local RobloxAPI = require(Modules.RobloxAPI)
 local Store = require(Modules.Store)
 local Toolbar = require(Modules.Toolbar)
 local WidgetInfo = require(Modules.WidgetInfo)
 
 ---
 
-local ColorPane = InitColorPane(plugin, "ColorPane_Companion")
-
 local colorEditPromise: typeof(ColorPane.PromptForColor())?
 local gradientEditPromise: typeof(ColorPane.PromptForGradient())?
 
+local colorPropertiesWindow: Window.Window = Window.new(WidgetInfo.ColorProperties.Id, WidgetInfo.ColorProperties.Info)
 local settingsWindow: Window.Window = Window.new(WidgetInfo.Settings.Id, WidgetInfo.Settings.Info)
 
 ---
+
+Toolbar.ColorEditButton.ClickableWhenViewportHidden = true
+Toolbar.GradientEditButton.ClickableWhenViewportHidden = true
+
+if (ManagedUserData.Companion:getValue(Enums.CompanionUserDataKey.AutoLoadColorPropertiesAPIData)) then
+    local startupRequestFinished
+    startupRequestFinished = RobloxAPI.DataRequestFinished:subscribe(function(success: boolean)
+        startupRequestFinished:unsubscribe()
+
+        if ((not success) and RunService:IsEdit()) then
+            warn(Translator.FormatByKey("AutoLoadColorPropertiesFailure_Message"))
+        end
+    end)
+
+    RobloxAPI.GetData()
+end
+
+if (colorPropertiesWindow:isOpen()) then
+    colorPropertiesWindow:mount(Translator.FormatByKey("ColorProperties_WindowTitle"), Roact.createElement(ColorProperties), Store)
+    Toolbar.ColorPropertiesButton:SetActive(true)
+end
 
 Toolbar.ColorEditButton.Click:Connect(function()
     if (colorEditPromise) then
@@ -42,18 +67,18 @@ Toolbar.ColorEditButton.Click:Connect(function()
         return
     end
 
-    local editPromise = ColorPane.PromptForColor()
-    local suppressedRejectionPromise = editPromise:catch(function() end)
+    if (ColorPane.IsColorPromptAvailable()) then
+        local editPromise = ColorPane.PromptForColor()
 
-    -- check that the promise doesn't immediately complete
-    if (editPromise:getStatus() == ColorPane.PromiseStatus.Started) then
-        suppressedRejectionPromise:finally(function()
+        editPromise:catch(function() end):finally(function()
             colorEditPromise = nil
             Toolbar.ColorEditButton:SetActive(false)
         end)
     
         colorEditPromise = editPromise
         Toolbar.ColorEditButton:SetActive(true)
+    else
+        Toolbar.ColorEditButton:SetActive(false)
     end
 end)
 
@@ -64,18 +89,28 @@ Toolbar.GradientEditButton.Click:Connect(function()
         return
     end
 
-    local editPromise = ColorPane.PromptForGradient()
-    local suppressedRejectionPromise = editPromise:catch(function() end)
+    if (ColorPane.IsGradientPromptAvailable()) then
+        local editPromise = ColorPane.PromptForGradient()
 
-    -- check that the promise doesn't immediately complete
-    if (editPromise:getStatus() == ColorPane.PromiseStatus.Started) then
-        suppressedRejectionPromise:finally(function()
+        editPromise:catch(function() end):finally(function()
             gradientEditPromise = nil
             Toolbar.GradientEditButton:SetActive(false)
         end)
 
         gradientEditPromise = editPromise
         Toolbar.GradientEditButton:SetActive(true)
+    else
+        Toolbar.GradientEditButton:SetActive(false)
+    end
+end)
+
+Toolbar.ColorPropertiesButton.Click:Connect(function()
+    if (colorPropertiesWindow:isMounted()) then
+        colorPropertiesWindow:unmount()
+        Toolbar.ColorPropertiesButton:SetActive(false)
+    else
+        colorPropertiesWindow:mount(Translator.FormatByKey("ColorProperties_WindowTitle"), Roact.createElement(ColorProperties), Store)
+        Toolbar.ColorPropertiesButton:SetActive(true)
     end
 end)
 
@@ -89,6 +124,15 @@ Toolbar.SettingsButton.Click:Connect(function()
     end
 end)
 
+colorPropertiesWindow.openedWithoutMounting:subscribe(function()
+    colorPropertiesWindow:close()
+end)
+
+colorPropertiesWindow.closedWithoutUnmounting:subscribe(function()
+    colorPropertiesWindow:unmount()
+    Toolbar.ColorPropertiesButton:SetActive(false)
+end)
+
 settingsWindow.openedWithoutMounting:subscribe(function()
     settingsWindow:close()
 end)
@@ -99,6 +143,7 @@ settingsWindow.closedWithoutUnmounting:subscribe(function()
 end)
 
 plugin.Unloading:Connect(function()
+    colorPropertiesWindow:destroy()
     settingsWindow:destroy()
 
     if (colorEditPromise) then

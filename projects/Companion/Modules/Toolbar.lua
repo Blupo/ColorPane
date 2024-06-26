@@ -45,6 +45,16 @@ return {
     ),
 
     --[[
+        Button for the color properties panel.
+    ]]
+    ColorPropertiesButton = toolbar:CreateButton(
+        "CPCompanion_ColorProperties",
+        Translator.FormatByKey("ColorProperties_ToolbarButtonHintText"),
+        Style.Images.ColorPropertiesToolbarButtonIcon,
+        Translator.FormatByKey("ColorProperties_ToolbarButtonText")
+    ),
+
+    --[[
         Button to configure certain settings.
     ]]
     SettingsButton = toolbar:CreateButton(

@@ -102,6 +102,7 @@ local Style = {
         ColorEditorToolbarButtonIcon = "rbxassetid://7066707717",
         GradientEditorToolbarButtonIcon = "rbxassetid://7066742393",
         SettingsToolbarButtonIcon = "rbxassetid://6528624327",
+        ColorPropertiesToolbarButtonIcon = "rbxassetid://6531028502",
     }
 }
 

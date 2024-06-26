@@ -15,6 +15,7 @@ local Translator = require(CommonModules.Translator)
 local Window = require(CommonModules.Window)
 
 local CommonIncludes = Common.Includes
+local ColorLib = require(CommonIncludes.Color)
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
@@ -31,9 +32,6 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
 local Components = root.Components
 local GradientInfo = require(Components.GradientInfo)
 local GradientPalette = require(Components.GradientPalette)
-
-local Includes = root.Includes
-local ColorLib = require(Includes.Color)
 
 local Modules = root.Modules
 local Enums = require(Modules.Enums)
