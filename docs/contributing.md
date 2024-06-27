@@ -12,7 +12,7 @@ Please include a detailed description and an image and/or video of the bug to ma
 
 ## Documentation
 
-If you find any errors or places for improvement in the documentation, feel free to open an issue or submit a pull request ([`develop`](https://github.com/Blupo/ColorPane/tree/develop) branch only). ColorPane uses [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) (version 9.5.3 as of this writing).
+If you find any errors or places for improvement in the documentation, feel free to open an issue or submit a pull request. ColorPane's documentation uses [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) (version 9.5.27 as of this writing).
 
 ## Translations
 
@@ -35,7 +35,7 @@ Currently, the targeted languages are:
 ## Code Contributions
 
 /// note
-Please only submit new code to the [`develop`](https://github.com/Blupo/ColorPane/tree/develop) branch.
+
 ///
 
-If you have code you would like to contribute to ColorPane, please submit a pull request. ColorPane uses [Rojo](https://rojo.space) (version 7.3.0 as of this writing) for project management. When testing the plugin in Studio, serve `place.project.json` instead of the `default.project.json`. The plugin build folder will be located in ServerStorage.
+If you have code you would like to contribute to ColorPane, please submit a pull request. ColorPane uses [Rojo](https://rojo.space) (version 7.4.1 as of this writing) for project management. When testing the plugin in Studio, serve `place.project.json` instead of the `default.project.json`. The plugin build folder will be located in ServerStorage.

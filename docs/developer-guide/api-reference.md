@@ -8,118 +8,122 @@
 
 <pre><code>type ColorPromptOptions = {
     PromptTitle: string?,
-    ColorType: ("Color" | "Color3")?,
     InitialColor: (<a href="https://blupo.github.io/Color/api/color/">Color</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/Color3">Color3</a>)?,
-    OnColorChanged: ((<a href="https://blupo.github.io/Color/api/color/">Color</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/Color3">Color3</a>) -> nil)?
+    ColorType: ("Color" | "Color3")?,
+    OnColorChanged: (((<a href="https://blupo.github.io/Color/api/color/">Color</a>) -> ()) | ((<a href="https://create.roblox.com/docs/reference/engine/datatypes/Color3">Color3</a>) -> ()))?
 }</code></pre>
 
-`ColorType` determines the type of value returned through the Promise and the value passed to `OnColorChanged`.
+`ColorType` determines the type of value the Promise will resolve with, and the type of value passed to `OnColorChanged`.
 
 ### GradientPromptOptions
 
 <pre><code>type GradientPromptOptions = {
     PromptTitle: string?,
-    GradientType: ("Gradient" | "ColorSequence")?,
     InitialGradient: (<a href="https://blupo.github.io/Color/api/gradient/">Gradient</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>)?,
-    InitialColorSpace: <a href="https://blupo.github.io/Color/api/color/#colormix">ColorType</a>?,
+    InitialColorSpace: <a href="https://blupo.github.io/Color/api/color/#colormix">MixableColorType</a>?,
     InitialHueAdjustment: <a href="https://blupo.github.io/Color/api/color/#colormix">HueAdjustment</a>?,
     InitialPrecision: number?,
-    OnGradientChanged: ((<a href="https://blupo.github.io/Color/api/gradient">Gradient</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>) -> nil)?
+    GradientType: ("Gradient" | "ColorSequence")?,
+    OnGradientChanged: (((<a href="https://blupo.github.io/Color/api/gradient/">Gradient</a>) -> ()) | ((<a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>) -> ()))?
 }</code></pre>
 
-`GradientType` determines the type of value returned through the Promise and the value passed to `OnGradientChanged`.
+`GradientType` determines the type of value the Promise will resolve with, and the type of value passed to `OnGradientChanged`.
 
-### ColorSequencePromptOptions
+## Enums
 
-<pre><code>type ColorSequencePromptOptions = {
-    PromptTitle: string?
-    InitialColor: <a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>?
-    OnColorChanged: ((<a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>) -> any)?
-}</code></pre>
+### PromptRejection
+
+```
+{
+    InvalidPromptOptions,
+    PromptAlreadyOpen,
+    ReservationProblem,
+    PromptCancelled,
+    SameAsInitial
+}
+```
+
+* `PromptRejection.InvalidPromptOptions`: One or more of the prompt configuration options was invalid (bad value, wrong type, etc.)
+* `PromptRejection.PromptAlreadyOpen`: The prompt you were trying to open is already open
+* `PromptRejection.ReservationProblem`: If you were trying to open the color prompt, then the gradient prompt is currently open. If you were trying to open the gradient prompt, the color prompt is currently open.
+* `PromptRejection.PromptCancelled`: The user closed the prompt without confirming a color/gradient
+* `PromptRejection.SameAsInitial`: If you provided an initial color/gradient value, the user confirmed the exact same value
+
+### PromiseStatus
+
+Same as [`Promise.Status`](https://eryn.io/roblox-lua-promise/api/Promise#Status).
+
+```
+{
+    Started,
+    Resolved,
+    Rejected,
+    Cancelled
+}
+```
 
 ## Functions
 
-### GetVersion
+### IsColorPromptAvailable
 
-```
-ColorPane.GetVersion(): (number, number, number)
-```
+<pre><code>ColorPane.IsColorPromptAvailable(): boolean</code></pre>
 
-Returns the major, minor, and patch versions of the API.
+Returns if a request to prompt for a color will succeed instead of immediately rejecting.
 
-### IsColorEditorOpen
+### IsGradientPromptAvailable
 
-```
-ColorPane.IsColorEditorOpen(): boolean
-```
+<pre><code>ColorPane.IsGradientPromptAvailable(): boolean</code></pre>
 
-### IsColorSequenceEditorOpen
-
-/// warning | Deprecated
-Since v0.4.0
-///
-
-```
-ColorPane.IsColorSequenceEditorOpen(): boolean
-```
-
-Alias for [`IsGradientEditorOpen`](#isgradienteditoropen).
-
-### IsGradientEditorOpen
-
-```
-ColorPane.IsGradientEditorOpen(): boolean
-```
+Returns if a request to prompt for a gradient will succeed instead of immediately rejecting.
 
 ### PromptForColor
 
-<pre><code>ColorPane.PromptForColor(options: <a href="#colorpromptoptions">ColorPromptOptions</a>?):
-    <a href="https://eryn.io/roblox-lua-promise/api/Promise">Promise</a>&lt;<a href="https://blupo.github.io/Color/api/Color">Color</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">Color3</a>&gt;</code></pre>
+<pre><code>ColorPane.PromptForColor(options: <a href="#colorpromptoptions">ColorPromptOptions</a>?): Promise</code></pre>
 
-Prompts for a color. Will return a Promise that resolves with a Color or Color3, depending on `options.ColorType`. The default configuration is:
+Prompts the user for a color.
 
-```
-{
-    PromptTitle = "Select a color",
+``` {.lua .copy}
+local colorPromise = ColorPane.PromptForColor({
+    PromptTitle = "Hello, world!",
+    InitialColor = Color3.new(0.1, 0.2, 0.3),
+
     ColorType = "Color3",
-    InitialColor = Color.new(1, 1, 1),
-    OnColorChanged = nil
-}
+    OnColorChanged = print,
+})
 ```
 
-### PromptForColorSequence
+`OnColorChanged` must not yield. The specified `ColorType` and the type parameter to `OnColorChanged` should match, i.e.
 
-/// warning | Deprecated
-Since v0.4.0
-///
+- `ColorType` is `"Color3"`, and `OnColorChanged` accepts a `Color3`, or
+- `ColorType` is `"Color"`, and `OnColorChanged` accepts a `Color`
 
-<pre><code>ColorPane.PromptForColorSequence(options: <a href="#colorsequencepromptoptions">ColorSequencePromptOptions</a>?):
-    <a href="">Promise</a>&lt;<a href="https://create.roblox.com/docs/reference/engine/datatypes/ColorSequence">ColorSequence</a>&gt;</code></pre>
+but not
+
+- `ColorType` is `"Color3"`, and `OnColorChanged` accepts a `Color`, nor
+- `ColorType` is `"Color"`, and `OnColorChanged` accepts a `Color3`
 
 ### PromptForGradient
 
-<pre><code>ColorPane.PromptForGradient(options: <a href="#gradientpromptoptions">GradientPromptOptions</a>?):
-    <a href="https://eryn.io/roblox-lua-promise/api/Promise">Promise</a>&lt;<a href="https://blupo.github.io/Color/api/gradient/">Gradient</a> | <a href="https://create.roblox.com/docs/reference/engine/datatypes/Color3">ColorSequence</a>&gt;</code></pre>
+<pre><code>ColorPane.PromptForGradient(options: <a href="#gradientpromptoptions">GradientPromptOptions</a>?): Promise</code></pre>
 
-Prompts for a gradient. Will return a Promise that resolves with a Gradient or ColorSequence, depending on `options.GradientType`. The default configuration is:
+Prompts the user for a gradient.
 
-```
-{
-    PromptTitle = "Create a gradient",
+``` {.lua .copy}
+local gradientPromise = ColorPane.PromptForGradient({
+    PromptTitle = "Hello, world!",
+    InitialGradient = ColorSequence.new(Color3.new(0, 0, 0), Color3.new(1, 1, 1)),
+
     GradientType = "ColorSequence",
-    InitialGradient = Gradient.fromColors(Color.new(1, 1, 1)),
-    InitialColorSpace = "RGB",
-    InitialHueAdjustment = "Shorter",
-    InitialPrecision = 0,
-}
+    OnGradientChanged = print,
+})
 ```
 
-## Events
+`OnGradientChanged` must not yield. The specified `GradientType` and the type parameter to `OnGradientChanged` should match, i.e.
 
-### Unloading
+- `GradientType` is `"ColorSequence"`, and `OnGradientChanged` accepts a `ColorSequence`, or
+- `GradientType` is `"Gradient"`, and `OnGradientChanged` accepts a `Gradient`
 
-```
-ColorPane.Unloading: RBXScriptSignal<nil>
-```
+but not
 
-Fires when the API is about to be unloaded.
+- `GradientType` is `"ColorSequence"`, and `OnGradientChanged` accepts a `Gradient`, nor
+- `GradientType` is `"Gradient"`, and `OnGradientChanged` accepts a `ColorSequence`.

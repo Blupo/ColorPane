@@ -69,7 +69,6 @@ nav:
     - Developer Guide:
       - Integration: developer-guide/integration.md
       - API Reference: developer-guide/api-reference.md
-      - Proxy API Reference: developer-guide/proxy-reference.md
     - Attribution: attribution.md
     - Contributing: contributing.md
   - Changelog: changelog.md

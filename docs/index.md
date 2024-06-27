@@ -20,10 +20,3 @@ ColorPane can be used as a component in a larger project. This lets you use the 
 ## Contributing
 
 Found a bug? Want to request a new feature? Interested in translating ColorPane? Read the [Contributing](contributing.md) page for guidelines on contributing to the project!
-
-## Donations
-
-ColorPane is and will remain a free-to-use resource. If you would like to donate to the project, you can do so in several ways:
-
-- If you would like to donate Robux, you can do so on [our group's Donations place](https://www.roblox.com/games/5320096630)
-- If you would like to donate money, you can do so on [Ko-fi](https://ko-fi.com/Blupo)

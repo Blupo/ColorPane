@@ -20,6 +20,10 @@ The editor includes several sliders:
 
 ## Palettes
 
+/// warning
+If you don't have the Companion plugin installed, you won't be able to create, edit, or import palettes.
+///
+
 ![The palettes page](../images/palettes-grid.png)
 
 Palettes let you store lists of colors. For most palettes, you will see (from top to bottom, left to right): a search bar, buttons to switch between grid or list layout, a button to add the current color to the palette, and the list of colors.

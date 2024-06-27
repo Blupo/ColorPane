@@ -1,47 +1,37 @@
 ## [Unreleased]
 
 ### Added
-#### UX
-- Added a dedicated "Set Color" button for colors in the palette list layout
-- Added a "Reset" button for gradient precision
 - Added partial translations for French (`fr`) and Korean (`ko`)
-- Added a random color button
-#### API
-- Added `API.IsColorPromptAvailable` to check if calling `API.PromptForColor` will succeed or immediately reject
-- Added `API.IsGradientPromptAvailable` to check if calling `API.PromptForGradient` will succeed or immediately reject
+- Color editor: Added a dedicated "Set Color" button for colors in the palette list layout
+- Color editor: Added a random color button
+- Gradient editor: Added a "Reset" button for gradient precision
+- API: Added `API.IsColorPromptAvailable` to check if calling `API.PromptForColor` will succeed or immediately reject (replaces `API.IsColorEditorOpen`)
+- API: Added `API.IsGradientPromptAvailable` to check if calling `API.PromptForGradient` will succeed or immediately reject (replaces `API.IsGradientEditorOpen`)
 
 ### Changed
-#### UX
-- Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
-- Invalid palettes will no longer cause the entire list of palettes to be removed, only the invalid palettes are removed
-- Palette colors are now allowed to have RGB values outside of [0, 1]
-- Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
-#### API
-- Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
-- For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
-- For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
-- The `API.PromptError` enum has been re-named to `API.PromptRejection`
-- The `API.PromptForColor` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new colors are the same
-- The `API.PromptForGradient` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new gradients are the same
+- Settings: Invalid palettes will no longer cause the entire list of palettes to be removed, just the invalid palettes
+- Color editor: Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
+- Color Properties: Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
+- API: Promises from the API no longer cancel if the user closes the prompt, they will now instead reject with `PromptError.PromptCancelled`
+- API: For `GradientPromptOptions`, the type of `InitialGradient` and the value of `GradientType` are no longer required to match
+- API: For `ColorPromptOptions`, the type of `InitialColor` and the value of `ColorType` are no longer required to match
+- API: The `API.PromptError` enum has been re-named to `API.PromptRejection`
+- API: The `API.PromptForColor` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new colors are the same
+- API: The `API.PromptForGradient` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new gradients are the same
 
 ### Fixed
-#### UX
-- Fixed the initial size of the color editor only showing one page (it should have 2)
-#### API
-- `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
-- The `API.PromptForColor` Promise will no longer reject when the inital and new colors are the same even though you didn't specify an initial color
-- The `API.PromptForGradient` Promise will no longer reject when the initial and new gradients are the same even though you didn't specify an initial gradient
+- API: `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
+- API: Promises returned by `API.PromptForColor` will no longer reject when the inital and new colors are the same even though you didn't specify an initial color
+- API: Promises returned by `API.PromptForGradient` will no longer reject when the initial and new gradients are the same even though you didn't specify an initial gradient
 
 ### Deprecated
-#### API
-- `API.IsColorEditorOpen` is now deprecated, please use `API.IsColorPromptAvailable` for new work
-- `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
-- `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
-- `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
+- API: `API.IsColorEditorOpen` is now deprecated, please use `API.IsColorPromptAvailable` for new work
+- API: `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
+- API: `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
+- API: `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
 
 ### Removed
-#### API
-- The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. You will need to add the library to your project to continue using them.
+- API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. You will need to add the library to your project to continue using them.
 
 ## [0.4.1] - 2022-09-30
 

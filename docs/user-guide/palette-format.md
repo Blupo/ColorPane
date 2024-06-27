@@ -1,4 +1,4 @@
-When [importing](color-editor.md#import) palettes, they must follow this JSON format:
+When [importing](color-editor.md#import-and-export) palettes, they must follow this JSON format:
 
 ```json
 {
@@ -23,7 +23,7 @@ When [importing](color-editor.md#import) palettes, they must follow this JSON fo
 }
 ```
 
-The color array of each color object is a 3-element array representing sRGB channels, which range from [0, 1]. No two colors can share the same name, however any number of colors have have the same color array.
+The color array of each color object is a 3-element array, with the elements representing the 3 sRGB channels, which typically range from [0, 1]. No two colors can share the same name, however any number of colors have have the same color array.
 
 If importing from a ModuleScript, the palette can also be a Lua table in the same format, e.g.
 

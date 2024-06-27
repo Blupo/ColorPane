@@ -62,16 +62,16 @@ The implementation of the Kelvin color module is based on Neil Bartlett's [color
 
 ## Material Icons
 
-ColorPane makes extensive use of Google's [Material Icons](https://fonts.google.com/icons), which are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+Google's [Material Icons](https://fonts.google.com/icons) are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## @roblox/roact, rodux, roact-rodux
 
-[@roblox](https://github.com/Roblox)'s [roact](https://github.com/Roblox/roact), [rodux](https://github.com/Roblox/rodux), and [roact-rodux](https://github.com/Roblox/roact-rodux) are included in ColorPane. They are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
+[@roblox](https://github.com/Roblox)'s [roact](https://github.com/Roblox/roact), [rodux](https://github.com/Roblox/rodux), and [roact-rodux](https://github.com/Roblox/roact-rodux) are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## @evaera/roblox-lua-promise
 
-[@evaera](https://github.com/evaera)'s [roblox-lua-promise](https://github.com/evaera/roblox-lua-promise) is included in ColorPane. It is licensed under the [MIT License](https://github.com/evaera/roblox-lua-promise/blob/master/LICENSE).
+[@evaera](https://github.com/evaera)'s [roblox-lua-promise](https://github.com/evaera/roblox-lua-promise) is licensed under the [MIT License](https://github.com/evaera/roblox-lua-promise/blob/master/LICENSE).
 
 ## @osyrisrblx/t
 
-[@osyrisrblx](https://github.com/osyrisrblx)'s [t](https://github.com/osyrisrblx/t) is included in ColorPane. It is licensed under the [MIT License](https://github.com/osyrisrblx/t/blob/master/LICENSE).
+[@osyrisrblx](https://github.com/osyrisrblx)'s [t](https://github.com/osyrisrblx/t) is licensed under the [MIT License](https://github.com/osyrisrblx/t/blob/master/LICENSE).
