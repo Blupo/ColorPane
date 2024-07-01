@@ -18,7 +18,6 @@ local Util = require(Modules.Util)
 
 local BuiltInPalettes = Modules.BuiltInPalettes
 local BrickColors = require(BuiltInPalettes.BrickColors)
-local CopicColors = require(BuiltInPalettes.CopicColors)
 local WebColors = require(BuiltInPalettes.WebColors)
 
 local Components = root.Components
@@ -61,16 +60,6 @@ local builtInPaletteElements = {
     },
 
     {
-        name = Translator.FormatByKey("Copic_BuiltInPaletteName"),
-        
-        content = Roact.createElement(Palette, {
-            palette = Util.typeColorPalette(CopicColors, "Color3"),
-            paletteIndex = -2,
-            readOnly = true
-        })
-    },
-
-    {
         name = "Picular",
         content = Roact.createElement(PicularPalette),
     },
@@ -80,7 +69,7 @@ local builtInPaletteElements = {
 
         content = Roact.createElement(Palette, {
             palette = Util.typeColorPalette(WebColors, "Color3"),
-            paletteIndex = -3,
+            paletteIndex = -2,
             readOnly = true
         })
     }

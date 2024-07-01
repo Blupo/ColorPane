@@ -47,10 +47,6 @@ may "ColorBrewer" appear in their name, without prior written permission of
 Cynthia Brewer.
 ```
 
-## Copic
-
-Copic is a registered trademark of [Too Corporation, Japan](https://www.toomarker.co.jp/en).
-
 ## color-temperature
 
 The implementation of the Kelvin color module is based on Neil Bartlett's [color-temperature](https://github.com/neilbartlett/color-temperature), which is licensed under the MIT License.

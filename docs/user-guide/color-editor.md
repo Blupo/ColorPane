@@ -35,7 +35,6 @@ There are several built-in palettes, some of which have custom layouts:
 
 - BrickColors
 - [ColorBrewer](#colorbrewer-palette)
-- Copic
 - [Picular](#picular-palette)
 - Web Colors
 

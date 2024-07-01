@@ -31,6 +31,7 @@
 - API: `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
 
 ### Removed
+- Color editor: Removed the Copic color palette
 - API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. You will need to add the library to your project to continue using them.
 
 ## [0.4.1] - 2022-09-30
