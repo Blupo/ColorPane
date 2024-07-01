@@ -65,10 +65,10 @@ nav:
       - Color Properties: user-guide/color-properties.md
       - Settings: user-guide/settings.md
       - Tips and Tricks: user-guide/tips.md
-      - Palette Format: user-guide/palette-format.md
     - Developer Guide:
       - Integration: developer-guide/integration.md
       - API Reference: developer-guide/api-reference.md
+      - Palette Format: developer-guide/palette-format.md
     - Attribution: attribution.md
     - Contributing: contributing.md
   - Changelog: changelog.md

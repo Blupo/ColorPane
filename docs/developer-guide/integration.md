@@ -2,7 +2,7 @@
 
 --8<-- "docs/developer-guide/dev-guide-note.md"
 
-First, you'll need to grab the module from the [Creator Store](https://create.roblox.com/store/asset/17844182825). If you use Rojo, you can alternatively add the [GitHub repo](https://github.com/Blupo/ColorPane) as a submodule.
+First, you'll need to grab the module from the [Creator Store](https://create.roblox.com/store/asset/17844182825). If you use [Rojo](https://rojo.space), you can alternatively add the [GitHub repo](https://github.com/Blupo/ColorPane) as a submodule.
 
 ## Initialisation
 
@@ -32,7 +32,8 @@ local colorPromise = ColorPane.PromptForColor({
 
 To customise the prompt, you can pass a table of options. The two options specified here are the most common. `PromptTitle` sets what the window text says, and `InitialColor` sets what color the user starts with (grey in this example).
 
-<img alt="Color picker window with custom title and color" style="max-width: 60%;" src="../../images/integration-colorpromptoptions-example.png">
+![Color picker window with custom title and color (dark theme)](../images/integration-colorpromptoptions-example-dark.png#only-dark){ width="500" }
+![Color picker window with custom title and color (light theme)](../images/integration-colorpromptoptions-example-light.png#only-light){ width="500" }
 
 The API will return a Promise. The basic idea is that a Promise represents a value that will be given *in the future*. That Promise will either be fulfilled (resolved), or broken (rejected). In this example, if the Promise resolves, it will resolve with a [Color3](https://create.roblox.com/docs/reference/engine/datatypes/Color3), and if it rejects, it will reject with an error object or message, depending on where the rejection came from.
 

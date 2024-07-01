@@ -1,3 +1,7 @@
+/// note
+Settings can only be modified if you have the Companion plugin installed.
+///
+
 This page explains the various options in the Settings window, in the order that they appear.
 
 ## ColorPane Settings

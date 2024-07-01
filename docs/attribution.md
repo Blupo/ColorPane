@@ -1,11 +1,6 @@
 # Attribution
 
-## Translations
-
-- French (`fr`) translation:
-    - [Clem Gaming (clmntfeugere)](https://crowdin.com/profile/clmntfeugere)
-- Korean (`ko`) translation:
-    - [CoouDo](https://crowdin.com/profile/cooudo)
+This page gives attribution to the various open-source projects used in ColorPane, as well as whatever else seems appropriate.
 
 ## ColorBrewer
 
@@ -56,22 +51,33 @@ Cynthia Brewer.
 
 Copic is a registered trademark of [Too Corporation, Japan](https://www.toomarker.co.jp/en).
 
-## @neilbartlett/color-temperature
+## color-temperature
 
 The implementation of the Kelvin color module is based on Neil Bartlett's [color-temperature](https://github.com/neilbartlett/color-temperature), which is licensed under the MIT License.
+
+## Markdown Buttons
+
+[@cxmeel](https://github.com/cxmeel)'s [Material Buttons](https://gist.github.com/cxmeel/b3af232eba0ace022e2fba8b7b286520) are cool and you should know about them.
 
 ## Material Icons
 
 Google's [Material Icons](https://fonts.google.com/icons) are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
-## @roblox/roact, rodux, roact-rodux
+## roact, rodux, roact-rodux
 
 [@roblox](https://github.com/Roblox)'s [roact](https://github.com/Roblox/roact), [rodux](https://github.com/Roblox/rodux), and [roact-rodux](https://github.com/Roblox/roact-rodux) are licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html).
 
-## @evaera/roblox-lua-promise
+## roblox-lua-promise
 
 [@evaera](https://github.com/evaera)'s [roblox-lua-promise](https://github.com/evaera/roblox-lua-promise) is licensed under the [MIT License](https://github.com/evaera/roblox-lua-promise/blob/master/LICENSE).
 
-## @osyrisrblx/t
+## t
 
 [@osyrisrblx](https://github.com/osyrisrblx)'s [t](https://github.com/osyrisrblx/t) is licensed under the [MIT License](https://github.com/osyrisrblx/t/blob/master/LICENSE).
+
+## Translations
+
+- French (`fr`) translation:
+    - [Clem Gaming (clmntfeugere)](https://crowdin.com/profile/clmntfeugere)
+- Korean (`ko`) translation:
+    - [CoouDo](https://crowdin.com/profile/cooudo)

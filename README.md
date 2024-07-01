@@ -5,31 +5,48 @@ ColorPane is a suite of color tools for Roblox Studio plugins. Some of the tools
 - A color editor with a color wheel, several types of sliders, and various color palettes, with the ability to create, import, and export your own palettes.
 - A gradient editor, similar to the Studio editor, with some quality-of-life changes including keypoint snapping, buttons to swap keypoint colors around, and a gradient palette.
 
-## Restructuring for v0.5
+<picture>
+  <source media="(prefers-color-scheme: dark)" src="docs/images/color-editor-dark.png">
+  <source media="(prefers-color-scheme: light)" src="docs/images/color-editor-light.png">
+  <img alt="Color editor" src="docs/images/color-editor-dark.png">
+</picture>
 
-Previously, ColorPane was a singular plugin, and using its color editing tools requires a complicated process akin to sending web requests. The original reason for doing this was to ensure that there was a single "source of truth" for settings and palettes. Several developers trying to integrate ColorPane into their projects ended up shoving the whole plugin in their project folders, which was not the intended design.
+<picture>
+  <source media="(prefers-color-scheme: dark)" src="docs/images/gradient-editor-dark.png">
+  <source media="(prefers-color-scheme: light)" src="docs/images/gradient-editor-light.png">
+  <img alt="Gradient editor" src="docs/images/gradient-editor-dark.png">
+</picture>
 
-In v0.5, however, I'm moving away from this approach to make it easier for plugin developers to use ColorPane's tools. For the new structure of the project, keep reading below.
+## Installing
 
-## The Library (if you want to add ColorPane to your project)
+**ColorPane comes in 2 parts. Install the one that applies to your situation.**
 
-The library is the core of ColorPane, and includes all the color tools. You can include this project using Rojo, or grab it from the marketplace (TBA). It consists of a ModuleScript that you need to call to initialise the tools:
+### Library
 
-```lua
-local InitialiseColorPane = require(...)
-local ColorPane = InitialiseColorPane(plugin, "YourProjectId")
-```
+If you want to use these color tools in your own plugin, you'll want to install the ColorPane library:
 
-You can then use the tools using the API (TBA).
+[![Get it on Roblox](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/17844182825)
+[![Get it on GitHub](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
 
-## The Plugins (if you want to use ColorPane)
+If you use [Rojo](https://rojo.space), you can add the [source repository](https://github.com/Blupo/ColorPane) as a submodule. Take a look at the [Integration](https://blupo.github.io/ColorPane/developer-guide/integration) page to learn how to put these tools in your plugin.
 
 ### Companion
 
-The Companion plugin takes up the previous ColorPane plugin's responsibility of syncing settings and palettes. Though not required, installing it will allow you to create and save palettes and other settings, and is *highly* recommended. Without it, palette creation will be disabled, and settings changes will not persist between Studio sessions. It also includes buttons to test the color tools like the old plugin did.
+If you're looking to try out ColorPane to see if it's right for you, or you use a plugin with ColorPane and want to unlock it's full capabilities, you'll want to install the Companion plugin.
 
-You can install it from the marketplace (TBA).
+[![Get it on Roblox](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/6474565567)
+[![Get it on GitHub](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
 
-### Color Properties
+These additional capablities include:
 
-Color Properties was a functionality integrated into the previous ColorPane plugin that allowed users to modify the color properties of objects using the color tools. This functionality might be spun off into its own plugin, as it originally was when ColorPane first released.
+* Creating and editing palettes
+* Modifying settings
+* Editing [color properties](https://blupo.github.io/ColorPane/user-guide/color-properties)
+
+Take a look at the [User Guide](https://blupo.github.io/ColorPane/user-guide/color-editor) to learn how to use the color tools.
+
+## Contributing
+
+Found a bug? Want to request a new feature? Interested in translating ColorPane? Read the [Contributing](https://blupo.github.io/ColorPane/contributing) page for guidelines on contributing to the project!
+
+If you like ColorPane, consider [donating](https://ko-fi.com/blupo)!
