@@ -75,5 +75,8 @@ Google's [Material Icons](https://fonts.google.com/icons) are licensed under the
 
 - French (`fr`) translation:
     - [Clem Gaming (clmntfeugere)](https://crowdin.com/profile/clmntfeugere)
+    - [CROISSANT0011](https://crowdin.com/profile/croissant0011)
 - Korean (`ko`) translation:
     - [CoouDo](https://crowdin.com/profile/cooudo)
+- Russian (`ru`) translation:
+    - [Artemiy Zaitsev (ztsff)](https://crowdin.com/profile/ztsff)
