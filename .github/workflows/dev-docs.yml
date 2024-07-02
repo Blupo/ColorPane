@@ -1,10 +1,10 @@
 # https://squidfunk.github.io/mkdocs-material/publishing-your-site/#with-github-actions
-name: Documentation
+name: Development Documentation
 
 on:
   push:
     branches:
-      - main
+      - develop
     paths:
       - "docs/**"
       - "mkdocs.yml"
@@ -32,4 +32,4 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material mike
-      - run: mike deploy --push --update-aliases "${{ vars.THIS_VERSION }}" latest
+      - run: mike deploy --push --update-aliases "${{ vars.NEXT_VERSION }}" dev

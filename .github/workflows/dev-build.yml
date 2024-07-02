@@ -6,7 +6,9 @@ on:
       - develop
     paths-ignore:
       - "docs/**"
-  workflow_dispatch:
+      - "mkdocs.yml"
+      - "README.md"
+      - "LICENSE"
 
 jobs:
   build:

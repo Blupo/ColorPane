@@ -33,6 +33,11 @@ theme:
         icon: material/brightness-4
         name: Switch to system preference
 
+extra:
+  version:
+    provider: mike
+    alias: true
+
 extra_css:
   - stylesheets/cp-button.css
   - stylesheets/fonts.css
