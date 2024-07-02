@@ -25,8 +25,7 @@ ColorPane is a suite of color tools for Roblox Studio plugins. Some of the tools
 
 If you want to use these color tools in your own plugin, you'll want to install the ColorPane library:
 
-[![Get it on Roblox](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/17844182825)
-[![Get it on GitHub](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
+[![Get it on Roblox](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/17844182825) [![Get it on GitHub](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
 
 If you use [Rojo](https://rojo.space), you can add the [source repository](https://github.com/Blupo/ColorPane) as a submodule. Take a look at the [Integration](https://blupo.github.io/ColorPane/developer-guide/integration) page to learn how to put these tools in your plugin.
 
@@ -34,8 +33,7 @@ If you use [Rojo](https://rojo.space), you can add the [source repository](https
 
 If you're looking to try out ColorPane to see if it's right for you, or you use a plugin with ColorPane and want to unlock it's full capabilities, you'll want to install the Companion plugin.
 
-[![Get it on Roblox](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/6474565567)
-[![Get it on GitHub](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
+[![Get it on Roblox](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/6474565567) [![Get it on GitHub](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
 
 These additional capablities include:
 
