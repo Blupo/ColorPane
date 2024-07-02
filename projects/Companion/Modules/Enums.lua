@@ -8,6 +8,5 @@ return {
         AutoLoadColorPropertiesAPIData = "AutoLoadColorPropertiesAPIData",
         CacheColorPropertiesAPIData = "CacheColorPropertiesAPIData",
         RobloxApiDump = "RobloxApiDump",
-        RobloxApiDumpLastUpdated = "RobloxApiDumpLastUpdated",
     }
 }

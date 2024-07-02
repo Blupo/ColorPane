@@ -293,8 +293,20 @@ do
             local modifiedValues = {}
 
             for key in pairs(Enums.CompanionUserDataKey) do
-                if (this[key] ~= that[key]) then
-                    modifiedValues[key] = that[key]
+                if (key == Enums.CompanionUserDataKey.RobloxApiDump) then
+                    if (
+                        -- API dump tables are very large, so we'll avoid comparing them
+                        -- and just check if one is nil and one isn't nil
+                        -- (this definitely won't come back to haunt me)
+                        ((type(this[key]) == "table") and (type(that[key]) == "nil")) or 
+                        ((type(this[key]) == "nil") and (type(that[key]) == "table"))
+                    ) then
+                        modifiedValues[key] = that[key]
+                    end
+                else
+                    if (this[key] ~= that[key]) then
+                        modifiedValues[key] = that[key]
+                    end
                 end
             end
 

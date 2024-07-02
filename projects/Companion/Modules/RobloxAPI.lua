@@ -115,9 +115,8 @@ RobloxAPI.GetData = function()
     end):andThen(function(api, usedCache)
         api = usedCache and api or HttpService:JSONDecode(api)
 
-        if (not usedCache) then
+        if ((not usedCache) and companionUserData:getValue(Enums.CompanionUserDataKey.CacheColorPropertiesAPIData)) then
             companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDump, api)
-            companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDumpLastUpdated, DateTime.now().UnixTimestamp)
         end
 
         ColorAPIData.init(api)
@@ -140,10 +139,8 @@ valueChangedSubscription = companionUserData.valueChanged:subscribe(function(val
         if (not apiData) then return end
 
         companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDump, apiData)
-        companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDumpLastUpdated, DateTime.now().UnixTimestamp)
     else
         companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDump, nil)
-        companionUserData:setValue(Enums.CompanionUserDataKey.RobloxApiDumpLastUpdated, nil)
     end
 end)
 
