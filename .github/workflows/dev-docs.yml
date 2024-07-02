@@ -6,6 +6,7 @@ on:
     branches:
       - develop
     paths:
+      - ".github/**"
       - "docs/**"
       - "mkdocs.yml"
 
