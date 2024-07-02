@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: git fetch origin gh-pages --depth=1
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
@@ -32,4 +33,4 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material mike
-      - run: mike deploy --push --update-aliases "${{ vars.NEXT_VERSION }}" dev
+      - run: mike deploy --push --update-aliases ${{ vars.NEXT_VERSION }} dev
