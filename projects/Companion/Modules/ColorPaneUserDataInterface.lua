@@ -14,6 +14,7 @@ local Common = root.Common
 local CommonModules = Common.Modules
 local ColorPaneUserDataInterfaceValidator = require(CommonModules.ColorPaneUserDataInterfaceValidator)
 local ColorPaneUserDataInterfaceVersion = require(CommonModules.ColorPaneUserDataInterfaceVersion)
+local CommonConstants = require(CommonModules.Constants)
 local CommonTypes = require(CommonModules.Types)
 local PluginProvider = require(CommonModules.PluginProvider)
 
@@ -56,7 +57,7 @@ end)
 
 ---
 
-interfaceFolder.Name = "ColorPaneUserData"
+interfaceFolder.Name = CommonConstants.COLORPANE_USERDATA_INTERFACE_NAME
 getVersionFunction.Name = "GetVersion"
 getValueFunction.Name = "GetValue"
 getAllValuesFunction.Name = "GetAllValues"

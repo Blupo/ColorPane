@@ -1,6 +1,10 @@
 --!strict
 -- Provides constants used in the projects
 
+local StudioService: StudioService = game:GetService("StudioService")
+
+---
+
 local CONSTANTS = {
     --[[
         The list of valid gradient color spaces.
@@ -31,6 +35,11 @@ local CONSTANTS = {
         The maximum time value that gradient keypoints can be separated by.
     ]]
     MAX_SNAP_VALUE = 0.25,
+
+    --[[
+        The name of the ColorPane user interface folder.
+    ]]
+    COLORPANE_USERDATA_INTERFACE_NAME = "ColorPaneUserData_" .. StudioService:GetUserId(),
 }
 
 -- Calculate the maximum number of keypoints that can be in a ColorSequence

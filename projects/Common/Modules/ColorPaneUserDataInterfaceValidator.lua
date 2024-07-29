@@ -26,12 +26,6 @@ return function(value: any): (boolean, string?)
 
     if (not success) then
         return success, failReason
-    end
-
-    local correctName: boolean = (value.Name == "ColorPaneUserData")
-
-    if (not correctName) then
-        return false, "Incorrect interface name"
     else
         return true
     end

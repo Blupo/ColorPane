@@ -11,6 +11,7 @@ local CommonIncludes = Common.Includes
 local Signal = require(CommonIncludes.Signal)
 
 local CommonModules = Common.Modules
+local CommonConstants = require(CommonModules.Constants)
 local CommonEnums = require(CommonModules.Enums)
 local CommonTypes = require(CommonModules.Types)
 local ColorPaneUserDataInterfaceValidator = require(CommonModules.ColorPaneUserDataInterfaceValidator)
@@ -52,6 +53,7 @@ local resetUpstreamInterface = function()
 end
 
 local hookUpstreamInterface = function(child: Instance)
+    if (child.Name ~= CommonConstants.COLORPANE_USERDATA_INTERFACE_NAME) then return end
     if (not ColorPaneUserDataInterfaceValidator(child)) then return end
 
     local getVersion: BindableFunction = child:FindFirstChild("GetVersion")::BindableFunction
