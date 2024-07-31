@@ -27,7 +27,7 @@ If you want to use these color tools in your own plugin, you'll want to install 
 
 [![Get it on Roblox](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/roblox_dev.svg)](https://create.roblox.com/store/asset/17844182825) [![Get it on GitHub](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/github.svg)](https://github.com/Blupo/ColorPane/releases/latest)
 
-If you use [Rojo](https://rojo.space), you can add the [source repository](https://github.com/Blupo/ColorPane) as a submodule. Take a look at the [Integration](https://blupo.github.io/ColorPane/developer-guide/integration) page to learn how to put these tools in your plugin.
+If you use [Rojo](https://rojo.space), you can add the [source repository](https://github.com/Blupo/ColorPane) as a submodule. Take a look at the [Integration](https://blupo.github.io/ColorPane/0.5/developer-guide/integration) page to learn how to put these tools in your plugin.
 
 ### Companion
 
@@ -39,12 +39,12 @@ These additional capablities include:
 
 * Creating and editing palettes
 * Modifying settings
-* Editing [color properties](https://blupo.github.io/ColorPane/user-guide/color-properties)
+* Editing [color properties](https://blupo.github.io/ColorPane/0.5/user-guide/color-properties)
 
-Take a look at the [User Guide](https://blupo.github.io/ColorPane/user-guide/color-editor) to learn how to use the color tools.
+Take a look at the [User Guide](https://blupo.github.io/ColorPane/0.5/user-guide/color-editor) to learn how to use the color tools.
 
 ## Contributing
 
-Found a bug? Want to request a new feature? Interested in translating ColorPane? Read the [Contributing](https://blupo.github.io/ColorPane/contributing) page for guidelines on contributing to the project!
+Found a bug? Want to request a new feature? Interested in translating ColorPane? Read the [Contributing](https://blupo.github.io/ColorPane/0.5/contributing) page for guidelines on contributing to the project!
 
 If you like ColorPane, consider [donating](https://ko-fi.com/blupo)!

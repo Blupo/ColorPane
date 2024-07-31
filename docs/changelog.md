@@ -9,6 +9,7 @@
 - API: Added `API.IsGradientPromptAvailable` to check if calling `API.PromptForGradient` will succeed or immediately reject (replaces `API.IsGradientEditorOpen`)
 
 ### Changed
+- Script injection is no longer a required plugin permission
 - Settings: Invalid palettes will no longer cause the entire list of palettes to be removed, just the invalid palettes
 - Color editor: Duplicating palettes with the same name will now create or increment a counter instead of naming it "Palette (1) (1) (1) ..."
 - Color Properties: Changing color properties now uses the [Recording API](https://devforum.roblox.com/t/2512500)
@@ -31,8 +32,11 @@
 - API: `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
 
 ### Removed
+- Removed the first-time use plugin perimssions warning
+- Automatic update-checking has been removed
 - Color editor: Removed the Copic color palette
-- API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. You will need to add the library to your project to continue using them.
+- API: Removed `API.GetVersion`
+- API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. Please read the Integration page of the documentation for details on the updated integration method.
 
 ## [0.4.1] - 2022-09-30
 
