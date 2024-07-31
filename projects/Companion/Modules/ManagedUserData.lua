@@ -113,9 +113,19 @@ local initColorPaneUserData = function(userData, colorPaneDefaultUserDataValues)
         warn("ColorPane user data is invalid and will be re-created")
         return colorPaneDefaultUserDataValues, true
     else
-        -- check for missing or invalid values
         local modified: boolean = false
+        userData[Constants.META_UPDATE_SOURCE_KEY] = nil
 
+        -- check for extraneous values
+        for key: string in pairs(userData) do
+            if (CommonEnums.ColorPaneUserDataKey[key] == nil) then
+                warn("extraneous ColorPane user data key " .. key .. " will be dropped")
+                userData[key] = nil
+                modified = true
+            end
+        end
+
+        -- check for missing or invalid values
         for key: string in pairs(CommonEnums.ColorPaneUserDataKey) do
             local isValid: boolean, failReason: string? =
                 t.optional(ColorPaneUserDataValidators[key])(userData[key])
@@ -192,9 +202,19 @@ local initCompanionUserData = function(userData, companionDefaultUserDataValues)
         warn("Companion user data is invalid and will be re-created")
         return companionDefaultUserDataValues, false
     else
-        -- check for missing or invalid values
         local modified: boolean = false
+        userData[Constants.META_UPDATE_SOURCE_KEY] = nil
 
+        -- check for extraneous values
+        for key: string in pairs(userData) do
+            if (Enums.CompanionUserDataKey[key] == nil) then
+                warn("extraneous Companion user data key " .. key .. " will be dropped")
+                userData[key] = nil
+                modified = true
+            end
+        end
+
+        -- check for missing or invalid values
         for key: string in pairs(Enums.CompanionUserDataKey) do
             local isValid: boolean, failReason: string? =
                 t.optional(CompanionUserDataValidators[key])(userData[key])
@@ -265,9 +285,6 @@ end
 do
     local colorPaneUserData, colorPaneInitialWrite,
         companionUserData, companionInitialWrite = initUserData()
-
-    colorPaneUserData[Constants.META_UPDATE_SOURCE_KEY] = nil
-    companionUserData[Constants.META_UPDATE_SOURCE_KEY] = nil
 
     colorPaneUserDataObj = ColorPaneUserDataFactory(colorPaneUserData)
 

@@ -101,6 +101,13 @@ UserData.new = function(
     assert(userDataIsValidTable, Enums.UserDataError.InvalidUserData)
 
     for key, value in pairs(userData) do
+        -- drop extraneous values from table
+        if (not keys[key]) then
+            warn("extraneous user data key " .. key .. " will be dropped")
+            userData[key] = nil
+            continue
+        end
+
         local validator: (any) -> (boolean, string?) = validators[key]
         assert(validator, Enums.UserDataError.ValidatorNotFound .. " " .. key)
         assert(validator(value), Enums.UserDataError.InvalidUserData)
