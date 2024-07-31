@@ -143,7 +143,7 @@ local fireGradientEditFinished: Signal.FireSignal<boolean> = function(_: boolean
 --[[
     This is the actual color prompting function.
 ]]
-local __promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
+local _promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
     local fullPromptInfo: ColorPromptInfo = Cryo.Dictionary.join(DEFAULT_COLOR_PROMPT_INFO, promptInfo or {})
     local finishedSignal: Signal.Signal<boolean>, fireFinished: Signal.FireSignal<boolean> = Signal.createSignal()
     local initialColor: Color
@@ -305,7 +305,7 @@ ColorPane.PromptForColor = function(promptInfo: ColorPromptInfoArgument?): Promi
         return Promise.reject(Enums.PromptRejection.InvalidPromptOptions)
     end
 
-    return __promptForColor(promptInfo)
+    return _promptForColor(promptInfo)
 end
 
 --[[
@@ -417,7 +417,7 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
         originalPrecision = fullPromptInfo.InitialPrecision,
         fireFinished = fireFinished,
 
-        promptForColorEdit = __promptForColor,
+        promptForColorEdit = _promptForColor,
     })
 
     -- set up prompt state

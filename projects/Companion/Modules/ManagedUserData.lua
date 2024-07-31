@@ -54,7 +54,7 @@ local migrateLegacyData = function(legacyUserData): (CommonTypes.ColorPaneUserDa
         AskNameBeforePaletteCreation = t.optional(ColorPaneUserDataValidators.AskNameBeforePaletteCreation),
         SnapValue = t.optional(ColorPaneUserDataValidators.SnapValue),
         UserPalettes = t.optional(ColorPaneUserDataValidators.UserColorPalettes),
-        UserGradients = t.optional(ColorPaneUserDataValidators.__userGradients),
+        UserGradients = t.optional(ColorPaneUserDataValidators._userGradients),
         AutoLoadColorProperties = t.optional(t.boolean),
         CacheAPIData = t.optional(t.boolean),
     })(legacyUserData)

@@ -192,8 +192,8 @@ local gradientPalette = t.strictInterface({
 ---
 
 local ColorPaneUserDataValidators = {
-    __colorPalette = colorPalette,
-    __gradientPalette = gradientPalette,
+    _colorPalette = colorPalette,
+    _gradientPalette = gradientPalette,
 
     --[[
         Checks if a value is valid for the AskNameBeforePaletteCreation value.
@@ -238,7 +238,7 @@ local ColorPaneUserDataValidators = {
         @return If the value is valid
         @return An error message, if the value was invalid
     ]]
-    __userGradients = t.array(t.strictInterface({
+    _userGradients = t.array(t.strictInterface({
         name = t.string,
         colorSpace = t.string,
         precision = t.integer,
@@ -280,7 +280,7 @@ local ColorPaneUserDataValidators = {
     @return An error message, if the value was invalid
 
 ]]
-ColorPaneUserDataValidators.__userData = t.interface({
+ColorPaneUserDataValidators._userData = t.interface({
     AskNameBeforePaletteCreation = ColorPaneUserDataValidators.AskNameBeforePaletteCreation,
     SnapValue = ColorPaneUserDataValidators.SnapValue,
     UserColorPalettes = ColorPaneUserDataValidators.UserColorPalettes,

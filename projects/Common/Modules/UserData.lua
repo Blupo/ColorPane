@@ -67,11 +67,11 @@ type UserDataImpl = {
 
 export type UserData = typeof(setmetatable(
     {}::{
-        __data: Values,
-        __keys: Values,
-        __validators: {[string]: (any) -> (boolean, string?)},
-        __diffs: {[string]: (any, any) -> boolean},
-        __fireValueChanged: Signal.FireSignal<Types.KeyValue>,
+        _data: Values,
+        _keys: Values,
+        _validators: {[string]: (any) -> (boolean, string?)},
+        _diffs: {[string]: (any, any) -> boolean},
+        _fireValueChanged: Signal.FireSignal<Types.KeyValue>,
 
         --[[
             Fires when a user data value changes.
@@ -109,11 +109,11 @@ UserData.new = function(
     local valueChangedSignal: Signal.Signal<Types.KeyValue>, fireValueChanged: Signal.FireSignal<Types.KeyValue> = Signal.createSignal()
 
     local self = {
-        __data = userData,
-        __keys = keys,
-        __validators = validators,
-        __diffs = diffs,
-        __fireValueChanged = fireValueChanged,
+        _data = userData,
+        _keys = keys,
+        _validators = validators,
+        _diffs = diffs,
+        _fireValueChanged = fireValueChanged,
 
         valueChanged = valueChangedSignal,
     }
@@ -122,9 +122,9 @@ UserData.new = function(
 end
 
 UserData.getValue = function(self: UserData, key: string): any
-    assert(self.__keys[key], Enums.UserDataError.InvalidKey)
+    assert(self._keys[key], Enums.UserDataError.InvalidKey)
 
-    local value = self.__data[key]
+    local value = self._data[key]
 
     if (typeof(value) == "table") then
         return Util.table.deepCopy(value)
@@ -134,25 +134,25 @@ UserData.getValue = function(self: UserData, key: string): any
 end
 
 UserData.getAllValues = function(self: UserData): Values
-    return Util.table.deepCopy(self.__data)
+    return Util.table.deepCopy(self._data)
 end
 
 UserData.setValue = function(self: UserData, key: string, value: any): boolean
-    assert(self.__keys[key], Enums.UserDataError.InvalidKey)
+    assert(self._keys[key], Enums.UserDataError.InvalidKey)
 
     -- validate value
-    local validator = self.__validators[key]
+    local validator = self._validators[key]
     assert(validator, Enums.UserDataError.ValidatorNotFound)
 
     local valueIsValid: boolean = validator(value)
     assert(valueIsValid, Enums.UserDataError.InvalidValue)
 
     -- compare values to see if they're actually different
-    local originalValue: any = self.__data[key]
+    local originalValue: any = self._data[key]
     local isDifferentValue: boolean
 
-    if (self.__diffs[key]) then
-        isDifferentValue = self.__diffs[key](originalValue, value)
+    if (self._diffs[key]) then
+        isDifferentValue = self._diffs[key](originalValue, value)
     else
         isDifferentValue = originalValue ~= value
     end
@@ -163,12 +163,12 @@ UserData.setValue = function(self: UserData, key: string, value: any): boolean
 
     -- add a copy of tables to prevent unintended behaviour
     if (typeof(value) == "table") then
-        self.__data[key] = Util.table.deepCopy(value)
+        self._data[key] = Util.table.deepCopy(value)
     else
-        self.__data[key] = value
+        self._data[key] = value
     end
 
-    self.__fireValueChanged({
+    self._fireValueChanged({
         Key = key,
         Value = value
     })

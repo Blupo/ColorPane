@@ -38,14 +38,14 @@ type UserDataSynchroniserImpl = {
 
         @param self The user data synchroniser
     ]]
-    __pullSettings: (UserDataSynchroniser) -> (),
+    _pullSettings: (UserDataSynchroniser) -> (),
 
     --[[
         Writes the current user data values to the plugin settings.
 
         @param self The user data synchroniser
     ]]
-    __writeSettings: (UserDataSynchroniser) -> (),
+    _writeSettings: (UserDataSynchroniser) -> (),
 
     --[[
         Creates a new synchroniser for a UserData.
@@ -61,15 +61,15 @@ type UserDataSynchroniserImpl = {
 
 export type UserDataSynchroniser = typeof(setmetatable(
     {}::{
-        __userData: UserData,
-        __pluginSettingKey: string,
-        __diffCallback: (Values, Values) -> Values,
+        _userData: UserData,
+        _pluginSettingKey: string,
+        _diffCallback: (Values, Values) -> Values,
 
-        __synchroniserId: string,
-        __valueChangedSubscription: Signal.Subscription,
-        __heartbeat: RBXScriptConnection,
-        __lastSyncTime: number,
-        __syncing: boolean,
+        _synchroniserId: string,
+        _valueChangedSubscription: Signal.Subscription,
+        _heartbeat: RBXScriptConnection,
+        _lastSyncTime: number,
+        _syncing: boolean,
     },
     
     {}::UserDataSynchroniserImpl
@@ -89,14 +89,14 @@ local plugin: Plugin = PluginProvider()
 local UserDataSynchroniser: UserDataSynchroniserImpl = {}::UserDataSynchroniserImpl
 UserDataSynchroniser.__index = UserDataSynchroniser
 
-UserDataSynchroniser.__pullSettings = function(self: UserDataSynchroniser)
-    local userData = self.__userData
-    local freshUserData = plugin:GetSetting(self.__pluginSettingKey)
+UserDataSynchroniser._pullSettings = function(self: UserDataSynchroniser)
+    local userData = self._userData
+    local freshUserData = plugin:GetSetting(self._pluginSettingKey)
     local freshSynchroniserId: string = freshUserData[Constants.META_UPDATE_SOURCE_KEY]
 
-    if (freshSynchroniserId ~= self.__synchroniserId) then
+    if (freshSynchroniserId ~= self._synchroniserId) then
         -- only update values if the changes came from somewhere else
-        local modifiedSettings = self.__diffCallback(userData:getAllValues(), freshUserData)
+        local modifiedSettings = self._diffCallback(userData:getAllValues(), freshUserData)
 
         for modifiedKey, modifiedValue in pairs(modifiedSettings) do
             userData:setValue(modifiedKey, modifiedValue)
@@ -104,12 +104,12 @@ UserDataSynchroniser.__pullSettings = function(self: UserDataSynchroniser)
     end
 end
 
-UserDataSynchroniser.__writeSettings = function(self: UserDataSynchroniser)
-    local writtenUserData = Cryo.Dictionary.join(self.__userData:getAllValues(), {
-        [Constants.META_UPDATE_SOURCE_KEY] = self.__synchroniserId
+UserDataSynchroniser._writeSettings = function(self: UserDataSynchroniser)
+    local writtenUserData = Cryo.Dictionary.join(self._userData:getAllValues(), {
+        [Constants.META_UPDATE_SOURCE_KEY] = self._synchroniserId
     })
 
-    plugin:SetSetting(self.__pluginSettingKey, writtenUserData)
+    plugin:SetSetting(self._pluginSettingKey, writtenUserData)
 end
 
 UserDataSynchroniser.new = function(
@@ -119,43 +119,43 @@ UserDataSynchroniser.new = function(
     initialWrite: boolean?
 )
     local self = setmetatable({
-        __userData = userData,
-        __pluginSettingKey = pluginSettingKey,
-        __diffCallback = diffCallback,
+        _userData = userData,
+        _pluginSettingKey = pluginSettingKey,
+        _diffCallback = diffCallback,
 
-        __synchroniserId = HttpService:GenerateGUID(false),
-        __valueChangedSubscription = Signal.createSignal():subscribe(function() end),
-        __heartbeat = RunService.Heartbeat:Connect(function() end),
-        __lastSyncTime = -1,
-        __syncing = false,
+        _synchroniserId = HttpService:GenerateGUID(false),
+        _valueChangedSubscription = Signal.createSignal():subscribe(function() end),
+        _heartbeat = RunService.Heartbeat:Connect(function() end),
+        _lastSyncTime = -1,
+        _syncing = false,
     }, UserDataSynchroniser)
 
     -- these connections will be replaced
-    self.__valueChangedSubscription:unsubscribe()
-    self.__heartbeat:Disconnect()
+    self._valueChangedSubscription:unsubscribe()
+    self._heartbeat:Disconnect()
 
     if (initialWrite) then
-        self:__writeSettings()
+        self:_writeSettings()
     end
     
-    self.__valueChangedSubscription = userData.valueChanged:subscribe(function()
-        self:__writeSettings()
+    self._valueChangedSubscription = userData.valueChanged:subscribe(function()
+        self:_writeSettings()
     end)
 
-    self.__heartbeat = RunService.Heartbeat:Connect(function()
-        if (self.__syncing) then return end
-        if ((os.clock() - self.__lastSyncTime) < SYNC_FREQUENCY) then return end
+    self._heartbeat = RunService.Heartbeat:Connect(function()
+        if (self._syncing) then return end
+        if ((os.clock() - self._lastSyncTime) < SYNC_FREQUENCY) then return end
 
-        self.__syncing = true
-        self:__pullSettings()
+        self._syncing = true
+        self:_pullSettings()
 
-        self.__lastSyncTime = os.clock()
-        self.__syncing = false
+        self._lastSyncTime = os.clock()
+        self._syncing = false
     end)
 
     plugin.Unloading:Connect(function()
-        self.__valueChangedSubscription:unsubscribe()
-        self.__heartbeat:Disconnect()
+        self._valueChangedSubscription:unsubscribe()
+        self._heartbeat:Disconnect()
     end)
 
     return self

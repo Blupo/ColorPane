@@ -111,11 +111,11 @@ type WindowImpl = {
 
 export type Window = typeof(setmetatable(
     {}::{
-        __tree: any,
-        __window: DockWidgetPluginGui,
-        __mousePositionPoll: RBXScriptConnection,
-        __lastMousePosition: Vector2,
-        __fireMousePositionChanged: Signal.FireSignal<Vector2>,
+        _tree: any,
+        _window: DockWidgetPluginGui,
+        _mousePositionPoll: RBXScriptConnection,
+        _lastMousePosition: Vector2,
+        _fireMousePositionChanged: Signal.FireSignal<Vector2>,
 
         --[[
             Marks if the window has been destroyed.
@@ -156,11 +156,11 @@ Window.new = function(id: string, widgetInfo: DockWidgetPluginGuiInfo): Window
     local mousePositionChanged: Signal.Signal<Vector2>, fireMousePositionChanged: Signal.FireSignal<Vector2> = Signal.createSignal()
     
     local self = {
-        __tree = nil,
-        __window = window,
-        __mousePositionPoll = RunService.Heartbeat:Connect(function() end),
-        __lastMousePosition = Vector2.new(math.huge, math.huge),
-        __fireMousePositionChanged = fireMousePositionChanged,
+        _tree = nil,
+        _window = window,
+        _mousePositionPoll = RunService.Heartbeat:Connect(function() end),
+        _lastMousePosition = Vector2.new(math.huge, math.huge),
+        _fireMousePositionChanged = fireMousePositionChanged,
 
         destroyed = false,
         openedWithoutMounting = openedWithoutMounting,
@@ -171,26 +171,26 @@ Window.new = function(id: string, widgetInfo: DockWidgetPluginGuiInfo): Window
     window:GetPropertyChangedSignal("Enabled"):Connect(function()
         local enabled: boolean = window.Enabled
 
-        if (enabled and (not self.__tree)) then
+        if (enabled and (not self._tree)) then
             fireOpenedWithoutMounting()
-        elseif ((not enabled) and self.__tree) then
+        elseif ((not enabled) and self._tree) then
             fireClosedWithoutUnmounting()
         end
     end)
 
     window.Name = id
     window.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    self.__mousePositionPoll:Disconnect()
+    self._mousePositionPoll:Disconnect()
     return setmetatable(self, Window)
 end
 
 Window.unmount = function(self: Window, resetTitle: boolean?)
-    if ((self.destroyed) or (not self.__tree)) then return end
+    if ((self.destroyed) or (not self._tree)) then return end
 
-    Roact.unmount(self.__tree)
-    self.__tree = nil
+    Roact.unmount(self._tree)
+    self._tree = nil
 
-    local window: DockWidgetPluginGui = self.__window
+    local window: DockWidgetPluginGui = self._window
     window.Enabled = false
     
     if (resetTitle) then
@@ -199,11 +199,11 @@ Window.unmount = function(self: Window, resetTitle: boolean?)
 end
 
 Window.mount = function(self: Window, title: string, component: Element, store: Store)
-    if ((self.destroyed) or (self.__tree)) then return end
+    if ((self.destroyed) or (self._tree)) then return end
 
-    local window: DockWidgetPluginGui = self.__window
+    local window: DockWidgetPluginGui = self._window
 
-    self.__tree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
+    self._tree = Roact.mount(Roact.createElement(RoactRodux.StoreProvider, {
         store = store
     }, {
         App = component
@@ -214,42 +214,42 @@ Window.mount = function(self: Window, title: string, component: Element, store: 
 end
 
 Window.enableMouseTracking = function(self: Window)
-    if ((self.destroyed) or (self.__mousePositionPoll.Connected)) then return end
+    if ((self.destroyed) or (self._mousePositionPoll.Connected)) then return end
 
-    self.__mousePositionPoll = RunService.Heartbeat:Connect(function()
-        local position: Vector2 = self.__window:GetRelativeMousePosition()
-        if (position == self.__lastMousePosition) then return end
+    self._mousePositionPoll = RunService.Heartbeat:Connect(function()
+        local position: Vector2 = self._window:GetRelativeMousePosition()
+        if (position == self._lastMousePosition) then return end
 
-        self.__lastMousePosition = position
-        self.__fireMousePositionChanged(position)
+        self._lastMousePosition = position
+        self._fireMousePositionChanged(position)
     end)
 end
 
 Window.disableMouseTracking = function(self: Window)
-    if ((self.destroyed) or (not self.__mousePositionPoll.Connected)) then return end
+    if ((self.destroyed) or (not self._mousePositionPoll.Connected)) then return end
 
-    self.__mousePositionPoll:Disconnect()
+    self._mousePositionPoll:Disconnect()
 end
 
 Window.open = function(self: Window)
     if (self.destroyed) then return end
-    self.__window.Enabled = true
+    self._window.Enabled = true
 end
 
 Window.close = function(self: Window)
     if (self.destroyed) then return end
-    self.__window.Enabled = false
+    self._window.Enabled = false
 end
 
 Window.destroy = function(self: Window)
     if (self.destroyed) then return end
 
-    if (self.__tree) then
+    if (self._tree) then
         self:unmount()
     end
 
-    self.__mousePositionPoll:Disconnect()
-    self.__window:Destroy()
+    self._mousePositionPoll:Disconnect()
+    self._window:Destroy()
     self.destroyed = true
 end
 
@@ -257,7 +257,7 @@ Window.isMounted = function(self: Window): boolean
     if (self.destroyed) then
         return false
     else
-        return if (self.__tree) then true else false
+        return if (self._tree) then true else false
     end
 end
 
@@ -265,7 +265,7 @@ Window.isOpen = function(self: Window): boolean
     if (self.destroyed) then
         return false
     else
-        return self.__window.Enabled
+        return self._window.Enabled
     end
 end
 

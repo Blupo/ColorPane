@@ -114,7 +114,7 @@ end
 
 Util.palette.validate = function(palette: any): (boolean, string?)
     -- type check
-    local typeCheckSuccess, message = ColorPaneUserDataValidators.__colorPalette(palette)
+    local typeCheckSuccess, message = ColorPaneUserDataValidators._colorPalette(palette)
     if (not typeCheckSuccess) then return false, message end
 
     -- check for "blank" name
