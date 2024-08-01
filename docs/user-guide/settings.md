@@ -20,7 +20,7 @@ These settings only apply to the Companion plugin itself.
 
 ## Setting Controls
 
-There are several buttons here for settings management.
+There are several buttons at the bottom of the settings page for settings management.
 
 - <span class="cp-button">Import Settings</span>: Allows you to restore backed-up settings information.
 - <span class="cp-button">Export Settings</span>: Allows you to back up your settings information.
