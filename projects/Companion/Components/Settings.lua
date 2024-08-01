@@ -1,24 +1,29 @@
---[[
-    Component for managing ColorPane settings.
-]]
+-- Component for managing settings.
 
+local HttpService = game:GetService("HttpService")
 local TextService = game:GetService("TextService")
+
+---
 
 local root = script.Parent.Parent
 local Common = root.Common
 
 local CommonModules = Common.Modules
-local Constants = require(CommonModules.Constants)
+local CommonConstants = require(CommonModules.Constants)
 local CommonEnums = require(CommonModules.Enums)
+local Prompt = require(CommonModules.Prompt)
 local Style = require(CommonModules.Style)
 local Translator = require(CommonModules.Translator)
+local Window = require(CommonModules.Window)
 
 local CommonIncludes = Common.Includes
 local Roact = require(CommonIncludes.RoactRodux.Roact)
 
 local CommonComponents = Common.Components
+local Button = require(CommonComponents.Button)
 local Checkbox = require(CommonComponents.Checkbox)
 local ConnectTheme = require(CommonComponents.ConnectTheme)
+local ExportText = require(CommonComponents.ExportText)
 local TextInput = require(CommonComponents.TextInput)
 
 local StandardComponents = CommonComponents.StandardComponents
@@ -27,9 +32,15 @@ local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)
 local StandardUIPadding = require(StandardComponents.UIPadding)
 
+local Components = root.Components
+local ImportSettings = require(Components.ImportSettings)
+
 local Modules = root.Modules
+local Constants = require(Modules.Constants)
 local Enums = require(Modules.Enums)
 local ManagedUserData = require(Modules.ManagedUserData)
+local Store = require(Modules.Store)
+local WidgetInfo = require(Modules.WidgetInfo)
 
 ---
 
@@ -47,6 +58,15 @@ local UI_TRANSLATIONS = Translator.GenerateTranslationTable({
     "AskNameBeforePaletteCreation_SettingDescription",
     "AutoLoadColorProperties_SettingDescription",
     "CacheAPIData_SettingDescription",
+    "ImportSettings_ButtonText",
+    "ExportSettings_ButtonText",
+    "ImportSettings_WindowTitle",
+    "ExportSettings_WindowTitle",
+    "ExportSettings_CopyPrompt",
+    "ConfirmSettingsImport_WindowTitle",
+    "ConfirmSettingsImport_PromptText",
+    "Import_ButtonText",
+    "SnapValue_SettingDescription",
 })
 
 local colorPaneUserData = ManagedUserData.ColorPane
@@ -135,6 +155,9 @@ Settings.init = function(self)
     end
 
     self.listLength, self.updateListLength = Roact.createBinding(0)
+    self.importSettingsWindow = Window.new(WidgetInfo.ImportSettings.Id, WidgetInfo.ImportSettings.Info)
+    self.exportSettingsWindow = Window.new(WidgetInfo.ExportSettings.Id, WidgetInfo.ExportSettings.Info)
+    self.confirmImportSubscription = nil
     self:setState(initSettings)
 end
 
@@ -156,6 +179,22 @@ Settings.didMount = function(self)
             [key] = newValue,
         })
     end)
+
+    self.importOpenedWithoutMounting = self.importSettingsWindow.openedWithoutMounting:subscribe(function()
+        self.importSettingsWindow:close()
+    end)
+
+    self.exportOpenedWithoutMounting = self.exportSettingsWindow.openedWithoutMounting:subscribe(function()
+        self.exportSettingsWindow:close()
+    end)
+
+    self.importClosedWithoutUnmounting = self.importSettingsWindow.closedWithoutUnmounting:subscribe(function()
+        self.importSettingsWindow:unmount()
+    end)
+
+    self.exportClosedWithoutUnmounting = self.exportSettingsWindow.closedWithoutUnmounting:subscribe(function()
+        self.exportSettingsWindow:unmount()
+    end)
 end
 
 Settings.willUnmount = function(self)
@@ -163,8 +202,19 @@ Settings.willUnmount = function(self)
         self.state.restorePromptSubscription:unsubscribe()
     end
 
+    if (self.confirmImportSubscription) then
+        self.confirmImportSubscription:unsubscribe()
+    end
+
     self.colorPaneValueChanged:unsubscribe()
     self.companionValueChanged:unsubscribe()
+    self.importOpenedWithoutMounting:unsubscribe()
+    self.importClosedWithoutUnmounting:unsubscribe()
+    self.exportOpenedWithoutMounting:unsubscribe()
+    self.exportClosedWithoutUnmounting:unsubscribe()
+
+    self.importSettingsWindow:destroy()
+    self.exportSettingsWindow:destroy()
 end
 
 Settings.render = function(self)
@@ -225,7 +275,7 @@ Settings.render = function(self)
                 Size = UDim2.new(1, -(40 + Style.Constants.SpaciousElementPadding), 1, 0),
                 Position = UDim2.new(1, 0, 0.5, 0),
 
-                Text = "Gradient keypoint snap %",
+                Text = UI_TRANSLATIONS["SnapValue_SettingDescription"],
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
 
@@ -245,13 +295,13 @@ Settings.render = function(self)
                     if (not n) then return false end
 
                     n = n / 100
-                    return ((n >= Constants.MIN_SNAP_VALUE) and (n <= Constants.MAX_SNAP_VALUE))
+                    return ((n >= CommonConstants.MIN_SNAP_VALUE) and (n <= CommonConstants.MAX_SNAP_VALUE))
                 end,
 
                 onSubmit = function(text)
                     local n = tonumber(text)
-                    n = math.clamp(n / 100, Constants.MIN_SNAP_VALUE, Constants.MAX_SNAP_VALUE)
-                    n = round(n, math.log10(Constants.MIN_SNAP_VALUE))
+                    n = math.clamp(n / 100, CommonConstants.MIN_SNAP_VALUE, CommonConstants.MAX_SNAP_VALUE)
+                    n = round(n, math.log10(CommonConstants.MIN_SNAP_VALUE))
 
                     colorPaneUserData:setValue(CommonEnums.ColorPaneUserDataKey.SnapValue, n)
                 end,
@@ -284,6 +334,89 @@ Settings.render = function(self)
 
             onChecked = function(newValue)
                 companionUserData:setValue(Enums.CompanionUserDataKey.CacheColorPropertiesAPIData, newValue)
+            end,
+        }),
+
+        ControlsSectionHeader = Roact.createElement(SectionHeader, {
+            LayoutOrder = 7,
+            Text = "Controls",
+        }),
+
+        ImportSettingsButton = Roact.createElement(Button, {
+            Size = UDim2.new(0, 100, 0, Style.Constants.StandardButtonHeight),
+            LayoutOrder = 8,
+
+            displayType = "text",
+            text = UI_TRANSLATIONS["ImportSettings_ButtonText"],
+
+            onActivated = function()
+                if (self.importSettingsWindow:isMounted() or self.confirmImportSubscription) then return end
+                
+                self.importSettingsWindow:mount(
+                    UI_TRANSLATIONS["ImportSettings_WindowTitle"],
+                    Roact.createElement(ImportSettings, {
+                        onPromptClosed = function(settings)
+                            self.importSettingsWindow:unmount()
+                            if (not settings) then return end
+
+                            local confirmImport = Prompt(
+                                WidgetInfo.ConfirmImportSettingsPrompt.Id,
+                                WidgetInfo.ConfirmImportSettingsPrompt.Info,
+                                {
+                                    Title = UI_TRANSLATIONS["ConfirmSettingsImport_WindowTitle"],
+                                    PromptText = UI_TRANSLATIONS["ConfirmSettingsImport_PromptText"],
+                                    ConfirmText = UI_TRANSLATIONS["Import_ButtonText"],
+                                },
+                                Store
+                            )
+
+                            self.confirmImportSubscription = confirmImport:subscribe(function(confirm)
+                                if (not confirm) then
+                                    self.confirmImportSubscription = nil
+                                    return
+                                end
+
+                                for key, value in pairs(settings[Constants.COLORPANE_USERDATA_KEY]) do
+                                    colorPaneUserData:setValue(key, value)
+                                end
+
+                                for key, value in pairs(settings[Constants.COMPANION_USERDATA_KEY]) do
+                                    companionUserData:setValue(key, value)
+                                end
+
+                                print("Settings import complete!")
+                                self.confirmImportSubscription = nil
+                            end)
+                        end,
+                    }),
+                    Store
+                )
+            end,
+        }),
+
+        ExportSettingsButton = Roact.createElement(Button, {
+            Size = UDim2.new(0, 100, 0, Style.Constants.StandardButtonHeight),
+            LayoutOrder = 9,
+
+            displayType = "text",
+            text = UI_TRANSLATIONS["ExportSettings_ButtonText"],
+
+            onActivated = function()
+                if (self.exportSettingsWindow:isMounted()) then return end
+
+                local settingsTable = {
+                    [Constants.COLORPANE_USERDATA_KEY] = colorPaneUserData:getAllValues(),
+                    [Constants.COMPANION_USERDATA_KEY] = companionUserData:getAllValues(),
+                }
+
+                self.exportSettingsWindow:mount(
+                    UI_TRANSLATIONS["ExportSettings_WindowTitle"],
+                    Roact.createElement(ExportText, {
+                        promptText = UI_TRANSLATIONS["ExportSettings_CopyPrompt"],
+                        text = HttpService:JSONEncode(settingsTable),
+                    }),
+                    Store
+                )
             end,
         }),
     })

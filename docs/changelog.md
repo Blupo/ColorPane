@@ -5,6 +5,7 @@
 - Color editor: Added a dedicated "Set Color" button for colors in the palette list layout
 - Color editor: Added a random color button
 - Gradient editor: Added a "Reset" button for gradient precision
+- Companion: Added settings importing and exporting
 - API: Added `API.IsColorPromptAvailable` to check if calling `API.PromptForColor` will succeed or immediately reject (replaces `API.IsColorEditorOpen`)
 - API: Added `API.IsGradientPromptAvailable` to check if calling `API.PromptForGradient` will succeed or immediately reject (replaces `API.IsGradientEditorOpen`)
 

@@ -25,5 +25,20 @@ return {
     ColorProperties = {
         Id = "CPCompanion_ColorProperties",
         Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, Style.Constants.EditorPageWidth, 400, Style.Constants.EditorPageWidth, 200),
+    },
+
+    ImportSettings = {
+        Id = "CPCompanion_SettingsImport",
+        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 240, 260, 240, 260),
+    },
+
+    ExportSettings = {
+        Id = "CPCompanion_SettingsExport",
+        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 200, 100, 200, 100),
+    },
+
+    ConfirmImportSettingsPrompt = {
+        Id = "CPCompanion_SettingsImportConfirm",
+        Info = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 220, 200, 200, 200),
     }
 }

@@ -20,13 +20,15 @@ local StandardUIPadding = require(StandardComponents.UIPadding)
 
 --[[
     props
+
         promptText: string
         cancelText: string
         confirmText: string
 
-        onDone: (boolean)
+        onDone: (boolean) -> ()
 
     store props
+
         theme: StudioTheme
 ]]
 

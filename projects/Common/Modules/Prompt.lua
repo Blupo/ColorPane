@@ -8,12 +8,21 @@ local Roact = require(Includes.RoactRodux.Roact)
 local Signal = require(Includes.Signal)
 
 local Modules = script.Parent
+local PluginProvider = require(Modules.PluginProvider)
+local Translator = require(Modules.Translator)
 local Window = require(Modules.Window)
 
 local CommonComponents = Common.Components
 local PromptComponent = require(CommonComponents.Prompt)
 
 ---
+
+local plugin: Plugin = PluginProvider()
+
+local UI_TRANSLATIONS = Translator.GenerateTranslationTable({
+    "Cancel_ButtonText",
+    "Confirm_ButtonText",
+})
 
 --[[
     @param Title The title for the prompt window
@@ -42,31 +51,40 @@ return function(id: string, widgetInfo: DockWidgetPluginGuiInfo, promptInfo: Pro
 
     local openedWithoutMounting: Signal.Subscription
     local closedWithoutUnmounting: Signal.Subscription
+    local promptClosedCleanup: Signal.Subscription
 
-    local promptElement = Roact.createElement(PromptComponent, {
-        promptText = promptInfo.PromptText,
-        cancelText = promptInfo.CancelText or "Cancel",
-        confirmText = promptInfo.ConfirmText or "Confirm",
-
-        onDone = function(confirm)
-            firePromptClosed(confirm)
-            window:destroy()
-        end,
-    })
-
-    openedWithoutMounting = window.openedWithoutMounting:subscribe(function()
-        -- window shouldn't exist without tree
+    local cleanup = function()
+        promptClosedCleanup:unsubscribe()
         openedWithoutMounting:unsubscribe()
+        closedWithoutUnmounting:unsubscribe()
         window:destroy()
-    end)
+    end
+
+    promptClosedCleanup = promptClosed:subscribe(cleanup)
+    openedWithoutMounting = window.openedWithoutMounting:subscribe(cleanup)
 
     closedWithoutUnmounting = window.closedWithoutUnmounting:subscribe(function()
-        -- this is the same as cancelling
-        closedWithoutUnmounting:unsubscribe()
         firePromptClosed(false)
-        window:destroy()
     end)
 
-    window:mount(promptInfo.Title, promptElement, store)
+    plugin.Unloading:Connect(function()
+        if (window:isMounted()) then
+            firePromptClosed(false)
+        else
+            cleanup()
+        end
+    end)
+
+    window:mount(
+        promptInfo.Title,
+        Roact.createElement(PromptComponent, {
+            promptText = promptInfo.PromptText,
+            cancelText = promptInfo.CancelText or UI_TRANSLATIONS["Cancel_ButtonText"],
+            confirmText = promptInfo.ConfirmText or UI_TRANSLATIONS["Confirm_ButtonText"],
+            onDone = firePromptClosed,
+        }),
+        store
+    )
+
     return promptClosed
 end

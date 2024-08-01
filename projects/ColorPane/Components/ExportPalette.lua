@@ -19,6 +19,7 @@ local RoactRodux = require(CommonIncludes.RoactRodux.RoactRodux)
 
 local CommonComponents = Common.Components
 local Button = require(CommonComponents.Button)
+local RadioButtonGroup = require(CommonComponents.RadioButtonGroup)
 
 local StandardComponents = CommonComponents.StandardComponents
 local StandardTextLabel = require(StandardComponents.TextLabel)
@@ -29,7 +30,6 @@ local Util = require(Modules.Util)
 
 local Components = root.Components
 local SelectionComponent = require(Components.Selection)
-local RadioButtonGroup = require(Components.RadioButtonGroup)
 
 ---
 

@@ -1,17 +1,17 @@
 -- An group of radio buttons, where only one radio button can be selected at a time
 
-local Common = script.Parent.Parent.Common
+local root = script.Parent.Parent
 
-local CommonModules = Common.Modules
-local Style = require(CommonModules.Style)
+local Components = root.Components
+local ConnectTheme = require(Components.ConnectTheme)
 
-local CommonIncludes = Common.Includes
-local Roact = require(CommonIncludes.RoactRodux.Roact)
+local Includes = root.Includes
+local Roact = require(Includes.RoactRodux.Roact)
 
-local CommonComponents = Common.Components
-local ConnectTheme = require(CommonComponents.ConnectTheme)
+local Modules = root.Modules
+local Style = require(Modules.Style)
 
-local StandardComponents = CommonComponents.StandardComponents
+local StandardComponents = Components.StandardComponents
 local StandardTextLabel = require(StandardComponents.TextLabel)
 local StandardUICorner = require(StandardComponents.UICorner)
 local StandardUIListLayout = require(StandardComponents.UIListLayout)

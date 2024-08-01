@@ -17,3 +17,10 @@ These settings only apply to the Companion plugin itself.
 
 - *Automatically load the Roblox API data for Color Properties on startup*: Used in [Color Properties](color-properties.md). If enabled, the plugin will automatically load Roblox API data, which lets you use Color Properties without having to manually activate it.
 - *Cache Roblox API data for use during testing sessions*: Used in Color Properties. If enabled, Roblox API data will be saved to plugin settings, which lets you use Color Properties while testing your games.
+
+## Setting Controls
+
+There are several buttons here for settings management.
+
+- <span class="cp-button">Import Settings</span>: Allows you to restore backed-up settings information.
+- <span class="cp-button">Export Settings</span>: Allows you to back up your settings information.
