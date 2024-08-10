@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ### Added
-- Added partial translations for French (`fr`) and Korean (`ko`)
+- Added partial translations for French (`fr`), Korean (`ko`), and Russian (`ru`)
 - Color editor: Added a dedicated "Set Color" button for colors in the palette list layout
 - Color editor: Added a random color button
 - Gradient editor: Added a "Reset" button for gradient precision
@@ -23,7 +23,7 @@
 
 ### Fixed
 - API: `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
-- API: Promises returned by `API.PromptForColor` will no longer reject when the inital and new colors are the same even though you didn't specify an initial color
+- API: Promises returned by `API.PromptForColor` will no longer reject when the initial and new colors are the same even though you didn't specify an initial color
 - API: Promises returned by `API.PromptForGradient` will no longer reject when the initial and new gradients are the same even though you didn't specify an initial gradient
 
 ### Deprecated
