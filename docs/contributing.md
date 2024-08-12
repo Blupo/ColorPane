@@ -38,9 +38,9 @@ Currently, the targeted languages are:
 Code contributions should target the [develop](https://github.com/Blupo/ColorPane/tree/develop) branch, unless they're critical fixes.
 ///
 
-If you have code you would like to contribute to ColorPane, please submit a pull request. ColorPane uses [Rojo](https://rojo.space) (version 7.4.1 as of this writing) for project management. When testing the plugin in Studio, serve `workspace.project.json` instead of the `default.project.json`. There will be 3 build objects in ServerStorage:
+If you have code you would like to contribute to ColorPane, please submit a pull request. ColorPane uses [Rojo](https://rojo.space) (version 7.4.3 as of this writing) for project management. When testing the plugin in Studio, serve `workspace.project.json` instead of the `default.project.json`. There will be 3 build objects in ServerStorage:
 
-* CPTester, which is a debug plugin that provides direct access to the ColorPane API script from the Workspace
+* CPTest, which is a debug plugin that provides direct access to the ColorPane API script from the Workspace
 * Companion, the Companion plugin
 * ColorPane, the ColorPane library
 

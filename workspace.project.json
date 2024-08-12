@@ -8,7 +8,7 @@
             "$className": "ServerStorage",
 
             "CPTest": {
-                "$path": "projects/CPTester",
+                "$path": "projects/CPTest",
 
                 "ColorPane": {
                     "$path": "projects/ColorPane",
