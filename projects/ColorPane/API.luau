@@ -468,6 +468,15 @@ ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?):
 end
 
 --[[
+    **DEPRECATED**
+
+    Returns the API version.
+]]
+ColorPane.GetVersion = function(): (number, number, number)
+    return 0, 5, 0
+end
+
+--[[
     **DEPRECATED**: You should subscribe to your plugin's Unloading event instead.
 
     Fires when the API is about to unload

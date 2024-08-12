@@ -31,12 +31,12 @@
 - API: `API.IsGradientEditorOpen` is now deprecated, please use `API.IsGradientPromptAvailable` for new work
 - API: `API.PromptError` is now deprecated, please use `API.PromptRejection` for new work
 - API: `API.Unloading` is now deprecated, you should use your plugin's [Unloading](https://create.roblox.com/docs/reference/engine/classes/Plugin#Unloading) event instead
+- API: `API.GetVersion` is now deprecated
 
 ### Removed
 - Removed the first-time use plugin perimssions warning
 - Automatic update-checking has been removed
 - Color editor: Removed the Copic color palette
-- API: Removed `API.GetVersion`
 - API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. Please read the Integration page of the documentation for details on the updated integration method.
 
 ## [0.4.1] - 2022-09-30
