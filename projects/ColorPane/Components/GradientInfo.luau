@@ -220,7 +220,7 @@ GradientInfo.render = function(self)
         }),
 
         ColorSpaceSection = Roact.createElement("Frame", {
-            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize + (Style.Constants.StandardButtonHeight * 4) + (Style.Constants.MinorElementPadding * 4)),
+            Size = UDim2.new(1, 0, 0, Style.Constants.StandardTextSize + (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2)),
             BackgroundTransparency = 1,
             LayoutOrder = 0,
         }, {
@@ -235,7 +235,7 @@ GradientInfo.render = function(self)
             ColorSpaceList = Roact.createElement("Frame", {
                 AnchorPoint = Vector2.new(0.5, 1),
                 Position = UDim2.new(0.5, 0, 1, 0),
-                Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 4) + (Style.Constants.MinorElementPadding * 3)),
+                Size = UDim2.new(1, 0, 0, (Style.Constants.StandardButtonHeight * 3) + (Style.Constants.MinorElementPadding * 2)),
                 BackgroundTransparency = 1,
             }, colorSpaceListElements),
         }),

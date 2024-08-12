@@ -27,8 +27,6 @@ You can open the gradient palette using the ![gradient palette](../images/gradie
 
 ## Gradient Info
 
-(TODO: this image is a placeholder)
-
 ![The gradient information window (dark theme)](../images/gradient-info-dark.png#only-dark){ width="220" }
 ![The gradient information window (light theme)](../images/gradient-info-light.png#only-light){ width="220" }
 

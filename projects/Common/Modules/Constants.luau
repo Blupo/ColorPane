@@ -9,7 +9,7 @@ local CONSTANTS = {
     --[[
         The list of valid gradient color spaces.
     ]]
-    VALID_GRADIENT_COLOR_SPACES = { "RGB", "CMYK", "HSB", "HWB", "HSL", "HPLuv", "HSLuv", "Lab", "Oklab", "Luv", "LChab", "LChuv", "xyY", "XYZ" },
+    VALID_GRADIENT_COLOR_SPACES = { "RGB", "CMYK", "HSB", "HWB", "HSL", "Lab", "Luv", "LChab", "LChuv", "xyY", "XYZ" },
 
     --[[
         The list of valid hue adjustments.
