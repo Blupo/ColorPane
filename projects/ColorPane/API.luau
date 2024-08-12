@@ -254,7 +254,7 @@ ColorPane.PromiseStatus = Promise.Status
     instead of immediately rejecting.
 ]]
 ColorPane.IsColorPromptAvailable = function(): boolean
-    return (not colorEditorWindow:isMounted())
+    return (not (colorEditorWindow:isMounted() or gradientEditorWindow:isMounted()))
 end
 
 --[[
@@ -292,7 +292,7 @@ end
 ]]
 ColorPane.PromptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
     if (gradientEditorWindow:isMounted()) then
-        -- can't open the prompt because the gradient prompt might need it
+        -- gradient editor needs exclusive access to the color editor
         return Promise.reject(Enums.PromptRejection.ReservationProblem)
     elseif (colorEditorWindow:isMounted()) then
         -- can't open the prompt if it's already open
@@ -338,7 +338,7 @@ end
 ]]
 ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?): Promise
     if (colorEditorWindow:isMounted()) then
-        -- can't open the prompt because it might need the color prompt
+        -- gradient editor needs exclusive access to the color editor
         return Promise.reject(Enums.PromptRejection.ReservationProblem)
     elseif (gradientEditorWindow:isMounted()) then
         -- can't open the prompt if it's already open
@@ -529,10 +529,6 @@ end
 
 ---
 
--- make sure the user doesn't accidentally modify these
-table.freeze(Enums.PromptRejection)
-table.freeze(ColorPane)
-
 -- hook editor input signals
 colorEditorWindow:enableMouseTracking()
 gradientEditorWindow:enableMouseTracking()
@@ -620,5 +616,9 @@ plugin.Unloading:Connect(function()
     colorEditorWindow:destroy()
     gradientEditorWindow:destroy()
 end)
+
+-- make sure the user doesn't accidentally modify these
+table.freeze(Enums.PromptRejection)
+table.freeze(ColorPane)
 
 return ColorPane
