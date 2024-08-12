@@ -10,8 +10,12 @@
 
 local PluginProvider = require(script.Common.Modules.PluginProvider)
 local ProjectId = require(script.Modules.ProjectId)
+local Types = require(script.Modules.Types)
 
 ---
+
+export type ColorPromptInfoArgument = Types.ColorPromptInfoArgument
+export type GradientPromptInfoArgument = Types.GradientPromptInfoArgument
 
 --[[
     Initialises ColorPane and returns the API. **This function should only be called once.**

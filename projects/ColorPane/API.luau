@@ -29,6 +29,7 @@ local EditorInputSignals = require(Modules.EditorInputSignals)
 local ManagedUserData = require(Modules.ManagedUserData)
 local Enums = require(Modules.Enums)
 local Store = require(Modules.Store)
+local Types = require(Modules.Types)
 local Util = require(Modules.Util)
 local WidgetInfo = require(Modules.WidgetInfo)
 
@@ -49,13 +50,6 @@ type GradientKeypoint = ColorLib.GradientKeypoint
 type MixableColorType = ColorLib.MixableColorType
 type HueAdjustment = ColorLib.HueAdjustment
 
-type ColorPromptInfoArgument = {
-    PromptTitle: string?,
-    InitialColor: (Color | Color3)?,
-    ColorType: ("Color" | "Color3")?,
-    OnColorChanged: (((Color) -> ()) | ((Color3) -> ()))?
-}
-
 type ColorPromptInfoExpectingColor = {
     PromptTitle: string,
     InitialColor: (Color | Color3),
@@ -71,16 +65,6 @@ type ColorPromptInfoExpectingColor3 = {
 }
 
 type ColorPromptInfo = ColorPromptInfoExpectingColor | ColorPromptInfoExpectingColor3
-
-type GradientPromptInfoArgument = {
-    PromptTitle: string?,
-    InitialGradient: (Gradient | ColorSequence)?,
-    InitialColorSpace: MixableColorType?,
-    InitialHueAdjustment: HueAdjustment?,
-    InitialPrecision: number?,
-    GradientType: ("Gradient" | "ColorSequence")?,
-    OnGradientChanged: (((Gradient) -> ()) | ((ColorSequence) -> ()))?
-}
 
 type GradientPromptInfoExpectingGradient = {
     PromptTitle: string,
@@ -143,7 +127,7 @@ local fireGradientEditFinished: Signal.FireSignal<boolean> = function(_: boolean
 --[[
     This is the actual color prompting function.
 ]]
-local _promptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
+local _promptForColor = function(promptInfo: Types.ColorPromptInfoArgument?): Promise
     local fullPromptInfo: ColorPromptInfo = Cryo.Dictionary.join(DEFAULT_COLOR_PROMPT_INFO, promptInfo or {})
     local finishedSignal: Signal.Signal<boolean>, fireFinished: Signal.FireSignal<boolean> = Signal.createSignal()
     local initialColor: Color
@@ -290,7 +274,7 @@ end
     @param promptInfo The prompt info, see above
     @return A Promise that will resolve with a user-generated color, or reject with a rejection reason
 ]]
-ColorPane.PromptForColor = function(promptInfo: ColorPromptInfoArgument?): Promise
+ColorPane.PromptForColor = function(promptInfo: Types.ColorPromptInfoArgument?): Promise
     if (gradientEditorWindow:isMounted()) then
         -- gradient editor needs exclusive access to the color editor
         return Promise.reject(Enums.PromptRejection.ReservationProblem)
@@ -336,7 +320,7 @@ end
     @param promptInfo The prompt info, see above
     @return A Promise that will resolve with a user-generated gradient, or reject with a rejection reason
 ]]
-ColorPane.PromptForGradient = function(promptInfo: GradientPromptInfoArgument?): Promise
+ColorPane.PromptForGradient = function(promptInfo: Types.GradientPromptInfoArgument?): Promise
     if (colorEditorWindow:isMounted()) then
         -- gradient editor needs exclusive access to the color editor
         return Promise.reject(Enums.PromptRejection.ReservationProblem)
