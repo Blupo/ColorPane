@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.5.0] - 2024-08-13
 
 ### Added
 - Added partial translations for French (`fr`), Korean (`ko`), and Russian (`ru`)
@@ -20,6 +20,7 @@
 - API: The `API.PromptError` enum has been re-named to `API.PromptRejection`
 - API: The `API.PromptForColor` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new colors are the same
 - API: The `API.PromptForGradient` Promise now rejects with `SameAsInitial` instead of `PromptCancelled` if the initial and new gradients are the same
+- API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. Please read the Integration page of the documentation for details on the updated integration method.
 
 ### Fixed
 - API: `API.PromptForColorSequence` (deprecated) now returns a Promise as expected
@@ -34,10 +35,9 @@
 - API: `API.GetVersion` is now deprecated
 
 ### Removed
-- Removed the first-time use plugin perimssions warning
+- Removed the first-time use plugin permissions warning
 - Automatic update-checking has been removed
 - Color editor: Removed the Copic color palette
-- API: The color tools of ColorPane have been spun off into their own library, and the old method of using ColorPane will no longer work. Please read the Integration page of the documentation for details on the updated integration method.
 
 ## [0.4.1] - 2022-09-30
 
