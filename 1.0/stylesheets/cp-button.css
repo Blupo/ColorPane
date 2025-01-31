@@ -1,0 +1,59 @@
+/* Stylesheet for elements to emulate the appearance of buttons in the plugin UI */
+
+.cp-button {
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 2px;
+    font-family: "Source Sans 3";
+    font-size: 14px;
+    padding: 2px 4px;
+}
+
+/* set alignment for material icons */
+.cp-button .twemoji {
+    vertical-align: middle;
+}
+
+/*
+    background-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButton)
+    border-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder)
+    color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText)
+*/
+[data-md-color-scheme="slate"] .cp-button {
+    background-color: #3c3c3c;
+    border-color: #3c3c3c;
+    color: #cccccc;
+}
+
+/*
+    background-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButton)
+    border-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder)
+    color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonText)
+*/
+[data-md-color-scheme="default"] .cp-button {
+    background-color: #ffffff;
+    border-color: #cccccc;
+    color: #000000;
+}
+
+/*
+    background-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton)
+    border-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder)
+    color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText)
+*/
+[data-md-color-scheme="slate"] .cp-button.main {
+    background-color: #00a2ff;
+    border-color: #3c3c3c;
+    color: #ffffff;
+}
+
+/*
+    background-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogMainButton)
+    border-color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogButtonBorder)
+    color is StudioTheme:GetColor(Enum.StudioStyleGuideColor.DialogMainButtonText)
+*/
+[data-md-color-scheme="default"] .cp-button.main {
+    background-color: #00a2ff;
+    border-color: #cccccc;
+    color: #ffffff;
+}
